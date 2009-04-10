@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component author="xavier.guerin@imag.fr" unique="true" wrapper="false">
+
+  <id name="PosixThreadsLibrary" short_name="PThreads" version="1.0"/>
+
+  <provide>
+    <type name="pthread_t"/>
+    <type name="pthread_attr_t"/>
+    <type name="pthread_func_t"/>
+
+    <method name="__libthread_start" return_type="int32_t"/>
+
+    <method name="pthread_create" return_type="int32_t">
+      <argument name="thread" type="pthread_t" direction="out"/>
+      <argument name="attrs" type="pthread_attr_t" direction="inout"/>
+      <argument name="func" type="pthread_func_t" direction="in"/>
+      <argument name="args" type="access" direction="in"/>
+    </method>
+  </provide>
+
+  <require>
+
+    <!-- Application hook -->
+
+    <method name="main" return_type="int32_t">
+      <argument name="argc" type="int32_t" direction="in"/>
+      <argument name="argv" type="array of string" direction="in"/>
+    </method>
+
+    <!-- Semaphore hooks -->
+
+   <method name="semaphore_create" return_type="int32_t">
+      <argument name="name" type="string" direction="in"/>
+      <argument name="tokens" type="int32_t" direction="in"/>
+    </method>
+
+    <method name="semaphore_destroy" return_type="status_t">
+      <argument name="sid" type="int32_t" direction="in"/>
+    </method>
+
+    <method name="semaphore_acquire" return_type="status_t">
+      <argument name="sid" type="int32_t" direction="in"/>
+      <argument name="flags" type="int32_t" direction="in"/>
+      <argument name="timeout" type="bigtime_t" direction="in"/>
+    </method>
+
+    <method name="semaphore_release" return_type="status_t">
+      <argument name="sid" type="int32_t" direction="in"/>
+      <argument name="n_tokens" type="int32_t" direction="in"/>
+      <argument name="flags" type="int32_t" direction="in"/>
+    </method>
+
+    <method name="semaphore_get_info" return_type="status_t">
+      <argument name="sid" type="int32_t" direction="in"/>
+      <argument name="info" type="semaphore_info_t" direction="out"/>
+    </method>
+
+    <!-- Thread hooks -->
+
+    <method name="thread_create" return_type="int32_t">
+      <argument name="handler" type="thread_handler_t" direction="in"/>
+      <argument name="arguments" type="void" direction="in"/>
+      <argument name="name" type="string" direction="in"/>
+      <argument name="affinity" type="int32_t" direction="in"/>
+      <argument name="stack_size" type="int32_t" direction="in"/>
+    </method>
+
+    <method name="thread_wait" return_type="status_t">
+      <argument name="id" type="int32_t" direction="in"/>
+      <argument name="value" type="int32_t" direction="out"/>
+    </method>
+  </require>
+
+</component>
