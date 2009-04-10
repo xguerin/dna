@@ -1,6 +1,5 @@
 #include <pthread.h>
-
-#include "private/macros.h"
+#include <private/macros.h>
 
 int pthread_attr_destroy(pthread_attr_t *attr)
 {
