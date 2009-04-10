@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component author="xavier.guerin@imag.fr" unique="true" wrapper="false">
+
+  <id name="SoclibPlatform" short_name="SoCLib" version="1.0"/>
+
+  <provide>
+    <definition name="PLATFORM_ENDIANNESS"/>
+  </provide>
+
+</component>
