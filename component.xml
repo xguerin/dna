@@ -70,6 +70,10 @@
       <argument name="id" type="int32_t" direction="in"/>
       <argument name="value" type="int32_t" direction="out"/>
     </method>
+
+    <!-- DNA interface hooks -->
+
+    <type name="status_t"/>
   </require>
 
 </component>

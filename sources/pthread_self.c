@@ -1,4 +1,4 @@
-#include <pthread.h>
+#include <private/pthread.h>
 
 pthread_t pthread_self(void)
 {

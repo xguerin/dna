@@ -1,4 +1,4 @@
-#include <pthread.h>
+#include <private/pthread.h>
 
 int pthread_cond_wait(pthread_cond_t *condition, pthread_mutex_t *mutex)
 {

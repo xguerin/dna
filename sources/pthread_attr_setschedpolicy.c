@@ -1,6 +1,5 @@
-#include <pthread.h>
-
-#include "private/macros.h"
+#include <private/pthread.h>
+#include <private/macros.h>
 
 int pthread_attr_setschedpolicy(pthread_attr_t *attr, int policy)
 {

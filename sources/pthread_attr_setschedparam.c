@@ -1,7 +1,6 @@
-#include <pthread.h>
 #include <string.h>
-
-#include "private/macros.h"
+#include <private/pthread.h>
+#include <private/macros.h>
 
 int pthread_attr_setschedparam(pthread_attr_t *attr, const sched_param_t *param)
 {

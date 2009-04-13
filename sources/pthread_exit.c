@@ -1,4 +1,4 @@
-#include <pthread.h>
+#include <private/pthread.h>
 
 void pthread_exit(void *retval)
 {

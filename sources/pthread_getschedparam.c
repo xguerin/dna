@@ -1,7 +1,6 @@
-#include <pthread.h>
 #include <string.h>
-
-#include "private/macros.h"
+#include <private/pthread.h>
+#include <private/macros.h>
 
 int pthread_getschedparam(pthread_t t, int *p, struct sched_param *sp)
 {

@@ -1,7 +1,4 @@
-#include <pthread.h>
-#include <cpu.h>
-
-#include "private/macros.h"
+#include <private/pthread.h>
 
 int pthread_cond_broadcast(pthread_cond_t *condition)
 {

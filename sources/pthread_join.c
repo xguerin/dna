@@ -1,7 +1,6 @@
-#include <pthread.h>
 #include <stdio.h>
-
-#include "private/macros.h"
+#include <private/pthread.h>
+#include <private/macros.h>
 
 int pthread_join(pthread_t thread, void **value_ptr)
 {

@@ -1,4 +1,4 @@
-#include <pthread.h>
+#include <private/pthread.h>
 
 int pthread_equal(pthread_t thread1, pthread_t thread2)
 {

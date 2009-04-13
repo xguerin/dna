@@ -1,11 +1,8 @@
+#include <private/pthread.h>
+#include <private/macros.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <pthread.h>
-
-#include "private/macros.h"
-
-extern unsigned long int OS_THREAD_STACK_SIZE;
 
 int pthread_create(pthread_t *thread, pthread_attr_t *attr, pthread_func_t start, void *arg)
 {
@@ -30,7 +27,7 @@ int pthread_create(pthread_t *thread, pthread_attr_t *attr, pthread_func_t start
 	new -> cancel_bool = false;
 
 	if (attr == NULL) {
-		new -> attributs -> stacksize = OS_THREAD_STACK_SIZE;
+		new -> attributs -> stacksize = 0x8000;
 		new -> attributs -> detachstate = PTHREAD_CREATE_JOINABLE;
 		new -> attributs -> schedinherited = PTHREAD_EXPLICIT_SCHED;
 		new -> attributs -> schedpolicy = SCHED_FIFO;
