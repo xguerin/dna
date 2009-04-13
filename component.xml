@@ -2,7 +2,7 @@
 
 <component author="xavier.guerin@imag.fr" unique="true" wrapper="false">
 
-  <id name="PosixThreadsLibrary" short_name="PThreads" version="1.0"/>
+  <id name="PosixThreadsLibrary" short_name="PThread" version="1.0"/>
 
   <provide>
     <type name="pthread_t"/>
@@ -17,6 +17,7 @@
       <argument name="func" type="pthread_func_t" direction="in"/>
       <argument name="args" type="access" direction="in"/>
     </method>
+
   </provide>
 
   <require>
@@ -58,6 +59,8 @@
 
     <!-- Thread hooks -->
 
+    <type name="thread_handler_t"/>
+
     <method name="thread_create" return_type="int32_t">
       <argument name="handler" type="thread_handler_t" direction="in"/>
       <argument name="arguments" type="void" direction="in"/>
@@ -74,6 +77,7 @@
     <!-- DNA interface hooks -->
 
     <type name="status_t"/>
+
   </require>
 
 </component>

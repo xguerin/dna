@@ -8,6 +8,8 @@
 #include <stdbool.h>
 #include <time.h>
 
+#include <CoreManager/CoreManager.h>
+
 /*************************
  * Types and definitions *
  *************************/

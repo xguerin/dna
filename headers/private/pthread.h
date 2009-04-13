@@ -3,6 +3,6 @@
 
 #include <CoreManager/CoreManager.h>
 #include <DnaInterface/DnaInterface.h>
-#include <PThread/pthread.h>
+#include <PosixThreads/PosixThreads.h>
 
 #endif 
