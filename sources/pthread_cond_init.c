@@ -1,4 +1,4 @@
-#include <pthread.h>
+#include <private/pthread.h>
 
 int pthread_cond_init(pthread_cond_t *condition, pthread_condattr_t *condattr)
 {

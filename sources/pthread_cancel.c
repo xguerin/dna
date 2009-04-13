@@ -1,6 +1,5 @@
-#include <pthread.h>
-
-#include "private/macros.h"
+#include <private/pthread.h>
+#include <private/macros.h>
 
 int pthread_cancel(pthread_t thread)
 {

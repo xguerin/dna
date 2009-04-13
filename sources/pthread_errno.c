@@ -1,4 +1,4 @@
-#include <pthread.h>
+#include <private/pthread.h>
 
 static int32_t p_errno;
 

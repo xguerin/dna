@@ -1,7 +1,6 @@
 #include <string.h>
-#include <pthread.h>
-
-#include "private/macros.h"
+#include <private/pthread.h>
+#include <private/macros.h>
 
 int pthread_attr_init(pthread_attr_t *attr)
 {

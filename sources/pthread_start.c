@@ -1,5 +1,6 @@
-#include <pthread.h>
 #include <malloc.h>
+#include <private/pthread.h>
+#include <private/macros.h>
 
 extern int main (void);
 
