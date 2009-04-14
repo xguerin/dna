@@ -31,7 +31,8 @@
  * Device control codes.
  */
 
-enum device_control_codes {
+enum _device_control_codes
+{
 	DNA_GET_DEVICE_SIZE = 0,
 	DNA_SET_DEVICE_SIZE,
 	DNA_SET_NONBLOCKING_IO,
@@ -50,7 +51,8 @@ enum device_control_codes {
  * Device types.
  */
 
-enum device_type {
+enum _device_type
+{
 	DNA_CHARACTER_DEVICE,
 	DNA_BLOCK_DEVICE
 };
@@ -65,7 +67,8 @@ enum device_type {
  * SOURCE
  */
 
-typedef struct device_info {
+typedef struct _device_info
+{
 	int32_t type;
 	uint32_t bytes_per_sector;
 	uint32_t sectors_per_track;
@@ -74,7 +77,8 @@ typedef struct device_info {
 	bool removable;
 	bool read_only;
 	bool write_once;
-} device_info_t;
+}
+device_info_t;
 
 /*
  ****/
@@ -86,14 +90,16 @@ typedef struct device_info {
  * SOURCE
  */
 
-typedef struct device_cmd {
+typedef struct _device_cmd
+{
 	status_t (* open) (const char * name, int32_t mode, void ** cookie);
 	status_t (* close) (void * cookie);
 	status_t (* free) (void * cookie);
 	status_t (* read) (void * handler, void * destination, int64_t offset, int32_t * p_res);
 	status_t (* write) (void * handler, void * source, int64_t offset, int32_t * p_res);
 	status_t (* control) (void * handler, int32_t operation, void * data, int32_t * p_res);
-} device_cmd_t;
+}
+device_cmd_t;
 
 /*
  ****/
@@ -105,14 +111,16 @@ typedef struct device_cmd {
  * SOURCE
  */
 
-typedef struct driver {
+typedef struct _driver
+{
 	char * name;
 	status_t (* init_hardware) (void);
 	status_t (* init_driver) (void);
 	void (* uninit_driver) (void);
 	const char ** (* publish_devices) (void);
 	device_cmd_t * (* find_device) (const char * name);
-} driver_t;
+}
+driver_t;
 
 /*
  ****/
