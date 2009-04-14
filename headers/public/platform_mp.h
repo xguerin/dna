@@ -8,6 +8,6 @@ extern unsigned int PLATFORM_N_MIPSMIPS32;
 extern unsigned int PLATFORM_N_NIOS2FAST;
 extern unsigned int PLATFORM_N_UBLAZE81i;
 
-#define PLATFORM_MP_CPU_COUNT(what) PLATFORM_N_##what
+#define PLATFORM_MP_cpu_count(what) PLATFORM_N_##what
 
 #endif
