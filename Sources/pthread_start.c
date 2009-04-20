@@ -10,7 +10,7 @@ int __libthread_start (void)
 	thread_info_t cur;
 	pthread_t wrapper = malloc (sizeof (struct pthread));
 
-  my_id = thread_find (NULL);
+  thread_find (NULL, & my_id);
 	thread_get_info (my_id, & cur);
 
 	wrapper -> attributs = malloc (sizeof (pthread_attr_t));
