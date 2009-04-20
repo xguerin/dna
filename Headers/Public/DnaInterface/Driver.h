@@ -92,7 +92,7 @@ device_info_t;
 
 typedef struct _device_cmd
 {
-	status_t (* open) (const char * name, int32_t mode, void ** cookie);
+	status_t (* open) (char * name, int32_t mode, void ** cookie);
 	status_t (* close) (void * cookie);
 	status_t (* free) (void * cookie);
 	status_t (* read) (void * handler, void * destination, int64_t offset, int32_t * p_res);
