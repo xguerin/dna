@@ -45,9 +45,8 @@ int pthread_create(pthread_t *thread, pthread_attr_t *attr, pthread_func_t start
 		}
 	}
 
-	t_new = thread_create ((thread_handler_t)start,
-      (void *) arg, (char * restrict) new -> attributs -> name,
-      new -> attributs -> procid, 0x8000);
+	thread_create ((thread_handler_t)start, (void *) arg,
+      new -> attributs -> name, new -> attributs -> procid, 0x8000, & t_new);
 
 	thread_get_info (t_new, & info);
 
