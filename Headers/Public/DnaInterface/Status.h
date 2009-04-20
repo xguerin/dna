@@ -30,41 +30,64 @@
  * SOURCE
  */
 
-typedef int32_t status_t;
+typedef enum _status
+{
+  /*
+   * This code are not errors, hence that are
+   * given positive numbers
+   */
+
+  DNA_HANDLED_INTERRUPT =	0x0004,
+  DNA_UNHANDLED_INTERRUPT	= 0x0003,
+  DNA_INVOKE_SCHEDULER = 0x0002,
+  DNA_ALREADY_AT_ROOT	= 0x0001,
+
+  /*
+   * Standard error codes
+   */
+
+  DNA_OK = 0x0000,
+  DNA_ERROR	= 0xFFFF,
+  DNA_NOT_IMPLEMENTED = 0xFFFE,
+  DNA_OUT_OF_MEM = 0xFFFD,
+
+  /*
+   * VFS error codes
+   */
+
+  DNA_NO_ENTRY = 0xFFFC,
+  DNA_NO_VOLUME = 0xFFFB,
+  DNA_NO_VNODE = 0xFFFA,
+  DNA_DEVICE_MOUNTED = 0xFFF9,
+  DNA_VNODE_MOUNTED = 0xFFF8,
+  DNA_UNKNOWN_FILESYSTEM = 0xFFF7,
+  DNA_MAX_OPENED_FILES = 0xFFF6,
+  DNA_INVALID_FD = 0xFFF5,
+  DNA_BAD_INODE_TYPE = 0xFFF4,
+  DNA_INVALID_WHENCE = 0xFFF3,
+  DNA_VOLUME_IN_USE	= 0xFFF2,
+
+  /*
+   * Semaphore error codes
+   */
+
+  DNA_BAD_SEM_ID = 0xFFF1,
+  DNA_NO_MORE_SEM = 0xFFF0,
+  DNA_WOULD_BLOCK	= 0xFFEF,
+  DNA_TIMED_OUT	= 0xFFEE,
+
+  /*
+   * Team and threads error codes
+   */
+
+  DNA_UNKNOWN_TEAM = 0xFFED,
+  DNA_INVALID_TEAM_ID = 0xFFEC,
+  DNA_UNKNOWN_THREAD = 0xFFEB,
+  DNA_INVALID_THREAD_ID = 0xFFEA
+}
+status_t;
 
 /*
  ****/
-
-#define DNA_HANDLED_INTERRUPT			0x0004
-#define DNA_UNHANDLED_INTERRUPT		0x0003
-#define DNA_INVOKE_SCHEDULER			0x0002
-#define DNA_ALREADY_AT_ROOT				0x0001
-
-#define DNA_OK									  0x0000
-#define DNA_ERROR									0xFFFF
-#define DNA_NOT_IMPLEMENTED				0xFFFE
-#define DNA_OUT_OF_MEM						0xFFFD
-
-#define DNA_NO_ENTRY							0xFFFC
-#define DNA_NO_VOLUME							0xFFFB
-#define DNA_NO_VNODE							0xFFFA
-#define DNA_DEVICE_MOUNTED				0xFFF9
-#define DNA_VNODE_MOUNTED					0xFFF8
-#define DNA_UNKNOWN_FILESYSTEM		0xFFF7
-#define DNA_MAX_OPENED_FILES			0xFFF6
-#define DNA_INVALID_FD						0xFFF5
-#define DNA_BAD_INODE_TYPE				0xFFF4
-#define DNA_INVALID_WHENCE				0xFFF3
-#define DNA_VOLUME_IN_USE					0xFFF2
-
-#define DNA_BAD_SEM_ID						0xFFF1
-#define DNA_NO_MORE_SEM						0xFFF0
-#define DNA_WOULD_BLOCK						0xFFEF
-#define DNA_TIMED_OUT							0xFFEE
-
-#define DNA_UNKNOWN_TEAM					0xFFED
-#define DNA_INVALID_TEAM_ID				0xFFEC
-#define DNA_UNKNOWN_THREAD				0xFFEB
-#define DNA_INVALID_THREAD_ID			0xFFEA
 
 #endif
