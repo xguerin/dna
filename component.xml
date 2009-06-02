@@ -6,6 +6,60 @@
 
   <provide>
 
+    <!-- Configuration -->
+
+    <definition name="DNA_NAME_LENGTH"/>
+    <definition name="DNA_FILENAME_LENGTH"/>
+    <definition name="DNA_PATH_LENGTH"/>
+    <definition name="DNA_MAX_CPU"/>
+    <definition name="DNA_MAX_FILE"/>
+    <definition name="DNA_MAX_SEM"/>
+    <definition name="DNA_MAX_THREAD_WAIT_LIST"/>
+    <definition name="DNA_THREAD_IDLE_STACK_SIZE"/>
+    <definition name="DNA_THREAD_STACK_SIZE"/>
+
+    <!-- Fast C -->
+
+    <method name="dna_memcpy" return_type="access void">
+      <argument name="s1" type="access void" direction="in"/>
+      <argument name="s2" type="access void" direction="in"/>
+      <argument name="n" type="size_t" direction="in"/>
+    </method>
+
+    <method name="dna_memset" return_type="access void">
+      <argument name="s" type="access void" direction="in"/>
+      <argument name="c" type="int32_t" direction="in"/>
+      <argument name="n" type="size_t" direction="in"/>
+    </method>
+
+    <method name="dna_strcpy" return_type="string">
+      <argument name="s1" type="string" direction="in"/>
+      <argument name="s2" type="string" direction="out"/>
+    </method>
+
+    <method name="dna_strcat" return_type="string">
+      <argument name="s1" type="string" direction="inout"/>
+      <argument name="s2" type="string" direction="in"/>
+    </method>
+
+    <method name="dna_strcmp" return_type="int32_t">
+      <argument name="s1" type="string" direction="in"/>
+      <argument name="s2" type="string" direction="in"/>
+    </method>
+
+    <method name="dna_strlen" return_type="size_t">
+      <argument name="s" type="string" direction="in"/>
+    </method>
+
+    <method name="dna_atoi" return_type="int32_t">
+      <argument name="alpha" type="string" direction="in"/>
+    </method>
+
+    <method name="dna_itoa" return_type="int32_t">
+      <argument name="integer" type="int32_t" direction="in"/>
+      <argument name="buffer" type="string" direction="out"/>
+    </method>
+
     <!-- Driver management -->
 
     <definition name="DNA_GET_DEVICE_SIZE"/>
@@ -45,12 +99,17 @@
   </provide>
 
   <require>
-    <!-- Fast libc hooks -->
+    <!-- CPU Hooks -->
 
-    <method name="dna_strcmp" return_type="int32_t">
-      <argument name="s1" type="string" direction="in"/>
-      <argument name="s2" type="string" direction="in"/>
+    <method name="cpu_compare_and_swap" return_type="int32_t">
+      <argument name="lock" type="int32_t" direction="inout"/>
+      <argument name="old" type="int32_t" direction="in"/>
+      <argument name="new" type="int32_t" direction="in"/>
     </method>
+
+    <!-- Core Manager hooks -->
+
+    <type name="spinlock_t"/>
 
   </require>
 
