@@ -2,7 +2,7 @@
 #define _PTHREAD_P_H
 
 #include <CoreManager/CoreManager.h>
-#include <DnaInterface/DnaInterface.h>
+#include <DnaLibrary/DnaLibrary.h>
 #include <PosixThreads/PosixThreads.h>
 
 #endif 
