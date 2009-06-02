@@ -18,10 +18,15 @@
 #ifndef DNA_INTERFACE_H
 #define DNA_INTERFACE_H
 
-#include <DnaInterface/Component.h>
-#include <DnaInterface/Configuration.h>
-#include <DnaInterface/Driver.h>
-#include <DnaInterface/Filesystem.h>
-#include <DnaInterface/Status.h>
+#include <DnaLibrary/Atomic.h>
+#include <DnaLibrary/C.h>
+#include <DnaLibrary/Checkpoint.h>
+#include <DnaLibrary/Component.h>
+#include <DnaLibrary/Configuration.h>
+#include <DnaLibrary/Driver.h>
+#include <DnaLibrary/Extension.h>
+#include <DnaLibrary/Filesystem.h>
+#include <DnaLibrary/Queue.h>
+#include <DnaLibrary/Status.h>
 
 #endif
