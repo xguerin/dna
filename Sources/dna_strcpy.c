@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <DnaTools/DnaTools.h>
+#include <DnaLibrary/DnaLibrary.h>
 
 char * dna_strcpy (char * restrict s1, const char * restrict s2){
 	char *s1_ptr = s1, *s2_ptr = (char *)s2;

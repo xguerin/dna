@@ -16,7 +16,7 @@
  */
 
 #include <stdint.h>
-#include <DnaTools/DnaTools.h>
+#include <DnaLibrary/DnaLibrary.h>
 
 void * dna_memset (void * s, int32_t c, size_t n){
 	int32_t rem = n % 4;

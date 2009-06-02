@@ -17,7 +17,7 @@
  */
 
 #include <stdint.h>
-#include <DnaTools/DnaTools.h>
+#include <DnaLibrary/DnaLibrary.h>
 
 int32_t dna_atoi(char * alpha) {
 	int32_t value = 0, c = 0, index = 0;
