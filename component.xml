@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component author="xavier.guerin@imag.fr" unique="false" wrapper="false">
+
+  <id name="DeviceFileSystem" short_name="DevFS" version="1.0"/>
+
+  <manage>
+    <method name="init_hardware" return_type="status_t"/>
+    <method name="init_driver" return_type="status_t"/>
+    <method name="uninit_driver" return_type="access void"/>
+    <method name="publish_devices" return_type="access string"/>
+    <method name="find_device" return_type="access device_cmd_t"/>
+  </manage>
+
+  <provide>
+    <method name="fs_walk" return_type="status_t">
+      <argument name="ns" type="access" direction="in"/>
+      <argument name="base" type="access" direction="in"/>
+      <argument name="path" type="string" direction="in"/>
+      <argument name="new_path" type="string" direction="out"/>
+      <argument name="vnid" type="int64_t" direction="out"/>
+    </method>
+  </provide>
+
+  <require>
+
+    <!-- Memory hooks -->
+
+    <method name="kernel_malloc" return_type="access">
+      <argument name="size" type="int32_t" direction="in"/>
+      <argument name="erase" type="boolean" direction="in"/>
+    </method>
+
+    <method name="kernel_free" return_type="status_t">
+      <argument name="area" type="access" direction="in"/>
+    </method>
+
+    <!-- VNode hooks -->
+
+    <method name="vnode_create" return_type="status_t">
+      <argument name="vnid" type="int64_t" direction="in"/>
+      <argument name="vid" type="int32_t" direction="in"/>
+      <argument name="data" type="access" direction="in"/>
+    </method>
+
+  </require>
+
+</component>
