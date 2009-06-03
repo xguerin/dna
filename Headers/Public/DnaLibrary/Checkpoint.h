@@ -21,10 +21,24 @@
 #ifndef DNA_TOOLS_CHECKPOINT_H
 #define DNA_TOOLS_CHECKPOINT_H
 
-#define dna_checkpoint(condition,on_failure)	\
-	if (! (condition)) {												\
-		on_failure;																\
-	}	
+#define watch(type) type _rescue_status;
+#define leave return _rescue_status
+
+#define check(tag,condition,code)         \
+  if (! (condition))                      \
+  {                                       \
+    _rescue_status = code;                \
+    goto tag;                             \
+  }
+
+#define ensure(condition,code)              \
+  if (! (condition))                      \
+  {                                       \
+    _rescue_status = code;                \
+    return _rescue_status;                \
+  }
+
+#define rescue(tag) tag:
 
 #endif
 

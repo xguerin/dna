@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <DnaTools/DnaTools.h>
+#include <DnaLibrary/DnaLibrary.h>
 
 void queue_insert (queue_t * queue, queue_comparator_t comparator,
     queue_item_t * item)

@@ -16,7 +16,7 @@
  */
 
 #include <stdint.h>
-#include <DnaTools/DnaTools.h>
+#include <DnaLibrary/DnaLibrary.h>
 
 char * dna_strcat (char * restrict dest, const char * restrict src){
 	char * s1 = dest;

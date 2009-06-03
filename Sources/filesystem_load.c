@@ -15,8 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#include <DnaTools/DnaTools.h>
-#include <DnaInterface/DnaInterface.h>
+#include <DnaLibrary/DnaLibrary.h>
 
 /****f* support/filesystem_load
  * SUMMARY

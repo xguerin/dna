@@ -2,15 +2,9 @@
 
 <component author="xavier.guerin@imag.fr" unique="true" wrapper="false">
 
-  <id name="DnaInterfaceLibrary" short_name="DnaIF" version="1.0"/>
+  <id name="DnaLibrary" short_name="DnaLib" version="1.0"/>
 
   <provide>
-
-    <!-- Assert -->
-
-    <method name="dna_checkpoint" return_type="">
-      <argument name="condition" type="boolean" direction="in"/>
-    </method>
 
     <!-- Configuration -->
 
@@ -65,7 +59,7 @@
       <argument name="integer" type="int32_t" direction="in"/>
       <argument name="buffer" type="string" direction="out"/>
     </method>
- 
+
     <!-- Driver management -->
 
     <definition name="DNA_GET_DEVICE_SIZE"/>
@@ -116,6 +110,7 @@
     <!-- Core Manager hooks -->
 
     <type name="spinlock_t"/>
+
   </require>
 
 </component>
