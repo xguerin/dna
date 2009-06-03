@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component author="xavier.guerin@imag.fr" unique="true" wrapper="false">
+
+  <id name="DnaMemoryManager" short_name="Mem" version="1.0"/>
+
+  <provide>
+
+    <!-- Component hooks -->
+
+    <method name="memory_create" return_type="status_t"/>
+    <method name="memory_destroy" return_type="status_t"/>
+    <method name="memory_start" return_type="status_t"/>
+    <method name="memory_stop" return_type="status_t"/>
+
+    <method name="kernel_malloc" return_type="access">
+      <argument name="size" type="int32_t" direction="in"/>
+      <argument name="erase" type="boolean" direction="in"/>
+    </method>
+
+    <method name="kernel_free" return_type="status_t">
+      <argument name="area" type="access" direction="in"/>
+    </method>
+
+    <method name="user_sbrk" return_type="access">
+      <argument name="increment" type="int32_t" direction="in"/>
+    </method>
+  </provide>
+
+  <require>
+
+    <!-- Traps hooks -->
+
+    <method name="cpu_trap_mask_and_backup" return_type="interrupt_status_t"/>
+
+    <method name="cpu_trap_restore" return_type="">
+      <argument name="status" type="interrupt_status_t" direction="in"/>
+    </method>
+
+    <!-- Lock hooks -->
+
+    <type name="spinlock_t"/>
+
+    <method name="lock_acquire" return_type="void">
+      <argument name="lock" type="spinlock_t" direction="inout"/>
+    </method>
+
+    <method name="lock_release" return_type="void">
+      <argument name="lock" type="spinlock_t" direction="inout"/>
+    </method>
+
+  </require>
+
+</component>
