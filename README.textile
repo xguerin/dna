@@ -1,1 +1,1 @@
-h1. The POSIX Threads Library
+h1. The POSIX Thread Library
