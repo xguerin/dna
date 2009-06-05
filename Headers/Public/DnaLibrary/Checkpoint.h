@@ -21,19 +21,23 @@
 #ifndef DNA_TOOLS_CHECKPOINT_H
 #define DNA_TOOLS_CHECKPOINT_H
 
+#include <DnaLibrary/C.h>
+
 #define watch(type) type _rescue_status;
 #define leave return _rescue_status
 
 #define check(tag,condition,code)         \
   if (! (condition))                      \
   {                                       \
+    log ("<" #condition "> failed.", 4);   \
     _rescue_status = code;                \
     goto tag;                             \
   }
 
-#define ensure(condition,code)              \
+#define ensure(condition,code)            \
   if (! (condition))                      \
   {                                       \
+    log ("<" #condition "> failed.", 4);  \
     _rescue_status = code;                \
     return _rescue_status;                \
   }

@@ -38,7 +38,7 @@ void dna_printf (const char * restrict format, ...)
   int32_t d_val = 0, ascii_index = 0, len = 0;
   uint32_t u_val = 0, rem = 0;
   char * fmt_ptr = (char *)format, ascii[32];
-  char buffer[1024], * b_ptr = buffer;
+  char buffer[256], * b_ptr = buffer;
   char c_val = 0, * ptr = NULL;
 
   va_list arg;
@@ -159,6 +159,7 @@ void dna_printf (const char * restrict format, ...)
   }
 
   *b_ptr ++ = '\0';
+  platform_debug_puts (buffer);
 
   va_end (arg);
 }

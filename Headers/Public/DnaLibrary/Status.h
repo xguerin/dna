@@ -83,7 +83,20 @@ typedef enum _status
   DNA_UNKNOWN_TEAM = 0xFFED,
   DNA_INVALID_TEAM_ID = 0xFFEC,
   DNA_UNKNOWN_THREAD = 0xFFEB,
-  DNA_INVALID_THREAD_ID = 0xFFEA
+  DNA_INVALID_THREAD_ID = 0xFFEA,
+
+  /*
+   * Timer error code
+   */
+
+  DNA_NO_TIMER = 0xFFE9,
+
+  /*
+   * Ports and messages codes
+   */
+
+  DNA_BAD_PORT_ID = 0xFFE8,
+  DNA_NO_MORE_PORT = 0xFFE7
 }
 status_t;
 
