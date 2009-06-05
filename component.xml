@@ -6,6 +6,18 @@
 
   <provide>
     <definition name="PLATFORM_ENDIANNESS"/>
+
+    <method name="platform_debug_puts" return_type="">
+      <argument name="string" type="string" direction="in"/>
+    </method>
   </provide>
+
+  <require>
+   <method name="cpu_write" return_type="">
+      <argument name="size" type="int32_t" direction="in"/>
+      <argument name="address" type="access" direction="in"/>
+      <argument name="value" type="access" direction="in"/>
+    </method>
+  </require>
 
 </component>
