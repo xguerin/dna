@@ -1,0 +1,92 @@
+/****h* core/thread
+ * SUMMARY
+ * Thread management.
+ ****
+ * Copyright (C) 2007 TIMA Laboratory
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#ifndef DNA_CORE_THREAD_PUBLIC_H
+#define DNA_CORE_THREAD_PUBLIC_H
+
+#include <stdint.h>
+#include <Processor/Processor.h>
+
+#include <Core/Time.h>
+#include <DnaLibrary/DnaLibrary.h>
+
+/****t* types/thread_handler_t
+ * SUMMARY
+ * Thread handler type.
+ *
+ * SOURCE
+ */
+
+typedef int32_t (* thread_handler_t) (void * args);
+
+/*
+ ****/
+
+/****t* types/thread_info_t
+ * SUMMARY
+ * Thread information type.
+ *
+ * SOURCE
+ */
+
+typedef struct _thread_info
+{
+	char name[DNA_NAME_LENGTH];
+	uint32_t cpu_affinity;
+
+	struct
+ 	{
+		int32_t type;
+		void * base;
+		int32_t size;
+	}
+ 	stack;
+
+	struct
+ 	{
+		thread_handler_t handler;
+		void * arguments;
+	}
+ 	bootstrap;
+
+	bigtime_t kernel_time;
+	bigtime_t user_time;
+}
+thread_info_t;
+
+/*
+ ****/
+
+extern status_t thread_create (thread_handler_t handler, void * arguments,
+    char * name, int32_t affinity, int32_t stack_size, int32_t * tid);
+
+extern status_t thread_resume (int32_t id);
+extern status_t thread_suspend (int32_t id);
+extern status_t thread_yield (void);
+
+extern status_t thread_wait (int32_t id, int32_t * value);
+extern status_t thread_snooze (bigtime_t value);
+extern void thread_exit (int32_t value);
+
+extern status_t thread_find (char * name, int32_t * tid);
+extern status_t thread_get_info (int32_t id, thread_info_t * info);
+
+#endif
+
