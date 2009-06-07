@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component author="xavier.guerin@imag.fr" unique="true" wrapper="false">
+
+  <id name="DnaVirtualFileSystem" short_name="VFS" version="1.0"/>
+
+  <manage>
+    <method name="fs_walk" return_type="status_t">
+      <argument name="ns" type="access" direction="in"/>
+      <argument name="base" type="access" direction="in"/>
+      <argument name="path" type="string" direction="in"/>
+      <argument name="new_path" type="string" direction="out"/>
+      <argument name="vnid" type="int64_t" direction="out"/>
+    </method>
+  </manage>
+
+  <provide>
+
+    <!-- Component hooks -->
+
+    <method name="vfs_create" return_type="status_t"/>
+    <method name="vfs_destroy" return_type="status_t"/>
+    <method name="vfs_start" return_type="status_t"/>
+    <method name="vfs_stop" return_type="status_t"/>
+
+    <!-- FDArray management -->
+
+    <method name="fdarray_create" return_type="status_t">
+      <argument name="id" type="int32_t" direction="in"/>
+      <argument name="parent" type="int32_t" direction="in"/>
+    </method>
+
+    <method name="fdarray_destroy" return_type="status_t">
+      <argument name="id" type="int32_t" direction="in"/>
+    </method>
+
+    <!-- VNode management -->
+
+    <method name="vnode_create" return_type="status_t">
+      <argument name="vnid" type="int64_t" direction="in"/>
+      <argument name="vid" type="int32_t" direction="in"/>
+      <argument name="data" type="access" direction="in"/>
+    </method>
+
+    <method name="vnode_destroy" return_type="status_t">
+      <argument name="vid" type="int32_t" direction="in"/>
+      <argument name="vnid" type="int64_t" direction="in"/>
+    </method>
+
+    <method name="vnode_get" return_type="status_t">
+      <argument name="vid" type="int32_t" direction="in"/>
+      <argument name="vnid" type="int64_t" direction="in"/>
+      <argument name="data" type="access" direction="in"/>
+    </method>
+
+    <method name="vnode_put" return_type="status_t">
+      <argument name="vid" type="int32_t" direction="in"/>
+      <argument name="vnid" type="int64_t" direction="in"/>
+    </method>
+
+    <!-- Paths -->
+
+    <definition name="DNA_NAME_TOO_LONG"/>
+
+    <!-- Operations -->
+
+    <definition name="DNA_SEEK_SET"/>
+    <definition name="DNA_SEEK_FROM_CURRENT"/>
+    <definition name="DNA_SEEK_FROM_END"/>
+    <definition name="DNA_READ_ONLY"/>
+    <definition name="DNA_WRITE_ONLY"/>
+    <definition name="DNA_READ_WRITE"/>
+    <definition name="DNA_APPEND"/>
+    <definition name="DNA_CREATE"/>
+    <definition name="DNA_TRUNCATE"/>
+    <definition name="DNA_FAIL_IF_EXIST"/>
+    <definition name="DNA_NON_BLOCKING"/>
+
+    <type name="directory_entry_t"/>
+
+    <method name="vfs_mount" return_type="status_t">
+      <argument name="source" type="string" direction="in"/>
+      <argument name="target" type="string" direction="in"/>
+      <argument name="fs_type" type="string" direction="in"/>
+      <argument name="flags" type="uint32_t" direction="in"/>
+      <argument name="data" type="access" direction="in"/>
+    </method>
+
+    <method name="vfs_umount" return_type="status_t">
+      <argument name="target" type="string" direction="in"/>
+    </method>
+
+    <method name="vfs_open" return_type="status_t">
+      <argument name="path" type="string" direction="in"/>
+      <argument name="mode" type="int32_t" direction="in"/>
+      <argument name="perms" type="int32_t" direction="in"/>
+      <argument name="p_fd" type="int16_t" direction="out"/>
+    </method>
+
+    <method name="vfs_close" return_type="status_t">
+      <argument name="fd" type="int16_t" direction="in"/>
+    </method>
+
+    <method name="vfs_mkdir" return_type="status_t">
+      <argument name="path" type="string" direction="in"/>
+      <argument name="mode" type="int32_t" direction="in"/>
+    </method>
+
+    <method name="vfs_readdir" return_type="status_t">
+      <argument name="fd" type="string" direction="in"/>
+      <argument name="entry_array" type="array of directory_entry_t" direction="out"/>
+      <argument name="count" type="string" direction="in"/>
+      <argument name="p_res" type="int32_t" direction="out"/>
+    </method>
+
+    <method name="vfs_read" return_type="status_t">
+      <argument name="fd" type="int16_t" direction="in"/>
+      <argument name="data" type="access" direction="in"/>
+      <argument name="count" type="int32_t" direction="in"/>
+      <argument name="p_ret" type="int32_t" direction="out"/>
+    </method>
+
+    <method name="vfs_write" return_type="status_t">
+      <argument name="fd" type="int16_t" direction="in"/>
+      <argument name="data" type="access" direction="in"/>
+      <argument name="count" type="int32_t" direction="in"/>
+      <argument name="p_ret" type="int32_t" direction="out"/>
+    </method>
+
+    <method name="vfs_lseek" return_type="status_t">
+      <argument name="fd" type="int16_t" direction="in"/>
+      <argument name="offset" type="int64_t" direction="in"/>
+      <argument name="whence" type="int32_t" direction="in"/>
+      <argument name="p_offset" type="int64_t" direction="out"/>
+    </method>
+
+    <method name="vfs_ioctl" return_type="status_t">
+      <argument name="fd" type="int16_t" direction="in"/>
+      <argument name="function" type="int32_t" direction="in"/>
+      <argument name="arguments" type="access" direction="in"/>
+      <argument name="retval" type="int32_t" direction="out"/>
+    </method>
+
+  </provide>
+
+
+  <require>
+
+    <!-- Interrupt hooks -->
+
+    <type name="interrupt_status_t"/>
+
+    <method name="cpu_trap_mask_and_backup" return_type="interrupt_status_t"/>
+
+    <method name="cpu_trap_restore" return_type="">
+      <argument name="status" type="interrupt_status_t" direction="in"/>
+    </method>
+
+    <!-- Lock hooks -->
+
+    <type name="spinlock_t"/>
+
+    <method name="lock_acquire" return_type="void">
+      <argument name="lock" type="spinlock_t" direction="inout"/>
+    </method>
+
+    <method name="lock_release" return_type="void">
+      <argument name="lock" type="spinlock_t" direction="inout"/>
+    </method>
+
+    <!-- Team hooks -->
+
+    <method name="team_find" return_type="int32_t">
+      <argument name="name" type="string" direction="in"/>
+    </method>
+
+    <!-- Memory hooks -->
+
+    <method name="kernel_malloc" return_type="access">
+      <argument name="size" type="int32_t" direction="in"/>
+      <argument name="erase" type="boolean" direction="in"/>
+    </method>
+
+    <method name="kernel_free" return_type="status_t">
+      <argument name="area" type="access" direction="in"/>
+    </method>
+
+  </require>
+
+</component>
