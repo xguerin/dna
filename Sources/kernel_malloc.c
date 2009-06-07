@@ -17,7 +17,7 @@
 
 #include <stdint.h>
 #include <Private/MemoryManager.h>
-#include <CoreManager/CoreManager.h>
+#include <Core/Core.h>
 #include <DnaLibrary/DnaLibrary.h>
 #include <Processor/Processor.h>
 

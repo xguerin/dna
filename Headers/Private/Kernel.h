@@ -23,7 +23,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include <CoreManager/CoreManager.h>
+#include <Core/Core.h>
 #include <DnaLibrary/Status.h>
 
 /****d* kernel/DNA_KERNEL_BLOCK_SIZE
