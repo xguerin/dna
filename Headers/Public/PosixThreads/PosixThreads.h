@@ -8,7 +8,7 @@
 #include <stdbool.h>
 #include <time.h>
 
-#include <CoreManager/CoreManager.h>
+#include <Core/Core.h>
 
 /*************************
  * Types and definitions *
