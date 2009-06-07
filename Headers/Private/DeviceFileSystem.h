@@ -19,7 +19,7 @@
 #define DEVFS_H
 
 #include <DnaLibrary/DnaLibrary.h>
-#include <VirtualFileSystemManager/VirtualFileSystemManager.h>
+#include <VirtualFileSystem/VirtualFileSystem.h>
 
 #define DEVFS_NAME_LENGTH 256
 
