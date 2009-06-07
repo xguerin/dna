@@ -19,7 +19,7 @@
 #define ROOTFS_H
 
 #include <DnaLibrary/DnaLibrary.h>
-#include <VirtualFileSystemManager/VirtualFileSystemManager.h>
+#include <VirtualFileSystem/VirtualFileSystem.h>
 
 #define ROOTFS_NAME_LENGTH 256
 
