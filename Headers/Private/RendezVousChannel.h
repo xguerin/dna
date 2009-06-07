@@ -18,7 +18,7 @@
 #ifndef DNAOS_CHANNEL_RDV_H
 #define DNAOS_CHANNEL_RDV_H
 
-#include <CoreManager/CoreManager.h>
+#include <Core/Core.h>
 #include <DnaLibrary/DnaLibrary.h>
 
 typedef struct channel_rdv {
