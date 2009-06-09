@@ -3,6 +3,6 @@
 
 #include <Platform/Debug.h>
 #include <Platform/Endian.h>
-#include <Platform/MP.h>
+#include <Platform/Mp.h>
 
 #endif
