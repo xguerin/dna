@@ -29,7 +29,8 @@
 
 /****t* scheduler/cpu_t
  * SUMMARY
- * CPU type. Contains various information concerning a CPU execution context.
+ * CPU type. Contains various information concerning
+ * a CPU execution context.
  *
  * SOURCE
  */
@@ -67,8 +68,9 @@ scheduler_t;
 extern scheduler_t scheduler;
 
 extern thread_t scheduler_elect (void);
+extern status_t scheduler_callback (void * data);
+
 extern void scheduler_switch (thread_t thread, queue_t * queue);
-extern void scheduler_restore (void);
 
 #endif
 
