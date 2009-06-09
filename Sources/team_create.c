@@ -100,7 +100,7 @@ status_t team_create (char * team_name, thread_handler_t thread_handler,
      * Allocate its stack.
      */
 
-    stack_base = kernel_malloc (DNA_THREAD_STACK_SIZE, false);
+    stack_base = kernel_malloc (0x4000, false);
     check (stack_alloc, stack_base != NULL, DNA_OUT_OF_MEM);
 
     /*
@@ -116,7 +116,7 @@ status_t team_create (char * team_name, thread_handler_t thread_handler,
     thread -> team = team;
 
     thread -> signature . stack_base = stack_base;
-    thread -> signature . stack_size = DNA_THREAD_STACK_SIZE;
+    thread -> signature . stack_size = 0x4000;
     thread -> signature . handler = thread_handler;
     thread -> signature . arguments = thread_arguments;
 

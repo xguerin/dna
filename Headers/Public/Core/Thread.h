@@ -27,6 +27,18 @@
 #include <Core/Time.h>
 #include <DnaLibrary/DnaLibrary.h>
 
+/****d* thread/DNA_NO_AFFINITY
+ * SUMMARY
+ * Thread no-affinity constant.
+ *
+ * SOURCE
+ */
+
+#define DNA_NO_AFFINITY	0xFFFFFFFF
+
+/*
+ ****/
+
 /****t* types/thread_handler_t
  * SUMMARY
  * Thread handler type.
@@ -49,6 +61,7 @@ typedef int32_t (* thread_handler_t) (void * args);
 typedef struct _thread_info
 {
 	char name[DNA_NAME_LENGTH];
+	uint32_t cpu_id;
 	uint32_t cpu_affinity;
 
 	struct

@@ -31,18 +31,6 @@
 #include <DnaLibrary/DnaLibrary.h>
 #include <Processor/Processor.h>
 
-/****d* thread/DNA_THREAD_NO_AFFINITY
- * SUMMARY
- * Thread no-affinity constant.
- *
- * SOURCE
- */
-
-#define DNA_THREAD_NO_AFFINITY	0xFFFFFFFF
-
-/*
- ****/
-
 /****v* thread/thread_status
  * SUMMARY
  * Available thread status.

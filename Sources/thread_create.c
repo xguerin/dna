@@ -81,7 +81,7 @@ status_t thread_create (thread_handler_t handler, void * arguments,
     thread -> cpu_id = -1;
     thread -> team = team;
 
-    if (affinity == DNA_THREAD_NO_AFFINITY)
+    if (affinity == DNA_NO_AFFINITY)
     {
       thread -> cpu_affinity = scheduler . xt_index;
     }

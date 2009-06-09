@@ -125,7 +125,7 @@ status_t core_create (void)
        * Allocate its stack.
        */
 
-      stack_base = kernel_malloc (DNA_THREAD_IDLE_STACK_SIZE, true);
+      stack_base = kernel_malloc (0x400, true);
       check (thread_alloc, stack_base != NULL, DNA_OUT_OF_MEM);
 
       /*
@@ -143,7 +143,7 @@ status_t core_create (void)
       thread -> team = team;
 
       thread -> signature . stack_base = stack_base;
-      thread -> signature . stack_size = DNA_THREAD_IDLE_STACK_SIZE;
+      thread -> signature . stack_size = 0x400;
       thread -> signature . handler = thread_idle;
       thread -> signature . arguments = NULL;
 

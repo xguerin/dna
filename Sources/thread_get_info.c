@@ -61,6 +61,7 @@ status_t thread_get_info (int32_t id, thread_info_t * info)
     lock_release (& team_manager . lock);
 
     dna_strcpy (info -> name, thread -> name);
+    info -> cpu_id = cpu_mp_id ();
     info -> cpu_affinity = thread -> cpu_affinity;
     info -> stack . base = thread -> signature . stack_base;
     info -> stack . size = thread -> signature . stack_size;

@@ -50,13 +50,20 @@ void thread_exit (int32_t value)
 	lock_acquire (& self -> lock);
 
   /*
+   * And we place the return value in our structure
+   */
+
+  self -> signature . return_value = value;
+
+  /*
    * Then we can wake up the waiting threads
    */
+
+  lock_acquire (& self -> wait . lock);
 
 	while ((p = queue_rem (& self -> wait)) != NULL)
   {
 		p -> status = DNA_THREAD_READY;
-		p -> signature . return_value = value;
 
 		lock_acquire (& scheduler . xt[p -> cpu_affinity] . lock);
 
@@ -65,6 +72,8 @@ void thread_exit (int32_t value)
 
 		lock_release (& scheduler . xt[p -> cpu_affinity] . lock);
 	}
+
+  lock_release (& self -> wait . lock);
 
   /*
    * Mark self as zombie
