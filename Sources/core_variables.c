@@ -61,14 +61,14 @@ scheduler_t scheduler;
 /*
  ****/
 
-/****v* Core/it_mux
+/****v* Core/it_manager
  * SUMMARY
  * The interrupt multiplexer instance.
  *
  * SOURCE
  */
 
-it_mux_t it_mux;
+it_manager_t it_manager;
 
 /*
  ****/

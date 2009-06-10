@@ -56,10 +56,17 @@ void thread_exit (int32_t value)
   self -> signature . return_value = value;
 
   /*
-   * Then we can wake up the waiting threads
+   * Mark self as zombie
    */
 
+  self -> status = DNA_THREAD_ZOMBIE;
+
   lock_acquire (& self -> wait . lock);
+	lock_release (& self -> lock);
+
+  /*
+   * Then we can wake up the waiting threads
+   */
 
 	while ((p = queue_rem (& self -> wait)) != NULL)
   {
@@ -74,13 +81,6 @@ void thread_exit (int32_t value)
 	}
 
   lock_release (& self -> wait . lock);
-
-  /*
-   * Mark self as zombie
-   */
-
-  self -> status = DNA_THREAD_ZOMBIE;
-	lock_release (& self -> lock);
 
   /*
    * Elect a the next thread and run it

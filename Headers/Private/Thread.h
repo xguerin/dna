@@ -38,7 +38,7 @@
  * SOURCE
  */
 
-typedef enum thread_status
+typedef enum _thread_status
 {
 	DNA_THREAD_SLEEP		= 0xBAFF,
 	DNA_THREAD_READY		= 0xFACE,

@@ -22,9 +22,18 @@
 #define DNA_CORE_INTERRUPT_PRIVATE_H
 
 #include <stdint.h>
-#include <DnaLibrary/DnaLibrary.h>
 #include <Core/Core.h>
 #include <Processor/Processor.h>
+#include <Platform/Platform.h>
+#include <DnaLibrary/DnaLibrary.h>
+
+#define DNA_IPI_ALL cpu_mp_count
+
+enum
+{
+  DNA_IPI_YIELD = 0xFFFF,
+  DNA_IPI_PING = 0xFFFE
+};
 
 typedef struct _isr
 {
@@ -33,18 +42,25 @@ typedef struct _isr
 }
 * isr_t;
 
-typedef struct _it_mux
+typedef struct _it_manager
 {
 	spinlock_t lock;
+
 	int32_t counter[cpu_n_it];
 	queue_t isr_list[cpu_n_it];
-}
-it_mux_t;
 
-extern it_mux_t it_mux;
+  bool has_ipi;
+  ipi_manager_t ipi_manager;
+}
+it_manager_t;
+
+extern it_manager_t it_manager;
 
 extern int32_t interrupt_handler (int32_t itn);
 extern bool interrupt_handler_inspector (void * p_isr, void * p_handler, void * dummy);
+
+extern status_t ipi_send (int32_t target, int32_t command, int32_t data);
+extern status_t ipi_callback (int32_t command, int32_t data);
 
 #endif
 

@@ -55,7 +55,10 @@ status_t thread_suspend (int32_t id)
       self -> status = DNA_THREAD_WAIT;
 
       target = scheduler_elect ();
-      if (target == NULL) target = scheduler . cpu[current_cpuid] . idle_thread;
+      if (target == NULL)
+      {
+        target = scheduler . cpu[current_cpuid] . idle_thread;
+      }
 
       scheduler_switch (target, NULL);
       cpu_trap_restore(it_status);

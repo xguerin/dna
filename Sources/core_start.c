@@ -37,8 +37,11 @@ status_t core_start (void)
  */
 
 {
+#if 0
   int32_t alarm_id;
   status_t status;
+#endif
+
   uint32_t current_cpuid = cpu_mp_id ();
   thread_t thread = scheduler . cpu[current_cpuid] . idle_thread;
 
@@ -46,12 +49,14 @@ status_t core_start (void)
   {
     ensure (thread != NULL, DNA_ERROR);
 
+#if 0
     if (current_cpuid == 0)
     {
       status = time_set_alarm (4000000, DNA_RELATIVE_ALARM |
           DNA_PERIODIC_ALARM, scheduler_callback, NULL, & alarm_id);
       ensure (status == DNA_OK, status);
     }
+#endif
 
     thread -> status = DNA_THREAD_RUNNING;
     cpu_context_load((& thread -> ctx));

@@ -139,6 +139,11 @@ status_t thread_create (thread_handler_t handler, void * arguments,
         & thread -> status_link);
 
     lock_release (& scheduler . xt[thread -> cpu_affinity] . lock);
+
+    /*
+     * Then we return to the calling function
+     */
+
     cpu_trap_restore(it_status);
 
     *tid = thread -> id;

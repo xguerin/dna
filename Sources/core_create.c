@@ -61,7 +61,10 @@ status_t core_create (void)
      */
 
     dna_memset (& scheduler, 0, sizeof (scheduler_t));
+
     scheduler . xt_index = cpu_mp_count;
+    scheduler . first_available = 0;
+    scheduler . last_available = cpu_mp_count - 1;
 
     scheduler . cpu = kernel_malloc (sizeof (cpu_t) * DNA_MAX_CPU, true);
     ensure (scheduler . cpu != NULL, DNA_OUT_OF_MEM);
@@ -73,7 +76,7 @@ status_t core_create (void)
      * Initialize the IT multiplexer
      */
 
-    dna_memset (& it_mux, 0, sizeof (it_mux_t));
+    dna_memset (& it_manager, 0, sizeof (it_manager_t));
 
     /*
      * Initialize the time manager
@@ -167,9 +170,19 @@ status_t core_create (void)
        * Deal with the new thread
        */
 
+      scheduler . cpu[cpu_i] . status = DNA_CPU_READY;
       scheduler . cpu[cpu_i] . current_team = team;
       scheduler . cpu[cpu_i] . idle_thread = thread;
       scheduler . cpu[cpu_i] . current_thread = thread;
+
+      if (cpu_i != (cpu_mp_count - 1))
+      {
+        scheduler . cpu[cpu_i] . next_available = cpu_i + 1;
+      }
+      else
+      {
+        scheduler . cpu[cpu_i] . next_available = -1;
+      }
     }
 
     return DNA_OK;

@@ -27,6 +27,24 @@
 #include <Core/Core.h>
 #include <DnaLibrary/DnaLibrary.h>
 
+/****t* scheduler/cpu_status_t
+ * SUMMARY
+ * CPU status type.
+ *
+ * SOURCE
+ */
+
+typedef enum _cpu_status
+{
+	DNA_CPU_READY		    = 0xFACE,
+	DNA_CPU_RUNNING	    = 0xBEEF,
+	DNA_CPU_DISABLED		= 0xDEAD
+}
+cpu_status_t;
+
+/*
+ ****/
+
 /****t* scheduler/cpu_t
  * SUMMARY
  * CPU type. Contains various information concerning
@@ -37,9 +55,11 @@
 
 typedef struct _cpu
 {
+  cpu_status_t status;
 	team_t current_team;
 	thread_t current_thread;
 	thread_t idle_thread;
+  int32_t next_available;
 }
 cpu_t;
 
@@ -58,6 +78,9 @@ typedef struct _scheduler
 	spinlock_t lock;
 	int32_t xt_index;
 	queue_t * xt;
+
+  int32_t first_available;
+  int32_t last_available;
 	cpu_t * cpu;
 }
 scheduler_t;
@@ -69,6 +92,9 @@ extern scheduler_t scheduler;
 
 extern thread_t scheduler_elect (void);
 extern status_t scheduler_callback (void * data);
+
+extern int32_t scheduler_pop_cpu (void);
+extern void scheduler_push_cpu (int32_t id);
 
 extern void scheduler_switch (thread_t thread, queue_t * queue);
 

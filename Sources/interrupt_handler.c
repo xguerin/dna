@@ -39,7 +39,7 @@ int32_t interrupt_handler (int32_t data)
  */
 
 {
-	queue_lookup (& it_mux . isr_list[data],
+	queue_lookup (& it_manager . isr_list[data],
       interrupt_handler_inspector, & data, NULL);
 	return DNA_OK;
 }

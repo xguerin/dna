@@ -39,9 +39,27 @@ int32_t thread_idle (void * data)
  */
 
 {
+  int32_t cpu_id;
+  
+  /*
+   * Until we find a better solution, we force CPU0
+   * to YIELD to a runnable thread, and since we are supposed
+   * to be alone here, we don't lock
+   */
+
+  if (cpu_mp_id () == 0)
+  {
+    cpu_id = scheduler_pop_cpu ();  
+    ipi_send (cpu_id, DNA_IPI_YIELD, 0);
+  }
+
+  /*
+   * Then, well, we loop...
+   */
+
 	while (true)
   {
-    thread_yield ();
+
   }
 
 	return 0;
