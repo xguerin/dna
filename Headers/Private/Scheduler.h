@@ -59,7 +59,7 @@ typedef struct _cpu
 	team_t current_team;
 	thread_t current_thread;
 	thread_t idle_thread;
-  int32_t next_available;
+  queue_item_t link;
 }
 cpu_t;
 
@@ -79,9 +79,8 @@ typedef struct _scheduler
 	int32_t xt_index;
 	queue_t * xt;
 
-  int32_t first_available;
-  int32_t last_available;
 	cpu_t * cpu;
+  queue_t cpu_pool;
 }
 scheduler_t;
 
@@ -93,7 +92,7 @@ extern scheduler_t scheduler;
 extern thread_t scheduler_elect (void);
 extern status_t scheduler_callback (void * data);
 
-extern int32_t scheduler_pop_cpu (void);
+extern int32_t scheduler_pop_cpu (int32_t required_id);
 extern void scheduler_push_cpu (int32_t id);
 
 extern void scheduler_switch (thread_t thread, queue_t * queue);

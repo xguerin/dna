@@ -170,7 +170,8 @@ status_t core_create (void)
        * Deal with the new thread
        */
 
-      scheduler . cpu[cpu_i] . status = DNA_CPU_READY;
+      scheduler . cpu[cpu_i] . status = DNA_CPU_DISABLED;
+
       scheduler . cpu[cpu_i] . current_team = team;
       scheduler . cpu[cpu_i] . idle_thread = thread;
       scheduler . cpu[cpu_i] . current_thread = thread;
