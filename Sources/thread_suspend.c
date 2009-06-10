@@ -54,9 +54,15 @@ status_t thread_suspend (int32_t id)
       it_status = cpu_trap_mask_and_backup();
       self -> status = DNA_THREAD_WAIT;
 
-      target = scheduler_elect ();
-      if (target == NULL)
+      /*
+       * Elect a the next thread and run it
+       * If target is IDLE, we can safely push the CPU
+       * since we disabled the interrupts.
+       */
+
+      if ((target = scheduler_elect ()) == NULL)
       {
+        scheduler_push_cpu (current_cpuid);
         target = scheduler . cpu[current_cpuid] . idle_thread;
       }
 

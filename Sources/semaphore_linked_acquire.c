@@ -110,9 +110,15 @@ status_t semaphore_linked_acquire (int32_t sid, int32_t lsid)
       lock_acquire (& sem -> waiting_queue . lock);
       lock_release (& sem -> lock);
 
-      thread = scheduler_elect ();
-      if (thread == NULL)
+      /*
+       * Elect a the next thread and run it
+       * If target is IDLE, we can safely push the CPU
+       * since we disabled the interrupts.
+       */
+
+      if ((thread = scheduler_elect ()) == NULL)
       {
+        scheduler_push_cpu (current_cpuid);
         thread = scheduler . cpu[current_cpuid] . idle_thread;
       }
 

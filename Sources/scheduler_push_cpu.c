@@ -33,16 +33,10 @@ void scheduler_push_cpu (int32_t id)
  */
 
 {
-  lock_acquire (& scheduler . lock);
-
   scheduler . cpu[id] . status = DNA_CPU_READY;
-  scheduler . cpu[id] . next_available = -1;
 
-  if (scheduler . first_available == -1)
-  {
-    scheduler . first_available = id;
-  }
-
+  lock_acquire (& scheduler . lock);
+  queue_add (& scheduler . cpu_pool, & scheduler . cpu[id] . link);
   lock_release (& scheduler . lock);
 }
 

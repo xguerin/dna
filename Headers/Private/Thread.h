@@ -138,6 +138,8 @@ typedef struct _thread
 /*
  ****/
 
+extern thread_handler_t APP_ENTRY_POINT;
+
 extern status_t thread_destroy (thread_t thread);
 
 extern bool thread_id_inspector (void * item, void * p_id, void * dummy);
@@ -145,6 +147,7 @@ extern bool thread_name_inspector (void * item, void * name, void * dummy);
 
 extern status_t thread_alarm (void * data);
 
+extern int32_t thread_root (void * data);
 extern int32_t thread_idle (void * data);
 extern int32_t thread_wrapper (void * data);
 

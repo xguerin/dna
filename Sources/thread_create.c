@@ -75,9 +75,9 @@ status_t thread_create (thread_handler_t handler, void * arguments,
      */
 
     dna_strcpy (thread -> name, name);
-    thread -> id = atomic_add (& team_manager . team_index, 1);
+    thread -> id = atomic_add (& team_manager . thread_index, 1);
     thread -> type = DNA_NORMAL_THREAD;
-    thread -> status = DNA_THREAD_READY;
+    thread -> status = DNA_THREAD_SLEEP;
     thread -> cpu_id = -1;
     thread -> team = team;
 
@@ -128,22 +128,7 @@ status_t thread_create (thread_handler_t handler, void * arguments,
 
     queue_add (& team -> thread_list, & thread -> team_link);
 
-    /*
-     * Register the thread in the appropriate scheduler's runnable queue
-     */
-
-    lock_acquire (& scheduler . xt[thread -> cpu_affinity] . lock);
     lock_release (& team -> lock);
-
-    queue_add (& scheduler . xt[thread -> cpu_affinity],
-        & thread -> status_link);
-
-    lock_release (& scheduler . xt[thread -> cpu_affinity] . lock);
-
-    /*
-     * Then we return to the calling function
-     */
-
     cpu_trap_restore(it_status);
 
     *tid = thread -> id;

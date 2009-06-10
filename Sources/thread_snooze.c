@@ -21,7 +21,7 @@
 
 /****f* Core/thread_snooze
  * SUMMARY
- * Snooze the current thread for a specified amount of time.
+ * Snooze the current thread for a specified amount of time (ns).
  *
  * SYNOPSIS
  */
@@ -57,8 +57,17 @@ status_t thread_snooze (bigtime_t value)
 
     self -> status = DNA_THREAD_SLEEP;
 
-    target = scheduler_elect ();
-    if (target == NULL) target = scheduler . cpu[current_cpuid] . idle_thread;
+    /*
+     * Elect a the next thread and run it
+     * If target is IDLE, we can safely push the CPU
+     * since we disabled the interrupts.
+     */
+
+    if ((target = scheduler_elect ()) == NULL)
+    {
+      scheduler_push_cpu (current_cpuid);
+      target = scheduler . cpu[current_cpuid] . idle_thread;
+    }
 
     scheduler_switch (target, NULL);
     cpu_trap_restore(it_status);

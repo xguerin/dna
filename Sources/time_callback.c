@@ -42,11 +42,7 @@ status_t time_callback (void * data)
   bigtime_t current_time = 0, quanta = 0;
 	status_t status = DNA_OK;
 
-  /*
-   * We lock the time_manager structure
-   */
-
-  lock_acquire (& time_manager . lock);
+  log (1, "enter");
 
   /*
    * Now we execute the alarm and those
@@ -74,9 +70,12 @@ status_t time_callback (void * data)
      * Look through the alarms, and restart or cancel them if necessary
      */
 
+    lock_acquire (& time_manager . lock);
+
     if (time_manager . alarm_queue . status != 0)
     {
       next_alarm = queue_rem (& time_manager . alarm_queue);
+      time_manager . current_alarm = next_alarm;
 
       time_manager . system_timer . get (& current_time);
       quanta = next_alarm -> deadline - current_time;
@@ -84,11 +83,11 @@ status_t time_callback (void * data)
       if (quanta <= DNA_TIMER_JIFFY)
       {
         alarm = next_alarm;
+        log (1, "invalid quanta");
       }
       else
       {
         process_next_alarm = false;
-        time_manager . current_alarm = next_alarm;
         time_manager . system_timer . set (quanta, time_callback, next_alarm);
       }
     }
@@ -97,14 +96,10 @@ status_t time_callback (void * data)
       time_manager . current_alarm = NULL;
       process_next_alarm = false;
     }
+
+    lock_release (& time_manager . lock);
   }
   while (process_next_alarm);
-
-  /*
-   * We unlock the time manager
-   */
-
-  lock_release (& time_manager . lock);
 
   /*
    * And reschedule if necessary

@@ -39,29 +39,27 @@ int32_t thread_idle (void * data)
  */
 
 {
-  int32_t cpu_id;
-  
-  /*
-   * Until we find a better solution, we force CPU0
-   * to YIELD to a runnable thread, and since we are supposed
-   * to be alone here, we don't lock
-   */
+  int32_t thread = -1;
+  int32_t current_cpuid = cpu_mp_id ();
+  interrupt_status_t it_status;
 
-  if (cpu_mp_id () == 0)
+  scheduler . cpu[current_cpuid] . status = DNA_CPU_READY;
+
+  it_status = cpu_trap_mask_and_backup ();
+  lock_acquire (& scheduler . lock);
+
+  queue_add (& scheduler . cpu_pool, & scheduler . cpu[current_cpuid] . link);
+
+  lock_release (& scheduler . lock);
+  cpu_trap_restore (it_status);
+
+  if (current_cpuid == 0)
   {
-    cpu_id = scheduler_pop_cpu ();  
-    ipi_send (cpu_id, DNA_IPI_YIELD, 0);
+    thread_create (thread_root, NULL, "Root", DNA_NO_AFFINITY, 0x2000, & thread);
+    thread_resume (thread);
   }
 
-  /*
-   * Then, well, we loop...
-   */
-
-	while (true)
-  {
-
-  }
-
+	while (true);
 	return 0;
 }
 

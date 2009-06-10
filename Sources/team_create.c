@@ -65,7 +65,7 @@ status_t team_create (char * team_name, thread_handler_t thread_handler,
      * Fill-in and initialize the necessary fields.
      */
 
-    team -> id = atomic_add (& team_manager . thread_index, 1);
+    team -> id = atomic_add (& team_manager . team_index, 1);
     dna_strcpy (team -> name, team_name);
 
     queue_item_init (& team -> sched_link, team);
@@ -108,9 +108,9 @@ status_t team_create (char * team_name, thread_handler_t thread_handler,
      */
 
     dna_strcpy (thread -> name, "MainThread");
-    thread -> id = atomic_add (& team_manager . team_index, 1);
+    thread -> id = atomic_add (& team_manager . thread_index, 1);
     thread -> type = DNA_MAIN_THREAD;
-    thread -> status = DNA_THREAD_READY;
+    thread -> status = DNA_THREAD_SLEEP;
     thread -> cpu_id = -1;
     thread -> cpu_affinity = scheduler . xt_index;
     thread -> team = team;
@@ -153,16 +153,7 @@ status_t team_create (char * team_name, thread_handler_t thread_handler,
 
     queue_add (& team -> thread_list, & thread -> team_link);
 
-    lock_acquire (& scheduler . xt[thread -> cpu_affinity] . lock);
     lock_release (& team -> lock);
-
-    /*
-     * Register the main thread in the appropriate scheduler's runnable queue
-     */
-
-    queue_add (& scheduler . xt[thread -> cpu_affinity], & thread -> status_link);
-
-    lock_release (& scheduler . xt[thread -> cpu_affinity] . lock);
     cpu_trap_restore(it_status);
 
     *tid = thread -> id;

@@ -80,7 +80,6 @@ status_t time_cancel_alarm (int32_t alarm)
 
       queue_extract (& time_manager . alarm_queue, & a -> link);
       kernel_free (a);
-
     }
 
     lock_release (& time_manager . lock);

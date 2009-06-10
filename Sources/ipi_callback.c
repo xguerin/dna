@@ -40,11 +40,27 @@ status_t ipi_callback (int32_t command, int32_t data)
  */
 
 {
+  thread_t thread;
+	thread_t self = scheduler . cpu[cpu_mp_id()] . current_thread;
+
   switch (command)
   {
     case DNA_IPI_YIELD :
-      log (1, "YIELD received on processor %d", cpu_mp_id ());
-      thread_yield ();
+      log (1, "YIELD(%d) on processor %d", data, cpu_mp_id ());
+
+      lock_acquire (& team_manager . lock);
+
+      thread = queue_lookup (& team_manager . thread_list,
+          thread_id_inspector, (void *) & data, NULL);
+
+      lock_release (& team_manager . lock);
+
+      if (thread != NULL)
+      {
+        self -> status = DNA_THREAD_READY;
+        scheduler_switch (thread, NULL);
+      }
+
       break;
 
     case DNA_IPI_PING :

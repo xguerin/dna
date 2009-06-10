@@ -39,7 +39,7 @@ status_t thread_resume (int32_t id)
  */
 
 {
-	uint32_t current_cpuid = cpu_mp_id();
+	uint32_t current_cpuid = cpu_mp_id(), next_cpuid;
 	team_t team = scheduler . cpu[current_cpuid] . current_team;
   thread_t target = NULL;
   interrupt_status_t it_status = 0;
@@ -59,15 +59,28 @@ status_t thread_resume (int32_t id)
 
     target -> status = DNA_THREAD_READY;
 
-    lock_acquire (& scheduler . xt[target -> cpu_affinity] . lock);
-    lock_release (& target -> lock);
+    /*
+     * Search for a CPU available
+     * FIXME: we only support NO_AFFINITY
+     */
 
-    queue_add (& scheduler . xt[target -> cpu_affinity],
-        & target -> status_link);
+    if ((next_cpuid = scheduler_pop_cpu (DNA_NO_AFFINITY)) != -1)
+    {
+      lock_release (& target -> lock);
+      ipi_send (next_cpuid, DNA_IPI_YIELD, target -> id);
+    }
+    else
+    {
+      lock_acquire (& scheduler . xt[target -> cpu_affinity] . lock);
+      lock_release (& target -> lock);
 
-    lock_release (& scheduler . xt[target -> cpu_affinity] . lock);
+      queue_add (& scheduler . xt[target -> cpu_affinity],
+          & target -> status_link);
+
+      lock_release (& scheduler . xt[target -> cpu_affinity] . lock);
+    }
+
     cpu_trap_restore(it_status);
-
     return DNA_OK;
   }
 

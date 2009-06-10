@@ -55,7 +55,9 @@ cpu_status_t;
 
 typedef struct _cpu
 {
+  int32_t id;
   cpu_status_t status;
+
 	team_t current_team;
 	thread_t current_thread;
 	thread_t idle_thread;
@@ -92,7 +94,7 @@ extern scheduler_t scheduler;
 extern thread_t scheduler_elect (void);
 extern status_t scheduler_callback (void * data);
 
-extern int32_t scheduler_pop_cpu (int32_t required_id);
+extern int32_t scheduler_pop_cpu (int32_t affinity);
 extern void scheduler_push_cpu (int32_t id);
 
 extern void scheduler_switch (thread_t thread, queue_t * queue);

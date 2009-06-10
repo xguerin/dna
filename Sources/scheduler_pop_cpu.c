@@ -26,7 +26,7 @@
  * SYNOPSIS
  */
 
-int32_t scheduler_pop_cpu (void)
+int32_t scheduler_pop_cpu (int32_t affinity)
 
 /*
  * RESULT
@@ -37,21 +37,36 @@ int32_t scheduler_pop_cpu (void)
  */
 
 {
-  int32_t cpu_id;
+  int32_t cpu_id = -1;
+  cpu_t * cpu = NULL;
 
-  lock_acquire (& scheduler . lock);
-  cpu_id = scheduler . first_available;
-
-  if (cpu_id != -1)
+  if (affinity == DNA_NO_AFFINITY)
   {
-    scheduler . cpu[0] . status = DNA_CPU_RUNNING;
-    scheduler . first_available = scheduler . cpu[cpu_id] . next_available;
+    if (scheduler . cpu_pool . status != 0)
+    {
+      lock_acquire (& scheduler . lock);
+      cpu = queue_rem (& scheduler . cpu_pool);
+      lock_release (& scheduler . lock);
+    }
+
+    if (cpu != NULL)
+    {
+      cpu -> status = DNA_CPU_RUNNING;
+      cpu_id = cpu -> id;
+    }
+  }
+  else
+  {
+    /*
+     * Not supported yet
+     */
   }
 
-  lock_release (& scheduler . lock);
 	return cpu_id;
 }
 
 /*
+ * NOTE
+ * Interrupts must ne disabled.
  ****/
 

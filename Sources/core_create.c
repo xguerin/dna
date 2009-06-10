@@ -61,10 +61,7 @@ status_t core_create (void)
      */
 
     dna_memset (& scheduler, 0, sizeof (scheduler_t));
-
     scheduler . xt_index = cpu_mp_count;
-    scheduler . first_available = 0;
-    scheduler . last_available = cpu_mp_count - 1;
 
     scheduler . cpu = kernel_malloc (sizeof (cpu_t) * DNA_MAX_CPU, true);
     ensure (scheduler . cpu != NULL, DNA_OUT_OF_MEM);
@@ -104,8 +101,8 @@ status_t core_create (void)
      * Fill-in the necessary fields.
      */
 
-    team -> id = atomic_add (& team_manager . thread_index, 1);
-    dna_strcpy (team -> name, "KernelTeam");
+    team -> id = atomic_add (& team_manager . team_index, 1);
+    dna_strcpy (team -> name, "Kernel");
 
     queue_item_init (& team -> sched_link, team);
 
@@ -136,10 +133,10 @@ status_t core_create (void)
        */
 
       dna_itoa (cpu_i, id_buffer);
-      dna_strcpy (thread -> name, "ThreadIdle");
+      dna_strcpy (thread -> name, "Idle");
       dna_strcat (thread -> name, id_buffer);
 
-      thread -> id = atomic_add (& team_manager . team_index, 1);
+      thread -> id = atomic_add (& team_manager . thread_index, 1);
       thread -> type = DNA_IDLE_THREAD;
       thread -> cpu_id = cpu_i;
       thread -> cpu_affinity = cpu_i;
@@ -170,20 +167,14 @@ status_t core_create (void)
        * Deal with the new thread
        */
 
+      scheduler . cpu[cpu_i] . id = cpu_i;
       scheduler . cpu[cpu_i] . status = DNA_CPU_DISABLED;
+      queue_item_init (& scheduler . cpu[cpu_i] . link,
+          & scheduler . cpu[cpu_i]);
 
       scheduler . cpu[cpu_i] . current_team = team;
       scheduler . cpu[cpu_i] . idle_thread = thread;
       scheduler . cpu[cpu_i] . current_thread = thread;
-
-      if (cpu_i != (cpu_mp_count - 1))
-      {
-        scheduler . cpu[cpu_i] . next_available = cpu_i + 1;
-      }
-      else
-      {
-        scheduler . cpu[cpu_i] . next_available = -1;
-      }
     }
 
     return DNA_OK;

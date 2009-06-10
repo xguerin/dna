@@ -76,13 +76,15 @@ status_t thread_wait (int32_t id, int32_t * value)
 
       /*
        * If not, put ourselve in wait mode and we switch
+       * If target is IDLE, we can safely push the CPU
+       * since we disabled the interrupts.
        */
 
       self -> status = DNA_THREAD_WAIT;
 
-      target = scheduler_elect ();
-      if (target == NULL)
+      if ((target = scheduler_elect ()) == NULL)
       {
+        scheduler_push_cpu (current_cpuid);
         target = scheduler . cpu[current_cpuid] . idle_thread;
       }
 

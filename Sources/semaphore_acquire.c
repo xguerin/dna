@@ -85,9 +85,15 @@ status_t semaphore_acquire (int32_t sid, int32_t flags, bigtime_t timeout)
           lock_acquire (& sem -> waiting_queue . lock);
           lock_release (& sem -> lock);
 
-          thread = scheduler_elect ();
-          if (thread == NULL)
+          /*
+           * Elect a the next thread and run it
+           * If target is IDLE, we can safely push the CPU
+           * since we disabled the interrupts.
+           */
+
+          if ((thread = scheduler_elect ()) == NULL)
           {
+            scheduler_push_cpu (current_cpuid);
             thread = scheduler . cpu[current_cpuid] . idle_thread;
           }
         
@@ -96,15 +102,15 @@ status_t semaphore_acquire (int32_t sid, int32_t flags, bigtime_t timeout)
 
           break;
 
-        case 0 : /* Test if we are in a blocking situation */
+        case 0 :
           sem -> tokens += 1;
           status = DNA_WOULD_BLOCK;
 
           break;
 
-        default : /* Wait for timeout µS and retry */
+        default :
           status = time_set_alarm (timeout, DNA_RELATIVE_ALARM
-              | DNA_ONE_SHOT_ALARM, semaphore_alarm, self, & alarm);
+              | DNA_ONE_SHOT_ALARM, thread_alarm, self, & alarm);
 
           check (invalid_alarm, status == DNA_OK, status);
 
@@ -113,9 +119,15 @@ status_t semaphore_acquire (int32_t sid, int32_t flags, bigtime_t timeout)
           lock_acquire (& sem -> waiting_queue . lock);
           lock_release (& sem -> lock);
 
-          thread = scheduler_elect ();
-          if (thread == NULL)
+          /*
+           * Elect a the next thread and run it
+           * If target is IDLE, we can safely push the CPU
+           * since we disabled the interrupts.
+           */
+
+          if ((thread = scheduler_elect ()) == NULL)
           {
+            scheduler_push_cpu (current_cpuid);
             thread = scheduler . cpu[current_cpuid] . idle_thread;
           }
         
@@ -137,7 +149,10 @@ status_t semaphore_acquire (int32_t sid, int32_t flags, bigtime_t timeout)
       }
     }
     
-    if (status == DNA_OK) sem -> latest_holder = self;
+    if (status == DNA_OK)
+    {
+      sem -> latest_holder = self;
+    }
 
     lock_release (& sem -> lock);
     cpu_trap_restore(it_status);
