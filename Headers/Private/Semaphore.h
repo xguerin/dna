@@ -67,7 +67,6 @@ sem_pool_t;
  ****/
 
 extern sem_pool_t sem_pool;
-extern status_t semaphore_alarm (void * data);
 
 #endif
 
