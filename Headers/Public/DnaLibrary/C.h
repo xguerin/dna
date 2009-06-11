@@ -35,13 +35,13 @@ extern int32_t dna_itoa (int32_t integer, char * buffer);
 extern void dna_printf (const char * restrict format, ...);
 
 #ifdef DNA_ENABLE_LOG
-#define log(string, level)                                      \
-  if (level <= DNA_ENABLE_LOG)                                  \
-  {                                                             \
-    dna_printf ("[%s:%d] %s\r\n", __FUNCTION__, __LINE__, string);  \
+#define log(level, string, ...)                                                     \
+  if (level <= DNA_ENABLE_LOG)                                                      \
+  {                                                                                 \
+    dna_printf ("[%s:%d] " string "\r\n", __FUNCTION__, __LINE__,  ## __VA_ARGS__); \
   }
 #else
-#define log(string, level)
+#define log(level, string, ...)
 #endif
 
 #endif

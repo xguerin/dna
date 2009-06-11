@@ -29,7 +29,7 @@
 #define check(tag,condition,code)         \
   if (! (condition))                      \
   {                                       \
-    log ("<" #condition "> failed.", 4);   \
+    log (4, "<" #condition "> failed.");  \
     _rescue_status = code;                \
     goto tag;                             \
   }
@@ -37,7 +37,7 @@
 #define ensure(condition,code)            \
   if (! (condition))                      \
   {                                       \
-    log ("<" #condition "> failed.", 4);  \
+    log (4, "<" #condition "> failed.");  \
     _rescue_status = code;                \
     return _rescue_status;                \
   }

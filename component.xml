@@ -15,8 +15,6 @@
     <definition name="DNA_MAX_FILE"/>
     <definition name="DNA_MAX_SEM"/>
     <definition name="DNA_MAX_THREAD_WAIT_LIST"/>
-    <definition name="DNA_THREAD_IDLE_STACK_SIZE"/>
-    <definition name="DNA_THREAD_STACK_SIZE"/>
 
     <!-- Fast C -->
 
