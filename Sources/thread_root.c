@@ -16,8 +16,8 @@
  */
 
 #include <Private/Core.h>
-#include <VirtualFileSystem/VirtualFileSystem.h>
 #include <DnaLibrary/DnaLibrary.h>
+#include <VirtualFileSystem/VirtualFileSystem.h>
 #include <Processor/Processor.h>
 
 /****f* core/thread_root
@@ -42,14 +42,10 @@ int32_t thread_root (void * data)
 {
   int16_t dummy = -1;
   int32_t main_thread = -1;
-  team_t team = scheduler . cpu[cpu_mp_id ()] . current_team;
   status_t status = DNA_OK;
 
   watch (status_t)
   {
-    status = fdarray_create (team -> id, -1);
-    ensure (status == DNA_OK, status);
-
     status = vfs_open ("/devices/console", 0, 0, & dummy);
     ensure (status == DNA_OK, status);
 

@@ -55,7 +55,8 @@ int32_t thread_idle (void * data)
 
   if (current_cpuid == 0)
   {
-    thread_create (thread_root, NULL, "Root", DNA_NO_AFFINITY, 0x2000, & thread);
+    thread_create (thread_root, NULL, "Root",
+        DNA_NO_AFFINITY, 0x2000, & thread);
     thread_resume (thread);
   }
 

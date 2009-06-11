@@ -18,6 +18,7 @@
 #include <Private/Core.h>
 #include <DnaLibrary/DnaLibrary.h>
 #include <MemoryManager/MemoryManager.h>
+#include <VirtualFileSystem/VirtualFileSystem.h>
 #include <Processor/Processor.h>
 
 /****f* Core/core_initialize
@@ -39,24 +40,28 @@ status_t core_start (void)
 {
 #if 0
   int32_t alarm_id;
-  status_t status;
 #endif
 
+  status_t status;
   uint32_t current_cpuid = cpu_mp_id ();
   thread_t thread = scheduler . cpu[current_cpuid] . idle_thread;
+  team_t team = scheduler . cpu[cpu_mp_id ()] . current_team;
 
   watch (status_t)
   {
     ensure (thread != NULL, DNA_ERROR);
 
-#if 0
     if (current_cpuid == 0)
     {
+      status = fdarray_create (team -> id, -1);
+      ensure (status == DNA_OK, status);
+
+#if 0
       status = time_set_alarm (4000000, DNA_RELATIVE_ALARM |
           DNA_PERIODIC_ALARM, scheduler_callback, NULL, & alarm_id);
       ensure (status == DNA_OK, status);
-    }
 #endif
+    }
 
     thread -> status = DNA_THREAD_RUNNING;
     cpu_context_load((& thread -> ctx));
