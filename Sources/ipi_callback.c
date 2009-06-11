@@ -40,39 +40,49 @@ status_t ipi_callback (int32_t command, int32_t data)
  */
 
 {
-  thread_t thread;
-	thread_t self = scheduler . cpu[cpu_mp_id()] . current_thread;
+  thread_t target;
 
-  switch (command)
+  watch (status_t)
   {
-    case DNA_IPI_YIELD :
-      log (1, "YIELD(%d) on processor %d", data, cpu_mp_id ());
+    switch (command)
+    {
+      case DNA_IPI_YIELD :
+        log (1, "YIELD(%d) on processor %d", data, cpu_mp_id ());
 
-      lock_acquire (& team_manager . lock);
+        lock_acquire (& team_manager . lock);
 
-      thread = queue_lookup (& team_manager . thread_list,
-          thread_id_inspector, (void *) & data, NULL);
+        target = queue_lookup (& team_manager . thread_list,
+            thread_id_inspector, (void *) & data, NULL);
 
-      lock_release (& team_manager . lock);
+        check (invalid_thread, target != NULL, DNA_UNKNOWN_THREAD);
 
-      if (thread != NULL)
-      {
-        self -> status = DNA_THREAD_READY;
-        scheduler_switch (thread, NULL);
-      }
+        lock_acquire (& target -> lock);
+        lock_release (& team_manager . lock);
 
-      break;
+        target -> status = DNA_THREAD_READY;
 
-    case DNA_IPI_PING :
-      log (1, "PING received on processor %d", cpu_mp_id ());
-      break;
+        lock_release (& target -> lock);
+        scheduler_switch (target, NULL);
 
-    default :
-      log (1, "Unknown command received on processor %d", cpu_mp_id ());
-      break;
+        break;
+
+      case DNA_IPI_PING :
+        log (1, "PING received on processor %d", cpu_mp_id ());
+        break;
+
+      default :
+        log (1, "Unknown command received on processor %d", cpu_mp_id ());
+        break;
+    }
+
+    return DNA_OK;
   }
 
-	return DNA_OK;
+  rescue (invalid_thread)
+  {
+    lock_release (& team_manager . lock);
+    leave;
+  }
 }
 
 /*

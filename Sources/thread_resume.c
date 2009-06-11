@@ -47,17 +47,6 @@ status_t thread_resume (int32_t id)
   watch (status_t)
   {
     it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& team -> lock);
-
-    target = queue_lookup (& team_manager . thread_list,
-        thread_id_inspector, (void *) & id, NULL);
-
-    check (invalid_thread, target != NULL, DNA_UNKNOWN_THREAD);
-
-    lock_acquire (& target -> lock);
-    lock_release (& team -> lock);
-
-    target -> status = DNA_THREAD_READY;
 
     /*
      * Search for a CPU available
@@ -66,11 +55,23 @@ status_t thread_resume (int32_t id)
 
     if ((next_cpuid = scheduler_pop_cpu (DNA_NO_AFFINITY)) != -1)
     {
-      lock_release (& target -> lock);
-      ipi_send (next_cpuid, DNA_IPI_YIELD, target -> id);
+      ipi_send (next_cpuid, DNA_IPI_YIELD, id);
     }
     else
     {
+      lock_acquire (& team -> lock);
+
+      target = queue_lookup (& team_manager . thread_list,
+          thread_id_inspector, (void *) & id, NULL);
+
+      check (invalid_thread, target != NULL, DNA_UNKNOWN_THREAD);
+      check (invalid_thread, target -> status == DNA_THREAD_SLEEP, DNA_ERROR);
+
+      lock_acquire (& target -> lock);
+      lock_release (& team -> lock);
+
+      target -> status = DNA_THREAD_READY;
+
       lock_acquire (& scheduler . xt[target -> cpu_affinity] . lock);
       lock_release (& target -> lock);
 

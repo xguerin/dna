@@ -35,29 +35,20 @@ status_t thread_alarm (void * data)
  */
 
 {
-  int32_t next_cpuid;
-	thread_t thread = data;
+  thread_t thread = data;
 
   watch (status_t)
   {
     ensure (thread != NULL, DNA_ERROR);
-    log (1, "enter");
 
-    if ((next_cpuid = scheduler_pop_cpu (DNA_NO_AFFINITY)) != -1)
-    {
-      ipi_send (next_cpuid, DNA_IPI_YIELD, thread -> id);
-    }
-    else
-    {
-      lock_acquire (& scheduler . xt[thread -> cpu_affinity] . lock);
+    lock_acquire (& scheduler . xt[thread -> cpu_affinity] . lock);
 
-      queue_add (& scheduler . xt[thread -> cpu_affinity],
-          & thread -> status_link);
+    queue_add (& scheduler . xt[thread -> cpu_affinity],
+        & thread -> status_link);
 
-      lock_release (& scheduler . xt[thread -> cpu_affinity] . lock);
-    }
+    lock_release (& scheduler . xt[thread -> cpu_affinity] . lock);
 
-    return DNA_OK;
+    return DNA_INVOKE_SCHEDULER;
   }
 }
 
