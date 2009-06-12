@@ -42,6 +42,7 @@ status_t semaphore_release (int32_t sid, int32_t n_tokens, int32_t flags)
  */
 
 {
+  int32_t next_cpuid = 0;
 	thread_t thread = NULL;
 	semaphore_t sem = NULL;
 	interrupt_status_t it_status = 0;
@@ -78,17 +79,27 @@ status_t semaphore_release (int32_t sid, int32_t n_tokens, int32_t flags)
       lock_release (& sem -> lock);
 
       thread = queue_rem (& sem -> waiting_queue);
-
       lock_release (& sem -> waiting_queue . lock);
 
       if (thread != NULL) 
       {
-        thread -> status = DNA_THREAD_READY;
+        if ((next_cpuid = scheduler_pop_cpu (DNA_NO_AFFINITY)) != -1)
+        {
+          ipi_send (next_cpuid, DNA_IPI_YIELD, thread -> id);
+        }
+        else
+        {
+          lock_acquire (& thread -> lock);
 
-        lock_acquire (& scheduler . xt[thread -> cpu_affinity] . lock);
-        queue_add (& scheduler . xt[thread -> cpu_affinity],
-            & thread -> status_link);
-        lock_release (& scheduler . xt[thread -> cpu_affinity] . lock);
+          thread -> status = DNA_THREAD_READY;
+
+          lock_acquire (& scheduler . xt[thread -> cpu_affinity] . lock);
+          lock_release (& thread -> lock);
+
+          queue_add (& scheduler . xt[thread -> cpu_affinity],
+              & thread -> status_link);
+          lock_release (& scheduler . xt[thread -> cpu_affinity] . lock);
+        }
       }
 
       lock_acquire (& sem -> lock);

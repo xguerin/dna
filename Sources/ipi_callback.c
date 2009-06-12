@@ -47,7 +47,7 @@ status_t ipi_callback (int32_t command, int32_t data)
     switch (command)
     {
       case DNA_IPI_YIELD :
-        log (1, "YIELD(%d) on processor %d", data, cpu_mp_id ());
+        log (4, "YIELD(%d) on processor %d", data, cpu_mp_id ());
 
         lock_acquire (& team_manager . lock);
 
@@ -64,10 +64,6 @@ status_t ipi_callback (int32_t command, int32_t data)
         lock_release (& target -> lock);
         scheduler_switch (target, NULL);
 
-        break;
-
-      case DNA_IPI_PING :
-        log (1, "PING received on processor %d", cpu_mp_id ());
         break;
 
       default :

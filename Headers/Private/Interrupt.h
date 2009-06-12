@@ -31,8 +31,7 @@
 
 enum
 {
-  DNA_IPI_YIELD = 0xFFFF,
-  DNA_IPI_PING = 0xFFFE
+  DNA_IPI_YIELD = 0xFFFF
 };
 
 typedef struct _isr

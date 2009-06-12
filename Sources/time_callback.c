@@ -42,8 +42,6 @@ status_t time_callback (void * data)
   bigtime_t current_time = 0, quanta = 0;
 	status_t status = DNA_OK;
 
-  log (1, "enter");
-
   /*
    * Now we execute the alarm and those
    * which deadline is included in the Jiffy
@@ -83,7 +81,6 @@ status_t time_callback (void * data)
       if (quanta <= DNA_TIMER_JIFFY)
       {
         alarm = next_alarm;
-        log (1, "invalid quanta");
       }
       else
       {
