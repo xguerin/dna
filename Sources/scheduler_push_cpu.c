@@ -35,9 +35,9 @@ void scheduler_push_cpu (int32_t id)
 {
   scheduler . cpu[id] . status = DNA_CPU_READY;
 
-  lock_acquire (& scheduler . lock);
+  lock_acquire (& scheduler . cpu_pool . lock);
   queue_add (& scheduler . cpu_pool, & scheduler . cpu[id] . link);
-  lock_release (& scheduler . lock);
+  lock_release (& scheduler . cpu_pool . lock);
 }
 
 /*

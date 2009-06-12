@@ -46,11 +46,11 @@ int32_t thread_idle (void * data)
   scheduler . cpu[current_cpuid] . status = DNA_CPU_READY;
 
   it_status = cpu_trap_mask_and_backup ();
-  lock_acquire (& scheduler . lock);
+  lock_acquire (& scheduler . cpu_pool . lock);
 
   queue_add (& scheduler . cpu_pool, & scheduler . cpu[current_cpuid] . link);
 
-  lock_release (& scheduler . lock);
+  lock_release (& scheduler . cpu_pool . lock);
   cpu_trap_restore (it_status);
 
   if (current_cpuid == 0)

@@ -77,7 +77,6 @@ cpu_t;
 
 typedef struct _scheduler
 {
-	spinlock_t lock;
 	int32_t xt_index;
 	queue_t * xt;
 

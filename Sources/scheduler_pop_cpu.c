@@ -44,9 +44,9 @@ int32_t scheduler_pop_cpu (int32_t affinity)
   {
     if (scheduler . cpu_pool . status != 0)
     {
-      lock_acquire (& scheduler . lock);
+      lock_acquire (& scheduler . cpu_pool . lock);
       cpu = queue_rem (& scheduler . cpu_pool);
-      lock_release (& scheduler . lock);
+      lock_release (& scheduler . cpu_pool . lock);
     }
 
     if (cpu != NULL)
