@@ -58,7 +58,6 @@ typedef struct _cpu
   int32_t id;
   cpu_status_t status;
   spinlock_t lock;
-  void * cookie;
 
 	team_t current_team;
 	thread_t current_thread;
@@ -93,7 +92,7 @@ scheduler_t;
 extern scheduler_t scheduler;
 
 extern thread_t scheduler_elect (void);
-extern void scheduler_place (thread_t thread);
+extern void scheduler_dispatch (thread_t thread);
 extern status_t scheduler_callback (void * data);
 
 extern int32_t scheduler_pop_cpu (int32_t affinity);

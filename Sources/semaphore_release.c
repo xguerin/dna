@@ -82,7 +82,7 @@ status_t semaphore_release (int32_t sid, int32_t n_tokens, int32_t flags)
 
       if (thread != NULL) 
       {
-        scheduler_place (thread);
+        scheduler_dispatch (thread);
       }
 
       lock_acquire (& sem -> lock);

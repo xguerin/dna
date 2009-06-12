@@ -19,14 +19,14 @@
 #include <DnaLibrary/DnaLibrary.h>
 #include <Processor/Processor.h>
 
-/****f* Core/scheduler_place
+/****f* Core/scheduler_dispatch
  * SUMMARY
- * Place a thread.
+ * Dispatch a thread.
  *
  * SYNOPSIS
  */
 
-void scheduler_place (thread_t thread)
+void scheduler_dispatch (thread_t thread)
 
 /*
  * ARGUMENTS
@@ -46,8 +46,7 @@ void scheduler_place (thread_t thread)
 
     lock_release (& thread -> lock);
 
-    scheduler . cpu[next_cpuid] . cookie = thread;
-    ipi_send (next_cpuid, DNA_IPI_YIELD, 0);
+    ipi_send (next_cpuid, DNA_IPI_YIELD, thread);
   }
   else
   {

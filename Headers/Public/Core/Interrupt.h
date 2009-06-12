@@ -34,7 +34,7 @@
 
 typedef struct _system_ipi_manager
 {
-  status_t (* send) (int32_t target, int32_t command, int32_t data);
+  status_t (* send) (int32_t target, int32_t command, void * cookie);
 }
 ipi_manager_t;
 
@@ -49,7 +49,7 @@ extern status_t interrupt_detach (interrupt_id_t id,
 
 extern status_t ipi_set_manager (ipi_manager_t timer, bool force);
 
-extern status_t ipi_callback (int32_t command, int32_t data);
+extern status_t ipi_callback (int32_t command, void * cookie);
 
 #endif
 

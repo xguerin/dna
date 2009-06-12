@@ -27,13 +27,13 @@
  * SYNOPSIS
  */
 
-status_t ipi_send (int32_t target, int32_t command, int32_t data)
+status_t ipi_send (int32_t target, int32_t command, void * cookie)
 
 /*
  * ARGUMENTS
  * * target : the processor's ID
  * * command : the command to pass
- * * data : the data attached to the command
+ * * cookie : the data attached to the command
  *
  * RESULT
  * * DNA_ERROR if the target ID is wrong
@@ -56,12 +56,12 @@ status_t ipi_send (int32_t target, int32_t command, int32_t data)
     {
       for (int32_t i = 0; i < cpu_mp_count; i += 1)
       {
-        it_manager . ipi_manager . send (i, command, data);
+        it_manager . ipi_manager . send (i, command, cookie);
       }
     }
     else
     {
-      it_manager . ipi_manager . send (target, command, data);
+      it_manager . ipi_manager . send (target, command, cookie);
     }
 
     lock_release (& it_manager . lock);

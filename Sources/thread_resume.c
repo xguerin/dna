@@ -57,7 +57,7 @@ status_t thread_resume (int32_t id)
     check (invalid_thread, target != NULL, DNA_UNKNOWN_THREAD);
     check (invalid_thread, target -> status == DNA_THREAD_SLEEP, DNA_ERROR);
 
-    scheduler_place (target);
+    scheduler_dispatch (target);
 
     cpu_trap_restore(it_status);
     return DNA_OK;

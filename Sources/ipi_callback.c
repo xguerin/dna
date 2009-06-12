@@ -26,12 +26,12 @@
  * SYNOPSIS
  */
 
-status_t ipi_callback (int32_t command, int32_t data)
+status_t ipi_callback (int32_t command, void * cookie)
 
 /*
  * ARGUMENTS
  * * command : the command of the ipi
- * * data : the data of the ipi
+ * * cookie : the data of the ipi
  *
  * RESULT
  * DNA_OK.
@@ -47,7 +47,7 @@ status_t ipi_callback (int32_t command, int32_t data)
     switch (command)
     {
       case DNA_IPI_YIELD :
-        target = scheduler . cpu[cpu_mp_id ()] . cookie;
+        target = cookie;
         ensure (target != NULL, DNA_ERROR);
 
         log (4, "YIELD(%d) on processor %d", target -> id, cpu_mp_id ());
