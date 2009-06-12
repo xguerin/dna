@@ -47,21 +47,10 @@ status_t ipi_callback (int32_t command, int32_t data)
     switch (command)
     {
       case DNA_IPI_YIELD :
-        log (4, "YIELD(%d) on processor %d", data, cpu_mp_id ());
+        target = scheduler . cpu[cpu_mp_id ()] . cookie;
+        ensure (target != NULL, DNA_ERROR);
 
-        lock_acquire (& team_manager . lock);
-
-        target = queue_lookup (& team_manager . thread_list,
-            thread_id_inspector, (void *) & data, NULL);
-
-        check (invalid_thread, target != NULL, DNA_UNKNOWN_THREAD);
-
-        lock_acquire (& target -> lock);
-        lock_release (& team_manager . lock);
-
-        target -> status = DNA_THREAD_READY;
-
-        lock_release (& target -> lock);
+        log (4, "YIELD(%d) on processor %d", target -> id, cpu_mp_id ());
         scheduler_switch (target, NULL);
 
         break;
@@ -72,12 +61,6 @@ status_t ipi_callback (int32_t command, int32_t data)
     }
 
     return DNA_OK;
-  }
-
-  rescue (invalid_thread)
-  {
-    lock_release (& team_manager . lock);
-    leave;
   }
 }
 

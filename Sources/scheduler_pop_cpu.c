@@ -40,29 +40,51 @@ int32_t scheduler_pop_cpu (int32_t affinity)
   int32_t cpu_id = -1;
   cpu_t * cpu = NULL;
 
-  if (affinity == DNA_NO_AFFINITY)
+  watch (int32_t)
   {
-    if (scheduler . cpu_pool . status != 0)
+    if (affinity == scheduler . xt_index)
+    {
+      if (scheduler . cpu_pool . status != 0)
+      {
+        lock_acquire (& scheduler . cpu_pool . lock);
+        cpu = queue_rem (& scheduler . cpu_pool);
+        check (no_cpu, cpu != NULL, -1);
+
+        lock_acquire (& cpu -> lock);
+        lock_release (& scheduler . cpu_pool . lock);
+
+        cpu -> status = DNA_CPU_RUNNING;
+        cpu_id = cpu -> id;
+
+        lock_release (& cpu -> lock);
+      }
+    }
+    else
     {
       lock_acquire (& scheduler . cpu_pool . lock);
-      cpu = queue_rem (& scheduler . cpu_pool);
+      lock_acquire (& scheduler . cpu[affinity] . lock);
+
+      if (scheduler . cpu[affinity] . status == DNA_THREAD_READY)
+      {
+        queue_extract (& scheduler . cpu_pool,
+            & scheduler . cpu[affinity] . link);
+
+        scheduler . cpu[affinity] . status = DNA_CPU_RUNNING;
+        cpu_id = scheduler . cpu[affinity] . id;
+      }
+
+      lock_release (& scheduler . cpu[affinity] . lock);
       lock_release (& scheduler . cpu_pool . lock);
     }
 
-    if (cpu != NULL)
-    {
-      cpu -> status = DNA_CPU_RUNNING;
-      cpu_id = cpu -> id;
-    }
-  }
-  else
-  {
-    /*
-     * Not supported yet
-     */
+    return cpu_id;
   }
 
-	return cpu_id;
+  rescue (no_cpu)
+  {
+    lock_release (& scheduler . cpu_pool . lock);
+    leave;
+  }
 }
 
 /*

@@ -42,7 +42,6 @@ status_t semaphore_release (int32_t sid, int32_t n_tokens, int32_t flags)
  */
 
 {
-  int32_t next_cpuid = 0;
 	thread_t thread = NULL;
 	semaphore_t sem = NULL;
 	interrupt_status_t it_status = 0;
@@ -83,31 +82,27 @@ status_t semaphore_release (int32_t sid, int32_t n_tokens, int32_t flags)
 
       if (thread != NULL) 
       {
-        if ((next_cpuid = scheduler_pop_cpu (DNA_NO_AFFINITY)) != -1)
-        {
-          ipi_send (next_cpuid, DNA_IPI_YIELD, thread -> id);
-        }
-        else
-        {
-          lock_acquire (& thread -> lock);
-
-          thread -> status = DNA_THREAD_READY;
-
-          lock_acquire (& scheduler . xt[thread -> cpu_affinity] . lock);
-          lock_release (& thread -> lock);
-
-          queue_add (& scheduler . xt[thread -> cpu_affinity],
-              & thread -> status_link);
-          lock_release (& scheduler . xt[thread -> cpu_affinity] . lock);
-        }
+        scheduler_place (thread);
       }
 
       lock_acquire (& sem -> lock);
     }
 
-    lock_release (& sem -> lock);
-    if ((flags & DNA_NO_RESCHEDULE) != 0) thread_yield ();
+    /*
+     * We release the sem's lock
+     */
 
+    lock_release (& sem -> lock);
+
+    /*
+     * Now we deal with the reschedule
+     */
+
+    if ((flags & DNA_NO_RESCHEDULE) != 0)
+    {
+      thread_yield ();
+    }
+ 
     cpu_trap_restore(it_status);
     return status;
   }
