@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component author="xavier.guerin@imag.fr" unique="true" wrapper="false">
+
+  <id name="DnaLibrary" short_name="DnaLib" version="1.0"/>
+
+  <provide>
+
+    <method name="__libthread_start" return_type="int32_t"/>
+
+  </provide>
+
+  <require>
+
+  </require>
+
+</component>
