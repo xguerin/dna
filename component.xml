@@ -2,7 +2,7 @@
 
 <component author="xavier.guerin@imag.fr" unique="true" wrapper="false">
 
-  <id name="DnaLibrary" short_name="DnaLib" version="1.0"/>
+  <id name="DnaTools" short_name="DT" version="1.0"/>
 
   <provide>
 

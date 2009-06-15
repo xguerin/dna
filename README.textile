@@ -1,1 +1,1 @@
-h1. The DNA Library Component
+h1. The DNA Tools Component
