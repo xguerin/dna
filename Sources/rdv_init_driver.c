@@ -17,7 +17,7 @@
 
 #include <Private/RendezVousChannel.h>
 #include <MemoryManager/MemoryManager.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 const char ** rdv_devices;
 

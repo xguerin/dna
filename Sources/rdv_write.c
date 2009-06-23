@@ -17,7 +17,7 @@
 
 #include <Private/RendezVousChannel.h>
 #include <Processor/Processor.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 status_t rdv_write (void * handler, void * source, int64_t offset, int32_t * p_count) {
 	channel_rdv_t * rdv = handler;

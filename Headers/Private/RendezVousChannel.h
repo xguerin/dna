@@ -19,7 +19,7 @@
 #define DNAOS_CHANNEL_RDV_H
 
 #include <Core/Core.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 typedef struct channel_rdv {
 	int32_t sem;

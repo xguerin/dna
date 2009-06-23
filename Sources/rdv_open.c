@@ -17,7 +17,7 @@
 
 #include <Private/RendezVousChannel.h>
 #include <MemoryManager/MemoryManager.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 status_t rdv_open (char * name, int32_t mode, void ** data) {
 	channel_rdv_t * rdv = NULL;

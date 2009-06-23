@@ -16,7 +16,7 @@
  */
 
 #include <Private/RendezVousChannel.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 status_t rdv_close (void * data) {
 

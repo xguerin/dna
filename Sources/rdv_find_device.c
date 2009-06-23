@@ -16,7 +16,7 @@
  */
 
 #include <Private/RendezVousChannel.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 device_cmd_t rdv_commands = {
 	rdv_open,
