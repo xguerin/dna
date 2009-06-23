@@ -23,7 +23,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 #define DNA_PERIODIC_ALARM		0x1
 #define DNA_ONE_SHOT_ALARM		0x2

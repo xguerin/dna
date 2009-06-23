@@ -25,7 +25,7 @@
 #include <stdbool.h>
 #include <Private/Team.h>
 #include <Core/Core.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 /****t* semaphore/semaphore_t
  * SUMMARY

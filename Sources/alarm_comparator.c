@@ -16,7 +16,7 @@
  */
 
 #include <Private/Core.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 /****f* Core/alarm_comparator
  * SUMMARY

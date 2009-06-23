@@ -16,7 +16,7 @@
  */
 
 #include <Private/Core.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 /****v* Core/core_component
  * SUMMARY

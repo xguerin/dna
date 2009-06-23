@@ -22,7 +22,7 @@
 #define DNA_CORE_INTERRUPT_PUBLIC_H
 
 #include <stdint.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
 extern status_t interrupt_attach (interrupt_id_t id, int32_t mode,

@@ -27,7 +27,7 @@
 #include <Core/Team.h>
 #include <Core/Thread.h>
 #include <Core/Time.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 extern component_t core_component;
 

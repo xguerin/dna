@@ -26,7 +26,7 @@
 #define DNA_ABSOLUTE_TIMER		0x00000004
 
 #include <Core/Time.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 typedef struct _semaphore_info
 {

@@ -25,7 +25,7 @@
 #include <Processor/Processor.h>
 
 #include <Core/Time.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 /****d* thread/DNA_NO_AFFINITY
  * SUMMARY

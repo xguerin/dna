@@ -22,7 +22,7 @@
 #define DNA_CORE_TEAM_PUBLIC_H
 
 #include <Core/Thread.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 #define DNA_SYSTEM_TEAM "SystemTeam"
 

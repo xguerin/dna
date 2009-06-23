@@ -22,7 +22,7 @@
 #define DNA_CORE_INTERRUPT_PRIVATE_H
 
 #include <stdint.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 #include <Core/Core.h>
 #include <Processor/Processor.h>
 
