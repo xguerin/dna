@@ -16,7 +16,7 @@
  */
 
 #include <Private/Core.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 #include <VirtualFileSystem/VirtualFileSystem.h>
 #include <Processor/Processor.h>
 

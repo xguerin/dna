@@ -25,7 +25,7 @@
 #include <Private/Thread.h>
 
 #include <Core/Core.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 /****t* scheduler/cpu_status_t
  * SUMMARY

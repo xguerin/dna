@@ -17,7 +17,7 @@
 
 #include <Private/Core.h>
 #include <MemoryManager/MemoryManager.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
 /****f* time/time_set_alarm

@@ -21,7 +21,7 @@
 #ifndef DNA_CORE_FRAMEWORK_PRIVATE_H
 #define DNA_CORE_FRAMEWORK_PRIVATE_H
 
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 extern status_t core_create (void);
 extern status_t core_destroy (void);

@@ -18,7 +18,7 @@
 #include <Private/Core.h>
 #include <VirtualFileSystem/VirtualFileSystem.h>
 #include <MemoryManager/MemoryManager.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 /****f* Core/team_create
  * SUMMARY

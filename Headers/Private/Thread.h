@@ -28,7 +28,7 @@
 #include <Private/Team.h>
 #include <Core/Core.h>
 
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
 /****v* thread/thread_status

@@ -25,7 +25,7 @@
 #include <Core/Core.h>
 #include <Processor/Processor.h>
 #include <Platform/Platform.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 #define DNA_IPI_ALL cpu_mp_count
 

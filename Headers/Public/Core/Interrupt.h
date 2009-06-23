@@ -22,7 +22,7 @@
 #define DNA_CORE_INTERRUPT_PUBLIC_H
 
 #include <stdint.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
 /****t* interrupt/ipi_manager_t
