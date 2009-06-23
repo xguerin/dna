@@ -21,7 +21,7 @@
 #ifndef DNA_MEMORY_FRAMEWORK_PRIVATE_H
 #define DNA_MEMORY_FRAMEWORK_PRIVATE_H
 
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 extern uint32_t CPU_BSS_START;
 extern uint32_t CPU_BSS_END;

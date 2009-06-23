@@ -16,7 +16,7 @@
  */
 
 #include <Private/MemoryManager.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 /****f* framework/memory_start
  * SUMMARY

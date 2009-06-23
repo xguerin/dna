@@ -24,7 +24,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <Core/Core.h>
-#include <DnaLibrary/Status.h>
+#include <DnaTools/Status.h>
 
 /****d* kernel/DNA_KERNEL_BLOCK_SIZE
  * SUMMARY

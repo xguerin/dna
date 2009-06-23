@@ -23,7 +23,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 extern void * kernel_malloc (uint32_t size, bool erase);
 extern status_t kernel_free (void * area);

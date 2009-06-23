@@ -18,7 +18,7 @@
 #include <stdint.h>
 #include <Private/MemoryManager.h>
 #include <Core/Core.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
 /****f* kernel/kernel_free

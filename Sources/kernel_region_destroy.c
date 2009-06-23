@@ -16,7 +16,7 @@
  */
 
 #include <Private/MemoryManager.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 /****f* kernel/kernel_region_destroy
  * SUMMARY

@@ -23,7 +23,7 @@
 
 #include <MemoryManager/Kernel.h>
 #include <MemoryManager/User.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 extern component_t memory_component;
 
