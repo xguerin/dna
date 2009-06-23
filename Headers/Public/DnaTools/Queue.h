@@ -27,7 +27,7 @@
 #include <stdbool.h>
 
 #include <Core/Lock.h>
-#include <DnaLibrary/Status.h>
+#include <DnaTools/Status.h>
 
 /****t* support/queue_inspector_t
  * SUMMARY

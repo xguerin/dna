@@ -16,7 +16,7 @@
  */
 
 #include <stdint.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 int32_t dna_strcmp (const char *s1, const char *s2){
 	char *s1_ptr = (char *)s1, *s2_ptr = (char *)s2;

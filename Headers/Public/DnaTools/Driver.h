@@ -24,7 +24,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include <DnaLibrary/Status.h>
+#include <DnaTools/Status.h>
 
 /****v* support/device_control_code
  * SUMMARY

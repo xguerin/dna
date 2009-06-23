@@ -22,7 +22,7 @@
 #define DNA_INTERFACE_COMPONENT_H
 
 #include <stdint.h>
-#include <DnaLibrary/Status.h>
+#include <DnaTools/Status.h>
 
 /****t* component/component_t
  * SUMMARY

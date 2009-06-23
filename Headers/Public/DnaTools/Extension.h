@@ -23,7 +23,7 @@
 
 #include <stdint.h>
 
-#include <DnaLibrary/Status.h>
+#include <DnaTools/Status.h>
 
 /****t* extension/extension_cmd_t
  * SUMMARY

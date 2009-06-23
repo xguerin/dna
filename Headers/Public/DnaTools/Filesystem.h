@@ -22,7 +22,7 @@
 #define DNA_LIBOS_FILESYSTEM_H
 
 #include <stdint.h>
-#include <DnaLibrary/Status.h>
+#include <DnaTools/Status.h>
 
 /****t* vfs/filesystem_cmd_t
  * SUMMARY

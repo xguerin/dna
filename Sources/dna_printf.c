@@ -16,7 +16,7 @@
  */
 
 #include <stdint.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 /****f* libc/dna_printf
  * SUMMARY

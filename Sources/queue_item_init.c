@@ -16,7 +16,7 @@
  */
 
 #include <stdlib.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 void queue_item_init (queue_item_t * item, void * owner)
 {

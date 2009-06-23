@@ -21,7 +21,7 @@
 #ifndef DNA_TOOLS_CHECKPOINT_H
 #define DNA_TOOLS_CHECKPOINT_H
 
-#include <DnaLibrary/C.h>
+#include <DnaTools/C.h>
 
 #define watch(type) type _rescue_status;
 #define leave return _rescue_status

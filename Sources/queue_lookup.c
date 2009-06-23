@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 void * queue_lookup (queue_t * queue, queue_inspector_t inspector, void * a0, void * a1)
 {

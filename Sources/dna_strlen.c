@@ -16,7 +16,7 @@
  */
 
 #include <stdlib.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 size_t dna_strlen (const char *s){
 	size_t size = 0;
