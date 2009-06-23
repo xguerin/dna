@@ -16,7 +16,7 @@
  */
 
 #include <Private/DeviceFileSystem.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 status_t devfs_write_vnode (void * ns, void * node) {
 

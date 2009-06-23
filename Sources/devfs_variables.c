@@ -16,7 +16,7 @@
  */
 
 #include <Private/DeviceFileSystem.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 static filesystem_cmd_t devfs_cmd = {
 	devfs_walk,

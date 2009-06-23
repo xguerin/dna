@@ -16,7 +16,7 @@
  */
 
 #include <Private/DeviceFileSystem.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 status_t devfs_ioctl (void * ns, void * node, void * data,
     int32_t function, void * arguments, int32_t * p_ret) {

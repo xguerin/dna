@@ -16,7 +16,7 @@
  */
 
 #include <Private/DeviceFileSystem.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 bool devfs_inode_inspector (void * inode, void * iid, void * dummy)
 {

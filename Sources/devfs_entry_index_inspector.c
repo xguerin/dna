@@ -16,7 +16,7 @@
  */
 
 #include <Private/DeviceFileSystem.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 bool devfs_entry_index_inspector (void * entry, void * entry_index, void * dummy) {
 	devfs_entry_t e = entry;

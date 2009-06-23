@@ -16,7 +16,7 @@
  */
 
 #include <Private/DeviceFileSystem.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 status_t devfs_write (void * ns, void * node, void * file, void * data, int64_t offset, int32_t * p_count) {
 	devfs_inode_t inode = node;

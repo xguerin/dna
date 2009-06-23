@@ -16,7 +16,7 @@
  */
 
 #include <Private/DeviceFileSystem.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 status_t devfs_open (void * ns, void * node, int32_t mode, void ** data) {
 	devfs_inode_t inode = node;
