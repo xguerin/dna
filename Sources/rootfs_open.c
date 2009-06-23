@@ -16,7 +16,7 @@
  */
 
 #include <Private/RootFileSystem.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 status_t rootfs_open (void * ns, void * node, int32_t mode, void ** data) {
 	//rootfs_inode_t inode = node;

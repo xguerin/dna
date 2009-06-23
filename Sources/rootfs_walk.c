@@ -16,7 +16,7 @@
  */
 
 #include <Private/RootFileSystem.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 status_t rootfs_walk (void * ns, void * base, char * restrict path,
     char ** new_path, int64_t * p_vnid)

@@ -16,7 +16,7 @@
  */
 
 #include <Private/RootFileSystem.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 bool rootfs_entry_name_inspector (void * entry,
     void * entry_name, void * dummy)

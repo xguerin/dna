@@ -16,7 +16,7 @@
  */
 
 #include <Private/RootFileSystem.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 status_t rootfs_close (void * ns, void * node, void * data) {
 

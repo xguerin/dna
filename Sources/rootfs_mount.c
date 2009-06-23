@@ -17,7 +17,7 @@
 
 #include <Private/RootFileSystem.h>
 #include <MemoryManager/MemoryManager.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 status_t rootfs_mount (int32_t vid, const char * dev_path, uint32_t flags, void * params, void ** data, int64_t * vnid) {
 	rootfs_t rootfs = NULL;

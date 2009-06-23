@@ -17,7 +17,7 @@
 
 #include <Private/RootFileSystem.h>
 #include <MemoryManager/MemoryManager.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 status_t rootfs_create (void * ns, void * node, char * restrict path, int32_t mode, int32_t perms, int64_t * vnid, void ** data) {
 	rootfs_t rootfs = ns;

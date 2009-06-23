@@ -16,7 +16,7 @@
  */
 
 #include <Private/RootFileSystem.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 bool rootfs_inode_inspector (void * inode, void * iid, void * dummy)
 {

@@ -17,7 +17,7 @@
 
 #include <Private/RootFileSystem.h>
 #include <MemoryManager/MemoryManager.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 status_t rootfs_mkdir (void * ns, void * node,
     char * restrict name, int32_t mode)

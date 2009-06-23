@@ -18,7 +18,7 @@
 #ifndef ROOTFS_H
 #define ROOTFS_H
 
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 #include <VirtualFileSystem/VirtualFileSystem.h>
 
 #define ROOTFS_NAME_LENGTH 256

@@ -16,7 +16,7 @@
  */
 
 #include <Private/RootFileSystem.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 status_t rootfs_read_vnode (void * ns, int64_t vnid, void ** data) {
 	rootfs_t rootfs = ns;

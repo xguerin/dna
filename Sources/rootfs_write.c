@@ -16,7 +16,7 @@
  */
 
 #include <Private/RootFileSystem.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 status_t rootfs_write (void * ns, void * node, void * file, void * data, int64_t offset, int32_t * p_count) {
 	status_t status = DNA_OK;

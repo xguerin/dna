@@ -16,7 +16,7 @@
  */
 
 #include <Private/RootFileSystem.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 status_t rootfs_readdir (void * ns, void * node, void * data,
     void * entry_array, int64_t * offset, int32_t * p_count)
