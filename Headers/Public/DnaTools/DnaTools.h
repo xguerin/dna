@@ -15,18 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DNA_LIBRARY_H
-#define DNA_LIBRARY_H
+#ifndef DNA_TOOLS_H
+#define DNA_TOOLS_H
 
-#include <DnaLibrary/Atomic.h>
-#include <DnaLibrary/C.h>
-#include <DnaLibrary/Checkpoint.h>
-#include <DnaLibrary/Component.h>
-#include <DnaLibrary/Configuration.h>
-#include <DnaLibrary/Driver.h>
-#include <DnaLibrary/Extension.h>
-#include <DnaLibrary/Filesystem.h>
-#include <DnaLibrary/Queue.h>
-#include <DnaLibrary/Status.h>
+#include <DnaTools/Atomic.h>
+#include <DnaTools/C.h>
+#include <DnaTools/Checkpoint.h>
+#include <DnaTools/Component.h>
+#include <DnaTools/Configuration.h>
+#include <DnaTools/Driver.h>
+#include <DnaTools/Extension.h>
+#include <DnaTools/Filesystem.h>
+#include <DnaTools/Queue.h>
+#include <DnaTools/Status.h>
 
 #endif
