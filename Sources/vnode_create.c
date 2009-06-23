@@ -16,7 +16,7 @@
  */
 
 #include <Private/VirtualFileSystem.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 #include <MemoryManager/MemoryManager.h>
 
 /****f* vnode/vnode_create

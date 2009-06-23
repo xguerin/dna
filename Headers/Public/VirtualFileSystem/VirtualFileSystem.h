@@ -25,7 +25,7 @@
 #include <VirtualFileSystem/Operation.h>
 #include <VirtualFileSystem/Path.h>
 #include <VirtualFileSystem/VNode.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 extern component_t vfs_component;
 

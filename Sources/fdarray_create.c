@@ -18,7 +18,7 @@
 #include <Private/VirtualFileSystem.h>
 #include <Core/Core.h>
 #include <MemoryManager/MemoryManager.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
 status_t fdarray_create (int32_t id, int32_t parent_id)

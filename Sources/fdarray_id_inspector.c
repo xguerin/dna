@@ -16,7 +16,7 @@
  */
 
 #include <Private/VirtualFileSystem.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 /****f* fdarray/fdarray_id_inspector
  * SUMMARY

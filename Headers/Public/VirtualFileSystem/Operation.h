@@ -22,7 +22,7 @@
 #define DNA_VFS_OPERATION_PUBLIC_H
 
 #include <stdint.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 #define DNA_SEEK_SET										0x00000000
 #define DNA_SEEK_FROM_CURRENT						0x00000001

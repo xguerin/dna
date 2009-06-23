@@ -17,7 +17,7 @@
 
 #include <Private/VirtualFileSystem.h>
 #include <MemoryManager/MemoryManager.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 /****f* volume/volume_destroy
  * SUMMARY

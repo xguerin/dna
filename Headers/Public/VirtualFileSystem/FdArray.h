@@ -19,7 +19,7 @@
 #define DNA_VFS_FDARRAY_PUBLIC_H
 
 #include <stdint.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 extern status_t fdarray_create (int32_t id, int32_t parent_id);
 extern status_t fdarray_destroy (int32_t id);

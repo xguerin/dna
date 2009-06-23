@@ -26,7 +26,7 @@
 #include <Private/Volume.h>
 
 #include <Core/Core.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 /****t* vnode/vnode_t
  * SUMMARY
