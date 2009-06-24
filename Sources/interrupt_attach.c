@@ -49,6 +49,8 @@ status_t interrupt_attach (interrupt_id_t id, int32_t mode,
 
   watch (status_t)
   {
+    ensure (id < cpu_n_it, DNA_ERROR);
+
     isr = kernel_malloc (sizeof (struct _isr), true);
     ensure (isr != NULL, DNA_OUT_OF_MEM);
 
