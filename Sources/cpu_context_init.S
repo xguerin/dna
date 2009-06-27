@@ -3,7 +3,7 @@
 	.global cpu_context_init
 
 cpu_context_init:
-	stmdb sp!, {r4,r5,r6}
+	push {r4, r5, lr}
 	ldr r4, [sp, #12]
 	str r4, [r0], #4
 	stmia r0!, {r1-r10, fp, ip}
@@ -12,7 +12,6 @@ cpu_context_init:
 	str r5, [r0], #4
 	str r3, [r0], #4
 	mrs r5, cpsr
-	mrs r6, spsr
-	stmia r0!, {r5,r6}
-	ldmia sp!, {r4, r5,r6}
-	mov pc, lr
+  bic r5, r5, #0xC0
+	str r5, [r0]
+	pop {r4, r5, pc}

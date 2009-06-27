@@ -3,5 +3,4 @@
 	.global fiq_handler
 
 fiq_handler:
-	subs pc, lr, #0x4
-
+  b fiq_handler

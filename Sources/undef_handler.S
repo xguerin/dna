@@ -3,4 +3,4 @@
 	.global undef_handler
 
 undef_handler:
-	subs	pc,	lr,	#4
+	b undef_handler

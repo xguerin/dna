@@ -3,4 +3,4 @@
 	.global swi_handler
 
 swi_handler:
-	subs	pc,	lr,	#4
+	b swi_handler

@@ -3,4 +3,4 @@
 	.global prefetch_abort_handler
 
 prefetch_abort_handler:
-	subs	pc,	lr,	#4
+	b prefetch_abort_handler

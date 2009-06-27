@@ -3,5 +3,5 @@
 	.global data_abort_handler
 
 data_abort_handler:
-	subs	pc,	lr,	#4
+  b data_abort_handler
 
