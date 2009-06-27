@@ -17,19 +17,35 @@
 
 #include <DnaTools/DnaTools.h>
 
-void queue_add (queue_t * queue, queue_item_t * item)
+status_t queue_add (queue_t * queue, queue_item_t * item)
 {
-	item -> next = NULL;
+  watch (status_t)
+  {
+    check (queue_error, item -> next == NULL, DNA_ERROR);
 
-	if (queue -> status == 0) {
-		queue -> head = item;
-		queue -> tail = item;
-	}
-	else {
-		queue -> tail -> next = item;
-		queue -> tail = item;
-	}
+    if (queue -> status == 0)
+    {
+      queue -> head = item;
+      queue -> tail = item;
+    }
+    else
+    {
+      queue -> tail -> next = item;
+      queue -> tail = item;
+    }
 
-	queue -> status += 1;
+    queue -> status += 1;
+
+    return DNA_OK;
+  }
+
+  rescue (queue_error)
+  {
+    log (1, "Q(0x%x): status %d, item 0x%x",
+        queue, queue -> status, item);
+
+    leave;
+  }
+
 }
 

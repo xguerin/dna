@@ -19,18 +19,33 @@
 
 void * queue_rem (queue_t * queue)
 {
-	queue_item_t * kitem = NULL;
+	queue_item_t * item = NULL;
 	void * data = NULL;
 
-	if (queue -> status != 0)
+  watch (void *)
   {
-		kitem = queue -> head;
-		data = kitem -> owner;
-		queue -> status -= 1;
-		queue -> head = queue -> head -> next;
-		kitem -> next = NULL;
-	}
+    if (queue -> status != 0)
+    {
+      item = queue -> head;
+      data = item -> owner;
+      queue -> status -= 1;
 
-	return data;
+      queue -> head = item -> next;
+      check (queue_error, queue -> head != NULL ||
+          (queue -> head == NULL && queue -> status == 0), NULL);
+
+      item -> next = NULL;
+    }
+
+    return data;
+  }
+
+  rescue (queue_error)
+  {
+    log (1, "Q(0x%x): status %d, item 0x%x",
+        queue, queue -> status, item);
+
+    leave;
+  }
 }
 

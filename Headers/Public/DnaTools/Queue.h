@@ -90,13 +90,21 @@ queue_t;
  ****/
 
 extern void queue_item_init (queue_item_t * item, void * owner);
-extern void queue_add (queue_t * queue, queue_item_t * item);
+
+extern status_t queue_add (queue_t * queue, queue_item_t * item);
+
 extern void * queue_rem (queue_t * queue);
+
 extern void queue_extract (queue_t * queue, queue_item_t * item);
-extern void * queue_lookup (queue_t * queue, queue_inspector_t inspector, void * a0, void * a1);
-extern void queue_walk (queue_t * queue, queue_inspector_t inspector, void * a0, void * a1);
-extern void queue_insert (queue_t * queue, queue_comparator_t comparator,
-    queue_item_t * item);
+
+extern void * queue_lookup (queue_t * queue,
+    queue_inspector_t inspector, void * a0, void * a1);
+
+extern void queue_walk (queue_t * queue,
+    queue_inspector_t inspector, void * a0, void * a1);
+
+extern void queue_insert (queue_t * queue,
+    queue_comparator_t comparator, queue_item_t * item);
 
 #endif
 
