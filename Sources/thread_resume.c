@@ -52,10 +52,10 @@ status_t thread_resume (int32_t id)
     target = queue_lookup (& team_manager . thread_list,
         thread_id_inspector, (void *) & id, NULL);
 
-    lock_release (& team -> lock);
-
     check (invalid_thread, target != NULL, DNA_UNKNOWN_THREAD);
     check (invalid_thread, target -> status == DNA_THREAD_SLEEP, DNA_ERROR);
+
+    lock_release (& team -> lock);
 
     scheduler_dispatch (target);
 
@@ -65,7 +65,9 @@ status_t thread_resume (int32_t id)
 
   rescue (invalid_thread)
   {
+    lock_release (& team -> lock);
     cpu_trap_restore(it_status);
+
     leave;
   }
 }
