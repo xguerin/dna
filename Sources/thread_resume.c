@@ -53,6 +53,7 @@ status_t thread_resume (int32_t id)
         thread_id_inspector, (void *) & id, NULL);
 
     check (invalid_thread, target != NULL, DNA_UNKNOWN_THREAD);
+    check (invalid_thread, target -> status == DNA_THREAD_SLEEP, DNA_OK);
 
     lock_acquire (& target -> lock);
     lock_release (& team -> lock);
@@ -75,6 +76,7 @@ status_t thread_resume (int32_t id)
   {
     lock_release (& team -> lock);
     cpu_trap_restore(it_status);
+
     leave;
   }
 }
