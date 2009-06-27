@@ -18,7 +18,7 @@
 #include <Private/VirtualFileSystem.h>
 #include <Core/Core.h>
 #include <MemoryManager/MemoryManager.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 /****f* vfs/vfs_open
  * SUMMARY

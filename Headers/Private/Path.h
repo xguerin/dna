@@ -21,7 +21,7 @@
 #ifndef DNA_VFS_PATH_PRIVATE_H
 #define DNA_VFS_PATH_PRIVATE_H
 
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 extern status_t path_get_next_entry (char ** path, char * token);
 extern status_t path_split (char * restrict path, char * restrict token);

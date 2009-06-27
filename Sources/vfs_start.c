@@ -16,7 +16,7 @@
  */
 
 #include <Private/VirtualFileSystem.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 /****f* framework/vfs_start
  * SUMMARY

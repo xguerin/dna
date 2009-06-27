@@ -21,7 +21,7 @@
 #ifndef DNA_VFS_FRAMEWORK_PRIVATE_H
 #define DNA_VFS_FRAMEWORK_PRIVATE_H
 
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 extern status_t vfs_create (void);
 extern status_t vfs_destroy (void);

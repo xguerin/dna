@@ -17,7 +17,7 @@
 
 #include <Private/VirtualFileSystem.h>
 #include <MemoryManager/MemoryManager.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 status_t fdarray_destroy (int32_t id)
 {

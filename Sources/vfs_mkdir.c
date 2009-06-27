@@ -16,7 +16,7 @@
  */
 
 #include <Private/VirtualFileSystem.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 #include <Core/Core.h>
 
 /****f* vfs/vfs_mkdir

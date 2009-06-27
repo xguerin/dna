@@ -18,7 +18,7 @@
 #include <stdint.h>
 #include <Private/VirtualFileSystem.h>
 #include <Core/Core.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 /****f* framework/vfs_destroy
  * SUMMARY

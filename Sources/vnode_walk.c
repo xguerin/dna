@@ -17,7 +17,7 @@
 
 #include <Private/VirtualFileSystem.h>
 #include <Core/Core.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
 /****f* vnode/vnode_walk

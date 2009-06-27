@@ -21,7 +21,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <Private/VNode.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 /****t* ioctx/file_t
  * SUMMARY

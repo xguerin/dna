@@ -22,7 +22,7 @@
 #define DNA_VFS_VNODE_PUBLIC_H
 
 #include <stdint.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 extern status_t vnode_create (int64_t vnid, int32_t vid, void * data);
 extern status_t vnode_destroy (int32_t vid, int64_t vnid);

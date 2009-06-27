@@ -17,7 +17,7 @@
 
 #include <stdint.h>
 #include <Private/VirtualFileSystem.h>
-#include <DnaLibrary/DnaLibrary.h>
+#include <DnaTools/DnaTools.h>
 
 /****v* framework/vfs_component
  * SUMMARY
