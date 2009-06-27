@@ -19,33 +19,16 @@
 
 void queue_extract (queue_t * queue, queue_item_t * item)
 {
-	queue_item_t * item = queue -> head;
+	queue_item_t * kitem = queue -> head;
 
-  /*
-   * TODO: we need to check the case
-   * where item is not in the queue
-   */
-
-	if (queue -> head == item)
-  {
-    queue -> head = item -> next;
-  }
+	if (queue -> head == item) queue -> head = item -> next;
 	else
   {
-		while (item -> next != item)
-    {
-      item = item -> next;
-    }
-
-		item -> next = item -> next;
-
-		if (item -> next == NULL)
-    {
-      queue -> tail = item;
-    }
+		while (kitem -> next != item) kitem = kitem -> next;
+		kitem -> next = item -> next;
+		if (kitem -> next == NULL) queue -> tail = kitem;
 	}
 
-  item -> next = NULL;
 	queue -> status -= 1;
 }
 
