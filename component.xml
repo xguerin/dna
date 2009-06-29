@@ -2,10 +2,10 @@
 
 <component author="xavier.guerin@imag.fr" unique="true" wrapper="false">
 
-  <id name="Arm9Processor" short_name="Arm9" version="1.0"/>
+  <id name="ArmV6Processor" short_name="ArmV6" version="1.0"/>
 
   <restrict>
-    <id name="SoclibPlatform" version="1.0"/>
+
   </restrict>
 
   <provide>
