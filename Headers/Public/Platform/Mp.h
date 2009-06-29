@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-extern uint32_t PLATFORM_N_ARM7TDMI;
+extern uint32_t PLATFORM_N_ARMV6;
 extern uint32_t PLATFORM_N_SPARCV8;
 extern uint32_t PLATFORM_N_MIPSR3000;
 extern uint32_t PLATFORM_N_MIPSMIPS32;
