@@ -3,16 +3,21 @@
 
 static inline long int cpu_test_and_set (volatile long int * spinlock)
 {
-  long int ret = *spinlock;
+  register long int result, temp = 1; 
 
-  *spinlock = 1;
-  return ret;
+  __asm__ volatile ("\n"
+      "0:\tswp\t%0,%2,[%1]\n\t"
+      : "=&r" (result)
+      : "r" (spinlock), "r" (temp)
+      : "cc", "memory");
+
+  return result;
 }
 
 static inline long int cpu_compare_and_swap (volatile long int * p_val,
     long int oldval, long int newval)
 {
-  long int result, tmp;
+  register long int result, tmp;
 
   __asm__ volatile ("\n"
       "0:\tldr\t%1,[%2]\n\t"

@@ -10,20 +10,29 @@
 	.extern CPU_SVC_STACK_ADDR
 
 reset_handler:
-	@FIQ - SP = .FIQ_STACK
+  @ Get the current cpuid
+  mrc p15, 0, r0, c0, c0, 5
+  mov r3, #0x400
+
+  @ Compute the basic stack addresses
+	ldr	r1, = CPU_SVC_STACK_ADDR
+  mov r2, r3, lsl r0
+  sub r1, r1, r2
+
+  @ Set the processor stack
 	mov	r0, #FIQ_MODE
 	msr	cpsr_c, r0
-	ldr	sp, = CPU_SVC_STACK_ADDR
+	mov	sp, r1
+	mov fp, sp
 
-	@IRQ - SP = .IRQ_STACK
 	mov	r0, #IRQ_MODE
 	msr	cpsr_c, r0
-	ldr	sp, = CPU_SVC_STACK_ADDR
+	mov	sp, r1
+	mov fp, sp
 
-	@SVC - SP = .SVC_STACK
 	mov	r0,  #SVC_MODE
 	msr cpsr_c, r0
-	ldr	sp, = CPU_SVC_STACK_ADDR
+	mov	sp, r1
 	mov fp, sp
 
 	@ Disable CPU interrupts
