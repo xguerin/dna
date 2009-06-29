@@ -5,9 +5,9 @@
 
 typedef enum exception_id
 {
-	cpu_trap_data_abort,
-	cpu_trap_prefetch_abort,
-	cpu_trap_undefined
+  cpu_trap_data_abort,
+  cpu_trap_prefetch_abort,
+  cpu_trap_undefined
 }
 exception_id_t;
 

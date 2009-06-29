@@ -3,7 +3,7 @@
 
 int32_t cpu_mp_id (void)
 {
-	register int32_t id = 0;
+  register int32_t id = 0;
 
   __asm__ volatile (
       "mrc p15,0,%0,c0,c0,5"
@@ -11,6 +11,5 @@ int32_t cpu_mp_id (void)
       :
       );
 
-	return id;
+  return id;
 }
-
