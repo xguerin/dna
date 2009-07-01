@@ -52,9 +52,13 @@ bool interrupt_handler_inspector (void * item, void * p_id, void * dummy)
 
     switch (status)
     {
-      case DNA_UNHANDLED_INTERRUPT : return false;
+      case DNA_UNHANDLED_INTERRUPT :
+        return false;
+
       case DNA_INVOKE_SCHEDULER :
-      case DNA_HANDLED_INTERRUPT : return true;
+      case DNA_HANDLED_INTERRUPT :
+        return true;
+
       default : return false;
     }
   }

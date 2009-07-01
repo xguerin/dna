@@ -55,7 +55,7 @@ status_t thread_snooze (bigtime_t value)
 
     check (alarm_error, status == DNA_OK, status);
 
-    self -> status = DNA_THREAD_SLEEP;
+    self -> status = DNA_THREAD_WAIT;
 
     target = scheduler_elect ();
     if (target == NULL) target = scheduler . cpu[current_cpuid] . idle_thread;

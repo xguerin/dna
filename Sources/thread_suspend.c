@@ -52,7 +52,7 @@ status_t thread_suspend (int32_t id)
     if (id == self -> id)
     {
       it_status = cpu_trap_mask_and_backup();
-      self -> status = DNA_THREAD_WAIT;
+      self -> status = DNA_THREAD_SLEEP;
 
       target = scheduler_elect ();
       if (target == NULL) target = scheduler . cpu[current_cpuid] . idle_thread;

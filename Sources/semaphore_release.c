@@ -74,24 +74,27 @@ status_t semaphore_release (int32_t sid, int32_t n_tokens, int32_t flags)
     {
       sem -> tokens += 1;
 
-      lock_acquire (& sem -> waiting_queue . lock);
-      lock_release (& sem -> lock);
-
-      thread = queue_rem (& sem -> waiting_queue);
-
-      lock_release (& sem -> waiting_queue . lock);
-
-      if (thread != NULL) 
+      if (sem -> tokens >= 0)
       {
-        thread -> status = DNA_THREAD_READY;
+        lock_acquire (& sem -> waiting_queue . lock);
+        lock_release (& sem -> lock);
 
-        lock_acquire (& scheduler . xt[thread -> cpu_affinity] . lock);
-        queue_add (& scheduler . xt[thread -> cpu_affinity],
-            & thread -> status_link);
-        lock_release (& scheduler . xt[thread -> cpu_affinity] . lock);
+        thread = queue_rem (& sem -> waiting_queue);
+
+        lock_release (& sem -> waiting_queue . lock);
+
+        if (thread != NULL) 
+        {
+          thread -> status = DNA_THREAD_READY;
+
+          lock_acquire (& scheduler . xt[thread -> cpu_affinity] . lock);
+          queue_add (& scheduler . xt[thread -> cpu_affinity],
+              & thread -> status_link);
+          lock_release (& scheduler . xt[thread -> cpu_affinity] . lock);
+        }
+
+        lock_acquire (& sem -> lock);
       }
-
-      lock_acquire (& sem -> lock);
     }
 
     lock_release (& sem -> lock);
