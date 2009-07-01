@@ -26,14 +26,16 @@ status_t rdv_read (void * handler, void * destination, int64_t offset, int32_t *
 	it_status = cpu_trap_mask_and_backup();
 	lock_acquire (& rdv -> lock);
 		
-	if (! rdv -> setter . ready) {
+	if (! rdv -> setter . ready)
+  {
 		rdv -> getter . ready = true;
 		rdv -> getter . buffer = destination;
 
 		lock_release (& rdv -> lock);
-		semaphore_acquire (rdv -> sem, 0, -1);
+		semaphore_acquire (rdv -> sem, 1, 0, -1);
 	}
-	else {
+	else
+  {
 		rdv -> setter . ready = false;
 		rdv -> getter . ready = false;
 		dna_memcpy ((void *)destination, (void *)rdv -> setter . buffer, *p_count);
