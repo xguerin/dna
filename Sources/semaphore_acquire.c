@@ -26,11 +26,13 @@
  * SYNOPSIS
  */
 
-status_t semaphore_acquire (int32_t sid, int32_t flags, bigtime_t timeout)
+status_t semaphore_acquire (int32_t sid, int32_t n_tokens,
+    int32_t flags, bigtime_t timeout)
 
 /*
  * ARGUMENTS
  * * sid : the ID of the semaphore to acquire.
+ * * n_tokens : the number of tokens to acquire
  * * flags : flags of the operation.
  * * timeout : time, in millisecond, when the acquire process must abort.
  *
@@ -73,7 +75,7 @@ status_t semaphore_acquire (int32_t sid, int32_t flags, bigtime_t timeout)
      * timeout value if there are no tokens left
      */
 
-    sem -> tokens -= 1;
+    sem -> tokens -= n_tokens;
 
     if (sem -> tokens < 0)
     {
