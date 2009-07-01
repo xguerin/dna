@@ -74,18 +74,21 @@ status_t semaphore_release (int32_t sid, int32_t n_tokens, int32_t flags)
     {
       sem -> tokens += 1;
 
-      lock_acquire (& sem -> waiting_queue . lock);
-      lock_release (& sem -> lock);
-
-      thread = queue_rem (& sem -> waiting_queue);
-      lock_release (& sem -> waiting_queue . lock);
-
-      if (thread != NULL) 
+      if (sem -> tokens >= 0)
       {
-        scheduler_dispatch (thread);
-      }
+        lock_acquire (& sem -> waiting_queue . lock);
+        lock_release (& sem -> lock);
 
-      lock_acquire (& sem -> lock);
+        thread = queue_rem (& sem -> waiting_queue);
+        lock_release (& sem -> waiting_queue . lock);
+
+        if (thread != NULL) 
+        {
+          scheduler_dispatch (thread);
+        }
+
+        lock_acquire (& sem -> lock);
+      }
     }
 
     /*
