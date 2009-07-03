@@ -170,6 +170,10 @@ status_t semaphore_acquire (int32_t sid, int32_t n_tokens,
           break;
       }
     }
+    else
+    {
+      sem -> tokens -= n_tokens;
+    }
     
     if (status == DNA_OK)
     {
