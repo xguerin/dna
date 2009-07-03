@@ -49,7 +49,7 @@ status_t semaphore_acquire (int32_t sid, int32_t n_tokens,
 	thread_t self = scheduler . cpu[current_cpuid] . current_thread;
 	thread_t thread = NULL;
 	semaphore_t sem = NULL;
-	int32_t alarm;
+	int32_t alarm, rem_tokens;
 	interrupt_status_t it_status = 0;
 	status_t status = DNA_OK;
 
@@ -71,17 +71,27 @@ status_t semaphore_acquire (int32_t sid, int32_t n_tokens,
     lock_release (& sem_pool . lock);
 
     /*
-     * Remove one token, and decide what to do according to the
-     * timeout value if there are no tokens left
+     * Remove the necessary tokens
      */
 
-    sem -> tokens -= n_tokens;
+    rem_tokens = sem -> tokens - n_tokens;
 
-    if (sem -> tokens < 0)
+    /*
+     * And decide what to do next depending on the result
+     */
+
+    if (rem_tokens < 0)
     {
+      sem -> tokens = 0;
+
       switch (timeout)
       {
-        case -1 : /* Just wait */
+        /*
+         * First choice, we just wait
+         */
+
+        case -1 :
+          self -> sem_tokens = -1 * rem_tokens;
           self -> status = DNA_THREAD_WAIT;
 
           lock_acquire (& sem -> waiting_queue . lock);
@@ -104,11 +114,20 @@ status_t semaphore_acquire (int32_t sid, int32_t n_tokens,
 
           break;
 
+        /*
+         * Second choice, it was just a check, so 
+         * we return DNA_WOULD_BLOCK
+         */
+
         case 0 :
-          sem -> tokens += 1;
+          sem -> tokens += n_tokens;
           status = DNA_WOULD_BLOCK;
 
           break;
+
+        /*
+         * Last choice, we set a timer
+         */
 
         default :
           status = time_set_alarm (timeout, DNA_RELATIVE_ALARM
@@ -116,6 +135,7 @@ status_t semaphore_acquire (int32_t sid, int32_t n_tokens,
 
           check (invalid_alarm, status == DNA_OK, status);
 
+          self -> sem_tokens = -1 * rem_tokens;
           self -> status = DNA_THREAD_WAIT;
 
           lock_acquire (& sem -> waiting_queue . lock);
@@ -140,7 +160,7 @@ status_t semaphore_acquire (int32_t sid, int32_t n_tokens,
           {
             queue_extract (& sem -> waiting_queue, & self -> status_link);
             status = DNA_TIMED_OUT;
-            sem -> tokens += 1;
+            sem -> tokens += n_tokens;
           }
           else
           {

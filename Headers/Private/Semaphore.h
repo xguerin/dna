@@ -38,7 +38,6 @@ typedef struct _semaphore
 {
 	int32_t id;
 	char name[DNA_NAME_LENGTH];
-	int32_t tokens_max;
 	int32_t tokens;
 	spinlock_t lock;
 	team_t team;

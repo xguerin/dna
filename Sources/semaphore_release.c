@@ -66,30 +66,42 @@ status_t semaphore_release (int32_t sid, int32_t n_tokens, int32_t flags)
     lock_release (& sem_pool . lock);
 
     /*
-     * Remove the desired number of tokens, and
-     * wake up waiting threads accordkingly
+     * Decide what to do according to the number
+     * of tokens required by a potential waiting thread
      */
 
-    for (int32_t i = 0; i < n_tokens; i++)
+    while (n_tokens != 0)
     {
-      sem -> tokens += 1;
+      thread = queue_rem (& sem -> waiting_queue);
 
-      if (sem -> tokens >= 0)
+      if (thread != NULL)
       {
-        lock_acquire (& sem -> waiting_queue . lock);
-        lock_release (& sem -> lock);
-
-        thread = queue_rem (& sem -> waiting_queue);
-        lock_release (& sem -> waiting_queue . lock);
-
-        if (thread != NULL) 
+        if (thread -> sem_tokens <= n_tokens)
         {
+          n_tokens -= thread -> sem_tokens;
+          thread -> sem_tokens = 0;
+
           scheduler_dispatch (thread);
         }
+        else
+        {
+          thread -> sem_tokens -= n_tokens;
+          n_tokens = 0;
 
-        lock_acquire (& sem -> lock);
+          queue_pushback (& sem -> waiting_queue, & thread -> status_link);
+        }
+      }
+      else
+      {
+        break;
       }
     }
+
+    /*
+     * Add the remaining number of tokens
+     */
+
+    sem -> tokens += n_tokens;
 
     /*
      * We release the sem's lock

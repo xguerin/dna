@@ -108,8 +108,9 @@ typedef struct _thread
 	int32_t cpu_id;
 	int32_t cpu_affinity;
 
-	spinlock_t lock;
 	team_t team;
+	spinlock_t lock;
+  int32_t sem_tokens;
 
 	queue_item_t status_link;
 	queue_item_t team_link;
