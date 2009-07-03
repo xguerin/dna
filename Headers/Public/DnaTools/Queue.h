@@ -95,6 +95,8 @@ extern status_t queue_add (queue_t * queue, queue_item_t * item);
 
 extern void * queue_rem (queue_t * queue);
 
+extern status_t queue_pushback (queue_t * queue, queue_item_t * item);
+
 extern void queue_extract (queue_t * queue, queue_item_t * item);
 
 extern void * queue_lookup (queue_t * queue,

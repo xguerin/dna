@@ -1,7 +1,4 @@
-/****h* DnaInterface/Configuration
- * SUMMARY
- * Configuration.
- ****
+/*
  * Copyright (C) 2007 TIMA Laboratory
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,16 +13,39 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- ****/
+ */
 
-#ifndef DNA_LIBRARY_CONFIGURATION_H
-#define DNA_LIBRARY_CONFIGURATION_H
+#include <DnaTools/DnaTools.h>
 
-#define DNA_NAME_LENGTH 					    		32
-#define DNA_FILENAME_LENGTH 			       256
-#define DNA_PATH_LENGTH 				    		1024
-#define DNA_MAX_CPU							    			32
-#define DNA_MAX_FILE						    		  32
-#define DNA_MAX_SEM								    	  32
+status_t queue_pushback (queue_t * queue, queue_item_t * item)
+{
+  watch (status_t)
+  {
+    check (queue_error, item -> next == NULL, DNA_ERROR);
 
-#endif
+    if (queue -> status == 0)
+    {
+      queue -> head = item;
+      queue -> tail = item;
+    }
+    else
+    {
+      item -> next = queue -> head;
+      queue -> head = item;
+    }
+
+    queue -> status += 1;
+
+    return DNA_OK;
+  }
+
+  rescue (queue_error)
+  {
+    log (1, "Q(0x%x): status %d, item 0x%x",
+        queue, queue -> status, item);
+
+    leave;
+  }
+
+}
+
