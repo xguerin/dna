@@ -37,34 +37,34 @@ thread_t scheduler_elect (void)
  */
 
 {
-	thread_t target = NULL;
-	int32_t current_cpuid = cpu_mp_id();
+  thread_t target = NULL;
+  int32_t current_cpuid = cpu_mp_id();
 
-	/*
-	 * First, we look into the local thread list.
-	 */
+  /*
+   * First, we look into the local thread list.
+   */
 
   if (scheduler . xt[current_cpuid] . status != 0)
   {
-	  lock_acquire (& scheduler . xt[current_cpuid] . lock);
-	  target = queue_rem (& scheduler . xt[current_cpuid]);
-	  lock_release (& scheduler . xt[current_cpuid] . lock);
+    lock_acquire (& scheduler . xt[current_cpuid] . lock);
+    target = queue_rem (& scheduler . xt[current_cpuid]);
+    lock_release (& scheduler . xt[current_cpuid] . lock);
 
-	  if (target != NULL) return target;
+    if (target != NULL) return target;
   }
 
-	/*
-	 * If nothing is available, we look into the global thread list.
-	 */
+  /*
+   * If nothing is available, we look into the global thread list.
+   */
 
   if (scheduler . xt[scheduler . xt_index] . status != 0)
   {
-	  lock_acquire (& scheduler . xt[scheduler . xt_index] . lock);
-	  target = queue_rem (& scheduler . xt[scheduler . xt_index]);
-	  lock_release (& scheduler . xt[scheduler . xt_index] . lock);
+    lock_acquire (& scheduler . xt[scheduler . xt_index] . lock);
+    target = queue_rem (& scheduler . xt[scheduler . xt_index]);
+    lock_release (& scheduler . xt[scheduler . xt_index] . lock);
   }
 
-	return target;
+  return target;
 }
 
 /*

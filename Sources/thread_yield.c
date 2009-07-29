@@ -35,17 +35,17 @@ status_t thread_yield (void)
  */
 
 {
-	thread_t self = scheduler . cpu[cpu_mp_id()] . current_thread;
-	thread_t thread = NULL;
-	interrupt_status_t it_status = 0;
+  thread_t self = scheduler . cpu[cpu_mp_id()] . current_thread;
+  thread_t thread = NULL;
+  interrupt_status_t it_status = 0;
 
-	it_status = cpu_trap_mask_and_backup();
+  it_status = cpu_trap_mask_and_backup();
 
-	if ((thread = scheduler_elect ()) != NULL)
+  if ((thread = scheduler_elect ()) != NULL)
   {
-		self -> status = DNA_THREAD_READY;
+    self -> status = DNA_THREAD_READY;
 
-		if (self -> type != DNA_IDLE_THREAD)
+    if (self -> type != DNA_IDLE_THREAD)
     {
       lock_acquire (& scheduler . xt[self -> cpu_affinity] . lock);
       scheduler_switch (thread, & scheduler . xt[self -> cpu_affinity]);
@@ -54,10 +54,10 @@ status_t thread_yield (void)
     {
       scheduler_switch (thread, NULL);
     }
-	}
+  }
 
-	cpu_trap_restore(it_status);
-	return DNA_OK;
+  cpu_trap_restore(it_status);
+  return DNA_OK;
 }
 
 /*

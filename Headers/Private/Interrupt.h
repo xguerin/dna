@@ -36,17 +36,17 @@ enum
 
 typedef struct _isr
 {
-	interrupt_handler_t handler;
-	queue_item_t link;
+  interrupt_handler_t handler;
+  queue_item_t link;
 }
 * isr_t;
 
 typedef struct _it_manager
 {
-	spinlock_t lock;
+  spinlock_t lock;
 
-	int32_t counter[cpu_n_it];
-	queue_t isr_list[cpu_n_it];
+  int32_t counter[cpu_n_it];
+  queue_t isr_list[cpu_n_it];
 
   bool has_ipi;
   ipi_manager_t ipi_manager;

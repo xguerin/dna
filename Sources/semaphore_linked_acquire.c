@@ -41,12 +41,12 @@ status_t semaphore_linked_acquire (int32_t sid, int32_t lsid)
  */
 
 {
-	uint32_t current_cpuid = cpu_mp_id();
-	thread_t self = scheduler . cpu[current_cpuid] . current_thread;
-	thread_t thread = NULL;
-	semaphore_t sem = NULL, lsem = NULL;
-	int32_t index = 0;
-	interrupt_status_t it_status = 0;
+  uint32_t current_cpuid = cpu_mp_id();
+  thread_t self = scheduler . cpu[current_cpuid] . current_thread;
+  thread_t thread = NULL;
+  semaphore_t sem = NULL, lsem = NULL;
+  int32_t index = 0;
+  interrupt_status_t it_status = 0;
 
   watch (status_t)
   {

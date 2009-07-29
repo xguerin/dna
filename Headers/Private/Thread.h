@@ -40,11 +40,11 @@
 
 typedef enum _thread_status
 {
-	DNA_THREAD_SLEEP		= 0xBAFF,
-	DNA_THREAD_READY		= 0xFACE,
-	DNA_THREAD_RUNNING	= 0xBEEF,
-	DNA_THREAD_WAIT			= 0xBADD,
-	DNA_THREAD_ZOMBIE		= 0xDEAD
+  DNA_THREAD_SLEEP    = 0xBAFF,
+  DNA_THREAD_READY    = 0xFACE,
+  DNA_THREAD_RUNNING  = 0xBEEF,
+  DNA_THREAD_WAIT      = 0xBADD,
+  DNA_THREAD_ZOMBIE    = 0xDEAD
 }
 thread_status_t;
 
@@ -60,9 +60,9 @@ thread_status_t;
 
 typedef enum thread_type
 {
-	DNA_NORMAL_THREAD		= 0x0001,
-	DNA_IDLE_THREAD			= 0x0002,
-	DNA_MAIN_THREAD			= 0x0004
+  DNA_NORMAL_THREAD    = 0x0001,
+  DNA_IDLE_THREAD      = 0x0002,
+  DNA_MAIN_THREAD      = 0x0004
 }
 thread_type_t;
 
@@ -76,13 +76,13 @@ thread_type_t;
 
 typedef struct _thread_signature
 {
-	thread_handler_t handler;
-	void * arguments;
+  thread_handler_t handler;
+  void * arguments;
 
-	void * stack_base;
-	int32_t stack_size;
+  void * stack_base;
+  int32_t stack_size;
 
-	int32_t return_value;
+  int32_t return_value;
 }
 thread_signature_t;
 
@@ -98,41 +98,41 @@ thread_signature_t;
 
 typedef struct _thread
 {
-	int32_t id;
-	char name[DNA_NAME_LENGTH];
+  int32_t id;
+  char name[DNA_NAME_LENGTH];
 
-	thread_type_t type;
-	thread_status_t status;
-	int32_t stopwatch;
-	int32_t priority;
-	int32_t cpu_id;
-	int32_t cpu_affinity;
+  thread_type_t type;
+  thread_status_t status;
+  int32_t stopwatch;
+  int32_t priority;
+  int32_t cpu_id;
+  int32_t cpu_affinity;
 
-	team_t team;
-	spinlock_t lock;
+  team_t team;
+  spinlock_t lock;
   int32_t sem_tokens;
 
-	queue_item_t status_link;
-	queue_item_t team_link;
-	queue_item_t sched_link;
-	queue_t wait;
+  queue_item_t status_link;
+  queue_item_t team_link;
+  queue_item_t sched_link;
+  queue_t wait;
 
-	struct _kernel_time
- 	{
-		bigtime_t start;
-		bigtime_t elapsed;
-	}
- 	kernel_time;
+  struct _kernel_time
+   {
+    bigtime_t start;
+    bigtime_t elapsed;
+  }
+   kernel_time;
 
-	struct _user_time
- 	{
-		bigtime_t start;
-		bigtime_t elapsed;
-	}
- 	user_time;
+  struct _user_time
+   {
+    bigtime_t start;
+    bigtime_t elapsed;
+  }
+   user_time;
 
   thread_signature_t signature;
-	cpu_context_t ctx;
+  cpu_context_t ctx;
 }
 * thread_t;
 

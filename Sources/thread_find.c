@@ -40,8 +40,8 @@ status_t thread_find (char * name, int32_t * tid)
  */
 
 {
-	thread_t thread = NULL;
-	interrupt_status_t it_status = 0;
+  thread_t thread = NULL;
+  interrupt_status_t it_status = 0;
 
   watch (status_t)
   {

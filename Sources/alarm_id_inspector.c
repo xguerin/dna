@@ -40,9 +40,9 @@ bool alarm_id_inspector (void * item, void * p_id, void * dummy)
  */
 
 {
-	alarm_t alarm = item;
-	int32_t * id = p_id;
-	
+  alarm_t alarm = item;
+  int32_t * id = p_id;
+  
   watch (bool)
   {
     ensure (alarm != NULL && id != NULL, false);

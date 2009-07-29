@@ -33,7 +33,7 @@ status_t time_reset_alarm (int32_t alarm)
 
 {
 
-	return DNA_NOT_IMPLEMENTED;
+  return DNA_NOT_IMPLEMENTED;
 }
 
 /*

@@ -45,7 +45,7 @@ status_t time_set_alarm (bigtime_t quanta, int32_t mode,
 {
   alarm_t new_alarm = NULL, old_alarm = NULL;
   bigtime_t current_time = 0;
-	interrupt_status_t status;
+  interrupt_status_t status;
   
   watch (status_t)
   {

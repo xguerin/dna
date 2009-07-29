@@ -37,17 +37,17 @@ void thread_exit (int32_t value)
  */
 
 {
-	uint32_t current_cpuid = cpu_mp_id();
-	thread_t self = scheduler . cpu[current_cpuid] . current_thread;
-	thread_t target = NULL, p = NULL;
-	interrupt_status_t it_status = 0;
+  uint32_t current_cpuid = cpu_mp_id();
+  thread_t self = scheduler . cpu[current_cpuid] . current_thread;
+  thread_t target = NULL, p = NULL;
+  interrupt_status_t it_status = 0;
 
   /*
    * First, we lock ourselves
    */
 
-	it_status = cpu_trap_mask_and_backup();
-	lock_acquire (& self -> lock);
+  it_status = cpu_trap_mask_and_backup();
+  lock_acquire (& self -> lock);
 
   /*
    * And we place the return value in our structure
@@ -62,23 +62,23 @@ void thread_exit (int32_t value)
   self -> status = DNA_THREAD_ZOMBIE;
 
   lock_acquire (& self -> wait . lock);
-	lock_release (& self -> lock);
+  lock_release (& self -> lock);
 
   /*
    * Then we can wake up the waiting threads
    */
 
-	while ((p = queue_rem (& self -> wait)) != NULL)
+  while ((p = queue_rem (& self -> wait)) != NULL)
   {
-		p -> status = DNA_THREAD_READY;
+    p -> status = DNA_THREAD_READY;
 
-		lock_acquire (& scheduler . xt[p -> cpu_affinity] . lock);
+    lock_acquire (& scheduler . xt[p -> cpu_affinity] . lock);
 
-		queue_add (& scheduler . xt[p -> cpu_affinity],
-				& p -> status_link);
+    queue_add (& scheduler . xt[p -> cpu_affinity],
+        & p -> status_link);
 
-		lock_release (& scheduler . xt[p -> cpu_affinity] . lock);
-	}
+    lock_release (& scheduler . xt[p -> cpu_affinity] . lock);
+  }
 
   lock_release (& self -> wait . lock);
 

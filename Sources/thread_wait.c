@@ -41,10 +41,10 @@ status_t thread_wait (int32_t id, int32_t * value)
  */
 
 {
-	uint32_t current_cpuid = cpu_mp_id();
-	thread_t self = scheduler . cpu[current_cpuid] . current_thread;
-	thread_t thread = NULL, target = NULL;
-	interrupt_status_t it_status = 0;
+  uint32_t current_cpuid = cpu_mp_id();
+  thread_t self = scheduler . cpu[current_cpuid] . current_thread;
+  thread_t thread = NULL, target = NULL;
+  interrupt_status_t it_status = 0;
 
   watch (status_t)
   {

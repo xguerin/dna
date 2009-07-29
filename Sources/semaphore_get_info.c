@@ -42,9 +42,9 @@ status_t semaphore_get_info (int32_t sid, semaphore_info_t * info)
  */
 
 {
-	semaphore_t sem = NULL;
-	interrupt_status_t it_status = 0;
-	status_t status = DNA_OK;
+  semaphore_t sem = NULL;
+  interrupt_status_t it_status = 0;
+  status_t status = DNA_OK;
 
   watch (status_t)
   {

@@ -41,7 +41,7 @@ status_t interrupt_detach (interrupt_id_t id, interrupt_handler_t handler)
 
 {
 
-	return DNA_NOT_IMPLEMENTED;
+  return DNA_NOT_IMPLEMENTED;
 }
 
 /*

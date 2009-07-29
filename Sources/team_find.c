@@ -40,8 +40,8 @@ status_t team_find (char * name, int32_t * tid)
  */
 
 {
-	team_t team = NULL;
-	interrupt_status_t it_status = 0;
+  team_t team = NULL;
+  interrupt_status_t it_status = 0;
 
   watch (status_t)
   {

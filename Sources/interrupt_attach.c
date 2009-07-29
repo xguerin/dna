@@ -44,8 +44,8 @@ status_t interrupt_attach (interrupt_id_t id, int32_t mode,
  */
 
 {
-	interrupt_status_t it_status = 0;
-	isr_t isr = NULL;
+  interrupt_status_t it_status = 0;
+  isr_t isr = NULL;
 
   watch (status_t)
   {

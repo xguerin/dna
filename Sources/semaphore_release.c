@@ -42,10 +42,10 @@ status_t semaphore_release (int32_t sid, int32_t n_tokens, int32_t flags)
  */
 
 {
-	thread_t thread = NULL;
-	semaphore_t sem = NULL;
-	interrupt_status_t it_status = 0;
-	status_t status = DNA_OK;
+  thread_t thread = NULL;
+  semaphore_t sem = NULL;
+  interrupt_status_t it_status = 0;
+  status_t status = DNA_OK;
 
   watch (status_t)
   {

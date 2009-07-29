@@ -40,8 +40,8 @@ bool team_id_inspector (void * item, void * p_id, void * dummy)
  */
 
 {
-	team_t t = item;
-	int32_t * tid = p_id;
+  team_t t = item;
+  int32_t * tid = p_id;
 
   watch (bool)
   {

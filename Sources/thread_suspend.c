@@ -40,8 +40,8 @@ status_t thread_suspend (int32_t id)
  */
 
 {
-	uint32_t current_cpuid = cpu_mp_id();
-	thread_t self = scheduler . cpu[current_cpuid] . current_thread;
+  uint32_t current_cpuid = cpu_mp_id();
+  thread_t self = scheduler . cpu[current_cpuid] . current_thread;
   thread_t target = NULL;
   interrupt_status_t it_status = 0;
 

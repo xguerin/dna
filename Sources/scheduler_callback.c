@@ -35,7 +35,7 @@ status_t scheduler_callback (void * data)
  */
 
 {
-	return DNA_INVOKE_SCHEDULER;
+  return DNA_INVOKE_SCHEDULER;
 }
 
 /*

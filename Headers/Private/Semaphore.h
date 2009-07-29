@@ -36,13 +36,13 @@
 
 typedef struct _semaphore
 {
-	int32_t id;
-	char name[DNA_NAME_LENGTH];
-	int32_t tokens;
-	spinlock_t lock;
-	team_t team;
-	thread_t latest_holder;
-	queue_t waiting_queue;
+  int32_t id;
+  char name[DNA_NAME_LENGTH];
+  int32_t tokens;
+  spinlock_t lock;
+  team_t team;
+  thread_t latest_holder;
+  queue_t waiting_queue;
 } * semaphore_t;
 
 /*
@@ -57,8 +57,8 @@ typedef struct _semaphore
 
 typedef struct _sem_pool
 {
-	spinlock_t lock;
-	semaphore_t * semaphore;
+  spinlock_t lock;
+  semaphore_t * semaphore;
 }
 sem_pool_t;
 

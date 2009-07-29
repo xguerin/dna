@@ -36,9 +36,9 @@
 
 typedef enum _cpu_status
 {
-	DNA_CPU_READY		    = 0xFACE,
-	DNA_CPU_RUNNING	    = 0xBEEF,
-	DNA_CPU_DISABLED		= 0xDEAD
+  DNA_CPU_READY        = 0xFACE,
+  DNA_CPU_RUNNING      = 0xBEEF,
+  DNA_CPU_DISABLED    = 0xDEAD
 }
 cpu_status_t;
 
@@ -59,9 +59,9 @@ typedef struct _cpu
   cpu_status_t status;
   spinlock_t lock;
 
-	team_t current_team;
-	thread_t current_thread;
-	thread_t idle_thread;
+  team_t current_team;
+  thread_t current_thread;
+  thread_t idle_thread;
   queue_item_t link;
 }
 cpu_t;
@@ -78,10 +78,10 @@ cpu_t;
 
 typedef struct _scheduler
 {
-	int32_t xt_index;
-	queue_t * xt;
+  int32_t xt_index;
+  queue_t * xt;
 
-	cpu_t * cpu;
+  cpu_t * cpu;
   queue_t cpu_pool;
 }
 scheduler_t;
