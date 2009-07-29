@@ -20,7 +20,7 @@
 #include <DnaTools/DnaTools.h>
 
 status_t rdv_open (char * name, int32_t mode, void ** data) {
-	channel_rdv_t * rdv = NULL;
+  channel_rdv_t * rdv = NULL;
   status_t status = DNA_OK;
 
   watch (status_t)

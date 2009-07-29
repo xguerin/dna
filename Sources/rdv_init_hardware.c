@@ -20,6 +20,6 @@
 
 status_t rdv_init_hardware (void) {
 
-	return DNA_OK;
+  return DNA_OK;
 }
 

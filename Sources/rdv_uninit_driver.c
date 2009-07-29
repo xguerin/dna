@@ -20,11 +20,11 @@
 
 void rdv_uninit_driver (void)
 {
-	for (int32_t i = 0; i < CHANNEL_RDV_NDEV; i++)
+  for (int32_t i = 0; i < CHANNEL_RDV_NDEV; i++)
   {
     kernel_free ((void *)rdv_devices[i]);
   }
 
-	kernel_free (rdv_devices);
+  kernel_free (rdv_devices);
 }
 

@@ -19,6 +19,6 @@
 
 const char ** rdv_publish_devices (void) {
 
-	return rdv_devices;
+  return rdv_devices;
 }
 

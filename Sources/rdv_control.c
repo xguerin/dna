@@ -19,6 +19,6 @@
 
 status_t rdv_control (void * handler, int32_t operation, void * data, int32_t * p_res) {
 
-	return -1;
+  return -1;
 }
 
