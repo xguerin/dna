@@ -3,8 +3,8 @@
 
 int pthread_attr_setschedpolicy(pthread_attr_t *attr, int policy)
 {
-	ASSERT_RETURN(!attr,EINVAL);
+  ASSERT_RETURN(!attr,EINVAL);
 
-	attr->schedpolicy = policy;
-	return 0;
+  attr->schedpolicy = policy;
+  return 0;
 }

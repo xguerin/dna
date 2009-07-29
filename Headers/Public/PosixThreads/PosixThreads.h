@@ -25,8 +25,8 @@ typedef void *(*pthread_func_t)(void *);
 typedef volatile unsigned int pthread_spinlock_t;
 
 typedef struct pthread_bootstrap {
-	thread_handler_t handler;
-	void * argument;
+  thread_handler_t handler;
+  void * argument;
 } * pthread_bootstrap_t;
 
 enum { PTHREAD_CREATE_JOINABLE, PTHREAD_CREATE_DETACHED };
@@ -55,17 +55,17 @@ typedef struct sched_param {
  *********/
 
 typedef struct pthread_mutex {
-	int32_t flags;
-	int32_t status;
-	int32_t semaphore;
+  int32_t flags;
+  int32_t status;
+  int32_t semaphore;
 } pthread_mutex_t;
 
 typedef struct pthread_mutexattr {
 } pthread_mutexattr_t;
 
 enum {
-	MUTEX_UNLOCKED,
-	MUTEX_LOCKED
+  MUTEX_UNLOCKED,
+  MUTEX_LOCKED
 };
 
 /**************
@@ -73,7 +73,7 @@ enum {
  **************/
 
 typedef struct pthread_cond {
-	int32_t semaphore;
+  int32_t semaphore;
   int32_t count;
 } pthread_cond_t;
 
@@ -85,9 +85,9 @@ typedef struct pthread_condattr {
  ***********/
 
 typedef volatile struct pthread_barrier {
-	uint32_t threshold;
-	uint32_t count;
-	uint32_t sem;
+  uint32_t threshold;
+  uint32_t count;
+  uint32_t sem;
 } pthread_barrier_t;
 
 typedef struct pthread_barrierattr {
@@ -98,33 +98,33 @@ typedef struct pthread_barrierattr {
  ***********/
 
 typedef struct pthread_attr {
-	void *stackaddr;
-	size_t stacksize;
-	uint32_t detachstate;
-	uint32_t schedinherited;
-	uint32_t schedpolicy;
-	uint32_t procid;
+  void *stackaddr;
+  size_t stacksize;
+  uint32_t detachstate;
+  uint32_t schedinherited;
+  uint32_t schedpolicy;
+  uint32_t procid;
   sched_param_t schedparam;
-	char * name;
+  char * name;
 } pthread_attr_t;
 
 typedef struct pthread {
-	struct pthread  *next;
-	struct pthread  *prev;
+  struct pthread  *next;
+  struct pthread  *prev;
 
-	pthread_attr_t *attributs;                /* Attributs of the thread */
+  pthread_attr_t *attributs;                /* Attributs of the thread */
 
-	int32_t tid;
+  int32_t tid;
 
-	struct pthread *father;                   /* Forking thread */
-	uint32_t children;                 /* Number of forked threads */
+  struct pthread *father;                   /* Forking thread */
+  uint32_t children;                 /* Number of forked threads */
 
-	uint8_t cancel_type;            /* type */
-	uint8_t cancel_state;           /* state */
-	bool cancel_bool;            /* boolean */
-	uint8_t cancel_async;           /* delete asap */
+  uint8_t cancel_type;            /* type */
+  uint8_t cancel_state;           /* state */
+  bool cancel_bool;            /* boolean */
+  uint8_t cancel_async;           /* delete asap */
 
-	int32_t errorno;
+  int32_t errorno;
 } *pthread_t;
 
 /***********

@@ -3,8 +3,8 @@
 
 int pthread_attr_getinheritsched(const pthread_attr_t *attr, int *h)
 {
-	ASSERT_RETURN(!attr || !h,EINVAL);
+  ASSERT_RETURN(!attr || !h,EINVAL);
 
-	*h = attr -> schedinherited;
-	return 0;
+  *h = attr -> schedinherited;
+  return 0;
 }
