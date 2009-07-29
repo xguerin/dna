@@ -45,12 +45,12 @@ status_t vfs_write (int16_t file_id, void * data,
  */
 
 {
-	file_t file = NULL;
-	status_t status = DNA_OK;
-	int32_t n_data = count;
+  file_t file = NULL;
+  status_t status = DNA_OK;
+  int32_t n_data = count;
   fdarray_t fdarray = NULL;
   int32_t current_team = 0;
-	interrupt_status_t it_status = 0;
+  interrupt_status_t it_status = 0;
 
   watch (status_t)
   {

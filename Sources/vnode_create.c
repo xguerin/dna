@@ -40,9 +40,9 @@ status_t vnode_create (int64_t vnid, int32_t vid, void * data)
  */
 
 {
-	vnode_t vnode = NULL;
-	volume_t volume = NULL;
-	interrupt_status_t it_status = 0;
+  vnode_t vnode = NULL;
+  volume_t volume = NULL;
+  interrupt_status_t it_status = 0;
 
   watch (status_t)
   {

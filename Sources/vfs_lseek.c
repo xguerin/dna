@@ -45,10 +45,10 @@ status_t vfs_lseek (int16_t fd, int64_t offset,
  */
 
 {
-	file_t file = NULL;
-	fdarray_t fdarray = NULL;
+  file_t file = NULL;
+  fdarray_t fdarray = NULL;
   int32_t current_team = 0;
-	interrupt_status_t it_status = 0;
+  interrupt_status_t it_status = 0;
   status_t status = DNA_OK;
 
   watch (status_t)

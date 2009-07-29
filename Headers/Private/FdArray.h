@@ -32,11 +32,11 @@
 
 typedef struct _file
 {
-	vnode_t vnode;
-	spinlock_t lock;
-	int32_t mode;
-	int64_t offset;
-	void * data;
+  vnode_t vnode;
+  spinlock_t lock;
+  int32_t mode;
+  int64_t offset;
+  void * data;
 }
 * file_t;
 
@@ -55,8 +55,8 @@ typedef struct _fdarray
   queue_item_t link;
 
   int32_t associated_id;
-	spinlock_t lock;
-	file_t fds[DNA_MAX_FILE];
+  spinlock_t lock;
+  file_t fds[DNA_MAX_FILE];
 }
 * fdarray_t;
 
@@ -72,8 +72,8 @@ typedef struct _fdarray
 
 typedef struct _fdarray_manager
 {
-	spinlock_t lock;
-	queue_t fdarray_list;
+  spinlock_t lock;
+  queue_t fdarray_list;
 }
 fdarray_manager_t;
 

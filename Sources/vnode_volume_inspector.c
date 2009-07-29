@@ -42,8 +42,8 @@ bool vnode_volume_inspector (void * node, void * p_volume, void * dummy)
  */
 
 {
-	vnode_t vnode = node;
-	volume_t volume = p_volume;
+  vnode_t vnode = node;
+  volume_t volume = p_volume;
 
   watch (bool)
   {

@@ -45,13 +45,13 @@ status_t vnode_put (int32_t vid, int64_t vnid)
  */
 
 {
-	vnode_t vnode = NULL;
-	volume_t volume = NULL;
-	void * data = NULL;
-	bool destroy = false;
+  vnode_t vnode = NULL;
+  volume_t volume = NULL;
+  void * data = NULL;
+  bool destroy = false;
 
-	status_t status = DNA_OK;
-	interrupt_status_t it_status = 0;
+  status_t status = DNA_OK;
+  interrupt_status_t it_status = 0;
 
   watch (status_t)
   {

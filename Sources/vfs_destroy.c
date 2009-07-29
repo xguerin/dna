@@ -37,7 +37,7 @@ status_t vfs_destroy (void)
 
 {
 
-	return DNA_NOT_IMPLEMENTED;
+  return DNA_NOT_IMPLEMENTED;
 }
 
 /*

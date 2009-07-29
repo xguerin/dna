@@ -45,10 +45,10 @@ status_t vnode_get (int32_t vid, int64_t vnid, void ** data)
  */
 
 {
-	vnode_t vnode = NULL;
-	volume_t volume = NULL;
-	status_t status = DNA_OK;
-	interrupt_status_t it_status = 0;
+  vnode_t vnode = NULL;
+  volume_t volume = NULL;
+  status_t status = DNA_OK;
+  interrupt_status_t it_status = 0;
 
   watch (status_t)
   {

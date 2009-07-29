@@ -44,13 +44,13 @@ status_t vnode_walk (char * restrict path, volume_t * p_volume,
  */
 
 {
-	int64_t vnid = -1, new_vnid = -1;
-	void * data = NULL;
-	volume_t volume = NULL, new_volume = NULL;
-	char token[DNA_FILENAME_LENGTH], buffer[DNA_PATH_LENGTH];
-	char * path_ptr = buffer;
-	interrupt_status_t it_status = 0;
-	status_t status = DNA_OK;
+  int64_t vnid = -1, new_vnid = -1;
+  void * data = NULL;
+  volume_t volume = NULL, new_volume = NULL;
+  char token[DNA_FILENAME_LENGTH], buffer[DNA_PATH_LENGTH];
+  char * path_ptr = buffer;
+  interrupt_status_t it_status = 0;
+  status_t status = DNA_OK;
 
   watch (status_t)
   {

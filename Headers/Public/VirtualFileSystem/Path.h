@@ -21,7 +21,7 @@
 #ifndef DNA_VFS_PATH_PUBLIC_H
 #define DNA_VFS_PATH_PUBLIC_H
 
-#define DNA_NAME_TOO_LONG		0x01800000
+#define DNA_NAME_TOO_LONG    0x01800000
 
 #endif
 

@@ -42,8 +42,8 @@ bool volume_id_inspector (void * ns, void * p_id, void * dummy)
  */
 
 {
-	volume_t nspace = ns;
-	int32_t * nid = p_id;
+  volume_t nspace = ns;
+  int32_t * nid = p_id;
 
   watch (bool)
   {

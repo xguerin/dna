@@ -37,12 +37,12 @@ status_t vfs_umount (char * restrict target)
  */
 
 {
-	int64_t host_vnid = -1;
-	volume_t host_volume = NULL, volume = NULL;
-	vnode_t vnode = NULL;
-	void * node_data = NULL;
-	status_t status = DNA_OK;
-	interrupt_status_t it_status = 0;
+  int64_t host_vnid = -1;
+  volume_t host_volume = NULL, volume = NULL;
+  vnode_t vnode = NULL;
+  void * node_data = NULL;
+  status_t status = DNA_OK;
+  interrupt_status_t it_status = 0;
 
   watch (status_t)
   {

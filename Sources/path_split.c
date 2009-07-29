@@ -37,8 +37,8 @@ status_t path_split (char * restrict path, char * restrict token)
  */
 
 {
-	char * p_start = NULL, * p_end = NULL;
-	char * p_ptr, * t_ptr = NULL;
+  char * p_start = NULL, * p_end = NULL;
+  char * p_ptr, * t_ptr = NULL;
 
   watch (status_t)
   {

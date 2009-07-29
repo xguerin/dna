@@ -44,12 +44,12 @@ status_t vfs_readdir (int16_t file_id, directory_entry_t * entry_array,
  */
 
 {
-	file_t file = NULL;
-	int32_t n_data = count;
-	status_t status = DNA_OK;
-	fdarray_t fdarray = NULL;
+  file_t file = NULL;
+  int32_t n_data = count;
+  status_t status = DNA_OK;
+  fdarray_t fdarray = NULL;
   int32_t current_team = 0;
-	interrupt_status_t it_status = 0;
+  interrupt_status_t it_status = 0;
 
   watch (status_t);
   {

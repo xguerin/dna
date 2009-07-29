@@ -42,9 +42,9 @@ bool vnode_id_inspector (void * node, void * p_vnid, void * p_vid)
  */
 
 {
-	vnode_t vnode = node;
-	int64_t * vnid = p_vnid;
-	int32_t * vid = p_vid;
+  vnode_t vnode = node;
+  int64_t * vnid = p_vnid;
+  int32_t * vid = p_vid;
 
   watch (bool)
   {

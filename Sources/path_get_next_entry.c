@@ -41,8 +41,8 @@ status_t path_get_next_entry (char ** path, char * token)
  */
 
 {
-	char * p_start = *path, * p_end = *path;
-	int32_t token_size = 0, i = 0;
+  char * p_start = *path, * p_end = *path;
+  int32_t token_size = 0, i = 0;
 
   watch (status_t)
   {
