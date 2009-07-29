@@ -19,23 +19,23 @@
 #include <DnaTools/DnaTools.h>
 
 static filesystem_cmd_t rootfs_cmd = {
-	rootfs_walk,
-	rootfs_mount,
-	rootfs_read_vnode,
-	rootfs_write_vnode,
-	NULL,
-	rootfs_open,
-	rootfs_close,
-	rootfs_create,
-	rootfs_read,
-	rootfs_write,
-	rootfs_mkdir,
-	rootfs_readdir,
-	NULL
+  rootfs_walk,
+  rootfs_mount,
+  rootfs_read_vnode,
+  rootfs_write_vnode,
+  NULL,
+  rootfs_open,
+  rootfs_close,
+  rootfs_create,
+  rootfs_read,
+  rootfs_write,
+  rootfs_mkdir,
+  rootfs_readdir,
+  NULL
 };
 
 filesystem_t rootfs_module = {
-	"rootfs",
-	& rootfs_cmd
+  "rootfs",
+  & rootfs_cmd
 };
 

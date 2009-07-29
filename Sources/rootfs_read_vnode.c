@@ -19,12 +19,12 @@
 #include <DnaTools/DnaTools.h>
 
 status_t rootfs_read_vnode (void * ns, int64_t vnid, void ** data) {
-	rootfs_t rootfs = ns;
-	rootfs_inode_t inode = NULL;
+  rootfs_t rootfs = ns;
+  rootfs_inode_t inode = NULL;
 
-	inode = queue_lookup (& rootfs -> inode_list, rootfs_inode_inspector, (void *) & vnid, NULL);
+  inode = queue_lookup (& rootfs -> inode_list, rootfs_inode_inspector, (void *) & vnid, NULL);
 
-	*data = inode;
-	return DNA_OK;
+  *data = inode;
+  return DNA_OK;
 }
 

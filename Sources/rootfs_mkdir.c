@@ -22,10 +22,10 @@
 status_t rootfs_mkdir (void * ns, void * node,
     char * restrict name, int32_t mode)
 {
-	rootfs_t rootfs = ns;
-	rootfs_inode_t root_inode = node, inode = NULL;
-	rootfs_entry_t dot_entry = NULL, dotdot_entry = NULL, root_entry = NULL;
-	status_t status = DNA_OK;
+  rootfs_t rootfs = ns;
+  rootfs_inode_t root_inode = node, inode = NULL;
+  rootfs_entry_t dot_entry = NULL, dotdot_entry = NULL, root_entry = NULL;
+  status_t status = DNA_OK;
 
   watch (status_t)
   {

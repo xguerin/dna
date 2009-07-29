@@ -20,6 +20,6 @@
 
 status_t rootfs_write_vnode (void * ns, void * node) {
 
-	return DNA_OK;
+  return DNA_OK;
 }
 

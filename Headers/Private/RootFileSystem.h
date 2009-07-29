@@ -24,33 +24,33 @@
 #define ROOTFS_NAME_LENGTH 256
 
 typedef enum rootfs_inode_class {
-	DNA_ROOTFS_FILE,
-	DNA_ROOTFS_DIRECTORY,
-	DNA_ROOTFS_SYMLINK
+  DNA_ROOTFS_FILE,
+  DNA_ROOTFS_DIRECTORY,
+  DNA_ROOTFS_SYMLINK
 } rootfs_inode_class_t;
 
 typedef struct rootfs_entry {
-	int64_t id;
-	char name[ROOTFS_NAME_LENGTH];
-	queue_item_t link;
+  int64_t id;
+  char name[ROOTFS_NAME_LENGTH];
+  queue_item_t link;
 } * rootfs_entry_t;
 
 typedef struct rootfs_inode {
-	int64_t id;
-	char name[ROOTFS_NAME_LENGTH];
-	rootfs_inode_class_t class;
-	int64_t size;
-	int32_t mode;
-	int32_t perms;
-	queue_t entry_list;
-	queue_item_t link;
+  int64_t id;
+  char name[ROOTFS_NAME_LENGTH];
+  rootfs_inode_class_t class;
+  int64_t size;
+  int32_t mode;
+  int32_t perms;
+  queue_t entry_list;
+  queue_item_t link;
 } * rootfs_inode_t;
 
 typedef struct rootfs {
-	int64_t inode_index;
-	int64_t root_vnid;
-	int32_t vid;
-	queue_t inode_list;
+  int64_t inode_index;
+  int64_t root_vnid;
+  int32_t vid;
+  queue_t inode_list;
 } * rootfs_t;
 
 extern status_t rootfs_walk (void * ns, void * base, char * restrict path, char ** new_path, int64_t * vnid);

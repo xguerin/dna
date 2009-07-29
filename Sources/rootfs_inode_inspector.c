@@ -20,8 +20,8 @@
 
 bool rootfs_inode_inspector (void * inode, void * iid, void * dummy)
 {
-	rootfs_inode_t i = inode;
-	int64_t  * id = iid;
+  rootfs_inode_t i = inode;
+  int64_t  * id = iid;
 
   watch (bool)
   {

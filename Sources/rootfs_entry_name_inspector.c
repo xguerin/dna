@@ -21,8 +21,8 @@
 bool rootfs_entry_name_inspector (void * entry,
     void * entry_name, void * dummy)
 {
-	rootfs_entry_t e = entry;
-	char * name = entry_name;
+  rootfs_entry_t e = entry;
+  char * name = entry_name;
 
   watch (bool)
   {

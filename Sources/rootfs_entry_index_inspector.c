@@ -21,8 +21,8 @@
 bool rootfs_entry_index_inspector (void * entry,
     void * entry_index, void * dummy)
 {
-	rootfs_entry_t e = entry;
-	int64_t * index = entry_index;
+  rootfs_entry_t e = entry;
+  int64_t * index = entry_index;
 
   watch (bool)
   {

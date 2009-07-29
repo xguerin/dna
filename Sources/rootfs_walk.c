@@ -21,10 +21,10 @@
 status_t rootfs_walk (void * ns, void * base, char * restrict path,
     char ** new_path, int64_t * p_vnid)
 {
-	rootfs_t rootfs = ns;
-	rootfs_inode_t base_inode = base;
-	rootfs_entry_t entry = NULL;
-	int64_t vnid = -1;
+  rootfs_t rootfs = ns;
+  rootfs_inode_t base_inode = base;
+  rootfs_entry_t entry = NULL;
+  int64_t vnid = -1;
 
   watch (status_t)
   {
