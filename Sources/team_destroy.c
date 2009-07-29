@@ -42,7 +42,7 @@ status_t team_destroy (team_t team)
 
 {
 
-	return DNA_NOT_IMPLEMENTED;
+  return DNA_NOT_IMPLEMENTED;
 }
 
 /*

@@ -28,16 +28,16 @@
 
 typedef struct _isr
 {
-	interrupt_handler_t handler;
-	queue_item_t link;
+  interrupt_handler_t handler;
+  queue_item_t link;
 }
 * isr_t;
 
 typedef struct _it_mux
 {
-	spinlock_t lock;
-	int32_t counter[cpu_n_it];
-	queue_t isr_list[cpu_n_it];
+  spinlock_t lock;
+  int32_t counter[cpu_n_it];
+  queue_t isr_list[cpu_n_it];
 }
 it_mux_t;
 

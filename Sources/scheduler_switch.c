@@ -37,30 +37,30 @@ void scheduler_switch (thread_t thread, queue_t * queue)
  */
 
 {
-	uint32_t current_cpuid = cpu_mp_id();
+  uint32_t current_cpuid = cpu_mp_id();
   bigtime_t current_time = 0;
   extern uint32_t __scheduler_switch_end;
-	thread_t self = scheduler . cpu[current_cpuid] . current_thread;
+  thread_t self = scheduler . cpu[current_cpuid] . current_thread;
 
   /*
    * Update the scheduler
    */
 
-	scheduler . cpu[current_cpuid] . current_thread = thread;
-	scheduler . cpu[current_cpuid] . current_team = thread -> team;
+  scheduler . cpu[current_cpuid] . current_thread = thread;
+  scheduler . cpu[current_cpuid] . current_team = thread -> team;
 
   /*
    * Update the status of the target thread
    */
 
-	thread -> status = DNA_THREAD_RUNNING;
-	thread -> cpu_id = current_cpuid;
+  thread -> status = DNA_THREAD_RUNNING;
+  thread -> cpu_id = current_cpuid;
 
   /*
    * Update the status of the current thread
    */
 
-	self -> cpu_id = -1;
+  self -> cpu_id = -1;
 
   /*
    * Save the current context
@@ -74,8 +74,8 @@ void scheduler_switch (thread_t thread, queue_t * queue)
 
   if (queue != NULL)
   {
-	  queue_add (queue, & self -> status_link);
-	  lock_release (& queue -> lock);
+    queue_add (queue, & self -> status_link);
+    lock_release (& queue -> lock);
   }
 
   /*

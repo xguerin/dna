@@ -39,13 +39,13 @@ bool alarm_comparator (void * item1, void * item2)
  */
 
 {
-	alarm_t alarm1 = item1;
-	alarm_t alarm2 = item2;
+  alarm_t alarm1 = item1;
+  alarm_t alarm2 = item2;
   
   watch (bool)
   {
-	  ensure (alarm1 != NULL && alarm2 != NULL, false);
-	  return alarm2 -> deadline < alarm1 -> deadline;
+    ensure (alarm1 != NULL && alarm2 != NULL, false);
+    return alarm2 -> deadline < alarm1 -> deadline;
   }
 }
 

@@ -35,12 +35,12 @@
 
 typedef struct _team
 {
-	int32_t id;
-	char name[DNA_NAME_LENGTH];
+  int32_t id;
+  char name[DNA_NAME_LENGTH];
 
-	spinlock_t lock;
-	queue_t thread_list;
-	queue_item_t sched_link;
+  spinlock_t lock;
+  queue_t thread_list;
+  queue_item_t sched_link;
 }
 * team_t;
 
@@ -56,13 +56,13 @@ typedef struct _team
 
 typedef struct _team_manager
 {
-	spinlock_t lock;
+  spinlock_t lock;
 
-	int32_t team_index;
-	queue_t team_list;
+  int32_t team_index;
+  queue_t team_list;
 
-	int32_t thread_index;
-	queue_t thread_list;
+  int32_t thread_index;
+  queue_t thread_list;
 }
 team_manager_t;
 

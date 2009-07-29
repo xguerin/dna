@@ -35,7 +35,7 @@ status_t core_destroy (void)
  */
 
 {
-	return DNA_NOT_IMPLEMENTED;
+  return DNA_NOT_IMPLEMENTED;
 }
 
 /*

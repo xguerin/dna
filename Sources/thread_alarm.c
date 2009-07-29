@@ -35,8 +35,8 @@ status_t thread_alarm (void * data)
  */
 
 {
-	thread_t thread = data;
-	interrupt_status_t it_status = 0;
+  thread_t thread = data;
+  interrupt_status_t it_status = 0;
 
   watch (status_t)
   {

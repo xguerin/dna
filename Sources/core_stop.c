@@ -38,7 +38,7 @@ status_t core_stop (void)
  */
 
 {
-	return DNA_NOT_IMPLEMENTED;
+  return DNA_NOT_IMPLEMENTED;
 }
 
 /*

@@ -40,8 +40,8 @@ bool thread_id_inspector (void * item, void * p_id, void * dummy)
  */
 
 {
-	thread_t thread = item;
-	int32_t * id = p_id;
+  thread_t thread = item;
+  int32_t * id = p_id;
 
   watch (bool)
   {

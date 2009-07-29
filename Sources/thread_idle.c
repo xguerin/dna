@@ -39,12 +39,12 @@ int32_t thread_idle (void * data)
  */
 
 {
-	while (true)
+  while (true)
   {
     thread_yield ();
   }
 
-	return 0;
+  return 0;
 }
 
 /*

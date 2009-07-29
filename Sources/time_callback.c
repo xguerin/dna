@@ -36,11 +36,11 @@ status_t time_callback (void * data)
  */
 
 {
-	bool reschedule = false, process_next_alarm = true;
-	alarm_t alarm = (alarm_t) data;
-	alarm_t next_alarm = NULL;
+  bool reschedule = false, process_next_alarm = true;
+  alarm_t alarm = (alarm_t) data;
+  alarm_t next_alarm = NULL;
   bigtime_t current_time = 0, quanta = 0;
-	status_t status = DNA_OK;
+  status_t status = DNA_OK;
 
   /*
    * We lock the time_manager structure
@@ -115,7 +115,7 @@ status_t time_callback (void * data)
     thread_yield ();
   }
 
-	return DNA_OK;
+  return DNA_OK;
 }
 
 /*

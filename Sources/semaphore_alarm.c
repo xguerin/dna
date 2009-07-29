@@ -35,18 +35,18 @@ status_t semaphore_alarm (void * data)
  */
 
 {
-	thread_t thread = data;
-	interrupt_status_t it_status = 0;
+  thread_t thread = data;
+  interrupt_status_t it_status = 0;
 
-	it_status = cpu_trap_mask_and_backup();
-	lock_acquire (& scheduler . xt[thread -> cpu_affinity] . lock);
+  it_status = cpu_trap_mask_and_backup();
+  lock_acquire (& scheduler . xt[thread -> cpu_affinity] . lock);
 
-	queue_add (& scheduler . xt[thread -> cpu_affinity], & thread -> status_link);
+  queue_add (& scheduler . xt[thread -> cpu_affinity], & thread -> status_link);
 
-	lock_release (& scheduler . xt[thread -> cpu_affinity] . lock);
-	cpu_trap_restore(it_status);
+  lock_release (& scheduler . xt[thread -> cpu_affinity] . lock);
+  cpu_trap_restore(it_status);
 
-	return DNA_OK;
+  return DNA_OK;
 }
 
 /*

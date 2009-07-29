@@ -40,8 +40,8 @@ bool team_name_inspector (void * item, void * name, void * dummy)
  */
 
 {
-	team_t team = item;
-	const char * team_name = name;
+  team_t team = item;
+  const char * team_name = name;
 
   watch (bool)
   {

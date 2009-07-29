@@ -40,9 +40,9 @@ status_t time_cancel_alarm (int32_t alarm)
  */
 
 {
-	alarm_t a = NULL;
+  alarm_t a = NULL;
   bigtime_t current_time = 0, quanta = 0;
-	interrupt_status_t it_status = 0;
+  interrupt_status_t it_status = 0;
 
   watch (status_t)
   {

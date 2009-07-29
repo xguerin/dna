@@ -41,9 +41,9 @@ status_t thread_get_info (int32_t id, thread_info_t * info)
  */
 
 {
-	thread_t thread = NULL;
+  thread_t thread = NULL;
   bigtime_t current_time = 0;
-	interrupt_status_t it_status = 0;
+  interrupt_status_t it_status = 0;
 
   watch (status_t)
   {

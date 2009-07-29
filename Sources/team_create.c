@@ -45,12 +45,12 @@ status_t team_create (char * team_name, thread_handler_t thread_handler,
  */
 
 {
-	team_t team = NULL;
+  team_t team = NULL;
   team_t current_team = scheduler . cpu[cpu_mp_id ()] . current_team;
   thread_t thread = NULL;
   status_t status = DNA_OK;
   void * stack_base = NULL;
-	interrupt_status_t it_status = 0;
+  interrupt_status_t it_status = 0;
 
   watch (status_t)
   {

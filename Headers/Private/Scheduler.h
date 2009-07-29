@@ -36,9 +36,9 @@
 
 typedef struct _cpu
 {
-	team_t current_team;
-	thread_t current_thread;
-	thread_t idle_thread;
+  team_t current_team;
+  thread_t current_thread;
+  thread_t idle_thread;
 }
 cpu_t;
 
@@ -54,10 +54,10 @@ cpu_t;
 
 typedef struct _scheduler
 {
-	spinlock_t lock;
-	int32_t xt_index;
-	queue_t * xt;
-	cpu_t * cpu;
+  spinlock_t lock;
+  int32_t xt_index;
+  queue_t * xt;
+  cpu_t * cpu;
 }
 scheduler_t;
 

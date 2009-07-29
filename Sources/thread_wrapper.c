@@ -40,7 +40,7 @@ int32_t thread_wrapper (void * p_signature)
   thread_signature_t * signature = (thread_signature_t *) p_signature;
 
   thread_exit (signature -> handler (signature -> arguments));
-	return 0;
+  return 0;
 }
 
 /*

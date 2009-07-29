@@ -39,9 +39,9 @@ bool interrupt_handler_inspector (void * item, void * p_id, void * dummy)
  */
 
 {
-	isr_t isr = item;
-	int32_t * id = p_id;
-	status_t status = DNA_UNHANDLED_INTERRUPT;
+  isr_t isr = item;
+  int32_t * id = p_id;
+  status_t status = DNA_UNHANDLED_INTERRUPT;
 
   watch (bool)
   {

@@ -35,7 +35,7 @@
 
 typedef struct _team_info
 {
-	char name[DNA_NAME_LENGTH];
+  char name[DNA_NAME_LENGTH];
 }
 team_info_t;
 

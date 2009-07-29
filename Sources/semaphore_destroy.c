@@ -40,7 +40,7 @@ status_t semaphore_destroy (int32_t sid)
 
 {
 
-	return DNA_NOT_IMPLEMENTED;
+  return DNA_NOT_IMPLEMENTED;
 }
 
 /*

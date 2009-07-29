@@ -36,15 +36,15 @@
  */
 
 typedef struct _alarm {
-	int32_t id;
-	int32_t mode;
+  int32_t id;
+  int32_t mode;
 
-	bigtime_t quanta;
-	bigtime_t deadline;
-	timer_callback_t callback;
-	void * data;
+  bigtime_t quanta;
+  bigtime_t deadline;
+  timer_callback_t callback;
+  void * data;
 
-	queue_item_t link;
+  queue_item_t link;
 } * alarm_t;
 
 /*
@@ -59,11 +59,11 @@ typedef struct _alarm {
 
 typedef struct _time_manager
 {
-	spinlock_t lock;
+  spinlock_t lock;
 
-	int32_t alarm_counter;
+  int32_t alarm_counter;
   alarm_t current_alarm;
-	queue_t alarm_queue;
+  queue_t alarm_queue;
 
   bool has_timer;
   system_timer_t system_timer;

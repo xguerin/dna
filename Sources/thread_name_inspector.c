@@ -40,8 +40,8 @@ bool thread_name_inspector (void * item, void * name, void * dummy)
  */
 
 {
-	thread_t thread = item;
-	const char * thread_name = name;
+  thread_t thread = item;
+  const char * thread_name = name;
 
   watch (bool)
   {

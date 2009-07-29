@@ -39,11 +39,11 @@ status_t thread_snooze (bigtime_t value)
  */
 
 {
-	int32_t alarm_id = -1;
-	uint32_t current_cpuid = cpu_mp_id();
-	thread_t self = scheduler . cpu[current_cpuid] . current_thread;
-	thread_t target = NULL;
-	interrupt_status_t it_status = 0;
+  int32_t alarm_id = -1;
+  uint32_t current_cpuid = cpu_mp_id();
+  thread_t self = scheduler . cpu[current_cpuid] . current_thread;
+  thread_t target = NULL;
+  interrupt_status_t it_status = 0;
   status_t status = DNA_OK;
 
   watch (status_t)

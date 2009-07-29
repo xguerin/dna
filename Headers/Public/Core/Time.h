@@ -25,10 +25,10 @@
 #include <stdbool.h>
 #include <DnaTools/DnaTools.h>
 
-#define DNA_PERIODIC_ALARM		0x1
-#define DNA_ONE_SHOT_ALARM		0x2
-#define DNA_RELATIVE_ALARM		0x4
-#define DNA_ABSOLUTE_ALARM		0x8
+#define DNA_PERIODIC_ALARM    0x1
+#define DNA_ONE_SHOT_ALARM    0x2
+#define DNA_RELATIVE_ALARM    0x4
+#define DNA_ABSOLUTE_ALARM    0x8
 
 /****t* time/bigtime_t
  * SUMMARY

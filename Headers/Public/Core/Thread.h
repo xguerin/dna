@@ -34,7 +34,7 @@
  * SOURCE
  */
 
-#define DNA_NO_AFFINITY	0xFFFFFFFF
+#define DNA_NO_AFFINITY  0xFFFFFFFF
 
 /*
  ****/
@@ -60,27 +60,27 @@ typedef int32_t (* thread_handler_t) (void * args);
 
 typedef struct _thread_info
 {
-	char name[DNA_NAME_LENGTH];
-	uint32_t cpu_id;
-	uint32_t cpu_affinity;
+  char name[DNA_NAME_LENGTH];
+  uint32_t cpu_id;
+  uint32_t cpu_affinity;
 
-	struct
- 	{
-		int32_t type;
-		void * base;
-		int32_t size;
-	}
- 	stack;
+  struct
+   {
+    int32_t type;
+    void * base;
+    int32_t size;
+  }
+   stack;
 
-	struct
- 	{
-		thread_handler_t handler;
-		void * arguments;
-	}
- 	bootstrap;
+  struct
+   {
+    thread_handler_t handler;
+    void * arguments;
+  }
+   bootstrap;
 
-	bigtime_t kernel_time;
-	bigtime_t user_time;
+  bigtime_t kernel_time;
+  bigtime_t user_time;
 }
 thread_info_t;
 

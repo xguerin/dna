@@ -41,8 +41,8 @@ status_t team_get_info (int32_t id, team_info_t * info)
  */
 
 {
-	team_t team = NULL;
-	interrupt_status_t it_status = 0;
+  team_t team = NULL;
+  interrupt_status_t it_status = 0;
 
   watch (status_t)
   {
