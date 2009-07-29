@@ -3,7 +3,7 @@
 
 int pthread_attr_destroy(pthread_attr_t *attr)
 {
-	ASSERT_RETURN (!attr, EINVAL);
+  ASSERT_RETURN (!attr, EINVAL);
 
-	return 0;
+  return 0;
 }
