@@ -33,8 +33,8 @@
  */
 
 typedef enum extension_cmd {
-	DNA_EXTENSION_INIT,
-	DNA_EXTENSION_UNINIT
+  DNA_EXTENSION_INIT,
+  DNA_EXTENSION_UNINIT
 } extension_cmd_t;
 
 /*
@@ -48,10 +48,10 @@ typedef enum extension_cmd {
  */
 
 typedef struct extension_info {
-	char * name;
-	int32_t flags;
-	status_t (* init_extension) (void);
-	void (* uninit_extension) (void);
+  char * name;
+  int32_t flags;
+  status_t (* init_extension) (void);
+  void (* uninit_extension) (void);
 } extension_info_t;
 
 /*

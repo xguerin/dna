@@ -19,16 +19,16 @@
 #include <DnaTools/DnaTools.h>
 
 void * dna_memset (void * s, int32_t c, size_t n){
-	int32_t rem = n % 4;
-	int32_t quo = n >> 2;
-	int32_t step = 0;
-	
-	for (step = 0; step < quo; step++)
-		*((int32_t *)s + step) = c;
+  int32_t rem = n % 4;
+  int32_t quo = n >> 2;
+  int32_t step = 0;
+  
+  for (step = 0; step < quo; step++)
+    *((int32_t *)s + step) = c;
 
-	for (step = 0; step < rem; step++)
-		*((char *)s + step) = (char)c;
-	
-	return s;
+  for (step = 0; step < rem; step++)
+    *((char *)s + step) = (char)c;
+  
+  return s;
 }
 

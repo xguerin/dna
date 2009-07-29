@@ -21,11 +21,11 @@
 #ifndef DNA_LIBRARY_CONFIGURATION_H
 #define DNA_LIBRARY_CONFIGURATION_H
 
-#define DNA_NAME_LENGTH 					    		32
-#define DNA_FILENAME_LENGTH 			       256
-#define DNA_PATH_LENGTH 				    		1024
-#define DNA_MAX_CPU							    			32
-#define DNA_MAX_FILE						    		  32
-#define DNA_MAX_SEM								    	  32
+#define DNA_NAME_LENGTH                   32
+#define DNA_FILENAME_LENGTH              256
+#define DNA_PATH_LENGTH                 1024
+#define DNA_MAX_CPU                        32
+#define DNA_MAX_FILE                      32
+#define DNA_MAX_SEM                        32
 
 #endif

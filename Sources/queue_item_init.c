@@ -20,7 +20,7 @@
 
 void queue_item_init (queue_item_t * item, void * owner)
 {
-	item -> next = NULL;
-	item -> owner = owner;
+  item -> next = NULL;
+  item -> owner = owner;
 }
 

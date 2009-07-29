@@ -32,14 +32,14 @@ status_t driver_load (char * name, driver_t ** drv)
  */
 
 {
-	for (int32_t i = 0; i < OS_N_DRIVERS; i++) {
-		if (dna_strcmp (OS_DRIVERS_LIST[i] -> name, name) == 0) {
-			*drv = OS_DRIVERS_LIST[i];
-			return DNA_OK;
-		}
-	}
+  for (int32_t i = 0; i < OS_N_DRIVERS; i++) {
+    if (dna_strcmp (OS_DRIVERS_LIST[i] -> name, name) == 0) {
+      *drv = OS_DRIVERS_LIST[i];
+      return DNA_OK;
+    }
+  }
 
-	return DNA_ERROR;
+  return DNA_ERROR;
 }
 
 /*

@@ -37,17 +37,17 @@ typedef enum _status
    * given positive numbers
    */
 
-  DNA_HANDLED_INTERRUPT =	0x0004,
-  DNA_UNHANDLED_INTERRUPT	= 0x0003,
+  DNA_HANDLED_INTERRUPT =  0x0004,
+  DNA_UNHANDLED_INTERRUPT  = 0x0003,
   DNA_INVOKE_SCHEDULER = 0x0002,
-  DNA_ALREADY_AT_ROOT	= 0x0001,
+  DNA_ALREADY_AT_ROOT  = 0x0001,
 
   /*
    * Standard error codes
    */
 
   DNA_OK = 0x0000,
-  DNA_ERROR	= 0xFFFF,
+  DNA_ERROR  = 0xFFFF,
   DNA_NOT_IMPLEMENTED = 0xFFFE,
   DNA_OUT_OF_MEM = 0xFFFD,
 
@@ -65,7 +65,7 @@ typedef enum _status
   DNA_INVALID_FD = 0xFFF5,
   DNA_BAD_INODE_TYPE = 0xFFF4,
   DNA_INVALID_WHENCE = 0xFFF3,
-  DNA_VOLUME_IN_USE	= 0xFFF2,
+  DNA_VOLUME_IN_USE  = 0xFFF2,
 
   /*
    * Semaphore error codes
@@ -73,8 +73,8 @@ typedef enum _status
 
   DNA_BAD_SEM_ID = 0xFFF1,
   DNA_NO_MORE_SEM = 0xFFF0,
-  DNA_WOULD_BLOCK	= 0xFFEF,
-  DNA_TIMED_OUT	= 0xFFEE,
+  DNA_WOULD_BLOCK  = 0xFFEF,
+  DNA_TIMED_OUT  = 0xFFEE,
 
   /*
    * Team and threads error codes

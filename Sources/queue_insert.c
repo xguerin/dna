@@ -20,20 +20,20 @@
 void queue_insert (queue_t * queue, queue_comparator_t comparator,
     queue_item_t * item)
 {
-	queue_item_t * current = NULL, * previous = NULL;
+  queue_item_t * current = NULL, * previous = NULL;
 
-	item -> next = NULL;
+  item -> next = NULL;
 
-	if (queue -> status != 0)
+  if (queue -> status != 0)
   {
-		current = queue -> head;
-		while (current != NULL)
+    current = queue -> head;
+    while (current != NULL)
     {
       /*
        * The comparator function is <
        */
 
-			if (comparator (current -> owner, item -> owner))
+      if (comparator (current -> owner, item -> owner))
       {
         if (current == queue -> head)
         {
@@ -47,25 +47,25 @@ void queue_insert (queue_t * queue, queue_comparator_t comparator,
         }
 
         break;
-			}
-			else
+      }
+      else
       {
         previous = current;
         current = current -> next;
       }
-		}
+    }
 
     if (current == NULL)
     {
-  		queue -> tail -> next = item;
-  		queue -> tail = item;
+      queue -> tail -> next = item;
+      queue -> tail = item;
     }
-	}
+  }
   else
   {
-		queue -> head = item;
-		queue -> tail = item;
+    queue -> head = item;
+    queue -> tail = item;
   }
 
-	queue -> status += 1;
+  queue -> status += 1;
 }

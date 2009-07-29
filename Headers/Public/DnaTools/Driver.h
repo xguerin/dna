@@ -33,14 +33,14 @@
 
 enum _device_control_codes
 {
-	DNA_GET_DEVICE_SIZE = 0,
-	DNA_SET_DEVICE_SIZE,
-	DNA_SET_NONBLOCKING_IO,
-	DNA_SET_BLOCKING_IO,
-	DNA_GET_READ_STATUS,
-	DNA_GET_WRITE_STATUS,
-	DNA_GET_INFO,
-	DNA_CONTROL_CODES_END = 0x0FFF
+  DNA_GET_DEVICE_SIZE = 0,
+  DNA_SET_DEVICE_SIZE,
+  DNA_SET_NONBLOCKING_IO,
+  DNA_SET_BLOCKING_IO,
+  DNA_GET_READ_STATUS,
+  DNA_GET_WRITE_STATUS,
+  DNA_GET_INFO,
+  DNA_CONTROL_CODES_END = 0x0FFF
 };
 
 /*
@@ -53,8 +53,8 @@ enum _device_control_codes
 
 enum _device_type
 {
-	DNA_CHARACTER_DEVICE,
-	DNA_BLOCK_DEVICE
+  DNA_CHARACTER_DEVICE,
+  DNA_BLOCK_DEVICE
 };
 
 /*
@@ -69,14 +69,14 @@ enum _device_type
 
 typedef struct _device_info
 {
-	int32_t type;
-	uint32_t bytes_per_sector;
-	uint32_t sectors_per_track;
-	uint32_t cylinder_count;
-	uint32_t head_count;
-	bool removable;
-	bool read_only;
-	bool write_once;
+  int32_t type;
+  uint32_t bytes_per_sector;
+  uint32_t sectors_per_track;
+  uint32_t cylinder_count;
+  uint32_t head_count;
+  bool removable;
+  bool read_only;
+  bool write_once;
 }
 device_info_t;
 
@@ -92,12 +92,12 @@ device_info_t;
 
 typedef struct _device_cmd
 {
-	status_t (* open) (char * name, int32_t mode, void ** cookie);
-	status_t (* close) (void * cookie);
-	status_t (* free) (void * cookie);
-	status_t (* read) (void * handler, void * destination, int64_t offset, int32_t * p_res);
-	status_t (* write) (void * handler, void * source, int64_t offset, int32_t * p_res);
-	status_t (* control) (void * handler, int32_t operation, void * data, int32_t * p_res);
+  status_t (* open) (char * name, int32_t mode, void ** cookie);
+  status_t (* close) (void * cookie);
+  status_t (* free) (void * cookie);
+  status_t (* read) (void * handler, void * destination, int64_t offset, int32_t * p_res);
+  status_t (* write) (void * handler, void * source, int64_t offset, int32_t * p_res);
+  status_t (* control) (void * handler, int32_t operation, void * data, int32_t * p_res);
 }
 device_cmd_t;
 
@@ -113,12 +113,12 @@ device_cmd_t;
 
 typedef struct _driver
 {
-	char * name;
-	status_t (* init_hardware) (void);
-	status_t (* init_driver) (void);
-	void (* uninit_driver) (void);
-	const char ** (* publish_devices) (void);
-	device_cmd_t * (* find_device) (const char * name);
+  char * name;
+  status_t (* init_hardware) (void);
+  status_t (* init_driver) (void);
+  void (* uninit_driver) (void);
+  const char ** (* publish_devices) (void);
+  device_cmd_t * (* find_device) (const char * name);
 }
 driver_t;
 

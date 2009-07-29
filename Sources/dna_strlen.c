@@ -19,9 +19,9 @@
 #include <DnaTools/DnaTools.h>
 
 size_t dna_strlen (const char *s){
-	size_t size = 0;
+  size_t size = 0;
 
-	while (s[size++] != '\0');
-	return size - 1;
+  while (s[size++] != '\0');
+  return size - 1;
 }
 

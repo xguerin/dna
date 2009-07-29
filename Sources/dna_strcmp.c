@@ -19,13 +19,13 @@
 #include <DnaTools/DnaTools.h>
 
 int32_t dna_strcmp (const char *s1, const char *s2){
-	char *s1_ptr = (char *)s1, *s2_ptr = (char *)s2;
+  char *s1_ptr = (char *)s1, *s2_ptr = (char *)s2;
 
-	do {
-		if (*s1_ptr++ != *s2_ptr) return -1;
-	}
-	while (*s2_ptr++ != '\0');
-	
-	return 0;
+  do {
+    if (*s1_ptr++ != *s2_ptr) return -1;
+  }
+  while (*s2_ptr++ != '\0');
+  
+  return 0;
 }
 

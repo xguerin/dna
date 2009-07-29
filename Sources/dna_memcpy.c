@@ -19,7 +19,7 @@
 #include <DnaTools/DnaTools.h>
 
 void * dna_memcpy (void * restrict s1, const void * restrict s2, size_t n){
-	for (size_t idx = 0; idx < n; idx ++) ((uint8_t *)s1)[idx] = ((uint8_t *)s2)[idx];
-	return s1;
+  for (size_t idx = 0; idx < n; idx ++) ((uint8_t *)s1)[idx] = ((uint8_t *)s2)[idx];
+  return s1;
 }
 

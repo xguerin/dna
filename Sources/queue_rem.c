@@ -19,8 +19,8 @@
 
 void * queue_rem (queue_t * queue)
 {
-	queue_item_t * item = NULL;
-	void * data = NULL;
+  queue_item_t * item = NULL;
+  void * data = NULL;
 
   watch (void *)
   {

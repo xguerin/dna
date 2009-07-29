@@ -19,13 +19,13 @@
 #include <DnaTools/DnaTools.h>
 
 char * dna_strcat (char * restrict dest, const char * restrict src){
-	char * s1 = dest;
-	const char * s2 = src;
+  char * s1 = dest;
+  const char * s2 = src;
 
-	for (; *s1 != '\0'; s1++);
-	for (; *s2 != '\0'; s2++, s1++) *s1 = *s2;
-	*s1 = '\0';
+  for (; *s1 != '\0'; s1++);
+  for (; *s2 != '\0'; s2++, s1++) *s1 = *s2;
+  *s1 = '\0';
 
-	return dest;
+  return dest;
 }
 

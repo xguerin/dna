@@ -32,14 +32,14 @@ status_t filesystem_load (char * name, filesystem_t ** fs)
  */
 
 {
-	for (int32_t i = 0; i < OS_N_FILESYSTEMS; i++) {
-		if (dna_strcmp (OS_FILESYSTEMS_LIST[i] -> name, name) == 0) {
-			* fs = OS_FILESYSTEMS_LIST[i];
-			return DNA_OK;
-		}
-	}
+  for (int32_t i = 0; i < OS_N_FILESYSTEMS; i++) {
+    if (dna_strcmp (OS_FILESYSTEMS_LIST[i] -> name, name) == 0) {
+      * fs = OS_FILESYSTEMS_LIST[i];
+      return DNA_OK;
+    }
+  }
 
-	return DNA_ERROR;
+  return DNA_ERROR;
 }
 
 /*

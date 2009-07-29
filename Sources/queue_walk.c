@@ -19,17 +19,17 @@
 
 void queue_walk (queue_t * queue, queue_inspector_t inspector, void * a0, void * a1)
 {
-	queue_item_t * item = NULL, * old_item = NULL;
+  queue_item_t * item = NULL, * old_item = NULL;
 
-	if (queue -> status != 0) {
-		item = queue -> head;
-		while (item != NULL) {
-			if (inspector (item -> owner, a0, a1)) {
-				old_item = item;
-				item = item -> next;
-				queue_extract (queue, old_item);
-			}
-			else item = item -> next;
-		}
-	}
+  if (queue -> status != 0) {
+    item = queue -> head;
+    while (item != NULL) {
+      if (inspector (item -> owner, a0, a1)) {
+        old_item = item;
+        item = item -> next;
+        queue_extract (queue, old_item);
+      }
+      else item = item -> next;
+    }
+  }
 }

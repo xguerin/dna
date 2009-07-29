@@ -20,20 +20,20 @@
 #include <DnaTools/DnaTools.h>
 
 int32_t dna_atoi(char * alpha) {
-	int32_t value = 0, c = 0, index = 0;
-	uint32_t len = dna_strlen (alpha), coeff = 1;
+  int32_t value = 0, c = 0, index = 0;
+  uint32_t len = dna_strlen (alpha), coeff = 1;
 
-	if (alpha == NULL) return -1;
-	if (len == 0) return -1;
-	
-	for (index = len - 1; index >= 0; index -= 1) {
-		c = alpha[index] - '0';
-		if (c < 0 || c > 9) return -1;
+  if (alpha == NULL) return -1;
+  if (len == 0) return -1;
+  
+  for (index = len - 1; index >= 0; index -= 1) {
+    c = alpha[index] - '0';
+    if (c < 0 || c > 9) return -1;
 
-		value += c * coeff;
-		coeff *= 10;
-	}
+    value += c * coeff;
+    coeff *= 10;
+  }
 
-	return value;
+  return value;
 }
 

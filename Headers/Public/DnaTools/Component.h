@@ -32,11 +32,11 @@
  */
 
 typedef struct _component {
-	char * name;
-	status_t (* create) (void);
-	status_t (* destroy) (void);
-	status_t (* start) (void);
-	status_t (* stop) (void);
+  char * name;
+  status_t (* create) (void);
+  status_t (* destroy) (void);
+  status_t (* start) (void);
+  status_t (* stop) (void);
 } component_t;
 
 /*

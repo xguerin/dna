@@ -62,8 +62,8 @@ typedef bool (* queue_comparator_t)(void * item1, void * item2);
 
 typedef struct _queue_item
 {
-	struct _queue_item * next;
-	void * owner;
+  struct _queue_item * next;
+  void * owner;
 }
 queue_item_t;
 
@@ -80,9 +80,9 @@ queue_item_t;
 typedef struct queue
 {
   spinlock_t lock;
-	queue_item_t * head;
-	queue_item_t * tail;
-	volatile uint32_t status;
+  queue_item_t * head;
+  queue_item_t * tail;
+  volatile uint32_t status;
 }
 queue_t;
 
