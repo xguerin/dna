@@ -19,9 +19,9 @@
 #include <DnaTools/DnaTools.h>
 
 status_t devfs_open (void * ns, void * node, int32_t mode, void ** data) {
-	devfs_inode_t inode = node;
+  devfs_inode_t inode = node;
 
-	if (inode -> class == DNA_DEVFS_FILE) return inode -> dev_cmd -> open (inode -> name, mode, data);
-	else return DNA_OK;
+  if (inode -> class == DNA_DEVFS_FILE) return inode -> dev_cmd -> open (inode -> name, mode, data);
+  else return DNA_OK;
 }
 

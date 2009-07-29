@@ -24,35 +24,35 @@
 #define DEVFS_NAME_LENGTH 256
 
 typedef enum devfs_inode_class {
-	DNA_DEVFS_FILE,
-	DNA_DEVFS_DIRECTORY,
-	DNA_DEVFS_SYMLINK
+  DNA_DEVFS_FILE,
+  DNA_DEVFS_DIRECTORY,
+  DNA_DEVFS_SYMLINK
 } devfs_inode_class_t;
 
 typedef struct devfs_entry {
-	int64_t id;
-	char name[DEVFS_NAME_LENGTH];
-	queue_item_t link;
+  int64_t id;
+  char name[DEVFS_NAME_LENGTH];
+  queue_item_t link;
 } * devfs_entry_t;
 
 typedef struct devfs_inode {
-	int64_t id;
-	char name[DEVFS_NAME_LENGTH];
-	devfs_inode_class_t class;
-	int64_t size;
-	int32_t mode;
-	int32_t perms;
-	device_cmd_t * dev_cmd;
+  int64_t id;
+  char name[DEVFS_NAME_LENGTH];
+  devfs_inode_class_t class;
+  int64_t size;
+  int32_t mode;
+  int32_t perms;
+  device_cmd_t * dev_cmd;
 
-	queue_t entry_list;
-	queue_item_t link;
+  queue_t entry_list;
+  queue_item_t link;
 } * devfs_inode_t;
 
 typedef struct devfs {
-	int64_t inode_index;
-	int64_t root_vnid;
-	int32_t vid;
-	queue_t inode_list;
+  int64_t inode_index;
+  int64_t root_vnid;
+  int32_t vid;
+  queue_t inode_list;
 } * devfs_t;
 
 extern status_t devfs_walk (void * ns, void * base, char * restrict path, char ** new_path, int64_t * vnid);

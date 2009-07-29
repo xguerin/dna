@@ -21,12 +21,12 @@
 status_t devfs_readdir (void * ns, void * node, void * data,
     void * entry_array, int64_t * offset, int32_t * p_count)
 {
-	devfs_t devfs = ns;
-	devfs_inode_t inode = node;
-	devfs_entry_t entry = NULL;
-	status_t status = DNA_OK;
-	int64_t pos = 0;
-	directory_entry_t * p_entry = entry_array;
+  devfs_t devfs = ns;
+  devfs_inode_t inode = node;
+  devfs_entry_t entry = NULL;
+  status_t status = DNA_OK;
+  int64_t pos = 0;
+  directory_entry_t * p_entry = entry_array;
 
   watch (status_t)
   {

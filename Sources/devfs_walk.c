@@ -21,10 +21,10 @@
 status_t devfs_walk (void * ns, void * base, char * restrict path,
     char ** new_path, int64_t * p_vnid)
 {
-	devfs_t devfs = ns;
-	devfs_inode_t base_inode = base;
-	devfs_entry_t entry = NULL;
-	int64_t vnid = -1;
+  devfs_t devfs = ns;
+  devfs_inode_t base_inode = base;
+  devfs_entry_t entry = NULL;
+  int64_t vnid = -1;
 
   watch (status_t)
   {

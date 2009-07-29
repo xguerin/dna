@@ -20,8 +20,8 @@
 
 bool devfs_inode_inspector (void * inode, void * iid, void * dummy)
 {
-	devfs_inode_t i = inode;
-	int64_t  * id = iid;
+  devfs_inode_t i = inode;
+  int64_t  * id = iid;
 
   watch (bool)
   {

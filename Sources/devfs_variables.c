@@ -19,23 +19,23 @@
 #include <DnaTools/DnaTools.h>
 
 static filesystem_cmd_t devfs_cmd = {
-	devfs_walk,
-	devfs_mount,
-	devfs_read_vnode,
-	devfs_write_vnode,
-	NULL,
-	devfs_open,
-	devfs_close,
-	NULL,
-	devfs_read,
-	devfs_write,
-	NULL,
-	devfs_readdir,
-	devfs_ioctl
+  devfs_walk,
+  devfs_mount,
+  devfs_read_vnode,
+  devfs_write_vnode,
+  NULL,
+  devfs_open,
+  devfs_close,
+  NULL,
+  devfs_read,
+  devfs_write,
+  NULL,
+  devfs_readdir,
+  devfs_ioctl
 };
 
 filesystem_t devfs_module = {
-	"devfs",
-	& devfs_cmd
+  "devfs",
+  & devfs_cmd
 };
 

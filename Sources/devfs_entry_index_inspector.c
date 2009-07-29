@@ -19,8 +19,8 @@
 #include <DnaTools/DnaTools.h>
 
 bool devfs_entry_index_inspector (void * entry, void * entry_index, void * dummy) {
-	devfs_entry_t e = entry;
-	int64_t * index = entry_index;
+  devfs_entry_t e = entry;
+  int64_t * index = entry_index;
 
   watch (bool)
   {

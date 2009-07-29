@@ -19,8 +19,8 @@
 #include <DnaTools/DnaTools.h>
 
 bool devfs_entry_name_inspector (void * entry, void * entry_name, void * dummy) {
-	devfs_entry_t e = entry;
-	char * name = entry_name;
+  devfs_entry_t e = entry;
+  char * name = entry_name;
   
   watch (bool)
   {

@@ -20,6 +20,6 @@
 
 status_t devfs_write_vnode (void * ns, void * node) {
 
-	return DNA_OK;
+  return DNA_OK;
 }
 

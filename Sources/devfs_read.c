@@ -19,8 +19,8 @@
 #include <DnaTools/DnaTools.h>
 
 status_t devfs_read (void * ns, void * node, void * file, void * data, int64_t offset, int32_t * p_count) {
-	devfs_inode_t inode = node;
+  devfs_inode_t inode = node;
 
-	return inode -> dev_cmd -> read (file, data, offset, p_count);
+  return inode -> dev_cmd -> read (file, data, offset, p_count);
 }
 
