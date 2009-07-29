@@ -43,8 +43,8 @@ status_t kernel_region_create (uint32_t required_nblocks,
  */
 
 {
-	kernel_region_t current_region = kernel_allocator . next_free_region;
-	kernel_region_t next_region = NULL, rptr = NULL, aptr = NULL;
+  kernel_region_t current_region = kernel_allocator . next_free_region;
+  kernel_region_t next_region = NULL, rptr = NULL, aptr = NULL;
 
   watch (status_t)
   {
@@ -60,7 +60,9 @@ status_t kernel_region_create (uint32_t required_nblocks,
     if (current_region -> next != NULL) current_region -> next -> prev = NULL;
     kernel_allocator . next_free_region = current_region -> next;
 
-    next_region = (kernel_region_t)((uint8_t *)current_region + (required_nblocks * DNA_KERNEL_BLOCK_SIZE));
+    next_region = (kernel_region_t)((uint8_t *)current_region +
+        (required_nblocks * DNA_KERNEL_BLOCK_SIZE));
+
     next_region -> status = DNA_KERNEL_FREE_REGION;
     next_region -> nblocks = current_region -> nblocks - required_nblocks;
 
@@ -95,8 +97,14 @@ status_t kernel_region_create (uint32_t required_nblocks,
         rptr -> prev = next_region;
         next_region -> next = rptr;
 
-        if (next_region -> prev != NULL) next_region -> prev -> next = next_region;
-        else kernel_allocator . next_free_region = next_region;
+        if (next_region -> prev != NULL)
+        {
+          next_region -> prev -> next = next_region;
+        }
+        else
+        {
+          kernel_allocator . next_free_region = next_region;
+        }
       }
       else
       {

@@ -37,34 +37,34 @@ status_t memory_create (void)
  */
 
 {
-	uint32_t bss_size = 0, heap_size = 0;
-	kernel_region_t region = NULL;
+  uint32_t bss_size = 0, heap_size = 0;
+  kernel_region_t region = NULL;
 
   /*
    * Initializes the BSS to 0
    */
 
-	bss_size = (size_t) (CPU_BSS_END - CPU_BSS_START);
-	dna_memset ((void *) CPU_BSS_START, 0, bss_size);
+  bss_size = (size_t) (CPU_BSS_END - CPU_BSS_START);
+  dna_memset ((void *) CPU_BSS_START, 0, bss_size);
 
   /*
    * Initializes the kernel allocator
    */
 
-	heap_size = OS_KERNEL_HEAP_SIZE / DNA_KERNEL_BLOCK_SIZE;
+  heap_size = OS_KERNEL_HEAP_SIZE / DNA_KERNEL_BLOCK_SIZE;
 
-	region = (kernel_region_t) OS_KERNEL_HEAP_ADDRESS;
-	region -> next = NULL;
-	region -> prev = NULL;
-	region -> nblocks = heap_size - 1;
-	region -> status = DNA_KERNEL_FREE_REGION;
+  region = (kernel_region_t) OS_KERNEL_HEAP_ADDRESS;
+  region -> next = NULL;
+  region -> prev = NULL;
+  region -> nblocks = heap_size - 1;
+  region -> status = DNA_KERNEL_FREE_REGION;
 
-	kernel_allocator . next_free_region = region;
-	kernel_allocator . next_created_region = NULL;
-	kernel_allocator . nblocks = heap_size;
-	kernel_allocator . lock = 0;
+  kernel_allocator . next_free_region = region;
+  kernel_allocator . next_created_region = NULL;
+  kernel_allocator . nblocks = heap_size;
+  kernel_allocator . lock = 0;
 
-	return DNA_OK;
+  return DNA_OK;
 }
 
 /*

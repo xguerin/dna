@@ -41,103 +41,103 @@ status_t kernel_region_destroy (kernel_region_t region)
  */
 
 {
-	kernel_region_t ptr = NULL;
-	uint32_t vptr = 0, vregion = 0;
-	uint32_t vrsize = 0, vpsize = 0;
+  kernel_region_t ptr = NULL;
+  uint32_t vptr = 0, vregion = 0;
+  uint32_t vrsize = 0, vpsize = 0;
 
-	/*
-	 * Remove the region from the list of created regions
-	 */
+  /*
+   * Remove the region from the list of created regions
+   */
 
-	if (region -> next != NULL)
+  if (region -> next != NULL)
   {
     region -> next -> prev = region -> prev;
     region -> next = NULL;
   }
 
-	if (region -> prev != NULL)
+  if (region -> prev != NULL)
   {
     region -> prev -> next = region -> next;
     region -> prev = NULL;
   }
-	else
+  else
   {
     kernel_allocator . next_created_region = region -> next;
   }
 
-	/*
-	 * Add the region as a free region
-	 */
+  /*
+   * Add the region as a free region
+   */
 
-	ptr = kernel_allocator . next_free_region;
+  ptr = kernel_allocator . next_free_region;
 
-	if (ptr == NULL) kernel_allocator . next_free_region = region;
-	else {
-		vregion = (uint32_t)region;
-		vrsize = region -> nblocks * DNA_KERNEL_BLOCK_SIZE;
+  if (ptr == NULL) kernel_allocator . next_free_region = region;
+  else {
+    vregion = (uint32_t)region;
+    vrsize = region -> nblocks * DNA_KERNEL_BLOCK_SIZE;
 
-		/*
-		 * First, we increase the new region size
-		 * with connexes regions
-		 */
+    /*
+     * First, we increase the new region size
+     * with connexes regions
+     */
 
-		while (ptr != NULL) {
-			vptr = (uint32_t)ptr;
-			vpsize = ptr -> nblocks * DNA_KERNEL_BLOCK_SIZE;
+    while (ptr != NULL) {
+      vptr = (uint32_t)ptr;
+      vpsize = ptr -> nblocks * DNA_KERNEL_BLOCK_SIZE;
 
-			if (vptr + vpsize == vregion) {
-				ptr -> nblocks += region -> nblocks;
-				region = ptr;
+      if (vptr + vpsize == vregion) {
+        ptr -> nblocks += region -> nblocks;
+        region = ptr;
 
-				if (ptr -> prev != NULL) ptr -> prev -> next = ptr -> next;
-				else kernel_allocator . next_free_region = ptr -> next;
-				if (ptr -> next != NULL) ptr -> next -> prev = ptr -> prev;
-			}
-			else if (vregion + vrsize == vptr) {
-				region -> nblocks += ptr -> nblocks;
+        if (ptr -> prev != NULL) ptr -> prev -> next = ptr -> next;
+        else kernel_allocator . next_free_region = ptr -> next;
+        if (ptr -> next != NULL) ptr -> next -> prev = ptr -> prev;
+      }
+      else if (vregion + vrsize == vptr) {
+        region -> nblocks += ptr -> nblocks;
 
-				if (ptr -> prev != NULL) ptr -> prev -> next = ptr -> next;
-				else kernel_allocator . next_free_region = ptr -> next;
-				if (ptr -> next != NULL) ptr -> next -> prev = ptr -> prev;
-			}
+        if (ptr -> prev != NULL) ptr -> prev -> next = ptr -> next;
+        else kernel_allocator . next_free_region = ptr -> next;
+        if (ptr -> next != NULL) ptr -> next -> prev = ptr -> prev;
+      }
 
-			ptr = ptr -> next;
-		}
+      ptr = ptr -> next;
+    }
 
-		/*
-		 * Then, we order it in term of worst fit.
-		 * This way, alloc only take the first in the list.
-		 */
+    /*
+     * Then, we order it in term of worst fit.
+     * This way, alloc only take the first in the list.
+     */
 
-		ptr = kernel_allocator . next_free_region;
-		if (ptr == NULL) {
-			region -> prev = NULL;
-			region -> next = NULL;
-			kernel_allocator . next_free_region = region;
-		}
-		else {
-			while (ptr -> next != NULL) {
-				if (ptr -> nblocks <= region -> nblocks)  break;
-				ptr = ptr -> next;
-			}
-			
-			if (ptr -> nblocks <= region -> nblocks) {
-				region -> prev = ptr -> prev;
-				region -> next = ptr;
+    ptr = kernel_allocator . next_free_region;
+    if (ptr == NULL) {
+      region -> prev = NULL;
+      region -> next = NULL;
+      kernel_allocator . next_free_region = region;
+    }
+    else {
+      while (ptr -> next != NULL) {
+        if (ptr -> nblocks <= region -> nblocks)  break;
+        ptr = ptr -> next;
+      }
+      
+      if (ptr -> nblocks <= region -> nblocks) {
+        region -> prev = ptr -> prev;
+        region -> next = ptr;
 
-				if (ptr -> prev != NULL) ptr -> prev -> next = region;
-				else kernel_allocator . next_free_region = region;
-				ptr -> prev = region;
-			}
-			else {
-				ptr -> next = region;
-				region -> prev = ptr;
-				region -> next = NULL;
-			}
-		}
-	}	
+        if (ptr -> prev != NULL) ptr -> prev -> next = region;
+        else kernel_allocator . next_free_region = region;
+        ptr -> prev = region;
+      }
+      else {
+        ptr -> next = region;
+        region -> prev = ptr;
+        region -> next = NULL;
+      }
+    }
+  }  
 
-	return DNA_OK;
+  return DNA_OK;
 }
 
 /*

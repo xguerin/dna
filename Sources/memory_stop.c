@@ -35,7 +35,7 @@ status_t memory_stop (void)
 
 {
 
-	return DNA_NOT_IMPLEMENTED;
+  return DNA_NOT_IMPLEMENTED;
 }
 
 /*

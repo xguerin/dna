@@ -45,10 +45,10 @@ status_t kernel_free (void * area)
  */
 
 {
-	status_t status = DNA_OK;
-	kernel_region_t region = NULL;
-	int32_t region_nblocks;
-	interrupt_status_t it_status = 0;
+  status_t status = DNA_OK;
+  kernel_region_t region = NULL;
+  int32_t region_nblocks;
+  interrupt_status_t it_status = 0;
 
   watch (status_t)
   {

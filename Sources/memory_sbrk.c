@@ -36,13 +36,13 @@ void * memory_sbrk (uint32_t increment)
  */
 
 {
-	static uint8_t * current_end = & _end;
-	uint8_t * ptr_start = NULL;
-	
-	ptr_start = (uint8_t *)(((uint32_t)(current_end + 8)) & 0xFFFFFFF8);
-	current_end = current_end + increment; 
+  static uint8_t * current_end = & _end;
+  uint8_t * ptr_start = NULL;
+  
+  ptr_start = (uint8_t *)(((uint32_t)(current_end + 8)) & 0xFFFFFFF8);
+  current_end = current_end + increment; 
 
-	return ptr_start;
+  return ptr_start;
 }
 
 /*

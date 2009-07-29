@@ -42,11 +42,11 @@ void * kernel_malloc (uint32_t size, bool erase)
  */
 
 {
-	uint8_t * area = NULL;
-	kernel_region_t region = NULL;
-	uint32_t nblocks = 0;
-	status_t status = DNA_OK;
-	interrupt_status_t it_status = 0;
+  uint8_t * area = NULL;
+  kernel_region_t region = NULL;
+  uint32_t nblocks = 0;
+  status_t status = DNA_OK;
+  interrupt_status_t it_status = 0;
 
   watch (void *)
   {

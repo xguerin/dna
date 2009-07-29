@@ -47,8 +47,8 @@
 
 enum region_status
 {
-	DNA_KERNEL_FREE_REGION = 0xBEEF,
-	DNA_KERNEL_ALLOCATED_REGION = 0xDEAD
+  DNA_KERNEL_FREE_REGION = 0xBEEF,
+  DNA_KERNEL_ALLOCATED_REGION = 0xDEAD
 };
 
 /*
@@ -63,11 +63,11 @@ enum region_status
 
 typedef struct _kernel_region
 {
-	int32_t nblocks;
-	int32_t status;
+  int32_t nblocks;
+  int32_t status;
 
-	struct _kernel_region * next;
-	struct _kernel_region * prev;
+  struct _kernel_region * next;
+  struct _kernel_region * prev;
 }
 * kernel_region_t;
 
@@ -83,10 +83,10 @@ typedef struct _kernel_region
 
 typedef struct _kernel_allocator
 {
-	int32_t nblocks;
-	kernel_region_t next_created_region;
-	kernel_region_t next_free_region;
-	spinlock_t lock;
+  int32_t nblocks;
+  kernel_region_t next_created_region;
+  kernel_region_t next_free_region;
+  spinlock_t lock;
 }
 kernel_allocator_t;
 
