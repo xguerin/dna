@@ -24,7 +24,7 @@
 status_t fdarray_create (int32_t id, int32_t parent_id)
 {
   file_t file = NULL;
-	fdarray_t fdarray = NULL, parent_array = NULL;
+  fdarray_t fdarray = NULL, parent_array = NULL;
   status_t status = DNA_OK;
   interrupt_status_t it_status = 0;
   void * dummy = NULL;

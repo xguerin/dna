@@ -36,11 +36,11 @@ status_t vfs_create (void)
  */
 
 {
-	dna_memset (& vnode_manager, 0, sizeof (vnode_manager_t));
-	dna_memset (& volume_manager, 0, sizeof (volume_manager_t));
-	dna_memset (& fdarray_manager, 0, sizeof (fdarray_manager_t));
+  dna_memset (& vnode_manager, 0, sizeof (vnode_manager_t));
+  dna_memset (& volume_manager, 0, sizeof (volume_manager_t));
+  dna_memset (& fdarray_manager, 0, sizeof (fdarray_manager_t));
 
-	return DNA_OK;
+  return DNA_OK;
 }
 
 /*

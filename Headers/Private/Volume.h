@@ -35,17 +35,17 @@
 
 typedef struct _volume
 {
-	int32_t id;
-	int64_t root_vnid;
-	spinlock_t lock;
+  int32_t id;
+  int64_t root_vnid;
+  spinlock_t lock;
 
-	struct _volume * host_volume;
-	int64_t host_vnid;
+  struct _volume * host_volume;
+  int64_t host_vnid;
 
-	filesystem_cmd_t * cmd;
-	void * data;
+  filesystem_cmd_t * cmd;
+  void * data;
 
-	queue_item_t link;
+  queue_item_t link;
 }
 * volume_t;
 
@@ -61,9 +61,9 @@ typedef struct _volume
 
 typedef struct _volume_manager
 {
-	spinlock_t lock;
-	int32_t volume_index;
-	queue_t volume_list;
+  spinlock_t lock;
+  int32_t volume_index;
+  queue_t volume_list;
 }
 volume_manager_t;
 
@@ -73,7 +73,7 @@ volume_manager_t;
 extern volume_manager_t volume_manager;
 
 extern volume_t volume_create (int32_t vid, volume_t host_volume,
-		int64_t host_vnid, filesystem_cmd_t * cmd);
+    int64_t host_vnid, filesystem_cmd_t * cmd);
 
 extern status_t volume_destroy (volume_t volume);
 

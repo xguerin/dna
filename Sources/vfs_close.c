@@ -43,11 +43,11 @@ status_t vfs_close (int16_t file_id)
  */
 
 {
-	file_t file = NULL;
-	status_t status = DNA_OK;
-	fdarray_t fdarray = NULL;
+  file_t file = NULL;
+  status_t status = DNA_OK;
+  fdarray_t fdarray = NULL;
   int32_t current_team = -1;
-	interrupt_status_t it_status = 0;
+  interrupt_status_t it_status = 0;
 
   watch (status_t)
   {

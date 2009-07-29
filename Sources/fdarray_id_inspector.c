@@ -42,8 +42,8 @@ bool fdarray_id_inspector (void * fdarray, void * p_id, void * p_dummy)
  */
 
 {
-	fdarray_t array = fdarray;
-	int32_t * id = p_id;
+  fdarray_t array = fdarray;
+  int32_t * id = p_id;
 
   watch (bool)
   {

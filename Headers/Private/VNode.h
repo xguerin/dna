@@ -37,14 +37,14 @@
 
 typedef struct _vnode
 {
-	int64_t id;
-	volume_t volume;
-	bool destroy;
+  int64_t id;
+  volume_t volume;
+  bool destroy;
 
-	int32_t usage_counter;
-	void * data;
+  int32_t usage_counter;
+  void * data;
 
-	queue_item_t link;
+  queue_item_t link;
 }
 * vnode_t;
 
@@ -60,8 +60,8 @@ typedef struct _vnode
 
 typedef struct _vnode_manager
 {
-	spinlock_t lock;
-	queue_t vnode_list;
+  spinlock_t lock;
+  queue_t vnode_list;
 }
 vnode_manager_t;
 

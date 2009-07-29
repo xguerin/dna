@@ -29,7 +29,7 @@
  */
 
 status_t vfs_mount (char * restrict source, char * restrict target,
-		char * restrict fs_type, uint32_t flags, void * data)
+    char * restrict fs_type, uint32_t flags, void * data)
 
 /*
  * ARGUMENTS
@@ -54,15 +54,15 @@ status_t vfs_mount (char * restrict source, char * restrict target,
  */
 
 {
-	filesystem_t * fs = NULL;
-	int64_t host_vnid = -1;
+  filesystem_t * fs = NULL;
+  int64_t host_vnid = -1;
 
-	volume_t host_volume = NULL, volume = NULL;
-	int32_t new_vid = -1;
+  volume_t host_volume = NULL, volume = NULL;
+  int32_t new_vid = -1;
 
-	void * node_data = NULL;
-	status_t status = DNA_OK;
-	interrupt_status_t it_status = 0;
+  void * node_data = NULL;
+  status_t status = DNA_OK;
+  interrupt_status_t it_status = 0;
 
   watch (status_t)
   {

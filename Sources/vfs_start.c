@@ -36,7 +36,7 @@ status_t vfs_start (void)
 
 {
 
-	return DNA_OK;
+  return DNA_OK;
 }
 
 /*

@@ -28,7 +28,7 @@
  */
 
 volume_t volume_create (int32_t vid, volume_t host_volume,
-		int64_t host_vnid, filesystem_cmd_t * cmd)
+    int64_t host_vnid, filesystem_cmd_t * cmd)
 
 /*
  * ARGUMENTS
@@ -44,8 +44,8 @@ volume_t volume_create (int32_t vid, volume_t host_volume,
  */
 
 {
-	volume_t volume = NULL;
-	interrupt_status_t it_status = 0;
+  volume_t volume = NULL;
+  interrupt_status_t it_status = 0;
 
   watch (volume_t)
   {

@@ -42,11 +42,11 @@ status_t vfs_mkdir (char * restrict path, int32_t mode)
  */
 
 {
-	status_t status = DNA_OK;
-	int64_t vnid = -1;
-	volume_t volume = NULL;
-	void * data = NULL;
-	char buffer[DNA_PATH_LENGTH], token[DNA_FILENAME_LENGTH];
+  status_t status = DNA_OK;
+  int64_t vnid = -1;
+  volume_t volume = NULL;
+  void * data = NULL;
+  char buffer[DNA_PATH_LENGTH], token[DNA_FILENAME_LENGTH];
 
   watch (status_t)
   {

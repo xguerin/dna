@@ -39,18 +39,18 @@ status_t volume_destroy (volume_t volume)
  */
 
 {
-	interrupt_status_t it_status = 0;
+  interrupt_status_t it_status = 0;
 
-	it_status = cpu_trap_mask_and_backup();
-	lock_acquire (& volume_manager . volume_list . lock);
+  it_status = cpu_trap_mask_and_backup();
+  lock_acquire (& volume_manager . volume_list . lock);
 
-	queue_extract (& volume_manager . volume_list, & volume -> link);
+  queue_extract (& volume_manager . volume_list, & volume -> link);
 
-	lock_release (& volume_manager . volume_list . lock);
-	cpu_trap_restore(it_status);
+  lock_release (& volume_manager . volume_list . lock);
+  cpu_trap_restore(it_status);
 
-	kernel_free (volume);
-	return DNA_OK;
+  kernel_free (volume);
+  return DNA_OK;
 }
 
 /*

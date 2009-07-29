@@ -46,11 +46,11 @@ status_t vfs_read (int16_t file_id, void * data, int32_t count, int32_t * p_ret)
  */
 
 {
-	file_t file = NULL;
-	fdarray_t fdarray = NULL;
+  file_t file = NULL;
+  fdarray_t fdarray = NULL;
   int32_t current_team = -1;
-	int32_t n_data = count;
-	interrupt_status_t it_status = 0;
+  int32_t n_data = count;
+  interrupt_status_t it_status = 0;
   status_t status = DNA_OK;
 
   watch (status_t)

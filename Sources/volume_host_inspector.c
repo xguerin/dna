@@ -36,9 +36,9 @@ bool volume_host_inspector (void * item, void * p_host, void * p_vnid)
  */
 
 {
-	volume_t volume = item;
-	volume_t host = p_host;
-	int64_t * vnid = p_vnid; 
+  volume_t volume = item;
+  volume_t host = p_host;
+  int64_t * vnid = p_vnid; 
 
   watch (bool)
   {

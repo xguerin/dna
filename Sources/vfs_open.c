@@ -45,18 +45,18 @@ status_t vfs_open (char * restrict path, int32_t mode,
  */
 
 {
-	int16_t fd_index = 0;
-	file_t file = NULL;
-	int64_t vnid = -1, file_vnid = -1;
-	vnode_t vnode = NULL;
-	volume_t volume = NULL;
-	void * data = NULL;
-	void * file_data = NULL;
-	char buffer[DNA_PATH_LENGTH], token[DNA_FILENAME_LENGTH];
-	fdarray_t fdarray = NULL;
+  int16_t fd_index = 0;
+  file_t file = NULL;
+  int64_t vnid = -1, file_vnid = -1;
+  vnode_t vnode = NULL;
+  volume_t volume = NULL;
+  void * data = NULL;
+  void * file_data = NULL;
+  char buffer[DNA_PATH_LENGTH], token[DNA_FILENAME_LENGTH];
+  fdarray_t fdarray = NULL;
   int32_t current_team = -1;
-	interrupt_status_t it_status = 0;
-	status_t status = DNA_OK;
+  interrupt_status_t it_status = 0;
+  status_t status = DNA_OK;
 
   watch (status_t)
   {
