@@ -20,29 +20,29 @@
 #include <DnaTools/DnaTools.h>
 
 status_t rdv_write (void * handler, void * source, int64_t offset, int32_t * p_count) {
-	channel_rdv_t * rdv = handler;
-	interrupt_status_t it_status = 0;
+  channel_rdv_t * rdv = handler;
+  interrupt_status_t it_status = 0;
 
-	it_status = cpu_trap_mask_and_backup();
-	lock_acquire (& rdv -> lock);
+  it_status = cpu_trap_mask_and_backup();
+  lock_acquire (& rdv -> lock);
 
-	if (! rdv -> getter . ready) {
-		rdv -> setter . ready = true;
-		rdv -> setter . buffer = source;
+  if (! rdv -> getter . ready) {
+    rdv -> setter . ready = true;
+    rdv -> setter . buffer = source;
 
-		lock_release (& rdv -> lock);
-		semaphore_acquire (rdv -> sem, 0, -1);
-	}
-	else {
-		rdv -> getter . ready = false;
-		rdv -> setter . ready = false;
-		dna_memcpy ((void *)rdv -> getter . buffer, (void *)source, *p_count);
+    lock_release (& rdv -> lock);
+    semaphore_acquire (rdv -> sem, 0, -1);
+  }
+  else {
+    rdv -> getter . ready = false;
+    rdv -> setter . ready = false;
+    dna_memcpy ((void *)rdv -> getter . buffer, (void *)source, *p_count);
 
-		lock_release (& rdv -> lock);
-		semaphore_release (rdv -> sem, 1, DNA_NO_RESCHEDULE);
-	}
+    lock_release (& rdv -> lock);
+    semaphore_release (rdv -> sem, 1, DNA_NO_RESCHEDULE);
+  }
 
-	cpu_trap_restore(it_status);
-	return DNA_OK;
+  cpu_trap_restore(it_status);
+  return DNA_OK;
 }
 

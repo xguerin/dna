@@ -19,16 +19,16 @@
 #include <DnaTools/DnaTools.h>
 
 device_cmd_t rdv_commands = {
-	rdv_open,
-	rdv_close,
-	rdv_free,
-	rdv_read,
-	rdv_write,
-	rdv_control
+  rdv_open,
+  rdv_close,
+  rdv_free,
+  rdv_read,
+  rdv_write,
+  rdv_control
 };
 
 device_cmd_t * rdv_find_device (const char * name) {
 
-	return & rdv_commands;
+  return & rdv_commands;
 }
 

@@ -22,18 +22,18 @@
 #include <DnaTools/DnaTools.h>
 
 typedef struct channel_rdv {
-	int32_t sem;
-	spinlock_t lock;
+  int32_t sem;
+  spinlock_t lock;
 
-	struct {
-		const void * buffer;
-		volatile bool ready;
-	} setter;
+  struct {
+    const void * buffer;
+    volatile bool ready;
+  } setter;
 
-	struct {
-		const void * buffer;
-		volatile bool ready;
-	} getter;
+  struct {
+    const void * buffer;
+    volatile bool ready;
+  } getter;
 } channel_rdv_t;
 
 extern int32_t CHANNEL_RDV_NDEV;
