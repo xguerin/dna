@@ -27,12 +27,15 @@
 #include <Platform/Platform.h>
 #include <DnaTools/DnaTools.h>
 
-#define DNA_IPI_ALL cpu_mp_count
+#define DNA_IPI_ALL     cpu_mp_count
+#define DNA_IPI_YIELD   0xFFFF
 
-enum
-{
-  DNA_IPI_YIELD = 0xFFFF
-};
+/****t* interrupt/isr_t
+ * SUMMARY
+ * Describes an interrupt service routine element.
+ *
+ * SOURCE
+ */
 
 typedef struct _isr
 {
@@ -41,7 +44,17 @@ typedef struct _isr
 }
 * isr_t;
 
-typedef struct _it_manager
+/*
+ ****/
+
+/****t* interrupt/interrupt_manager_t
+ * SUMMARY
+ * Describes the interrupt manager.
+ *
+ * SOURCE
+ */
+
+typedef struct _interrupt_manager
 {
   spinlock_t lock;
 
@@ -51,9 +64,12 @@ typedef struct _it_manager
   bool has_ipi;
   ipi_manager_t ipi_manager;
 }
-it_manager_t;
+interrupt_manager_t;
 
-extern it_manager_t it_manager;
+/*
+ ****/
+
+extern interrupt_manager_t interrupt_manager;
 
 extern int32_t interrupt_demultiplexer (int32_t itn);
 extern bool interrupt_handler_inspector (void * p_isr,

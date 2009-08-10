@@ -42,19 +42,19 @@ status_t ipi_set_manager (ipi_manager_t manager, bool force)
 
   watch (status_t)
   {
-    ensure (it_manager . has_ipi || force, DNA_ERROR);
+    ensure (interrupt_manager . has_ipi || force, DNA_ERROR);
 
     /*
      * Set the timer to the time manager
      */
 
     it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& it_manager . lock);
+    lock_acquire (& interrupt_manager . lock);
 
-    it_manager . has_ipi = true;
-    it_manager . ipi_manager = manager;
+    interrupt_manager . has_ipi = true;
+    interrupt_manager . ipi_manager = manager;
 
-    lock_release (& it_manager . lock);
+    lock_release (& interrupt_manager . lock);
     cpu_trap_restore(it_status);
 
     return DNA_OK;

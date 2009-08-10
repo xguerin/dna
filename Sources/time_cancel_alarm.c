@@ -26,7 +26,7 @@
  * SYNOPSIS
  */
 
-status_t time_cancel_alarm (int32_t alarm)
+status_t time_cancel_alarm (int32_t aid)
 
 /*
  * ARGUMENTS
@@ -51,7 +51,7 @@ status_t time_cancel_alarm (int32_t alarm)
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& time_manager . lock);
 
-    if (time_manager . current_alarm -> id == alarm)
+    if (time_manager . current_alarm -> id == aid)
     {
       time_manager . system_timer . cancel ();
 
@@ -74,7 +74,7 @@ status_t time_cancel_alarm (int32_t alarm)
     else
     {
       a = queue_lookup (& time_manager . alarm_queue,
-          alarm_id_inspector, & alarm, NULL); 
+          alarm_id_inspector, & aid, NULL); 
 
       check (alarm_error, a != NULL, DNA_ERROR);
 

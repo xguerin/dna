@@ -54,13 +54,13 @@ status_t semaphore_linked_acquire (int32_t sid, int32_t lsid)
     ensure (lsid >= 0 && lsid < DNA_MAX_SEM , DNA_BAD_SEM_ID);
 
     it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& sem_pool . lock);
+    lock_acquire (& semaphore_pool . lock);
 
     /*
      * Check the first semaphore
      */
 
-    sem = sem_pool . semaphore[sid];
+    sem = semaphore_pool . semaphore[sid];
     check (invalid_sem, sem != NULL, DNA_BAD_SEM_ID);
 
     lock_acquire (& sem -> lock);
@@ -69,11 +69,11 @@ status_t semaphore_linked_acquire (int32_t sid, int32_t lsid)
      * Check the second semaphore
      */
 
-    lsem = sem_pool . semaphore[lsid];
+    lsem = semaphore_pool . semaphore[lsid];
     check (invalid_lsem, index < DNA_MAX_SEM, DNA_BAD_SEM_ID);
 
     lock_acquire (& lsem -> lock);
-    lock_release (& sem_pool . lock);
+    lock_release (& semaphore_pool . lock);
 
     /*
      * Release the second semaphore
@@ -141,7 +141,7 @@ status_t semaphore_linked_acquire (int32_t sid, int32_t lsid)
 
   rescue (invalid_sem)
   {
-    lock_release (& sem_pool . lock);
+    lock_release (& semaphore_pool . lock);
     cpu_trap_restore(it_status);
     leave;
   }

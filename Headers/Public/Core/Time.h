@@ -76,9 +76,9 @@ extern status_t time_set_timer (system_timer_t timer, bool force);
 extern status_t time_get_system (bigtime_t * value);
 
 extern status_t time_set_alarm (bigtime_t quantum, int32_t mode,
-    timer_callback_t callback, void * data, int32_t * alarm);
-extern status_t time_cancel_alarm (int32_t alarm);
-extern status_t time_reset_alarm (int32_t alarm);
+    timer_callback_t callback, void * data, int32_t * aid);
+extern status_t time_cancel_alarm (int32_t aid);
+extern status_t time_reset_alarm (int32_t aid);
 
 #endif
 

@@ -50,21 +50,21 @@ status_t ipi_send (int32_t target, int32_t command, void * cookie)
     ensure (target >= 0 && target <= cpu_mp_count, DNA_ERROR);
 
     it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& it_manager . lock);
+    lock_acquire (& interrupt_manager . lock);
 
     if (target == DNA_IPI_ALL)
     {
       for (int32_t i = 0; i < cpu_mp_count; i += 1)
       {
-        it_manager . ipi_manager . send (i, command, cookie);
+        interrupt_manager . ipi_manager . send (i, command, cookie);
       }
     }
     else
     {
-      it_manager . ipi_manager . send (target, command, cookie);
+      interrupt_manager . ipi_manager . send (target, command, cookie);
     }
 
-    lock_release (& it_manager . lock);
+    lock_release (& interrupt_manager . lock);
     cpu_trap_restore(it_status);
 
     return DNA_OK;

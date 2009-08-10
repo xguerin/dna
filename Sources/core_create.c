@@ -73,7 +73,7 @@ status_t core_create (void)
      * Initialize the IT multiplexer
      */
 
-    dna_memset (& it_manager, 0, sizeof (it_manager_t));
+    dna_memset (& interrupt_manager, 0, sizeof (interrupt_manager_t));
 
     /*
      * Initialize the time manager
@@ -85,10 +85,7 @@ status_t core_create (void)
      * Initialize the semaphore pool
      */
 
-    dna_memset (& sem_pool, 0, sizeof (sem_pool_t));
-    sem_pool . semaphore = kernel_malloc
-      (sizeof (semaphore_t) * DNA_MAX_SEM, true);
-    check (sem_pool_alloc, sem_pool . semaphore != NULL, DNA_OUT_OF_MEM);
+    dna_memset (& semaphore_pool, 0, sizeof (semaphore_pool_t));
 
     /*
      * Allocate the system team structure.
@@ -214,12 +211,7 @@ status_t core_create (void)
   
   rescue (team_alloc)
   {
-    kernel_free (sem_pool . semaphore);
-  }
-
-  rescue (sem_pool_alloc)
-  {
-    kernel_free (scheduler . xt);
+    kernel_free (semaphore_pool . semaphore);
   }
 
   rescue (sched_xt_alloc)

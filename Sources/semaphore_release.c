@@ -53,17 +53,17 @@ status_t semaphore_release (int32_t sid, int32_t tokens, int32_t flags)
     ensure (tokens > 0, DNA_ERROR);
 
     it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& sem_pool . lock);
+    lock_acquire (& semaphore_pool . lock);
 
     /*
      * Look for the semaphore with ID sid
      */
 
-    sem = sem_pool . semaphore[sid];
+    sem = semaphore_pool . semaphore[sid];
     check (invalid_semaphore, sem != NULL, DNA_BAD_SEM_ID);
 
     lock_acquire (& sem -> lock);
-    lock_release (& sem_pool . lock);
+    lock_release (& semaphore_pool . lock);
 
     /*
      * Decide what to do according to the number
@@ -124,7 +124,7 @@ status_t semaphore_release (int32_t sid, int32_t tokens, int32_t flags)
 
   rescue (invalid_semaphore)
   {
-    lock_release (& sem_pool . lock);
+    lock_release (& semaphore_pool . lock);
     cpu_trap_restore(it_status);
     leave;
   }

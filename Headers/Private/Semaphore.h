@@ -49,24 +49,24 @@ typedef struct _semaphore
 /*
  ****/
 
-/****t* semaphore/sem_pool_t
+/****t* semaphore/semaphore_pool_t
  * SUMMARY
  * Semaphore manager type.
  *
  * SOURCE
  */
 
-typedef struct _sem_pool
+typedef struct _semaphore_pool
 {
   spinlock_t lock;
-  semaphore_t * semaphore;
+  semaphore_t semaphore[DNA_MAX_SEM];
 }
-sem_pool_t;
+semaphore_pool_t;
 
 /*
  ****/
 
-extern sem_pool_t sem_pool;
+extern semaphore_pool_t semaphore_pool;
 
 #endif
 

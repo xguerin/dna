@@ -53,11 +53,11 @@ status_t semaphore_create (char * name, int32_t tokens, int32_t * sid)
     ensure (semaphore != NULL, DNA_OUT_OF_MEM);
 
     it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& sem_pool . lock);
+    lock_acquire (& semaphore_pool . lock);
 
     for (index = 0; index < DNA_MAX_SEM; index ++)
     {
-      if (sem_pool . semaphore[index] == NULL) break;
+      if (semaphore_pool . semaphore[index] == NULL) break;
     }
 
     check (pool_error, index < DNA_MAX_SEM, DNA_NO_MORE_SEM);
@@ -67,9 +67,9 @@ status_t semaphore_create (char * name, int32_t tokens, int32_t * sid)
     semaphore -> tokens = tokens;
     semaphore -> team = scheduler . cpu[cpu_mp_id()] . current_team;
 
-    sem_pool . semaphore[index] = semaphore;
+    semaphore_pool . semaphore[index] = semaphore;
 
-    lock_release (& sem_pool . lock);
+    lock_release (& semaphore_pool . lock);
     cpu_trap_restore(it_status);
 
     *sid = semaphore -> id;
@@ -78,7 +78,7 @@ status_t semaphore_create (char * name, int32_t tokens, int32_t * sid)
 
   rescue (pool_error)
   {
-    lock_release (& sem_pool . lock);
+    lock_release (& semaphore_pool . lock);
     cpu_trap_restore(it_status);
     kernel_free (semaphore);
     leave;

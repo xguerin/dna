@@ -39,7 +39,7 @@ int32_t interrupt_demultiplexer (int32_t data)
  */
 
 {
-  queue_lookup (& it_manager . isr_list[data],
+  queue_lookup (& interrupt_manager . isr_list[data],
       interrupt_handler_inspector, & data, NULL);
   return DNA_OK;
 }
