@@ -41,7 +41,7 @@ typedef struct _alarm {
 
   bigtime_t quantum;
   bigtime_t deadline;
-  timer_callback_t callback;
+  alarm_callback_t callback;
   void * data;
 
   queue_item_t link;

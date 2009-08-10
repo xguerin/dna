@@ -28,7 +28,7 @@
  */
 
 status_t time_set_alarm (bigtime_t quantum, int32_t mode,
-    timer_callback_t callback, void * data, int32_t * aid)
+    alarm_callback_t callback, void * data, int32_t * aid)
 
 /*
  * ARGUMENTS
