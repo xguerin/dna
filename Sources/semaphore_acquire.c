@@ -26,13 +26,13 @@
  * SYNOPSIS
  */
 
-status_t semaphore_acquire (int32_t sid, int32_t n_tokens,
+status_t semaphore_acquire (int32_t sid, int32_t tokens,
     int32_t flags, bigtime_t timeout)
 
 /*
  * ARGUMENTS
  * * sid : the ID of the semaphore to acquire.
- * * n_tokens : the number of tokens to acquire
+ * * tokens : the number of tokens to acquire
  * * flags : flags of the operation.
  * * timeout : time, in millisecond, when the acquire process must abort.
  *
@@ -74,7 +74,7 @@ status_t semaphore_acquire (int32_t sid, int32_t n_tokens,
      * Remove the necessary tokens
      */
 
-    rem_tokens = sem -> tokens - n_tokens;
+    rem_tokens = sem -> tokens - tokens;
 
     /*
      * And decide what to do next depending on the result
@@ -120,7 +120,7 @@ status_t semaphore_acquire (int32_t sid, int32_t n_tokens,
          */
 
         case 0 :
-          sem -> tokens += n_tokens;
+          sem -> tokens += tokens;
           status = DNA_WOULD_BLOCK;
 
           break;
@@ -160,7 +160,7 @@ status_t semaphore_acquire (int32_t sid, int32_t n_tokens,
           {
             queue_extract (& sem -> waiting_queue, & self -> status_link);
             status = DNA_TIMED_OUT;
-            sem -> tokens += n_tokens;
+            sem -> tokens += tokens;
           }
           else
           {
@@ -172,7 +172,7 @@ status_t semaphore_acquire (int32_t sid, int32_t n_tokens,
     }
     else
     {
-      sem -> tokens -= n_tokens;
+      sem -> tokens -= tokens;
     }
     
     if (status == DNA_OK)

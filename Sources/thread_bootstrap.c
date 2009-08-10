@@ -17,14 +17,14 @@
 
 #include <Private/Core.h>
 
-/****f* Core/thread_wrapper
+/****f* Core/thread_bootstrap
  * SUMMARY
- * A wrapper to launch a thread.
+ * The code required to boostrap a thead.
  *
  * SYNOPSIS
  */
 
-int32_t thread_wrapper (void * p_signature)
+int32_t thread_bootstrap (void * p_signature)
 
 /*
  * ARGUMENTS

@@ -41,7 +41,7 @@ status_t time_cancel_alarm (int32_t alarm)
 
 {
   alarm_t a = NULL;
-  bigtime_t current_time = 0, quanta = 0;
+  bigtime_t current_time = 0, quantum = 0;
   interrupt_status_t it_status = 0;
 
   watch (status_t)
@@ -62,9 +62,9 @@ status_t time_cancel_alarm (int32_t alarm)
       {
         a = queue_rem (& time_manager . alarm_queue);
         time_manager . system_timer . get (& current_time);
-        quanta = a -> deadline - current_time;
+        quantum = a -> deadline - current_time;
         time_manager . current_alarm = a;
-        time_manager . system_timer . set (quanta, time_callback, a);
+        time_manager . system_timer . set (quantum, time_callback, a);
       }
       else
       {

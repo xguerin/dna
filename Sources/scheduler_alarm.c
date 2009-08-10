@@ -18,14 +18,14 @@
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* RootTask/scheduler_callback
+/****f* RootTask/scheduler_alarm
  * SUMMARY
  * Callback used for preempt context switching.
  *
  * SYNOPSIS
  */
 
-status_t scheduler_callback (void * data)
+status_t scheduler_alarm (void * data)
 
 /*
  * ARGUMENTS

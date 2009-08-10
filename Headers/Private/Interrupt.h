@@ -55,8 +55,9 @@ it_manager_t;
 
 extern it_manager_t it_manager;
 
-extern int32_t interrupt_handler (int32_t itn);
-extern bool interrupt_handler_inspector (void * p_isr, void * p_handler, void * dummy);
+extern int32_t interrupt_demultiplexer (int32_t itn);
+extern bool interrupt_handler_inspector (void * p_isr,
+    void * p_handler, void * dummy);
 
 extern status_t ipi_send (int32_t target, int32_t command, void * cookie);
 extern status_t ipi_callback (int32_t command, void * cookie);

@@ -26,12 +26,12 @@
  * SYNOPSIS
  */
 
-status_t semaphore_release (int32_t sid, int32_t n_tokens, int32_t flags)
+status_t semaphore_release (int32_t sid, int32_t tokens, int32_t flags)
 
 /*
  * ARGUMENTS
  * * sid : a semaphore ID
- * * n_tokens : the number of tokens to release
+ * * tokens : the number of tokens to release
  * * flags : the flags of the operation
  *
  * RESULT
@@ -50,7 +50,7 @@ status_t semaphore_release (int32_t sid, int32_t n_tokens, int32_t flags)
   watch (status_t)
   {
     ensure (sid >= 0 && sid < DNA_MAX_SEM, DNA_BAD_SEM_ID);
-    ensure (n_tokens > 0, DNA_ERROR);
+    ensure (tokens > 0, DNA_ERROR);
 
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& sem_pool . lock);
@@ -70,23 +70,23 @@ status_t semaphore_release (int32_t sid, int32_t n_tokens, int32_t flags)
      * of tokens required by a potential waiting thread
      */
 
-    while (n_tokens != 0)
+    while (tokens != 0)
     {
       thread = queue_rem (& sem -> waiting_queue);
 
       if (thread != NULL)
       {
-        if (thread -> sem_tokens <= n_tokens)
+        if (thread -> sem_tokens <= tokens)
         {
-          n_tokens -= thread -> sem_tokens;
+          tokens -= thread -> sem_tokens;
           thread -> sem_tokens = 0;
 
           scheduler_dispatch (thread);
         }
         else
         {
-          thread -> sem_tokens -= n_tokens;
-          n_tokens = 0;
+          thread -> sem_tokens -= tokens;
+          tokens = 0;
 
           queue_pushback (& sem -> waiting_queue, & thread -> status_link);
         }
@@ -101,7 +101,7 @@ status_t semaphore_release (int32_t sid, int32_t n_tokens, int32_t flags)
      * Add the remaining number of tokens
      */
 
-    sem -> tokens += n_tokens;
+    sem -> tokens += tokens;
 
     /*
      * We release the sem's lock

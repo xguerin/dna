@@ -58,7 +58,7 @@ status_t core_start (void)
 
 #if 0
       status = time_set_alarm (4000000, DNA_RELATIVE_ALARM |
-          DNA_PERIODIC_ALARM, scheduler_callback, NULL, & alarm_id);
+          DNA_PERIODIC_ALARM, scheduler_alarm, NULL, & alarm_id);
       ensure (status == DNA_OK, status);
 #endif
     }

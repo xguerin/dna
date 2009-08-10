@@ -39,7 +39,7 @@ status_t time_callback (void * data)
   bool reschedule = false, process_next_alarm = true;
   alarm_t alarm = (alarm_t) data;
   alarm_t next_alarm = NULL;
-  bigtime_t current_time = 0, quanta = 0;
+  bigtime_t current_time = 0, quantum = 0;
   status_t status = DNA_OK;
 
   /*
@@ -55,7 +55,7 @@ status_t time_callback (void * data)
     if ((alarm -> mode & DNA_PERIODIC_ALARM) != 0)
     {
       time_manager . system_timer . get (& current_time);
-      alarm -> deadline = alarm -> quanta +  current_time;
+      alarm -> deadline = alarm -> quantum +  current_time;
       queue_insert (& time_manager . alarm_queue,
           alarm_comparator, & alarm -> link);
     }
@@ -76,16 +76,16 @@ status_t time_callback (void * data)
       time_manager . current_alarm = next_alarm;
 
       time_manager . system_timer . get (& current_time);
-      quanta = next_alarm -> deadline - current_time;
+      quantum = next_alarm -> deadline - current_time;
 
-      if (quanta <= DNA_TIMER_JIFFY)
+      if (quantum <= DNA_TIMER_JIFFY)
       {
         alarm = next_alarm;
       }
       else
       {
         process_next_alarm = false;
-        time_manager . system_timer . set (quanta, time_callback, next_alarm);
+        time_manager . system_timer . set (quantum, time_callback, next_alarm);
       }
     }
     else

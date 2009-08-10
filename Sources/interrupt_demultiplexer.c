@@ -19,14 +19,14 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* Core/interrupt_handler
+/****f* Core/interrupt_demultiplexer
  * SUMMARY
  * Handler for mulitplexed interrupts.
  *
  * SYNOPSIS
  */
 
-int32_t interrupt_handler (int32_t data)
+int32_t interrupt_demultiplexer (int32_t data)
 
 /*
  * ARGUMENTS

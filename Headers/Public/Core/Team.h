@@ -42,9 +42,6 @@ team_info_t;
 /*
  ****/
 
-extern status_t team_create (char * name, thread_handler_t thread_handler,
-    void * thread_arguments, int32_t * tid);
-
 extern status_t team_find (char * name, int32_t * tid);
 extern status_t team_get_info (int32_t id, team_info_t * team_info);
 

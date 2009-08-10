@@ -27,14 +27,14 @@
  * SYNOPSIS
  */
 
-status_t team_create (char * team_name, thread_handler_t thread_handler,
-    void * thread_arguments, int32_t * tid)
+status_t team_create (char * name, thread_handler_t handler,
+    void * arguments, int32_t * tid)
 
 /*
  * ARGUMENTS
  * * name : team name
  * * handler : the main thread's handler
- * * thread_arguments : the main thread's arguments
+ * * arguments : the main thread's arguments
  * * tid : the placeholder of the main thread's ID
  *
  * RESULT
@@ -66,7 +66,7 @@ status_t team_create (char * team_name, thread_handler_t thread_handler,
      */
 
     team -> id = atomic_add (& team_manager . team_index, 1);
-    dna_strcpy (team -> name, team_name);
+    dna_strcpy (team -> name, name);
 
     queue_item_init (& team -> sched_link, team);
 
@@ -117,8 +117,8 @@ status_t team_create (char * team_name, thread_handler_t thread_handler,
 
     thread -> signature . stack_base = stack_base;
     thread -> signature . stack_size = 0x4000;
-    thread -> signature . handler = thread_handler;
-    thread -> signature . arguments = thread_arguments;
+    thread -> signature . handler = handler;
+    thread -> signature . arguments = arguments;
 
     /*
      * Initialize the queueing elements.
@@ -133,7 +133,7 @@ status_t team_create (char * team_name, thread_handler_t thread_handler,
      */
 
     cpu_context_init ((& thread -> ctx), thread -> signature . stack_base,
-        thread -> signature . stack_size, thread_wrapper, & thread -> signature);
+        thread -> signature . stack_size, thread_bootstrap, & thread -> signature);
 
     /*
      * Register the main thread in the global threads list

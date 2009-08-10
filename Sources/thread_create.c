@@ -108,7 +108,7 @@ status_t thread_create (thread_handler_t handler, void * arguments,
      */
 
     cpu_context_init ((& thread -> ctx), thread -> signature . stack_base,
-        thread -> signature . stack_size, thread_wrapper, & thread -> signature);
+        thread -> signature . stack_size, thread_bootstrap, & thread -> signature);
 
     /*
      * Register the thread in the global threads list

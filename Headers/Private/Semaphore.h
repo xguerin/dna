@@ -43,7 +43,8 @@ typedef struct _semaphore
   team_t team;
   thread_t latest_holder;
   queue_t waiting_queue;
-} * semaphore_t;
+}
+* semaphore_t;
 
 /*
  ****/

@@ -70,7 +70,7 @@ status_t interrupt_attach (interrupt_id_t id, int32_t mode,
     }
     else if (it_manager . counter[id] == 2)
     {
-      cpu_trap_attach_isr (id, mode, interrupt_handler);
+      cpu_trap_attach_isr (id, mode, interrupt_demultiplexer);
     }
 
     lock_release (& it_manager . lock);

@@ -41,11 +41,11 @@ semaphore_info_t;
 extern status_t semaphore_create (char * name, int32_t tokens, int32_t * sid);
 extern status_t semaphore_destroy (int32_t sid);
 
-extern status_t semaphore_acquire (int32_t sid, int32_t n_tokens,
+extern status_t semaphore_acquire (int32_t sid, int32_t tokens,
     int32_t flags, bigtime_t timeout);
 
 extern status_t semaphore_linked_acquire (int32_t sid, int32_t lsid);
-extern status_t semaphore_release (int32_t sid, int32_t n_tokens, int32_t flags);
+extern status_t semaphore_release (int32_t sid, int32_t tokens, int32_t flags);
 
 extern status_t semaphore_get_info (int32_t sid, semaphore_info_t * info);
 
