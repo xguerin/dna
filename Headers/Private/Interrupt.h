@@ -27,8 +27,8 @@
 #include <Platform/Platform.h>
 #include <DnaTools/DnaTools.h>
 
-#define DNA_IPI_ALL     cpu_mp_count
-#define DNA_IPI_YIELD   0xFFFF
+#define DNA_IPI_ALL       cpu_mp_count
+#define DNA_IPI_EXECUTE   0xFFFF
 
 /****t* interrupt/isr_t
  * SUMMARY

@@ -133,7 +133,8 @@ status_t team_create (char * name, thread_handler_t handler,
      */
 
     cpu_context_init ((& thread -> ctx), thread -> signature . stack_base,
-        thread -> signature . stack_size, thread_bootstrap, & thread -> signature);
+        thread -> signature . stack_size, thread_bootstrap,
+        & thread -> signature);
 
     /*
      * Register the main thread in the global threads list

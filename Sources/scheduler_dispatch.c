@@ -46,7 +46,7 @@ void scheduler_dispatch (thread_t thread)
 
     lock_release (& thread -> lock);
 
-    ipi_send (next_cpuid, DNA_IPI_YIELD, thread);
+    ipi_send (next_cpuid, DNA_IPI_EXECUTE, thread);
   }
   else
   {
