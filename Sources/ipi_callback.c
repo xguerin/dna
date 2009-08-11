@@ -46,7 +46,7 @@ status_t ipi_callback (int32_t command, void * cookie)
   {
     switch (command)
     {
-      case DNA_IPI_YIELD :
+      case DNA_IPI_EXECUTE :
         target = cookie;
         ensure (target != NULL, DNA_ERROR);
 
