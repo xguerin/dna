@@ -39,27 +39,6 @@ int32_t thread_idle (void * data)
  */
 
 {
-  int32_t thread = -1;
-  int32_t current_cpuid = cpu_mp_id ();
-  interrupt_status_t it_status;
-
-  scheduler . cpu[current_cpuid] . status = DNA_CPU_READY;
-
-  it_status = cpu_trap_mask_and_backup ();
-  lock_acquire (& scheduler . cpu_pool . lock);
-
-  queue_add (& scheduler . cpu_pool, & scheduler . cpu[current_cpuid] . link);
-
-  lock_release (& scheduler . cpu_pool . lock);
-  cpu_trap_restore (it_status);
-
-  if (current_cpuid == 0)
-  {
-    thread_create (thread_root, NULL, "Root",
-        DNA_NO_AFFINITY, 0x2000, & thread);
-    thread_resume (thread);
-  }
-
   while (true);
   return 0;
 }

@@ -43,10 +43,10 @@ status_t core_create (void)
  */
 
 {
+  status_t status;
   team_t team = NULL;
   thread_t thread = NULL;
-  void * stack_base = NULL;
-  char id_buffer[16];
+  int32_t thread_id = -1;
 
   watch (status_t)
   {
@@ -99,7 +99,7 @@ status_t core_create (void)
      */
 
     team -> id = atomic_add (& team_manager . team_index, 1);
-    dna_strcpy (team -> name, "Kernel");
+    dna_strcpy (team -> name, DNA_SYSTEM_TEAM);
 
     queue_item_init (& team -> sched_link, team);
 
@@ -109,56 +109,30 @@ status_t core_create (void)
 
     queue_add (& team_manager . team_list, & team -> sched_link);
 
+    /*
+     * Create the idle threads
+     */
+
     for (int32_t cpu_i = 0; cpu_i < cpu_mp_count; cpu_i++)
     {
       /*
-       * Allocate the idle thread structures.
+       * Set the current team as the system team.
+       * We do that now because current_team is required
+       * by thread_create ().
        */
 
-      thread = kernel_malloc (sizeof (struct _thread), true);
-      check (thread_alloc, thread != NULL, DNA_OUT_OF_MEM);
+      scheduler . cpu[cpu_i] . current_team = team;
 
       /*
-       * Allocate its stack.
+       * Create the Idle thread
        */
 
-      stack_base = kernel_malloc (0x400, true);
-      check (thread_alloc, stack_base != NULL, DNA_OUT_OF_MEM);
+      status = thread_create (thread_idle, NULL, "IdleThread",
+          cpu_i, 0x400, & thread_id);
+      check (create_threads, status == DNA_OK, DNA_ERROR);
 
-      /*
-       * Fill-in the necessary fields.
-       */
-
-      dna_itoa (cpu_i, id_buffer);
-      dna_strcpy (thread -> name, "Idle");
-      dna_strcat (thread -> name, id_buffer);
-
-      thread -> id = atomic_add (& team_manager . thread_index, 1);
-      thread -> type = DNA_IDLE_THREAD;
-      thread -> cpu_id = cpu_i;
-      thread -> cpu_affinity = cpu_i;
-      thread -> team = team;
-
-      thread -> signature . stack_base = stack_base;
-      thread -> signature . stack_size = 0x400;
-      thread -> signature . handler = thread_idle;
-      thread -> signature . arguments = NULL;
-
-      /*
-       * Initialize the queueing elements.
-       */
-
-      queue_item_init (& (thread -> status_link), thread);
-      queue_item_init (& (thread -> team_link), thread);
-      queue_item_init (& (thread -> sched_link), thread);
-
-      /*
-       * Initialize the context.
-       */
-
-      cpu_context_init ((& thread -> ctx), thread -> signature . stack_base,
-          thread -> signature . stack_size, thread -> signature . handler,
-          thread -> signature . arguments);
+      thread = queue_lookup (& team -> thread_list,
+          thread_id_inspector, (void *) & thread_id, NULL);
 
       /*
        * Deal with the new thread
@@ -166,26 +140,33 @@ status_t core_create (void)
 
       scheduler . cpu[cpu_i] . id = cpu_i;
       scheduler . cpu[cpu_i] . status = DNA_CPU_DISABLED;
+
       queue_item_init (& scheduler . cpu[cpu_i] . link,
           & scheduler . cpu[cpu_i]);
 
-      scheduler . cpu[cpu_i] . current_team = team;
       scheduler . cpu[cpu_i] . idle_thread = thread;
       scheduler . cpu[cpu_i] . current_thread = thread;
     }
 
+    /*
+     * Create the root thread
+     */
+
+    status = thread_create (thread_root, NULL, "RootThread",
+        DNA_NO_AFFINITY, 0x2000, & thread_id);
+    check (create_threads, status == DNA_OK, DNA_ERROR);
+
+    thread = queue_lookup (& team -> thread_list,
+        thread_id_inspector, (void *) & thread_id, NULL);
+
+    scheduler . cpu[0] . current_thread = thread;
+
     return DNA_OK;
   }
 
-  rescue (thread_alloc)
+  rescue(create_threads)
   {
     thread_t idle_thread = NULL;
-
-    /*
-     * We free the team
-     */
-
-    kernel_free (team);
 
     /*
      * We free each allocated thread and its stack
@@ -194,19 +175,22 @@ status_t core_create (void)
     for (int32_t cpu_i = 0; cpu_i < cpu_mp_count; cpu_i++)
     {
       idle_thread = scheduler . cpu[cpu_i] . idle_thread;
+
       if (idle_thread != NULL)
       {
-        kernel_free (idle_thread -> signature . stack_base);
-        kernel_free (idle_thread);
+        thread_destroy (idle_thread);
+
+        scheduler . cpu[cpu_i] . current_team = NULL;
+        scheduler . cpu[cpu_i] . idle_thread = NULL;
+        scheduler . cpu[cpu_i] . current_thread = NULL;
       }
     }
 
     /*
-     * We check if a temporary thread has been created and, if so,
-     * we free it
+     * We free the team
      */
 
-    if (thread != NULL) kernel_free (thread);
+    kernel_free (team);
   }
   
   rescue (team_alloc)

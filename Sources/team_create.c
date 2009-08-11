@@ -109,7 +109,6 @@ status_t team_create (char * name, thread_handler_t handler,
 
     dna_strcpy (thread -> name, "MainThread");
     thread -> id = atomic_add (& team_manager . thread_index, 1);
-    thread -> type = DNA_MAIN_THREAD;
     thread -> status = DNA_THREAD_SLEEP;
     thread -> cpu_id = -1;
     thread -> cpu_affinity = scheduler . xt_index;

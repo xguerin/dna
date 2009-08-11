@@ -45,15 +45,8 @@ status_t thread_yield (void)
   {
     self -> status = DNA_THREAD_READY;
 
-    if (self -> type != DNA_IDLE_THREAD)
-    {
-      lock_acquire (& scheduler . xt[self -> cpu_affinity] . lock);
-      scheduler_switch (thread, & scheduler . xt[self -> cpu_affinity]);
-    }
-    else
-    {
-      scheduler_switch (thread, NULL);
-    }
+    lock_acquire (& scheduler . xt[self -> cpu_affinity] . lock);
+    scheduler_switch (thread, & scheduler . xt[self -> cpu_affinity]);
   }
 
   cpu_trap_restore(it_status);
