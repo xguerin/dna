@@ -51,24 +51,6 @@ thread_status_t;
 /*
  ****/
 
-/****v* thread/thread_type
- * SUMMARY
- * Existing kind of threads. Not available to the user.
- *
- * SOURCE
- */
-
-typedef enum thread_type
-{
-  DNA_NORMAL_THREAD    = 0x0001,
-  DNA_IDLE_THREAD      = 0x0002,
-  DNA_MAIN_THREAD      = 0x0004
-}
-thread_type_t;
-
-/*
- ****/
-
 /****t* thread/thread_signature_t
  * SUMMARY
  * Thread signature.
@@ -101,7 +83,6 @@ typedef struct _thread
   int32_t id;
   char name[DNA_NAME_LENGTH];
 
-  thread_type_t type;
   thread_status_t status;
   int32_t stopwatch;
   int32_t priority;

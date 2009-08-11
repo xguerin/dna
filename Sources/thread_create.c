@@ -76,7 +76,6 @@ status_t thread_create (thread_handler_t handler, void * arguments,
 
     dna_strcpy (thread -> name, name);
     thread -> id = atomic_add (& team_manager . thread_index, 1);
-    thread -> type = DNA_NORMAL_THREAD;
     thread -> status = DNA_THREAD_SLEEP;
     thread -> cpu_id = -1;
     thread -> team = team;
@@ -108,7 +107,8 @@ status_t thread_create (thread_handler_t handler, void * arguments,
      */
 
     cpu_context_init ((& thread -> ctx), thread -> signature . stack_base,
-        thread -> signature . stack_size, thread_bootstrap, & thread -> signature);
+        thread -> signature . stack_size, thread_bootstrap,
+        & thread -> signature);
 
     /*
      * Register the thread in the global threads list

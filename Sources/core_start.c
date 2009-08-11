@@ -38,14 +38,10 @@ status_t core_start (void)
  */
 
 {
-#if 0
-  int32_t alarm_id;
-#endif
-
   status_t status;
   uint32_t current_cpuid = cpu_mp_id ();
-  thread_t thread = scheduler . cpu[current_cpuid] . idle_thread;
   team_t team = scheduler . cpu[cpu_mp_id ()] . current_team;
+  thread_t thread = scheduler . cpu[current_cpuid] . current_thread;
 
   watch (status_t)
   {
@@ -56,11 +52,11 @@ status_t core_start (void)
       status = fdarray_create (team -> id, -1);
       ensure (status == DNA_OK, status);
 
-#if 0
-      status = time_set_alarm (4000000, DNA_RELATIVE_ALARM |
-          DNA_PERIODIC_ALARM, scheduler_alarm, NULL, & alarm_id);
-      ensure (status == DNA_OK, status);
-#endif
+      scheduler . cpu[current_cpuid] . status = DNA_CPU_RUNNING;
+    }
+    else
+    {
+      scheduler_push_cpu (current_cpuid);
     }
 
     thread -> status = DNA_THREAD_RUNNING;
