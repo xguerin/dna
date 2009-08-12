@@ -27,11 +27,15 @@
  * SYNOPSIS
  */
 
-volume_t volume_create (int32_t vid, volume_t host_volume,
-    int64_t host_vnid, filesystem_cmd_t * cmd)
+status_t volume_create (volume_t host_volume, int64_t host_vnid,
+    filesystem_cmd_t * cmd, volume_t * p_volume)
 
 /*
  * ARGUMENTS
+ * * vid : the ID of the volume
+ * * host_volume : a pointer to a volume_t;
+ * * host_vnid : a pointer to a volume_t;
+ * * cmd : a pointer to a volume_t;
  * * volume : a pointer to a volume_t;
  *
  * FUNCTION
@@ -47,12 +51,12 @@ volume_t volume_create (int32_t vid, volume_t host_volume,
   volume_t volume = NULL;
   interrupt_status_t it_status = 0;
 
-  watch (volume_t)
+  watch (status_t)
   {
     volume = kernel_malloc (sizeof (struct _volume), true);
-    ensure (volume != NULL, NULL);
+    ensure (volume != NULL, DNA_OUT_OF_MEM);
 
-    volume -> id = vid;
+    volume -> id = atomic_add (& volume_manager . volume_index, 1);
     volume -> root_vnid = -1;
     volume -> host_volume = host_volume;
     volume -> host_vnid = host_vnid;
@@ -67,7 +71,8 @@ volume_t volume_create (int32_t vid, volume_t host_volume,
     lock_release (& volume_manager . volume_list . lock);
     cpu_trap_restore(it_status);
 
-    return volume;
+    *p_volume = volume;
+    return DNA_OK;
   }
 }
 

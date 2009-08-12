@@ -56,9 +56,7 @@ status_t vfs_mount (char * restrict source, char * restrict target,
 {
   filesystem_t * fs = NULL;
   int64_t host_vnid = -1;
-
   volume_t host_volume = NULL, volume = NULL;
-  int32_t new_vid = -1;
 
   void * node_data = NULL;
   status_t status = DNA_OK;
@@ -102,16 +100,14 @@ status_t vfs_mount (char * restrict source, char * restrict target,
      * Create the volume
      */
 
-    new_vid = atomic_add (& volume_manager . volume_index, 1);
-    volume = volume_create (new_vid, host_volume, host_vnid, fs -> cmd);
-
+    status = volume_create (host_volume, host_vnid, fs -> cmd, & volume);
     ensure (volume != NULL, DNA_OUT_OF_MEM);
 
     /*
      * Mount the filesystem
      */
 
-    status = fs -> cmd -> mount (new_vid, source, flags, data,
+    status = fs -> cmd -> mount (volume -> id, source, flags, data,
         & volume -> data, & volume -> root_vnid);
     ensure (status == DNA_OK, status);
 

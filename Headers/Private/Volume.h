@@ -72,13 +72,11 @@ volume_manager_t;
 
 extern volume_manager_t volume_manager;
 
-extern volume_t volume_create (int32_t vid, volume_t host_volume,
-    int64_t host_vnid, filesystem_cmd_t * cmd);
-
+extern status_t volume_create (volume_t host_volume, int64_t host_vnid,
+    filesystem_cmd_t * cmd, volume_t * p_volume);
 extern status_t volume_destroy (volume_t volume);
 
 extern bool volume_id_inspector (void * item, void * p_vid, void * dummy);
-
 extern bool volume_host_inspector (void * item, void * p_vid, void * p_vnid);
 
 #endif
