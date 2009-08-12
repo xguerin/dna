@@ -128,7 +128,7 @@ status_t core_create (void)
        */
 
       status = thread_create (thread_idle, NULL, "IdleThread",
-          cpu_i, 0x400, & thread_id);
+          cpu_i, DNA_IDLE_STACK_SIZE, & thread_id);
       check (create_threads, status == DNA_OK, DNA_ERROR);
 
       thread = queue_lookup (& team -> thread_list,
@@ -153,7 +153,7 @@ status_t core_create (void)
      */
 
     status = thread_create (thread_root, NULL, "RootThread",
-        DNA_NO_AFFINITY, 0x2000, & thread_id);
+        DNA_NO_AFFINITY, DNA_THREAD_STACK_SIZE, & thread_id);
     check (create_threads, status == DNA_OK, DNA_ERROR);
 
     thread = queue_lookup (& team -> thread_list,
