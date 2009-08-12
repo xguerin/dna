@@ -41,6 +41,7 @@ status_t semaphore_linked_acquire (int32_t sid, int32_t lsid)
  */
 
 {
+  status_t status;
   uint32_t current_cpuid = cpu_mp_id();
   thread_t self = scheduler . cpu[current_cpuid] . current_thread;
   thread_t thread = NULL;
@@ -118,7 +119,9 @@ status_t semaphore_linked_acquire (int32_t sid, int32_t lsid)
 
       if ((thread = scheduler_elect ()) == NULL)
       {
-        scheduler_push_cpu (current_cpuid);
+        status = scheduler_push_cpu ();
+        ensure (status == DNA_OK, status);
+
         thread = scheduler . cpu[current_cpuid] . idle_thread;
       }
 

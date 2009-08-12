@@ -41,6 +41,7 @@ status_t thread_wait (int32_t id, int32_t * value)
  */
 
 {
+  status_t status;
   uint32_t current_cpuid = cpu_mp_id();
   thread_t self = scheduler . cpu[current_cpuid] . current_thread;
   thread_t thread = NULL, target = NULL;
@@ -84,7 +85,9 @@ status_t thread_wait (int32_t id, int32_t * value)
 
       if ((target = scheduler_elect ()) == NULL)
       {
-        scheduler_push_cpu (current_cpuid);
+        status = scheduler_push_cpu ();
+        ensure (status == DNA_OK, status);
+
         target = scheduler . cpu[current_cpuid] . idle_thread;
       }
 

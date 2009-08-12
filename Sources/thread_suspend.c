@@ -40,6 +40,7 @@ status_t thread_suspend (int32_t id)
  */
 
 {
+  status_t status;
   uint32_t current_cpuid = cpu_mp_id();
   thread_t self = scheduler . cpu[current_cpuid] . current_thread;
   thread_t target = NULL;
@@ -62,7 +63,9 @@ status_t thread_suspend (int32_t id)
 
       if ((target = scheduler_elect ()) == NULL)
       {
-        scheduler_push_cpu (current_cpuid);
+        status = scheduler_push_cpu ();
+        ensure (status == DNA_OK, status);
+
         target = scheduler . cpu[current_cpuid] . idle_thread;
       }
 

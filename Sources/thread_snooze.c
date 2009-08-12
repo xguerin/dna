@@ -65,7 +65,9 @@ status_t thread_snooze (bigtime_t value)
 
     if ((target = scheduler_elect ()) == NULL)
     {
-      scheduler_push_cpu (current_cpuid);
+      status = scheduler_push_cpu ();
+      ensure (status == DNA_OK, status);
+
       target = scheduler . cpu[current_cpuid] . idle_thread;
     }
 

@@ -96,7 +96,7 @@ extern void scheduler_dispatch (thread_t thread);
 extern status_t scheduler_alarm (void * data);
 
 extern int32_t scheduler_pop_cpu (int32_t affinity);
-extern void scheduler_push_cpu (int32_t id);
+extern status_t scheduler_push_cpu (void);
 
 extern void scheduler_switch (thread_t thread, queue_t * queue);
 

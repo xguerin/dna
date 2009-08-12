@@ -56,7 +56,8 @@ status_t core_start (void)
     }
     else
     {
-      scheduler_push_cpu (current_cpuid);
+      status = scheduler_push_cpu ();
+      ensure (status == DNA_OK, status);
     }
 
     thread -> status = DNA_THREAD_RUNNING;

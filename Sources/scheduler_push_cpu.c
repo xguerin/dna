@@ -21,23 +21,32 @@
 
 /****f* Core/scheduler_push_cpu
  * SUMMARY
- * Get the next available CPU.
+ * Push the CPU(id) as ready.
  *
  * SYNOPSIS
  */
 
-void scheduler_push_cpu (int32_t id)
+status_t scheduler_push_cpu (void)
 
 /*
  * SOURCE
  */
 
 {
-  scheduler . cpu[id] . status = DNA_CPU_READY;
+  uint32_t cpuid = cpu_mp_id ();
 
-  lock_acquire (& scheduler . cpu_pool . lock);
-  queue_add (& scheduler . cpu_pool, & scheduler . cpu[id] . link);
-  lock_release (& scheduler . cpu_pool . lock);
+  watch (status_t)
+  {
+    ensure (scheduler . cpu[cpuid] . status != DNA_CPU_READY, DNA_ERROR);
+
+    scheduler . cpu[cpuid] . status = DNA_CPU_READY;
+
+    lock_acquire (& scheduler . cpu_pool . lock);
+    queue_add (& scheduler . cpu_pool, & scheduler . cpu[cpuid] . link);
+    lock_release (& scheduler . cpu_pool . lock);
+
+    return DNA_OK;
+  }
 }
 
 /*

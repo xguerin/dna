@@ -105,7 +105,9 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
 
           if ((thread = scheduler_elect ()) == NULL)
           {
-            scheduler_push_cpu (current_cpuid);
+            status = scheduler_push_cpu ();
+            ensure (status == DNA_OK, status);
+
             thread = scheduler . cpu[current_cpuid] . idle_thread;
           }
         
@@ -149,7 +151,9 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
 
           if ((thread = scheduler_elect ()) == NULL)
           {
-            scheduler_push_cpu (current_cpuid);
+            status = scheduler_push_cpu ();
+            ensure (status == DNA_OK, status);
+
             thread = scheduler . cpu[current_cpuid] . idle_thread;
           }
         

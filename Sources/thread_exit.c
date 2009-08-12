@@ -90,7 +90,7 @@ void thread_exit (int32_t value)
 
   if ((target = scheduler_elect ()) == NULL)
   {
-    scheduler_push_cpu (current_cpuid);
+    scheduler_push_cpu ();
     target = scheduler . cpu[current_cpuid] . idle_thread;
   }
 
