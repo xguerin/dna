@@ -76,14 +76,21 @@ status_t thread_wait (int32_t id, int32_t * value)
       lock_release (& thread -> lock);
 
       /*
-       * If not, put ourselve in wait mode and we switch
-       * If target is IDLE, we can safely push the CPU
-       * since we disabled the interrupts.
+       * If not, put ourselve in wait mode
        */
 
       self -> status = DNA_THREAD_WAIT;
 
-      if ((target = scheduler_elect ()) == NULL)
+      /*
+       * Elect a the next thread and run it
+       * If target is IDLE, we can safely push the CPU
+       * since we disabled the interrupts.
+       */
+
+      status = scheduler_elect (& thread);
+      ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
+
+      if (status == DNA_NO_AVAILABLE_THREAD)
       {
         status = scheduler_push_cpu ();
         ensure (status == DNA_OK, status);

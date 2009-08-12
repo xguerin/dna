@@ -26,7 +26,7 @@
  * SYNOPSIS
  */
 
-void scheduler_switch (thread_t thread, queue_t * queue)
+status_t scheduler_switch (thread_t thread, queue_t * queue)
 
 /*
  * ARGUMENTS
@@ -42,66 +42,73 @@ void scheduler_switch (thread_t thread, queue_t * queue)
   extern uint32_t __scheduler_switch_end;
   thread_t self = scheduler . cpu[current_cpuid] . current_thread;
 
-  /*
-   * Update the scheduler
-   */
-
-  scheduler . cpu[current_cpuid] . current_thread = thread;
-  scheduler . cpu[current_cpuid] . current_team = thread -> team;
-
-  /*
-   * Update the status of the target thread
-   */
-
-  thread -> status = DNA_THREAD_RUNNING;
-  thread -> cpu_id = current_cpuid;
-
-  /*
-   * Update the status of the current thread
-   */
-
-  self -> cpu_id = -1;
-
-  /*
-   * Save the current context
-   */
-
-  cpu_context_save((& self -> ctx), &__scheduler_switch_end);
-
-  /*
-   * If queue is not NULL, then add the current thread to this queue
-   */
-
-  if (queue != NULL)
+  watch (status_t)
   {
-    queue_add (queue, & self -> status_link);
-    lock_release (& queue -> lock);
+    ensure (thread != NULL, DNA_BAD_ARGUMENT);
+
+    /*
+     * Update the scheduler
+     */
+
+    scheduler . cpu[current_cpuid] . current_thread = thread;
+    scheduler . cpu[current_cpuid] . current_team = thread -> team;
+
+    /*
+     * Update the status of the target thread
+     */
+
+    thread -> status = DNA_THREAD_RUNNING;
+    thread -> cpu_id = current_cpuid;
+
+    /*
+     * Update the status of the current thread
+     */
+
+    self -> cpu_id = -1;
+
+    /*
+     * Save the current context
+     */
+
+    cpu_context_save((& self -> ctx), &__scheduler_switch_end);
+
+    /*
+     * If queue is not NULL, then add the current thread to this queue
+     */
+
+    if (queue != NULL)
+    {
+      queue_add (queue, & self -> status_link);
+      lock_release (& queue -> lock);
+    }
+
+    /*
+     * Compute the correct times if necessary
+     */
+
+    if (time_manager . has_timer)
+    {
+      time_manager . system_timer . get (& current_time);
+      self -> kernel_time . elapsed += current_time - self -> kernel_time . start;
+      thread -> kernel_time . start = current_time;
+    }
+
+    /*
+     * Load the target context
+     */
+
+    cpu_context_load((& thread -> ctx));
+
+    /*
+     * FIXME If someone has a better idea to get the
+     * right address after cpu_context_load, one can change
+     * what follows ...
+     */
+
+    __asm__ volatile ("__scheduler_switch_end:");
+
+    return DNA_OK;
   }
-
-  /*
-   * Compute the correct times if necessary
-   */
-
-  if (time_manager . has_timer)
-  {
-    time_manager . system_timer . get (& current_time);
-    self -> kernel_time . elapsed += current_time - self -> kernel_time . start;
-    thread -> kernel_time . start = current_time;
-  }
-
-  /*
-   * Load the target context
-   */
-
-  cpu_context_load((& thread -> ctx));
-
-  /*
-   * FIXME If someone has a better idea to get the
-   * right address after cpu_context_load, one can change
-   * what follows ...
-   */
-
-  __asm__ volatile ("__scheduler_switch_end:");
 }
 
 /*

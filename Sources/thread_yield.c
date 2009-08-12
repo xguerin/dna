@@ -29,28 +29,36 @@ status_t thread_yield (void)
 
 /*
  * RESULT
- * DNA_OK.
+ * * DNA_ERROR or DNA_BAD_ARGUMENT if something wrong happens with sched_elect
+ * * DNA_OK otherwise
  *
  * SOURCE
  */
 
 {
-  thread_t self = scheduler . cpu[cpu_mp_id()] . current_thread;
-  thread_t thread = NULL;
+  status_t status;
+  thread_t target = NULL;
   interrupt_status_t it_status = 0;
+  thread_t self = scheduler . cpu[cpu_mp_id()] . current_thread;
 
-  it_status = cpu_trap_mask_and_backup();
-
-  if ((thread = scheduler_elect ()) != NULL)
+  watch (status_t)
   {
-    self -> status = DNA_THREAD_READY;
+    it_status = cpu_trap_mask_and_backup();
 
-    lock_acquire (& scheduler . xt[self -> cpu_affinity] . lock);
-    scheduler_switch (thread, & scheduler . xt[self -> cpu_affinity]);
+    status = scheduler_elect (& target);
+    ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
+
+    if (status == DNA_OK)
+    {
+      self -> status = DNA_THREAD_READY;
+
+      lock_acquire (& scheduler . xt[self -> cpu_affinity] . lock);
+      scheduler_switch (target, & scheduler . xt[self -> cpu_affinity]);
+    }
+
+    cpu_trap_restore(it_status);
+    return DNA_OK;
   }
-
-  cpu_trap_restore(it_status);
-  return DNA_OK;
 }
 
 /*

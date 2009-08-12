@@ -26,7 +26,7 @@
  * SYNOPSIS
  */
 
-void scheduler_dispatch (thread_t thread)
+status_t scheduler_dispatch (thread_t thread)
 
 /*
  * ARGUMENTS
@@ -37,30 +37,41 @@ void scheduler_dispatch (thread_t thread)
 
 {
   int32_t next_cpuid;
+  status_t status;
 
-  if ((next_cpuid = scheduler_pop_cpu (thread -> cpu_affinity)) != -1)
+  watch (status_t)
   {
-    lock_acquire (& thread -> lock); 
+    status = scheduler_pop_cpu (thread -> cpu_affinity, & next_cpuid);
+    ensure (status != DNA_BAD_ARGUMENT, DNA_ERROR);
 
-    thread -> status = DNA_THREAD_RUNNING;
+    switch (status)
+    {
+      case DNA_OK :
+        lock_acquire (& thread -> lock); 
+        thread -> status = DNA_THREAD_RUNNING;
+        lock_release (& thread -> lock);
 
-    lock_release (& thread -> lock);
+        ipi_send (next_cpuid, DNA_IPI_EXECUTE, thread);
+        break;
 
-    ipi_send (next_cpuid, DNA_IPI_EXECUTE, thread);
-  }
-  else
-  {
-    lock_acquire (& thread -> lock); 
+      case DNA_NO_AVAILABLE_CPU :
+        lock_acquire (& thread -> lock); 
+        thread -> status = DNA_THREAD_READY;
 
-    thread -> status = DNA_THREAD_READY;
+        lock_acquire (& scheduler . xt[thread -> cpu_affinity] . lock);
+        lock_release (& thread -> lock);
 
-    lock_acquire (& scheduler . xt[thread -> cpu_affinity] . lock);
-    lock_release (& thread -> lock);
+        queue_add (& scheduler . xt[thread -> cpu_affinity],
+            & thread -> status_link);
 
-    queue_add (& scheduler . xt[thread -> cpu_affinity],
-        & thread -> status_link);
+        lock_release (& scheduler . xt[thread -> cpu_affinity] . lock);
+        break;
 
-    lock_release (& scheduler . xt[thread -> cpu_affinity] . lock);
+      default:
+        return DNA_ERROR;
+    }
+
+    return DNA_OK;
   }
 }
 

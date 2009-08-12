@@ -26,45 +26,63 @@
  * SYNOPSIS
  */
 
-thread_t scheduler_elect (void)
+status_t scheduler_elect (thread_t * p_thread)
 
 /*
+ * ARGUMENTS
+ * * p_thread : a pointer to a valid thread_t variable
+ *
  * RESULT
- * * A valid thread_t if something can be executed.
- * * NULL otherwise. If NULL is returned, the system will switch to idle.
+ * * DNA_OK if a valid thread has been elected
+ * * DNA_ERROR othrerwise
  *
  * SOURCE
  */
 
 {
-  thread_t target = NULL;
+  thread_t thread = NULL;
   int32_t current_cpuid = cpu_mp_id();
 
-  /*
-   * First, we look into the local thread list.
-   */
-
-  if (scheduler . xt[current_cpuid] . status != 0)
+  watch (status_t)
   {
-    lock_acquire (& scheduler . xt[current_cpuid] . lock);
-    target = queue_rem (& scheduler . xt[current_cpuid]);
-    lock_release (& scheduler . xt[current_cpuid] . lock);
+    ensure (p_thread != NULL, DNA_BAD_ARGUMENT);
 
-    if (target != NULL) return target;
+    /*
+     * First, we look into the local thread list.
+     */
+
+    if (scheduler . xt[current_cpuid] . status != 0)
+    {
+      lock_acquire (& scheduler . xt[current_cpuid] . lock);
+      thread = queue_rem (& scheduler . xt[current_cpuid]);
+      lock_release (& scheduler . xt[current_cpuid] . lock);
+
+      if (thread != NULL)
+      {
+        *p_thread = thread;
+        return DNA_OK;
+      }
+    }
+
+    /*
+     * If nothing is available, we look into the global thread list.
+     */
+
+    if (scheduler . xt[scheduler . xt_index] . status != 0)
+    {
+      lock_acquire (& scheduler . xt[scheduler . xt_index] . lock);
+      thread = queue_rem (& scheduler . xt[scheduler . xt_index]);
+      lock_release (& scheduler . xt[scheduler . xt_index] . lock);
+
+      if (thread != NULL)
+      {
+        *p_thread = thread;
+        return DNA_OK;
+      }
+    }
+
+    return DNA_NO_AVAILABLE_THREAD;
   }
-
-  /*
-   * If nothing is available, we look into the global thread list.
-   */
-
-  if (scheduler . xt[scheduler . xt_index] . status != 0)
-  {
-    lock_acquire (& scheduler . xt[scheduler . xt_index] . lock);
-    target = queue_rem (& scheduler . xt[scheduler . xt_index]);
-    lock_release (& scheduler . xt[scheduler . xt_index] . lock);
-  }
-
-  return target;
 }
 
 /*

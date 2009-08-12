@@ -26,35 +26,43 @@
  * SYNOPSIS
  */
 
-int32_t scheduler_pop_cpu (int32_t affinity)
+status_t scheduler_pop_cpu (int32_t affinity, int32_t * p_id)
 
 /*
+ * ARGUMENTS
+ * * affinity : specifies the required processor affinity
+ * * p_id : pointer to the variable that will receive the processor id
+ *
  * RESULT
- * * A valid CPU ID
- * * -1 otherwise 
+ * * DNA_OK if a valid CPU can be found
+ * * DNA_ERROR otherwise
  *
  * SOURCE
  */
 
 {
-  int32_t cpu_id = -1;
+  int32_t id = -1;
   cpu_t * cpu = NULL;
 
-  watch (int32_t)
+  watch (status_t)
   {
+    ensure (p_id != NULL, DNA_BAD_ARGUMENT);
+    ensure (affinity >= 0 && affinity <= cpu_mp_count, DNA_BAD_ARGUMENT);
+
     if (affinity == scheduler . xt_index)
     {
       if (scheduler . cpu_pool . status != 0)
       {
         lock_acquire (& scheduler . cpu_pool . lock);
+
         cpu = queue_rem (& scheduler . cpu_pool);
-        check (no_cpu, cpu != NULL, -1);
+        check (no_cpu, cpu != NULL, DNA_NO_AVAILABLE_CPU);
 
         lock_acquire (& cpu -> lock);
         lock_release (& scheduler . cpu_pool . lock);
 
         cpu -> status = DNA_CPU_RUNNING;
-        cpu_id = cpu -> id;
+        id = cpu -> id;
 
         lock_release (& cpu -> lock);
       }
@@ -62,22 +70,25 @@ int32_t scheduler_pop_cpu (int32_t affinity)
     else
     {
       lock_acquire (& scheduler . cpu_pool . lock);
+
+      check (no_cpu,
+          scheduler . cpu[affinity] . status == DNA_CPU_READY,
+          DNA_NO_AVAILABLE_CPU);
+
       lock_acquire (& scheduler . cpu[affinity] . lock);
 
-      if (scheduler . cpu[affinity] . status == DNA_THREAD_READY)
-      {
-        queue_extract (& scheduler . cpu_pool,
-            & scheduler . cpu[affinity] . link);
+      queue_extract (& scheduler . cpu_pool,
+          & scheduler . cpu[affinity] . link);
 
-        scheduler . cpu[affinity] . status = DNA_CPU_RUNNING;
-        cpu_id = scheduler . cpu[affinity] . id;
-      }
+      scheduler . cpu[affinity] . status = DNA_CPU_RUNNING;
+      id = scheduler . cpu[affinity] . id;
 
       lock_release (& scheduler . cpu[affinity] . lock);
       lock_release (& scheduler . cpu_pool . lock);
     }
 
-    return cpu_id;
+    *p_id = id;
+    return DNA_OK;
   }
 
   rescue (no_cpu)

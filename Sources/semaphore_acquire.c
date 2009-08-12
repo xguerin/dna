@@ -103,7 +103,10 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
            * since we disabled the interrupts.
            */
 
-          if ((thread = scheduler_elect ()) == NULL)
+          status = scheduler_elect (& thread);
+          ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
+
+          if (status == DNA_NO_AVAILABLE_THREAD)
           {
             status = scheduler_push_cpu ();
             ensure (status == DNA_OK, status);
@@ -149,7 +152,10 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
            * since we disabled the interrupts.
            */
 
-          if ((thread = scheduler_elect ()) == NULL)
+          status = scheduler_elect (& thread);
+          ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
+
+          if (status == DNA_NO_AVAILABLE_THREAD)
           {
             status = scheduler_push_cpu ();
             ensure (status == DNA_OK, status);

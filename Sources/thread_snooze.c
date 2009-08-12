@@ -63,7 +63,10 @@ status_t thread_snooze (bigtime_t value)
      * since we disabled the interrupts.
      */
 
-    if ((target = scheduler_elect ()) == NULL)
+    status = scheduler_elect (& target);
+    ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
+
+    if (status == DNA_NO_AVAILABLE_THREAD)
     {
       status = scheduler_push_cpu ();
       ensure (status == DNA_OK, status);

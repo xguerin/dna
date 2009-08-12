@@ -91,14 +91,14 @@ scheduler_t;
 
 extern scheduler_t scheduler;
 
-extern thread_t scheduler_elect (void);
-extern void scheduler_dispatch (thread_t thread);
+extern status_t scheduler_elect (thread_t * p_thread);
+extern status_t scheduler_dispatch (thread_t thread);
 extern status_t scheduler_alarm (void * data);
 
-extern int32_t scheduler_pop_cpu (int32_t affinity);
 extern status_t scheduler_push_cpu (void);
+extern status_t scheduler_pop_cpu (int32_t affinity, int32_t * p_id);
 
-extern void scheduler_switch (thread_t thread, queue_t * queue);
+extern status_t scheduler_switch (thread_t thread, queue_t * queue);
 
 #endif
 
