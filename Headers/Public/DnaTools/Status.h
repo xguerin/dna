@@ -33,70 +33,72 @@
 typedef enum _status
 {
   /*
-   * This code are not errors, hence that are
+   * This code are not errors, hence they are
    * given positive numbers
    */
 
-  DNA_HANDLED_INTERRUPT =  0x0004,
-  DNA_UNHANDLED_INTERRUPT  = 0x0003,
-  DNA_INVOKE_SCHEDULER = 0x0002,
-  DNA_ALREADY_AT_ROOT  = 0x0001,
+  DNA_HANDLED_INTERRUPT               = 0x0004,
+  DNA_UNHANDLED_INTERRUPT             = 0x0003,
+  DNA_INVOKE_SCHEDULER                = 0x0002,
+  DNA_ALREADY_AT_ROOT                 = 0x0001,
+  DNA_OK                              = 0x0000,
 
   /*
    * Standard error codes
    */
-
-  DNA_OK = 0x0000,
-  DNA_ERROR  = 0xFFFF,
-  DNA_NOT_IMPLEMENTED = 0xFFFE,
-  DNA_OUT_OF_MEM = 0xFFFD,
+  DNA_ERROR                           = 0xFFFF,
+  DNA_NOT_IMPLEMENTED                 = 0xFFFE,
+  DNA_OUT_OF_MEM                      = 0xFFFD,
+  DNA_BAD_ARGUMENT                    = 0xFFFC,
 
   /*
    * VFS error codes
    */
 
-  DNA_NO_ENTRY = 0xFFFC,
-  DNA_NO_VOLUME = 0xFFFB,
-  DNA_NO_VNODE = 0xFFFA,
-  DNA_DEVICE_MOUNTED = 0xFFF9,
-  DNA_VNODE_MOUNTED = 0xFFF8,
-  DNA_UNKNOWN_FILESYSTEM = 0xFFF7,
-  DNA_MAX_OPENED_FILES = 0xFFF6,
-  DNA_INVALID_FD = 0xFFF5,
-  DNA_BAD_INODE_TYPE = 0xFFF4,
-  DNA_INVALID_WHENCE = 0xFFF3,
-  DNA_VOLUME_IN_USE  = 0xFFF2,
+  DNA_NO_ENTRY                        = 0xFEFF,
+  DNA_NO_VOLUME                       = 0xFEFE,
+  DNA_NO_VNODE                        = 0xFEFD,
+  DNA_DEVICE_MOUNTED                  = 0xFEFC,
+  DNA_VNODE_MOUNTED                   = 0xFEFB,
+  DNA_UNKNOWN_FILESYSTEM              = 0xFEFA,
+  DNA_MAX_OPENED_FILES                = 0xFEF9,
+  DNA_INVALID_FD                      = 0xFEF8,
+  DNA_BAD_INODE_TYPE                  = 0xFEF7,
+  DNA_INVALID_WHENCE                  = 0xFEF6,
+  DNA_VOLUME_IN_USE                   = 0xFEF5,
 
   /*
    * Semaphore error codes
    */
 
-  DNA_BAD_SEM_ID = 0xFFF1,
-  DNA_NO_MORE_SEM = 0xFFF0,
-  DNA_WOULD_BLOCK  = 0xFFEF,
-  DNA_TIMED_OUT  = 0xFFEE,
+  DNA_BAD_SEM_ID                      = 0xFDFF,
+  DNA_NO_MORE_SEM                     = 0xFDFE,
+  DNA_WOULD_BLOCK                     = 0xFDFD,
+  DNA_TIMED_OUT                       = 0xFDFC,
 
   /*
    * Team and threads error codes
    */
 
-  DNA_UNKNOWN_TEAM = 0xFFED,
-  DNA_INVALID_TEAM_ID = 0xFFEC,
-  DNA_UNKNOWN_THREAD = 0xFFEB,
-  DNA_INVALID_THREAD_ID = 0xFFEA,
+  DNA_UNKNOWN_TEAM                    = 0xFCFF,
+  DNA_INVALID_TEAM_ID                 = 0xFCFE,
+  DNA_UNKNOWN_THREAD                  = 0xFCFD,
+  DNA_INVALID_THREAD_ID               = 0xFCFC,
+  DNA_NO_AVAILABLE_CPU                = 0xFCFC,
+  DNA_NO_AVAILABLE_THREAD             = 0xFCFB,
 
   /*
    * Timer error code
    */
 
-  DNA_NO_TIMER = 0xFFE9,
+  DNA_NO_TIMER                        = 0xFBFF,
 
   /*
    * Ports and messages codes
    */
 
-  DNA_BAD_PORT_ID = 0xFFE8,
-  DNA_NO_MORE_PORT = 0xFFE7
+  DNA_BAD_PORT_ID                     = 0xFAFF,
+  DNA_NO_MORE_PORT                    = 0xFAFE
 }
 status_t;
 
