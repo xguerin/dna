@@ -41,7 +41,7 @@ status_t thread_destroy (thread_t thread)
 {
   watch (status_t)
   {
-    ensure (thread != NULL, DNA_ERROR);
+    ensure (thread != NULL, DNA_BAD_ARGUMENT);
 
     kernel_free (thread -> signature . stack_base);
     kernel_free (thread);

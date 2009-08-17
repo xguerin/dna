@@ -37,7 +37,7 @@ status_t scheduler_push_cpu (void)
 
   watch (status_t)
   {
-    ensure (scheduler . cpu[cpuid] . status != DNA_CPU_READY, DNA_ERROR);
+    ensure (scheduler . cpu[cpuid] . status != DNA_CPU_READY, DNA_BAD_ARGUMENT);
 
     scheduler . cpu[cpuid] . status = DNA_CPU_READY;
 

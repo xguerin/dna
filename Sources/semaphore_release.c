@@ -50,7 +50,7 @@ status_t semaphore_release (int32_t sid, int32_t tokens, int32_t flags)
   watch (status_t)
   {
     ensure (sid >= 0 && sid < DNA_MAX_SEM, DNA_BAD_SEM_ID);
-    ensure (tokens > 0, DNA_ERROR);
+    ensure (tokens > 0, DNA_BAD_ARGUMENT);
 
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& semaphore_pool . lock);

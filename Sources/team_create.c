@@ -54,6 +54,7 @@ status_t team_create (char * name, thread_handler_t handler,
 
   watch (status_t)
   {
+    ensure (name != NULL && handler != NULL && tid != NULL, DNA_BAD_ARGUMENT);
     /*
      * Allocate the new team structure.
      */

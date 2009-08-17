@@ -49,6 +49,12 @@ status_t thread_wait (int32_t id, int32_t * value)
 
   watch (status_t)
   {
+    ensure (value != NULL, DNA_BAD_ARGUMENT);
+
+    /*
+     * Disable interrupts, lock the team manager
+     */
+
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& team_manager . lock);
 

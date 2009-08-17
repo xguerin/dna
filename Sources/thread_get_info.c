@@ -47,7 +47,7 @@ status_t thread_get_info (int32_t id, thread_info_t * info)
 
   watch (status_t)
   {
-    ensure (info != NULL, DNA_ERROR);
+    ensure (info != NULL, DNA_BAD_ARGUMENT);
 
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& team_manager . lock);

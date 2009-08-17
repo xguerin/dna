@@ -42,7 +42,7 @@ status_t scheduler_dispatch (thread_t thread)
   watch (status_t)
   {
     status = scheduler_pop_cpu (thread -> cpu_affinity, & next_cpuid);
-    ensure (status != DNA_BAD_ARGUMENT, DNA_ERROR);
+    ensure (status != DNA_BAD_ARGUMENT, status);
 
     switch (status)
     {

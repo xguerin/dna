@@ -42,7 +42,7 @@ status_t time_set_timer (system_timer_t timer, bool force)
 
   watch (status_t)
   {
-    ensure (time_manager . has_timer || force, DNA_ERROR);
+    ensure (time_manager . has_timer || force, DNA_BAD_ARGUMENT);
 
     /*
      * Set the timer to the time manager

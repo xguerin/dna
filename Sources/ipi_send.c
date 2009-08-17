@@ -47,7 +47,7 @@ status_t ipi_send (int32_t target, int32_t command, void * cookie)
 
   watch (status_t)
   {
-    ensure (target >= 0 && target <= cpu_mp_count, DNA_ERROR);
+    ensure (target >= 0 && target <= cpu_mp_count, DNA_BAD_ARGUMENT);
 
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& interrupt_manager . lock);

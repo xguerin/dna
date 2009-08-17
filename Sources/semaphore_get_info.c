@@ -49,7 +49,7 @@ status_t semaphore_get_info (int32_t sid, semaphore_info_t * info)
   watch (status_t)
   {
     ensure (sid >= 0 && sid < DNA_MAX_SEM, DNA_BAD_SEM_ID);
-    ensure (info != NULL, DNA_ERROR);
+    ensure (info != NULL, DNA_BAD_ARGUMENT);
 
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& semaphore_pool . lock);

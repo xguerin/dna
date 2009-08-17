@@ -43,12 +43,14 @@ status_t semaphore_create (char * name, int32_t tokens, int32_t * sid)
  */
 
 {
+  int32_t index = 0;
   semaphore_t semaphore = NULL;
   interrupt_status_t it_status = 0;
-  int32_t index = 0;
 
   watch (status_t)
   {
+    ensure (name != NULL && sid != NULL, DNA_BAD_ARGUMENT);
+
     semaphore = kernel_malloc (sizeof (struct _semaphore), true);
     ensure (semaphore != NULL, DNA_OUT_OF_MEM);
 

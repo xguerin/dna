@@ -56,6 +56,10 @@ status_t thread_create (thread_handler_t handler, void * arguments,
 
   watch (status_t)
   {
+    ensure (handler != NULL && name != NULL && tid != NULL, DNA_BAD_ARGUMENT);
+    ensure (affinity == DNA_NO_AFFINITY || (affinity >= 0
+          && affinity < cpu_mp_count), DNA_BAD_ARGUMENT);
+
     /*
      * Allocate the new thread structure.
      */

@@ -76,7 +76,7 @@ status_t time_cancel_alarm (int32_t aid)
       a = queue_lookup (& time_manager . alarm_queue,
           alarm_id_inspector, & aid, NULL); 
 
-      check (alarm_error, a != NULL, DNA_ERROR);
+      check (alarm_error, a != NULL, DNA_BAD_ARGUMENT);
 
       queue_extract (& time_manager . alarm_queue, & a -> link);
       kernel_free (a);

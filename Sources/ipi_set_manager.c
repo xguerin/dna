@@ -42,7 +42,7 @@ status_t ipi_set_manager (ipi_manager_t manager, bool force)
 
   watch (status_t)
   {
-    ensure (interrupt_manager . has_ipi || force, DNA_ERROR);
+    ensure (interrupt_manager . has_ipi || force, DNA_BAD_ARGUMENT);
 
     /*
      * Set the timer to the time manager
