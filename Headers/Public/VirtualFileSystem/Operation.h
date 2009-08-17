@@ -72,15 +72,15 @@ extern status_t vfs_mkdir (char * restrict path, int32_t mode);
 extern status_t vfs_readdir (int16_t fd, directory_entry_t * entry_array,
     uint32_t count, int32_t * p_res);
 
-extern status_t vfs_read (int16_t file_id, void * data,
+extern status_t vfs_read (int16_t fd, void * data,
     int32_t count, int32_t * p_ret);
-extern status_t vfs_write (int16_t file_id, void * data,
+extern status_t vfs_write (int16_t fd, void * data,
     int32_t count, int32_t * p_ret);
 
-extern status_t vfs_lseek (int16_t file_id, int64_t offset,
-    int32_t whence, int64_t * p_offset);
+extern status_t vfs_lseek (int16_t fd, int64_t offset,
+    int32_t whence, int64_t * p_ret);
 
-extern status_t vfs_ioctl (int16_t file_id, int32_t function,
-    void * arguments, int32_t * retval);
+extern status_t vfs_ioctl (int16_t fd, int32_t function,
+    void * arguments, int32_t * p_ret);
 
 #endif

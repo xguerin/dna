@@ -26,15 +26,15 @@
  * SYNOPSIS
  */
 
-status_t vfs_readdir (int16_t file_id, directory_entry_t * entry_array,
-    uint32_t count, int32_t * p_res)
+status_t vfs_readdir (int16_t fd, directory_entry_t * entry_array,
+    uint32_t count, int32_t * p_ret)
 
 /*
  * ARGUMENTS
  * * fd : a file descriptor
  * * entry_array : a buffer that will contain the dirents
  * * count : the size of the buffer
- * * p_res : a pointer to the result value
+ * * p_ret : a pointer to the result value
  *
  * FUNCTION
  *
@@ -53,8 +53,8 @@ status_t vfs_readdir (int16_t file_id, directory_entry_t * entry_array,
 
   watch (status_t);
   {
-    ensure (entry_array != NULL && count > 0 && p_res != NULL, DNA_ERROR);
-    ensure (file_id >= 0 && file_id < DNA_MAX_FILE, DNA_INVALID_FD);
+    ensure (entry_array != NULL && count > 0 && p_ret != NULL, DNA_ERROR);
+    ensure (fd >= 0 && fd < DNA_MAX_FILE, DNA_INVALID_FD);
 
     status = team_find (NULL, & current_team);
     ensure (status == DNA_OK, status);
@@ -70,7 +70,7 @@ status_t vfs_readdir (int16_t file_id, directory_entry_t * entry_array,
     lock_acquire (& fdarray -> lock);
     lock_release (& fdarray_manager . fdarray_list . lock);
 
-    file = fdarray -> fds[file_id];
+    file = fdarray -> fds[fd];
 
     lock_release (& fdarray -> lock);
     cpu_trap_restore(it_status);
@@ -83,7 +83,7 @@ status_t vfs_readdir (int16_t file_id, directory_entry_t * entry_array,
 
     ensure (status == DNA_OK, status);
 
-    *p_res = n_data;
+    *p_ret = n_data;
     return DNA_OK;
   }
 

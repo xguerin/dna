@@ -27,17 +27,18 @@
  * SYNOPSIS
  */
 
-status_t vfs_close (int16_t file_id)
+status_t vfs_close (int16_t fd)
 
 /*
  * ARGUMENTS
- * * file_id : the file identifier.
+ * * fd : the file descriptor.
  *
  * FUNCTION
  * Not implemented yet.
  *
  * RESULT
- * Always returns DNA_NOT_IMPLEMENTED
+ * * DNA_INVALID_FD if fd is not a valid file
+ * * DNA_OK if the operation succeed
  *
  * SOURCE
  */
@@ -51,7 +52,7 @@ status_t vfs_close (int16_t file_id)
 
   watch (status_t)
   {
-    ensure (file_id >= 0 && file_id < DNA_MAX_FILE, DNA_INVALID_FD);
+    ensure (fd >= 0 && fd < DNA_MAX_FILE, DNA_INVALID_FD);
 
     /*
      * Get the current fdarray
@@ -69,13 +70,13 @@ status_t vfs_close (int16_t file_id)
     cpu_trap_restore(it_status);
 
     /*
-     * Get the file associated to the file_id
+     * Get the file associated to the fd
      */
 
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& fdarray -> lock);
 
-    file = fdarray -> fds[file_id];
+    file = fdarray -> fds[fd];
 
     lock_release (& fdarray -> lock);
     cpu_trap_restore(it_status);
@@ -98,7 +99,7 @@ status_t vfs_close (int16_t file_id)
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& fdarray -> lock);
 
-    fdarray -> fds[file_id] = NULL;
+    fdarray -> fds[fd] = NULL;
 
     lock_release (& fdarray -> lock);
     cpu_trap_restore(it_status);
