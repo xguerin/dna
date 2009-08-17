@@ -17,57 +17,57 @@
 
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
+#include <MemoryManager/MemoryManager.h>
+#include <Processor/Processor.h>
 
-/****f* Core/team_find
+/****f* Core/ipi_attach
  * SUMMARY
- * Finds a team by its name.
+ * Send an interrupt to a processor.
  *
  * SYNOPSIS
  */
 
-status_t team_find (char * name, int32_t * tid)
+status_t ipi_send (int32_t target, int32_t command, void * cookie)
 
 /*
  * ARGUMENTS
- * * name : team's name
- * * tid : the placeholder of the team's ID
+ * * target : the processor's ID
+ * * command : the command to pass
+ * * cookie : the data attached to the command
  *
  * RESULT
- * * DNA_OK and a valid int32_t in case of success
- * * DNA_UNKNOWN_TEAM if no team correspond to the given name.
+ * * DNA_ERROR if the target ID is wrong
+ * * DNA_OK if everything went well
  *
  * SOURCE
  */
 
 {
-  team_t team = NULL;
   interrupt_status_t it_status = 0;
 
   watch (status_t)
   {
-    ensure (tid != NULL, DNA_BAD_ARGUMENT);
+    ensure (target >= 0 && target <= cpu_mp_count, DNA_BAD_ARGUMENT);
 
-    if (name == NULL)
+    it_status = cpu_trap_mask_and_backup();
+    lock_acquire (& interrupt_manager . lock);
+
+    if (target == DNA_IPI_ALL)
     {
-      *tid = scheduler . cpu[cpu_mp_id()] . current_team -> id;
-      return DNA_OK;
+      for (int32_t i = 0; i < cpu_mp_count; i += 1)
+      {
+        interrupt_manager . ipi_manager . send (i, command, cookie);
+      }
     }
     else
     {
-      it_status = cpu_trap_mask_and_backup();
-      lock_acquire (& team_manager . lock);
-
-      team = queue_lookup (& team_manager . team_list,
-          team_name_inspector, (void *) name, NULL);
-
-      lock_release (& team_manager . lock);
-      cpu_trap_restore(it_status);
-
-      ensure (team != NULL, DNA_UNKNOWN_TEAM);
-
-      *tid =  team -> id;
-      return DNA_OK;
+      interrupt_manager . ipi_manager . send (target, command, cookie);
     }
+
+    lock_release (& interrupt_manager . lock);
+    cpu_trap_restore(it_status);
+
+    return DNA_OK;
   }
 }
 

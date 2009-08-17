@@ -53,22 +53,13 @@ status_t thread_resume (int32_t id)
         thread_id_inspector, (void *) & id, NULL);
 
     check (invalid_thread, target != NULL, DNA_UNKNOWN_THREAD);
-    check (invalid_thread, target -> status == DNA_THREAD_SLEEP, DNA_OK);
+    check (invalid_thread, target -> status == DNA_THREAD_SLEEP, DNA_ERROR);
 
-    lock_acquire (& target -> lock);
     lock_release (& team -> lock);
 
-    target -> status = DNA_THREAD_READY;
+    scheduler_dispatch (target);
 
-    lock_acquire (& scheduler . xt[target -> cpu_affinity] . lock);
-    lock_release (& target -> lock);
-
-    queue_add (& scheduler . xt[target -> cpu_affinity],
-        & target -> status_link);
-
-    lock_release (& scheduler . xt[target -> cpu_affinity] . lock);
     cpu_trap_restore(it_status);
-
     return DNA_OK;
   }
 

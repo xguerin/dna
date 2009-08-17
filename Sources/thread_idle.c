@@ -19,7 +19,7 @@
 #include <stdint.h>
 #include <Private/Core.h>
 
-/****f* CireManager/thread_idle
+/****f* CoreManager/thread_idle
  * SUMMARY
  * The idle thread.
  *
@@ -39,11 +39,7 @@ int32_t thread_idle (void * data)
  */
 
 {
-  while (true)
-  {
-    thread_yield ();
-  }
-
+  while (true);
   return 0;
 }
 

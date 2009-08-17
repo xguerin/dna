@@ -19,28 +19,29 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* Core/lock_release
+/****f* Core/interrupt_demultiplexer
  * SUMMARY
- * Unlock a spin lock.
+ * Handler for mulitplexed interrupts.
  *
  * SYNOPSIS
  */
 
-void lock_release (spinlock_t * lock)
+int32_t interrupt_demultiplexer (int32_t data)
 
 /*
  * ARGUMENTS
- * * lock : a pointer to a lock
+ * * data : the ID of the interrupt
  *
- * FUNCTION
- * Set the lock value to 0.
+ * RESULT
+ * DNA_OK.
  *
  * SOURCE
  */
 
 {
-  *lock = 0;
-  cpu_cache_wbflush ();
+  queue_lookup (& interrupt_manager . isr_list[data],
+      interrupt_handler_inspector, & data, NULL);
+  return DNA_OK;
 }
 
 /*

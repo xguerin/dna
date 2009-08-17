@@ -45,7 +45,7 @@ status_t thread_find (char * name, int32_t * tid)
 
   watch (status_t)
   {
-    ensure (tid != NULL, DNA_ERROR);
+    ensure (tid != NULL, DNA_BAD_ARGUMENT);
 
     if (name == NULL)
     {

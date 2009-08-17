@@ -17,36 +17,51 @@
 
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
+#include <Processor/Processor.h>
 
-/****f* Core/semaphore_alarm
+/****f* Core/ipi_callback
  * SUMMARY
- * Semaphore timeout alarm.
+ * Handler for inter-processor interrupts.
  *
  * SYNOPSIS
  */
 
-status_t semaphore_alarm (void * data)
+status_t ipi_callback (int32_t command, void * cookie)
 
 /*
  * ARGUMENTS
- * * data : a semaphore_t element.
+ * * command : the command of the ipi
+ * * cookie : the data of the ipi
+ *
+ * RESULT
+ * DNA_OK.
  *
  * SOURCE
  */
 
 {
-  thread_t thread = data;
-  interrupt_status_t it_status = 0;
+  thread_t target;
 
-  it_status = cpu_trap_mask_and_backup();
-  lock_acquire (& scheduler . xt[thread -> cpu_affinity] . lock);
+  watch (status_t)
+  {
+    switch (command)
+    {
+      case DNA_IPI_EXECUTE :
+        target = cookie;
+        ensure (target != NULL, DNA_ERROR);
 
-  queue_add (& scheduler . xt[thread -> cpu_affinity], & thread -> status_link);
+        log (4, "EXECUTE(%d) on processor %d", target -> id, cpu_mp_id ());
+        scheduler_switch (target, NULL);
 
-  lock_release (& scheduler . xt[thread -> cpu_affinity] . lock);
-  cpu_trap_restore(it_status);
+        break;
 
-  return DNA_OK;
+      default :
+        log (1, "Unknown command received on processor %d", cpu_mp_id ());
+        break;
+    }
+
+    return DNA_OK;
+  }
 }
 
 /*

@@ -49,20 +49,20 @@ status_t semaphore_get_info (int32_t sid, semaphore_info_t * info)
   watch (status_t)
   {
     ensure (sid >= 0 && sid < DNA_MAX_SEM, DNA_BAD_SEM_ID);
-    ensure (info != NULL, DNA_ERROR);
+    ensure (info != NULL, DNA_BAD_ARGUMENT);
 
     it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& sem_pool . lock);
+    lock_acquire (& semaphore_pool . lock);
 
     /*
      * Look for the semaphore with ID sid
      */
 
-    sem = sem_pool . semaphore[sid];
+    sem = semaphore_pool . semaphore[sid];
     check (invalid_semaphore, sem != NULL, DNA_BAD_SEM_ID);
 
     lock_acquire (& sem -> lock);
-    lock_release (& sem_pool . lock);
+    lock_release (& semaphore_pool . lock);
 
     /*
      * Copy information from the semaphore to the
@@ -91,7 +91,7 @@ status_t semaphore_get_info (int32_t sid, semaphore_info_t * info)
 
   rescue (invalid_semaphore)
   {
-    lock_release (& sem_pool . lock);
+    lock_release (& semaphore_pool . lock);
     cpu_trap_restore(it_status);
     leave;
   }

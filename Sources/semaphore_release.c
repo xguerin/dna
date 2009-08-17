@@ -26,12 +26,12 @@
  * SYNOPSIS
  */
 
-status_t semaphore_release (int32_t sid, int32_t n_tokens, int32_t flags)
+status_t semaphore_release (int32_t sid, int32_t tokens, int32_t flags)
 
 /*
  * ARGUMENTS
  * * sid : a semaphore ID
- * * n_tokens : the number of tokens to release
+ * * tokens : the number of tokens to release
  * * flags : the flags of the operation
  *
  * RESULT
@@ -50,63 +50,81 @@ status_t semaphore_release (int32_t sid, int32_t n_tokens, int32_t flags)
   watch (status_t)
   {
     ensure (sid >= 0 && sid < DNA_MAX_SEM, DNA_BAD_SEM_ID);
-    ensure (n_tokens > 0, DNA_ERROR);
+    ensure (tokens > 0, DNA_BAD_ARGUMENT);
 
     it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& sem_pool . lock);
+    lock_acquire (& semaphore_pool . lock);
 
     /*
      * Look for the semaphore with ID sid
      */
 
-    sem = sem_pool . semaphore[sid];
+    sem = semaphore_pool . semaphore[sid];
     check (invalid_semaphore, sem != NULL, DNA_BAD_SEM_ID);
 
     lock_acquire (& sem -> lock);
-    lock_release (& sem_pool . lock);
+    lock_release (& semaphore_pool . lock);
 
     /*
-     * Remove the desired number of tokens, and
-     * wake up waiting threads accordkingly
+     * Decide what to do according to the number
+     * of tokens required by a potential waiting thread
      */
 
-    for (int32_t i = 0; i < n_tokens; i++)
+    while (tokens != 0)
     {
-      sem -> tokens += 1;
+      thread = queue_rem (& sem -> waiting_queue);
 
-      if (sem -> tokens >= 0)
+      if (thread != NULL)
       {
-        lock_acquire (& sem -> waiting_queue . lock);
-        lock_release (& sem -> lock);
-
-        thread = queue_rem (& sem -> waiting_queue);
-
-        lock_release (& sem -> waiting_queue . lock);
-
-        if (thread != NULL) 
+        if (thread -> sem_tokens <= tokens)
         {
-          thread -> status = DNA_THREAD_READY;
+          tokens -= thread -> sem_tokens;
+          thread -> sem_tokens = 0;
 
-          lock_acquire (& scheduler . xt[thread -> cpu_affinity] . lock);
-          queue_add (& scheduler . xt[thread -> cpu_affinity],
-              & thread -> status_link);
-          lock_release (& scheduler . xt[thread -> cpu_affinity] . lock);
+          scheduler_dispatch (thread);
         }
+        else
+        {
+          thread -> sem_tokens -= tokens;
+          tokens = 0;
 
-        lock_acquire (& sem -> lock);
+          queue_pushback (& sem -> waiting_queue, & thread -> status_link);
+        }
+      }
+      else
+      {
+        break;
       }
     }
 
-    lock_release (& sem -> lock);
-    if ((flags & DNA_NO_RESCHEDULE) != 0) thread_yield ();
+    /*
+     * Add the remaining number of tokens
+     */
 
+    sem -> tokens += tokens;
+
+    /*
+     * We release the sem's lock
+     */
+
+    lock_release (& sem -> lock);
+
+    /*
+     * Now we deal with the reschedule
+     */
+
+    if ((flags & DNA_NO_RESCHEDULE) != 0)
+    {
+      thread_yield ();
+    }
+ 
     cpu_trap_restore(it_status);
     return status;
   }
 
   rescue (invalid_semaphore)
   {
-    lock_release (& sem_pool . lock);
+    lock_release (& semaphore_pool . lock);
     cpu_trap_restore(it_status);
     leave;
   }

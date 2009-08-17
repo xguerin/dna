@@ -56,6 +56,10 @@ status_t thread_create (thread_handler_t handler, void * arguments,
 
   watch (status_t)
   {
+    ensure (handler != NULL && name != NULL && tid != NULL, DNA_BAD_ARGUMENT);
+    ensure (affinity == DNA_NO_AFFINITY || (affinity >= 0
+          && affinity < cpu_mp_count), DNA_BAD_ARGUMENT);
+
     /*
      * Allocate the new thread structure.
      */
@@ -75,9 +79,8 @@ status_t thread_create (thread_handler_t handler, void * arguments,
      */
 
     dna_strcpy (thread -> name, name);
-    thread -> id = atomic_add (& team_manager . team_index, 1);
-    thread -> type = DNA_NORMAL_THREAD;
-    thread -> status = DNA_THREAD_READY;
+    thread -> id = atomic_add (& team_manager . thread_index, 1);
+    thread -> status = DNA_THREAD_SLEEP;
     thread -> cpu_id = -1;
     thread -> team = team;
 
@@ -108,7 +111,8 @@ status_t thread_create (thread_handler_t handler, void * arguments,
      */
 
     cpu_context_init ((& thread -> ctx), thread -> signature . stack_base,
-        thread -> signature . stack_size, thread_wrapper, & thread -> signature);
+        thread -> signature . stack_size, thread_bootstrap,
+        & thread -> signature);
 
     /*
      * Register the thread in the global threads list
@@ -128,17 +132,7 @@ status_t thread_create (thread_handler_t handler, void * arguments,
 
     queue_add (& team -> thread_list, & thread -> team_link);
 
-    /*
-     * Register the thread in the appropriate scheduler's runnable queue
-     */
-
-    lock_acquire (& scheduler . xt[thread -> cpu_affinity] . lock);
     lock_release (& team -> lock);
-
-    queue_add (& scheduler . xt[thread -> cpu_affinity],
-        & thread -> status_link);
-
-    lock_release (& scheduler . xt[thread -> cpu_affinity] . lock);
     cpu_trap_restore(it_status);
 
     *tid = thread -> id;

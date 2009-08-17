@@ -16,48 +16,56 @@
  */
 
 #include <Private/Core.h>
-#include <MemoryManager/MemoryManager.h>
 #include <DnaTools/DnaTools.h>
+#include <VirtualFileSystem/VirtualFileSystem.h>
 #include <Processor/Processor.h>
 
-/****f* Core/time_set_timer
+/****f* core/thread_root
  * SUMMARY
- * Set the system timer.
+ * The root thread.
  *
  * SYNOPSIS
  */
 
-status_t time_set_timer (system_timer_t timer, bool force)
+int32_t thread_root (void * data)
 
 /*
  * ARGUMENTS
- * * timer : a timer
- * * force : force this timer, even if a timer has already been set
+ *
+ * FUNCTION
+ *
+ * RESULT
  *
  * SOURCE
  */
 
 {
-  interrupt_status_t it_status = 0;
+  int16_t dummy = -1;
+  int32_t main_thread = -1;
+  status_t status = DNA_OK;
 
   watch (status_t)
   {
-    ensure (time_manager . has_timer || force, DNA_BAD_ARGUMENT);
+    status = vfs_open ("/devices/console", 0, 0, & dummy);
+    ensure (status == DNA_OK, status);
 
-    /*
-     * Set the timer to the time manager
-     */
+    status = vfs_open ("/devices/console", 0, 0, & dummy);
+    ensure (status == DNA_OK, status);
 
-    it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& time_manager . lock);
+    status = vfs_open ("/devices/console", 0, 0, & dummy);
+    ensure (status == DNA_OK, status);
 
-    time_manager . has_timer = true;
-    time_manager . system_timer = timer;
+    status = team_create ("Application",
+        APP_ENTRY_POINT , NULL, & main_thread);
+    ensure (status == DNA_OK, status);
 
-    lock_release (& time_manager . lock);
-    cpu_trap_restore(it_status);
+    status = thread_resume (main_thread);
+    ensure (status == DNA_OK, status);
 
-    return DNA_OK;
+    status = thread_wait (main_thread, NULL);
+    ensure (status == DNA_OK, status);
+
+    return 0;
   }
 }
 

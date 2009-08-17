@@ -27,18 +27,42 @@
 #include <Core/Core.h>
 #include <DnaTools/DnaTools.h>
 
+/****t* scheduler/cpu_status_t
+ * SUMMARY
+ * CPU status type.
+ *
+ * SOURCE
+ */
+
+typedef enum _cpu_status
+{
+  DNA_CPU_READY        = 0xFACE,
+  DNA_CPU_RUNNING      = 0xBEEF,
+  DNA_CPU_DISABLED    = 0xDEAD
+}
+cpu_status_t;
+
+/*
+ ****/
+
 /****t* scheduler/cpu_t
  * SUMMARY
- * CPU type. Contains various information concerning a CPU execution context.
+ * CPU type. Contains various information concerning
+ * a CPU execution context.
  *
  * SOURCE
  */
 
 typedef struct _cpu
 {
+  int32_t id;
+  cpu_status_t status;
+  spinlock_t lock;
+
   team_t current_team;
   thread_t current_thread;
   thread_t idle_thread;
+  queue_item_t link;
 }
 cpu_t;
 
@@ -54,10 +78,11 @@ cpu_t;
 
 typedef struct _scheduler
 {
-  spinlock_t lock;
   int32_t xt_index;
   queue_t * xt;
+
   cpu_t * cpu;
+  queue_t cpu_pool;
 }
 scheduler_t;
 
@@ -66,9 +91,14 @@ scheduler_t;
 
 extern scheduler_t scheduler;
 
-extern thread_t scheduler_elect (void);
-extern void scheduler_switch (thread_t thread, queue_t * queue);
-extern void scheduler_restore (void);
+extern status_t scheduler_elect (thread_t * p_thread);
+extern status_t scheduler_dispatch (thread_t thread);
+extern status_t scheduler_alarm (void * data);
+
+extern status_t scheduler_push_cpu (void);
+extern status_t scheduler_pop_cpu (int32_t affinity, int32_t * p_id);
+
+extern status_t scheduler_switch (thread_t thread, queue_t * queue);
 
 #endif
 

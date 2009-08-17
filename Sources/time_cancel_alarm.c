@@ -26,7 +26,7 @@
  * SYNOPSIS
  */
 
-status_t time_cancel_alarm (int32_t alarm)
+status_t time_cancel_alarm (int32_t aid)
 
 /*
  * ARGUMENTS
@@ -41,7 +41,7 @@ status_t time_cancel_alarm (int32_t alarm)
 
 {
   alarm_t a = NULL;
-  bigtime_t current_time = 0, quanta = 0;
+  bigtime_t current_time = 0, quantum = 0;
   interrupt_status_t it_status = 0;
 
   watch (status_t)
@@ -51,7 +51,7 @@ status_t time_cancel_alarm (int32_t alarm)
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& time_manager . lock);
 
-    if (time_manager . current_alarm -> id == alarm)
+    if (time_manager . current_alarm -> id == aid)
     {
       time_manager . system_timer . cancel ();
 
@@ -62,9 +62,9 @@ status_t time_cancel_alarm (int32_t alarm)
       {
         a = queue_rem (& time_manager . alarm_queue);
         time_manager . system_timer . get (& current_time);
-        quanta = a -> deadline - current_time;
+        quantum = a -> deadline - current_time;
         time_manager . current_alarm = a;
-        time_manager . system_timer . set (quanta, time_callback, a);
+        time_manager . system_timer . set (quantum, time_callback, a);
       }
       else
       {
@@ -74,13 +74,12 @@ status_t time_cancel_alarm (int32_t alarm)
     else
     {
       a = queue_lookup (& time_manager . alarm_queue,
-          alarm_id_inspector, & alarm, NULL); 
+          alarm_id_inspector, & aid, NULL); 
 
-      check (alarm_error, a != NULL, DNA_ERROR);
+      check (alarm_error, a != NULL, DNA_BAD_ARGUMENT);
 
       queue_extract (& time_manager . alarm_queue, & a -> link);
       kernel_free (a);
-
     }
 
     lock_release (& time_manager . lock);

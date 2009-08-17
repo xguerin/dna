@@ -39,9 +39,9 @@ typedef struct _alarm {
   int32_t id;
   int32_t mode;
 
-  bigtime_t quanta;
+  bigtime_t quantum;
   bigtime_t deadline;
-  timer_callback_t callback;
+  alarm_callback_t callback;
   void * data;
 
   queue_item_t link;

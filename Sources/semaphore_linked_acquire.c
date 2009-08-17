@@ -41,6 +41,7 @@ status_t semaphore_linked_acquire (int32_t sid, int32_t lsid)
  */
 
 {
+  status_t status;
   uint32_t current_cpuid = cpu_mp_id();
   thread_t self = scheduler . cpu[current_cpuid] . current_thread;
   thread_t thread = NULL;
@@ -54,13 +55,13 @@ status_t semaphore_linked_acquire (int32_t sid, int32_t lsid)
     ensure (lsid >= 0 && lsid < DNA_MAX_SEM , DNA_BAD_SEM_ID);
 
     it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& sem_pool . lock);
+    lock_acquire (& semaphore_pool . lock);
 
     /*
      * Check the first semaphore
      */
 
-    sem = sem_pool . semaphore[sid];
+    sem = semaphore_pool . semaphore[sid];
     check (invalid_sem, sem != NULL, DNA_BAD_SEM_ID);
 
     lock_acquire (& sem -> lock);
@@ -69,11 +70,11 @@ status_t semaphore_linked_acquire (int32_t sid, int32_t lsid)
      * Check the second semaphore
      */
 
-    lsem = sem_pool . semaphore[lsid];
+    lsem = semaphore_pool . semaphore[lsid];
     check (invalid_lsem, index < DNA_MAX_SEM, DNA_BAD_SEM_ID);
 
     lock_acquire (& lsem -> lock);
-    lock_release (& sem_pool . lock);
+    lock_release (& semaphore_pool . lock);
 
     /*
      * Release the second semaphore
@@ -110,9 +111,20 @@ status_t semaphore_linked_acquire (int32_t sid, int32_t lsid)
       lock_acquire (& sem -> waiting_queue . lock);
       lock_release (& sem -> lock);
 
-      thread = scheduler_elect ();
-      if (thread == NULL)
+      /*
+       * Elect a the next thread and run it
+       * If target is IDLE, we can safely push the CPU
+       * since we disabled the interrupts.
+       */
+
+      status = scheduler_elect (& thread);
+      ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
+
+      if (status == DNA_NO_AVAILABLE_THREAD)
       {
+        status = scheduler_push_cpu ();
+        ensure (status == DNA_OK, status);
+
         thread = scheduler . cpu[current_cpuid] . idle_thread;
       }
 
@@ -135,7 +147,7 @@ status_t semaphore_linked_acquire (int32_t sid, int32_t lsid)
 
   rescue (invalid_sem)
   {
-    lock_release (& sem_pool . lock);
+    lock_release (& semaphore_pool . lock);
     cpu_trap_restore(it_status);
     leave;
   }

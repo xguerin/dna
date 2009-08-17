@@ -71,6 +71,8 @@ team_manager_t;
 
 extern team_manager_t team_manager;
 
+extern status_t team_create (char * name, thread_handler_t handler,
+    void * arguments, int32_t * tid);
 extern status_t team_destroy (team_t team);
 
 extern bool team_id_inspector (void * item, void * p_id, void * dummy);

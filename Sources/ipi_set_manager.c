@@ -16,31 +16,49 @@
  */
 
 #include <Private/Core.h>
+#include <MemoryManager/MemoryManager.h>
+#include <DnaTools/DnaTools.h>
+#include <Processor/Processor.h>
 
-/****f* Core/thread_wrapper
+/****f* Core/ipi_set_manager
  * SUMMARY
- * A wrapper to launch a thread.
+ * Set the IPI manager.
  *
  * SYNOPSIS
  */
 
-int32_t thread_wrapper (void * p_signature)
+status_t ipi_set_manager (ipi_manager_t manager, bool force)
 
 /*
  * ARGUMENTS
- * A thread signature.
- * 
- * RESULT
- * Ignored.
+ * * manager : a manager
+ * * force : force this manager, even if a manager has already been set
  *
  * SOURCE
  */
 
 {
-  thread_signature_t * signature = (thread_signature_t *) p_signature;
+  interrupt_status_t it_status = 0;
 
-  thread_exit (signature -> handler (signature -> arguments));
-  return 0;
+  watch (status_t)
+  {
+    ensure (interrupt_manager . has_ipi || force, DNA_BAD_ARGUMENT);
+
+    /*
+     * Set the timer to the time manager
+     */
+
+    it_status = cpu_trap_mask_and_backup();
+    lock_acquire (& interrupt_manager . lock);
+
+    interrupt_manager . has_ipi = true;
+    interrupt_manager . ipi_manager = manager;
+
+    lock_release (& interrupt_manager . lock);
+    cpu_trap_restore(it_status);
+
+    return DNA_OK;
+  }
 }
 
 /*

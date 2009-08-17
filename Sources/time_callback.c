@@ -39,14 +39,8 @@ status_t time_callback (void * data)
   bool reschedule = false, process_next_alarm = true;
   alarm_t alarm = (alarm_t) data;
   alarm_t next_alarm = NULL;
-  bigtime_t current_time = 0, quanta = 0;
+  bigtime_t current_time = 0, quantum = 0;
   status_t status = DNA_OK;
-
-  /*
-   * We lock the time_manager structure
-   */
-
-  lock_acquire (& time_manager . lock);
 
   /*
    * Now we execute the alarm and those
@@ -61,7 +55,7 @@ status_t time_callback (void * data)
     if ((alarm -> mode & DNA_PERIODIC_ALARM) != 0)
     {
       time_manager . system_timer . get (& current_time);
-      alarm -> deadline = alarm -> quanta +  current_time;
+      alarm -> deadline = alarm -> quantum +  current_time;
       queue_insert (& time_manager . alarm_queue,
           alarm_comparator, & alarm -> link);
     }
@@ -74,22 +68,24 @@ status_t time_callback (void * data)
      * Look through the alarms, and restart or cancel them if necessary
      */
 
+    lock_acquire (& time_manager . lock);
+
     if (time_manager . alarm_queue . status != 0)
     {
       next_alarm = queue_rem (& time_manager . alarm_queue);
+      time_manager . current_alarm = next_alarm;
 
       time_manager . system_timer . get (& current_time);
-      quanta = next_alarm -> deadline - current_time;
+      quantum = next_alarm -> deadline - current_time;
 
-      if (quanta <= DNA_TIMER_JIFFY)
+      if (quantum <= DNA_TIMER_JIFFY)
       {
         alarm = next_alarm;
       }
       else
       {
         process_next_alarm = false;
-        time_manager . current_alarm = next_alarm;
-        time_manager . system_timer . set (quanta, time_callback, next_alarm);
+        time_manager . system_timer . set (quantum, time_callback, next_alarm);
       }
     }
     else
@@ -97,14 +93,10 @@ status_t time_callback (void * data)
       time_manager . current_alarm = NULL;
       process_next_alarm = false;
     }
+
+    lock_release (& time_manager . lock);
   }
   while (process_next_alarm);
-
-  /*
-   * We unlock the time manager
-   */
-
-  lock_release (& time_manager . lock);
 
   /*
    * And reschedule if necessary

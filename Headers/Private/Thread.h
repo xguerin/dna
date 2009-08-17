@@ -38,7 +38,7 @@
  * SOURCE
  */
 
-typedef enum thread_status
+typedef enum _thread_status
 {
   DNA_THREAD_SLEEP    = 0xBAFF,
   DNA_THREAD_READY    = 0xFACE,
@@ -47,24 +47,6 @@ typedef enum thread_status
   DNA_THREAD_ZOMBIE    = 0xDEAD
 }
 thread_status_t;
-
-/*
- ****/
-
-/****v* thread/thread_type
- * SUMMARY
- * Existing kind of threads. Not available to the user.
- *
- * SOURCE
- */
-
-typedef enum thread_type
-{
-  DNA_NORMAL_THREAD    = 0x0001,
-  DNA_IDLE_THREAD      = 0x0002,
-  DNA_MAIN_THREAD      = 0x0004
-}
-thread_type_t;
 
 /*
  ****/
@@ -101,15 +83,15 @@ typedef struct _thread
   int32_t id;
   char name[DNA_NAME_LENGTH];
 
-  thread_type_t type;
   thread_status_t status;
   int32_t stopwatch;
   int32_t priority;
   int32_t cpu_id;
   int32_t cpu_affinity;
 
-  spinlock_t lock;
   team_t team;
+  spinlock_t lock;
+  int32_t sem_tokens;
 
   queue_item_t status_link;
   queue_item_t team_link;
@@ -138,6 +120,8 @@ typedef struct _thread
 /*
  ****/
 
+extern thread_handler_t APP_ENTRY_POINT;
+
 extern status_t thread_destroy (thread_t thread);
 
 extern bool thread_id_inspector (void * item, void * p_id, void * dummy);
@@ -145,8 +129,9 @@ extern bool thread_name_inspector (void * item, void * name, void * dummy);
 
 extern status_t thread_alarm (void * data);
 
+extern int32_t thread_root (void * data);
 extern int32_t thread_idle (void * data);
-extern int32_t thread_wrapper (void * data);
+extern int32_t thread_bootstrap (void * data);
 
 #endif
 

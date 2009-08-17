@@ -27,14 +27,14 @@
  * SYNOPSIS
  */
 
-status_t team_create (char * team_name, thread_handler_t thread_handler,
-    void * thread_arguments, int32_t * tid)
+status_t team_create (char * name, thread_handler_t handler,
+    void * arguments, int32_t * tid)
 
 /*
  * ARGUMENTS
  * * name : team name
  * * handler : the main thread's handler
- * * thread_arguments : the main thread's arguments
+ * * arguments : the main thread's arguments
  * * tid : the placeholder of the main thread's ID
  *
  * RESULT
@@ -54,6 +54,7 @@ status_t team_create (char * team_name, thread_handler_t thread_handler,
 
   watch (status_t)
   {
+    ensure (name != NULL && handler != NULL && tid != NULL, DNA_BAD_ARGUMENT);
     /*
      * Allocate the new team structure.
      */
@@ -65,8 +66,8 @@ status_t team_create (char * team_name, thread_handler_t thread_handler,
      * Fill-in and initialize the necessary fields.
      */
 
-    team -> id = atomic_add (& team_manager . thread_index, 1);
-    dna_strcpy (team -> name, team_name);
+    team -> id = atomic_add (& team_manager . team_index, 1);
+    dna_strcpy (team -> name, name);
 
     queue_item_init (& team -> sched_link, team);
 
@@ -108,17 +109,16 @@ status_t team_create (char * team_name, thread_handler_t thread_handler,
      */
 
     dna_strcpy (thread -> name, "MainThread");
-    thread -> id = atomic_add (& team_manager . team_index, 1);
-    thread -> type = DNA_MAIN_THREAD;
-    thread -> status = DNA_THREAD_READY;
+    thread -> id = atomic_add (& team_manager . thread_index, 1);
+    thread -> status = DNA_THREAD_SLEEP;
     thread -> cpu_id = -1;
     thread -> cpu_affinity = scheduler . xt_index;
     thread -> team = team;
 
     thread -> signature . stack_base = stack_base;
     thread -> signature . stack_size = 0x4000;
-    thread -> signature . handler = thread_handler;
-    thread -> signature . arguments = thread_arguments;
+    thread -> signature . handler = handler;
+    thread -> signature . arguments = arguments;
 
     /*
      * Initialize the queueing elements.
@@ -133,7 +133,8 @@ status_t team_create (char * team_name, thread_handler_t thread_handler,
      */
 
     cpu_context_init ((& thread -> ctx), thread -> signature . stack_base,
-        thread -> signature . stack_size, thread_wrapper, & thread -> signature);
+        thread -> signature . stack_size, thread_bootstrap,
+        & thread -> signature);
 
     /*
      * Register the main thread in the global threads list
@@ -153,16 +154,7 @@ status_t team_create (char * team_name, thread_handler_t thread_handler,
 
     queue_add (& team -> thread_list, & thread -> team_link);
 
-    lock_acquire (& scheduler . xt[thread -> cpu_affinity] . lock);
     lock_release (& team -> lock);
-
-    /*
-     * Register the main thread in the appropriate scheduler's runnable queue
-     */
-
-    queue_add (& scheduler . xt[thread -> cpu_affinity], & thread -> status_link);
-
-    lock_release (& scheduler . xt[thread -> cpu_affinity] . lock);
     cpu_trap_restore(it_status);
 
     *tid = thread -> id;

@@ -38,36 +38,35 @@ typedef struct _semaphore
 {
   int32_t id;
   char name[DNA_NAME_LENGTH];
-  int32_t tokens_max;
   int32_t tokens;
   spinlock_t lock;
   team_t team;
   thread_t latest_holder;
   queue_t waiting_queue;
-} * semaphore_t;
+}
+* semaphore_t;
 
 /*
  ****/
 
-/****t* semaphore/sem_pool_t
+/****t* semaphore/semaphore_pool_t
  * SUMMARY
  * Semaphore manager type.
  *
  * SOURCE
  */
 
-typedef struct _sem_pool
+typedef struct _semaphore_pool
 {
   spinlock_t lock;
-  semaphore_t * semaphore;
+  semaphore_t semaphore[DNA_MAX_SEM];
 }
-sem_pool_t;
+semaphore_pool_t;
 
 /*
  ****/
 
-extern sem_pool_t sem_pool;
-extern status_t semaphore_alarm (void * data);
+extern semaphore_pool_t semaphore_pool;
 
 #endif
 

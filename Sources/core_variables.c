@@ -61,14 +61,14 @@ scheduler_t scheduler;
 /*
  ****/
 
-/****v* Core/it_mux
+/****v* Core/interrupt_manager
  * SUMMARY
  * The interrupt multiplexer instance.
  *
  * SOURCE
  */
 
-it_mux_t it_mux;
+interrupt_manager_t interrupt_manager;
 
 /*
  ****/
@@ -85,14 +85,14 @@ time_manager_t time_manager;
 /*
  ****/
 
-/****v* Core/sem_pool
+/****v* Core/semaphore_pool
  * SUMMARY
  * The semaphore manager instance.
  *
  * SOURCE
  */
 
-sem_pool_t sem_pool;
+semaphore_pool_t semaphore_pool;
 
 /*
  ****/

@@ -27,8 +27,8 @@
  * SYNOPSIS
  */
 
-status_t time_set_alarm (bigtime_t quanta, int32_t mode,
-    timer_callback_t callback, void * data, int32_t * alarm)
+status_t time_set_alarm (bigtime_t quantum, int32_t mode,
+    alarm_callback_t callback, void * data, int32_t * aid)
 
 /*
  * ARGUMENTS
@@ -36,6 +36,7 @@ status_t time_set_alarm (bigtime_t quanta, int32_t mode,
  * * mode : the alarm's mode
  * * callback : the function to call when the alarm goes off
  * * data : the data associated to the function
+ * * aid : the recipient of the new alarm's id
  *
  * RESULT
  *
@@ -67,8 +68,8 @@ status_t time_set_alarm (bigtime_t quanta, int32_t mode,
     new_alarm -> mode = mode;
 
     time_manager . system_timer . get (& current_time);
-    new_alarm -> quanta = quanta;
-    new_alarm -> deadline = quanta + current_time;
+    new_alarm -> quantum = quantum;
+    new_alarm -> deadline = quantum + current_time;
     new_alarm -> callback = callback;
     new_alarm -> data = data;
     queue_item_init (& new_alarm -> link, new_alarm);
@@ -83,7 +84,7 @@ status_t time_set_alarm (bigtime_t quanta, int32_t mode,
     if (time_manager . current_alarm == NULL)
     {
        time_manager . current_alarm = new_alarm;
-       time_manager . system_timer . set (quanta, time_callback, new_alarm);
+       time_manager . system_timer . set (quantum, time_callback, new_alarm);
     }
     else
     {
@@ -113,7 +114,7 @@ status_t time_set_alarm (bigtime_t quanta, int32_t mode,
          * Set the new timer
          */
         
-        time_manager . system_timer . set (quanta, time_callback, new_alarm);
+        time_manager . system_timer . set (quantum, time_callback, new_alarm);
       }
       else
       {
@@ -125,7 +126,7 @@ status_t time_set_alarm (bigtime_t quanta, int32_t mode,
     lock_release (& time_manager . lock);
     cpu_trap_restore(status);
 
-    *alarm = new_alarm -> id;
+    *aid = new_alarm -> id;
     return DNA_OK;
   }
 }

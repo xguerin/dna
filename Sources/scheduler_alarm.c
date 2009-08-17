@@ -17,31 +17,25 @@
 
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
-#include <Processor/Processor.h>
 
-/****f* Core/interrupt_handler
+/****f* RootTask/scheduler_alarm
  * SUMMARY
- * Handler for mulitplexed interrupts.
+ * Callback used for preempt context switching.
  *
  * SYNOPSIS
  */
 
-int32_t interrupt_handler (int32_t data)
+status_t scheduler_alarm (void * data)
 
 /*
  * ARGUMENTS
- * * data : the ID of the interrupt
- *
- * RESULT
- * DNA_OK.
+ * * data : ignored
  *
  * SOURCE
  */
 
 {
-  queue_lookup (& it_mux . isr_list[data],
-      interrupt_handler_inspector, & data, NULL);
-  return DNA_OK;
+  return DNA_INVOKE_SCHEDULER;
 }
 
 /*

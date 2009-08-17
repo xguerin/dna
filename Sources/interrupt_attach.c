@@ -49,7 +49,7 @@ status_t interrupt_attach (interrupt_id_t id, int32_t mode,
 
   watch (status_t)
   {
-    ensure (id < cpu_n_it, DNA_ERROR);
+    ensure (id < cpu_n_it, DNA_BAD_ARGUMENT);
 
     isr = kernel_malloc (sizeof (struct _isr), true);
     ensure (isr != NULL, DNA_OUT_OF_MEM);
@@ -58,22 +58,22 @@ status_t interrupt_attach (interrupt_id_t id, int32_t mode,
     queue_item_init (& isr -> link, isr);
 
     it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& it_mux . lock);
+    lock_acquire (& interrupt_manager . lock);
 
-    it_mux . counter[id] += 1;
-    queue_add (& it_mux . isr_list[id], & isr -> link);
+    interrupt_manager . counter[id] += 1;
+    queue_add (& interrupt_manager . isr_list[id], & isr -> link);
 
-    if (it_mux . counter[id] == 1)
+    if (interrupt_manager . counter[id] == 1)
     {
       cpu_trap_attach_isr (id, mode, handler);
       cpu_trap_enable (id);
     }
-    else if (it_mux . counter[id] == 2)
+    else if (interrupt_manager . counter[id] == 2)
     {
-      cpu_trap_attach_isr (id, mode, interrupt_handler);
+      cpu_trap_attach_isr (id, mode, interrupt_demultiplexer);
     }
 
-    lock_release (& it_mux . lock);
+    lock_release (& interrupt_manager . lock);
     cpu_trap_restore(it_status);
 
     return DNA_OK;

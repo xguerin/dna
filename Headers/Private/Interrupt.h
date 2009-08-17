@@ -22,9 +22,20 @@
 #define DNA_CORE_INTERRUPT_PRIVATE_H
 
 #include <stdint.h>
-#include <DnaTools/DnaTools.h>
 #include <Core/Core.h>
 #include <Processor/Processor.h>
+#include <Platform/Platform.h>
+#include <DnaTools/DnaTools.h>
+
+#define DNA_IPI_ALL       cpu_mp_count
+#define DNA_IPI_EXECUTE   0xFFFF
+
+/****t* interrupt/isr_t
+ * SUMMARY
+ * Describes an interrupt service routine element.
+ *
+ * SOURCE
+ */
 
 typedef struct _isr
 {
@@ -33,18 +44,38 @@ typedef struct _isr
 }
 * isr_t;
 
-typedef struct _it_mux
+/*
+ ****/
+
+/****t* interrupt/interrupt_manager_t
+ * SUMMARY
+ * Describes the interrupt manager.
+ *
+ * SOURCE
+ */
+
+typedef struct _interrupt_manager
 {
   spinlock_t lock;
   int32_t counter[cpu_n_it];
   queue_t isr_list[cpu_n_it];
+
+  bool has_ipi;
+  ipi_manager_t ipi_manager;
 }
-it_mux_t;
+interrupt_manager_t;
 
-extern it_mux_t it_mux;
+/*
+ ****/
 
-extern int32_t interrupt_handler (int32_t itn);
-extern bool interrupt_handler_inspector (void * p_isr, void * p_handler, void * dummy);
+extern interrupt_manager_t interrupt_manager;
+
+extern int32_t interrupt_demultiplexer (int32_t itn);
+extern bool interrupt_handler_inspector (void * p_isr,
+    void * p_handler, void * dummy);
+
+extern status_t ipi_send (int32_t target, int32_t command, void * cookie);
+extern status_t ipi_callback (int32_t command, void * cookie);
 
 #endif
 

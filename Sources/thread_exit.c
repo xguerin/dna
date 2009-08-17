@@ -37,6 +37,7 @@ void thread_exit (int32_t value)
  */
 
 {
+  status_t status;
   uint32_t current_cpuid = cpu_mp_id();
   thread_t self = scheduler . cpu[current_cpuid] . current_thread;
   thread_t target = NULL, p = NULL;
@@ -56,10 +57,17 @@ void thread_exit (int32_t value)
   self -> signature . return_value = value;
 
   /*
-   * Then we can wake up the waiting threads
+   * Mark self as zombie
    */
 
+  self -> status = DNA_THREAD_ZOMBIE;
+
   lock_acquire (& self -> wait . lock);
+  lock_release (& self -> lock);
+
+  /*
+   * Then we can wake up the waiting threads
+   */
 
   while ((p = queue_rem (& self -> wait)) != NULL)
   {
@@ -76,18 +84,15 @@ void thread_exit (int32_t value)
   lock_release (& self -> wait . lock);
 
   /*
-   * Mark self as zombie
-   */
-
-  self -> status = DNA_THREAD_ZOMBIE;
-  lock_release (& self -> lock);
-
-  /*
    * Elect a the next thread and run it
+   * If target is IDLE, we can safely push the CPU
+   * since we disabled the interrupts.
    */
 
-  if ((target = scheduler_elect ()) == NULL)
+  status = scheduler_elect (& target);
+  if (status == DNA_NO_AVAILABLE_THREAD)
   {
+    scheduler_push_cpu ();
     target = scheduler . cpu[current_cpuid] . idle_thread;
   }
 
