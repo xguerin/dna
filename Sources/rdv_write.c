@@ -19,21 +19,25 @@
 #include <Processor/Processor.h>
 #include <DnaTools/DnaTools.h>
 
-status_t rdv_write (void * handler, void * source, int64_t offset, int32_t * p_count) {
+status_t rdv_write (void * handler, void * source,
+    int64_t offset, int32_t * p_count)
+{
   channel_rdv_t * rdv = handler;
   interrupt_status_t it_status = 0;
 
   it_status = cpu_trap_mask_and_backup();
   lock_acquire (& rdv -> lock);
 
-  if (! rdv -> getter . ready) {
+  if (! rdv -> getter . ready)
+  {
     rdv -> setter . ready = true;
     rdv -> setter . buffer = source;
 
     lock_release (& rdv -> lock);
-    semaphore_acquire (rdv -> sem, 0, -1);
+    semaphore_acquire (rdv -> sem, 1, 0, -1);
   }
-  else {
+  else
+  {
     rdv -> getter . ready = false;
     rdv -> setter . ready = false;
     dna_memcpy ((void *)rdv -> getter . buffer, (void *)source, *p_count);
