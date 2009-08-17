@@ -53,7 +53,10 @@ status_t thread_yield (void)
       self -> status = DNA_THREAD_READY;
 
       lock_acquire (& scheduler . xt[self -> cpu_affinity] . lock);
-      scheduler_switch (target, & scheduler . xt[self -> cpu_affinity]);
+
+      status = scheduler_switch (target,
+          & scheduler . xt[self -> cpu_affinity]);
+      ensure (status == DNA_OK, status);
     }
 
     cpu_trap_restore(it_status);

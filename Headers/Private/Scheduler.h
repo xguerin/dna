@@ -56,6 +56,7 @@ typedef struct _cpu
 {
   int32_t id;
   cpu_status_t status;
+
   spinlock_t lock;
 
   thread_t current_thread;
@@ -76,6 +77,8 @@ cpu_t;
 
 typedef struct _scheduler
 {
+  spinlock_t lock;
+
   int32_t xt_index;
   queue_t * xt;
 

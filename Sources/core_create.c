@@ -145,6 +145,7 @@ status_t core_create (void)
         scheduler . cpu[cpu_i] . current_thread = NULL;
       }
     }
+  }
 
   rescue (sched_xt_alloc)
   {

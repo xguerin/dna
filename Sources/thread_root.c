@@ -46,7 +46,6 @@ int32_t thread_root (void * data)
 
   watch (status_t)
   {
-#if 0
     status = vfs_open ("/devices/console", 0, 0, & dummy);
     ensure (status == DNA_OK, status);
 
@@ -55,7 +54,16 @@ int32_t thread_root (void * data)
 
     status = vfs_open ("/devices/console", 0, 0, & dummy);
     ensure (status == DNA_OK, status);
-#endif
+
+    status = thread_create (APP_ENTRY_POINT, NULL, "AppMain",
+        DNA_NO_AFFINITY, DNA_THREAD_STACK_SIZE, & main_thread);
+    ensure (status == DNA_OK, status);
+
+    status = thread_resume (main_thread);
+    ensure (status == DNA_OK, status);
+
+    status = thread_wait (main_thread, NULL);
+    ensure (status == DNA_OK, status);
 
     return 0;
   }

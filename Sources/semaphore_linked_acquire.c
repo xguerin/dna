@@ -128,7 +128,9 @@ status_t semaphore_linked_acquire (int32_t sid, int32_t lsid)
         thread = scheduler . cpu[current_cpuid] . idle_thread;
       }
 
-      scheduler_switch (thread, & sem -> waiting_queue);
+      status = scheduler_switch (thread, & sem -> waiting_queue);
+      ensure (status == DNA_OK, status);
+
       lock_acquire (& sem -> lock);
     }
     

@@ -48,7 +48,6 @@ status_t thread_create (thread_handler_t handler, void * arguments,
  */
 
 {
-  int32_t current_cpuid = cpu_mp_id ();
   thread_t thread = NULL;
   void * stack_base = NULL;
   interrupt_status_t it_status = 0;

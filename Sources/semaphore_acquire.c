@@ -115,9 +115,10 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
             thread = scheduler . cpu[current_cpuid] . idle_thread;
           }
         
-          scheduler_switch (thread, & sem -> waiting_queue);
-          lock_acquire (& sem -> lock);
+          status = scheduler_switch (thread, & sem -> waiting_queue);
+          ensure (status == DNA_OK, status);
 
+          lock_acquire (& sem -> lock);
           break;
 
         /*
@@ -164,7 +165,9 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
             thread = scheduler . cpu[current_cpuid] . idle_thread;
           }
         
-          scheduler_switch (thread, & sem -> waiting_queue);
+          status = scheduler_switch (thread, & sem -> waiting_queue);
+          ensure (status == DNA_OK, status);
+
           lock_acquire (& sem -> lock);
 
           if (time_cancel_alarm (alarm) == DNA_ERROR)

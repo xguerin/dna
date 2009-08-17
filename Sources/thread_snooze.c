@@ -74,9 +74,10 @@ status_t thread_snooze (bigtime_t value)
       target = scheduler . cpu[current_cpuid] . idle_thread;
     }
 
-    scheduler_switch (target, NULL);
-    cpu_trap_restore(it_status);
+    status = scheduler_switch (target, NULL);
+    ensure (status == DNA_OK, status);
 
+    cpu_trap_restore(it_status);
     return DNA_OK;
   }
 

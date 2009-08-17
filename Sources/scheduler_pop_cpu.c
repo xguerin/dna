@@ -43,6 +43,7 @@ status_t scheduler_pop_cpu (int32_t affinity, int32_t * p_id)
 {
   int32_t id = -1;
   cpu_t * cpu = NULL;
+  status_t status = DNA_NO_AVAILABLE_CPU;
 
   watch (status_t)
   {
@@ -63,6 +64,7 @@ status_t scheduler_pop_cpu (int32_t affinity, int32_t * p_id)
 
         cpu -> status = DNA_CPU_RUNNING;
         id = cpu -> id;
+        status = DNA_OK;
 
         lock_release (& cpu -> lock);
       }
@@ -88,7 +90,7 @@ status_t scheduler_pop_cpu (int32_t affinity, int32_t * p_id)
     }
 
     *p_id = id;
-    return DNA_OK;
+    return status;
   }
 
   rescue (no_cpu)

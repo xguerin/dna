@@ -72,7 +72,9 @@ status_t thread_suspend (int32_t id)
         target = scheduler . cpu[current_cpuid] . idle_thread;
       }
 
-      scheduler_switch (target, NULL);
+      status = scheduler_switch (target, NULL);
+      ensure (status == DNA_OK, status);
+
       cpu_trap_restore(it_status);
     }
 
