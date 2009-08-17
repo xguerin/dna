@@ -36,7 +36,7 @@ status_t vfs_read (int16_t fd, void * data, int32_t count, int32_t * p_ret)
  * * p_ret : a pointer to the return value
  *
  * FUNCTION
- * * Looks-up for the file corresponding to fd in the current team.
+ * * Looks-up for the file corresponding to fd
  * * If it exists, then calls the file's read () function.
  *
  * RESULT
@@ -47,8 +47,7 @@ status_t vfs_read (int16_t fd, void * data, int32_t count, int32_t * p_ret)
 
 {
   file_t file = NULL;
-  fdarray_t fdarray = NULL;
-  int32_t current_team = -1;
+  fdarray_t fdarray = & fdarray_manager . fdarray[0];
   int32_t n_data = count;
   interrupt_status_t it_status = 0;
   status_t status = DNA_OK;
@@ -58,19 +57,12 @@ status_t vfs_read (int16_t fd, void * data, int32_t count, int32_t * p_ret)
     ensure (data != NULL && p_ret != NULL && count > 0, DNA_ERROR);
     ensure (fd >= 0 && fd < DNA_MAX_FILE, DNA_INVALID_FD);
 
-    status = team_find (NULL, & current_team);
-    ensure (status == DNA_OK, status);
+    /*
+     * Get the file associated to the fd
+     */
 
     it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& fdarray_manager . fdarray_list . lock);
-    
-    fdarray = queue_lookup (& fdarray_manager. fdarray_list,
-        fdarray_id_inspector, (void *) & current_team, NULL);
-
-    check (invalid_array, fdarray != NULL, DNA_ERROR);
-    
     lock_acquire (& fdarray -> lock);
-    lock_release (& fdarray_manager . fdarray_list . lock);
 
     file = fdarray -> fds[fd];
 
@@ -99,13 +91,6 @@ status_t vfs_read (int16_t fd, void * data, int32_t count, int32_t * p_ret)
   rescue (read_error)
   {
     *p_ret = -1;
-    leave;
-  }
-
-  rescue (invalid_array)
-  {
-    lock_release (& fdarray_manager . fdarray_list . lock);
-    cpu_trap_restore(it_status);
     leave;
   }
 }

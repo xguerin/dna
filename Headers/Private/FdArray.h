@@ -23,7 +23,7 @@
 #include <Private/VNode.h>
 #include <DnaTools/DnaTools.h>
 
-/****t* ioctx/file_t
+/****t* fdarray/file_t
  * SUMMARY
  * File type.
  *
@@ -32,8 +32,9 @@
 
 typedef struct _file
 {
-  vnode_t vnode;
   spinlock_t lock;
+  vnode_t vnode;
+
   int32_t mode;
   int64_t offset;
   void * data;
@@ -43,7 +44,7 @@ typedef struct _file
 /*
  ****/
 
-/****t* ioctx/fdarray_t
+/****t* fdarray/fdarray_t
  * SUMMARY
  * File descriptor array type.
  *
@@ -52,18 +53,17 @@ typedef struct _file
 
 typedef struct _fdarray
 {
-  queue_item_t link;
-
-  int32_t associated_id;
   spinlock_t lock;
+  int32_t associated_id;
   file_t fds[DNA_MAX_FILE];
+  queue_item_t link;
 }
 * fdarray_t;
 
 /*
  ****/
 
-/****t* ioctx/fdarray_t
+/****t* fdarray/fdarray_t
  * SUMMARY
  * File descriptor array type.
  *
@@ -73,7 +73,7 @@ typedef struct _fdarray
 typedef struct _fdarray_manager
 {
   spinlock_t lock;
-  queue_t fdarray_list;
+  struct _fdarray fdarray[DNA_MAX_FDARRAY];
 }
 fdarray_manager_t;
 
@@ -81,7 +81,5 @@ fdarray_manager_t;
  ****/
 
 extern fdarray_manager_t fdarray_manager;
-
-extern bool fdarray_id_inspector (void * fdarray, void * p_id, void * p_dummy);
 
 #endif

@@ -168,12 +168,6 @@
       <argument name="lock" type="spinlock_t" direction="inout"/>
     </method>
 
-    <!-- Team hooks -->
-
-    <method name="team_find" return_type="int32_t">
-      <argument name="name" type="string" direction="in"/>
-    </method>
-
     <!-- Memory hooks -->
 
     <method name="kernel_malloc" return_type="access">

@@ -46,28 +46,12 @@ status_t vfs_close (int16_t fd)
 {
   file_t file = NULL;
   status_t status = DNA_OK;
-  fdarray_t fdarray = NULL;
-  int32_t current_team = -1;
+  fdarray_t fdarray = & fdarray_manager . fdarray[0];
   interrupt_status_t it_status = 0;
 
   watch (status_t)
   {
     ensure (fd >= 0 && fd < DNA_MAX_FILE, DNA_INVALID_FD);
-
-    /*
-     * Get the current fdarray
-     */
-
-    team_find (NULL, & current_team);
-
-    it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& fdarray_manager . fdarray_list . lock);
-    
-    fdarray = queue_lookup (& fdarray_manager. fdarray_list,
-        fdarray_id_inspector, (void *) & current_team, NULL);
-    
-    lock_release (& fdarray_manager . fdarray_list . lock);
-    cpu_trap_restore(it_status);
 
     /*
      * Get the file associated to the fd

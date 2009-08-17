@@ -45,28 +45,19 @@ status_t vfs_lseek (int16_t fd, int64_t offset, int32_t whence, int64_t * p_ret)
 
 {
   file_t file = NULL;
-  fdarray_t fdarray = NULL;
-  int32_t current_team = 0;
+  fdarray_t fdarray = & fdarray_manager . fdarray[0];
   interrupt_status_t it_status = 0;
-  status_t status = DNA_OK;
 
   watch (status_t)
   {
     ensure (fd >= 0 && fd < DNA_MAX_FILE, DNA_INVALID_FD);
 
-    status = team_find (NULL, & current_team);
-    ensure (status == DNA_OK, status);
+    /*
+     * Get the file associated to the fd
+     */
 
     it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& fdarray_manager . fdarray_list . lock);
-    
-    fdarray = queue_lookup (& fdarray_manager. fdarray_list,
-        fdarray_id_inspector, (void *) & current_team, NULL);
-
-    check (invalid_array, fdarray != NULL, DNA_ERROR);
-    
     lock_acquire (& fdarray -> lock);
-    lock_release (& fdarray_manager . fdarray_list . lock);
 
     switch (whence)
     {
@@ -95,13 +86,6 @@ status_t vfs_lseek (int16_t fd, int64_t offset, int32_t whence, int64_t * p_ret)
     cpu_trap_restore(it_status);
     
     return DNA_OK;
-  }
-
-  rescue (invalid_array)
-  {
-    lock_release (& fdarray_manager . fdarray_list . lock);
-    cpu_trap_restore(it_status);
-    leave;
   }
 }
 

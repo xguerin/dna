@@ -53,8 +53,7 @@ status_t vfs_open (char * restrict path, int32_t mode,
   void * data = NULL;
   void * file_data = NULL;
   char buffer[DNA_PATH_LENGTH], token[DNA_FILENAME_LENGTH];
-  fdarray_t fdarray = NULL;
-  int32_t current_team = -1;
+  fdarray_t fdarray = & fdarray_manager . fdarray[0];
   interrupt_status_t it_status = 0;
   status_t status = DNA_OK;
 
@@ -63,26 +62,11 @@ status_t vfs_open (char * restrict path, int32_t mode,
     ensure (path != NULL && p_fd != NULL, DNA_ERROR);
 
     /*
-     * Get the current team ID
-     */
-
-    status = team_find (NULL, & current_team);
-    ensure (status == DNA_OK, status);
-
-    it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& fdarray_manager . fdarray_list . lock);
-    
-    fdarray = queue_lookup (& fdarray_manager. fdarray_list,
-        fdarray_id_inspector, (void *) & current_team, NULL);
-
-    check (invalid_array, fdarray != NULL, DNA_ERROR);
-    
-    lock_acquire (& fdarray -> lock);
-    lock_release (& fdarray_manager . fdarray_list . lock);
-
-    /*
      * Look for an available file slot.
      */
+
+    it_status = cpu_trap_mask_and_backup();
+    lock_acquire (& fdarray -> lock);
 
     for (fd_index = 0; fd_index < DNA_MAX_FILE; fd_index ++)
     {
@@ -199,13 +183,6 @@ status_t vfs_open (char * restrict path, int32_t mode,
   rescue (invalid_file)
   {
     lock_release (& fdarray -> lock);
-    cpu_trap_restore (it_status);
-    leave;
-  }
-
-  rescue (invalid_array)
-  {
-    lock_release (& fdarray_manager . fdarray_list . lock);
     cpu_trap_restore (it_status);
     leave;
   }

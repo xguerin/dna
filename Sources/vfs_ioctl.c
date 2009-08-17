@@ -36,7 +36,7 @@ status_t vfs_ioctl (int16_t fd, int32_t function,
  * * arguments : the arguments of the operation.
  *
  * FUNCTION
- * * Looks-up for the file corresponding to fd in the current team.
+ * * Looks-up for the file corresponding to fd
  * * If it exists, then calls the file's ioctl() function.
  *
  * RESULT
@@ -47,8 +47,7 @@ status_t vfs_ioctl (int16_t fd, int32_t function,
 
 {
   file_t file = NULL;
-  fdarray_t fdarray = NULL;
-  int32_t current_team = 0;
+  fdarray_t fdarray = & fdarray_manager . fdarray[0];
   interrupt_status_t it_status = 0;
   status_t status = DNA_OK;
 
@@ -56,19 +55,12 @@ status_t vfs_ioctl (int16_t fd, int32_t function,
   {
     ensure (fd >= 0 && fd < DNA_MAX_FILE, DNA_INVALID_FD);
 
-    status = team_find (NULL, & current_team);
-    ensure (status == DNA_OK, status);
+    /*
+     * Get the file associated to the fd
+     */
 
     it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& fdarray_manager . fdarray_list . lock);
-    
-    fdarray = queue_lookup (& fdarray_manager. fdarray_list,
-        fdarray_id_inspector, (void *) & current_team, NULL);
-
-    check (invalid_array, fdarray != NULL, DNA_ERROR);
-    
     lock_acquire (& fdarray -> lock);
-    lock_release (& fdarray_manager . fdarray_list . lock);
 
     file = fdarray -> fds[fd];
 
@@ -82,13 +74,6 @@ status_t vfs_ioctl (int16_t fd, int32_t function,
        function, arguments, p_ret);
 
     return status;
-  }
-
-  rescue (invalid_array)
-  {
-    lock_release (& fdarray_manager . fdarray_list . lock);
-    cpu_trap_restore(it_status);
-    leave;
   }
 }
 
