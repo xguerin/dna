@@ -49,7 +49,6 @@ status_t thread_create (thread_handler_t handler, void * arguments,
 
 {
   int32_t current_cpuid = cpu_mp_id ();
-  team_t team = scheduler .  cpu[current_cpuid] . current_team;
   thread_t thread = NULL;
   void * stack_base = NULL;
   interrupt_status_t it_status = 0;
@@ -79,10 +78,9 @@ status_t thread_create (thread_handler_t handler, void * arguments,
      */
 
     dna_strcpy (thread -> name, name);
-    thread -> id = atomic_add (& team_manager . thread_index, 1);
+    thread -> id = atomic_add (& scheduler . thread_index, 1);
     thread -> status = DNA_THREAD_SLEEP;
     thread -> cpu_id = -1;
-    thread -> team = team;
 
     if (affinity == DNA_NO_AFFINITY)
     {
@@ -103,7 +101,6 @@ status_t thread_create (thread_handler_t handler, void * arguments,
      */
 
     queue_item_init (& (thread -> status_link), thread);
-    queue_item_init (& (thread -> team_link), thread);
     queue_item_init (& (thread -> sched_link), thread);
 
     /*
@@ -119,20 +116,11 @@ status_t thread_create (thread_handler_t handler, void * arguments,
      */
 
     it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& team_manager . lock);
+    lock_acquire (& scheduler . lock);
 
-    queue_add (& team_manager . thread_list, & thread -> sched_link);
+    queue_add (& scheduler . thread_list, & thread -> sched_link);
 
-    /*
-     * Register the thread in its team's threads list
-     */
-
-    lock_acquire (& team -> lock);
-    lock_release (& team_manager . lock);
-
-    queue_add (& team -> thread_list, & thread -> team_link);
-
-    lock_release (& team -> lock);
+    lock_release (& scheduler . lock);
     cpu_trap_restore(it_status);
 
     *tid = thread -> id;

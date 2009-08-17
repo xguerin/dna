@@ -40,7 +40,6 @@ status_t core_start (void)
 {
   status_t status;
   uint32_t current_cpuid = cpu_mp_id ();
-  team_t team = scheduler . cpu[cpu_mp_id ()] . current_team;
   thread_t thread = scheduler . cpu[current_cpuid] . current_thread;
 
   watch (status_t)
@@ -49,9 +48,6 @@ status_t core_start (void)
 
     if (current_cpuid == 0)
     {
-      status = fdarray_create (team -> id, -1);
-      ensure (status == DNA_OK, status);
-
       scheduler . cpu[current_cpuid] . status = DNA_CPU_RUNNING;
     }
     else

@@ -37,18 +37,6 @@ component_t core_component =
 /*
  ****/
 
-/****v* Core/team_manager
- * SUMMARY
- * The team manager instance.
- *
- * SOURCE
- */
-
-team_manager_t team_manager;
-
-/*
- ****/
-
 /****v* Core/scheduler
  * SUMMARY
  * The scheduler manager instance.

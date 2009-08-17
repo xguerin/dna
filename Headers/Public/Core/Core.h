@@ -24,7 +24,6 @@
 #include <Core/Interrupt.h>
 #include <Core/Lock.h>
 #include <Core/Semaphore.h>
-#include <Core/Team.h>
 #include <Core/Thread.h>
 #include <Core/Time.h>
 #include <DnaTools/DnaTools.h>

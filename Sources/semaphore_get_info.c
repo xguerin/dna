@@ -70,7 +70,6 @@ status_t semaphore_get_info (int32_t sid, semaphore_info_t * info)
      */
 
     info -> id = sem -> id;
-    info -> team = sem -> team -> id;
     dna_strcpy (info -> name, sem -> name);
     info -> tokens = sem -> tokens;
 

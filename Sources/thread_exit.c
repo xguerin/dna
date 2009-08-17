@@ -102,7 +102,6 @@ void thread_exit (int32_t value)
   lock_release (& target -> lock);
 
   scheduler . cpu[current_cpuid] . current_thread = target;
-  scheduler . cpu[current_cpuid] . current_team = target -> team;
 
   cpu_context_load((& target -> ctx));
 }

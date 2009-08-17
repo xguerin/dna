@@ -25,7 +25,6 @@
 #include <stdarg.h>
 
 #include <Private/Time.h>
-#include <Private/Team.h>
 #include <Core/Core.h>
 
 #include <DnaTools/DnaTools.h>
@@ -89,28 +88,26 @@ typedef struct _thread
   int32_t cpu_id;
   int32_t cpu_affinity;
 
-  team_t team;
   spinlock_t lock;
   int32_t sem_tokens;
 
   queue_item_t status_link;
-  queue_item_t team_link;
   queue_item_t sched_link;
   queue_t wait;
 
   struct _kernel_time
-   {
+  {
     bigtime_t start;
     bigtime_t elapsed;
   }
-   kernel_time;
+  kernel_time;
 
   struct _user_time
    {
     bigtime_t start;
     bigtime_t elapsed;
   }
-   user_time;
+  user_time;
 
   thread_signature_t signature;
   cpu_context_t ctx;

@@ -21,7 +21,6 @@
 #ifndef DNA_CORE_SCHEDULER_PRIVATE_H
 #define DNA_CORE_SCHEDULER_PRIVATE_H
 
-#include <Private/Team.h>
 #include <Private/Thread.h>
 
 #include <Core/Core.h>
@@ -59,7 +58,6 @@ typedef struct _cpu
   cpu_status_t status;
   spinlock_t lock;
 
-  team_t current_team;
   thread_t current_thread;
   thread_t idle_thread;
   queue_item_t link;
@@ -83,6 +81,9 @@ typedef struct _scheduler
 
   cpu_t * cpu;
   queue_t cpu_pool;
+
+  int32_t thread_index;
+  queue_t thread_list;
 }
 scheduler_t;
 

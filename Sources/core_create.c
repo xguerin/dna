@@ -31,31 +31,22 @@ status_t core_create (void)
 
 /*
  * FUNCTION
- * * Initialize the team manager
  * * Initialize the scheduler manager
  * * Initialize the it multiplexer
  * * Initialize the time manager
  * * Initialize the semaphore pool
- * * Initialize the system team and the IDLE threads
- * * Create the system team.
+ * * Initialize the IDLE threads
  *
  * SOURCE
  */
 
 {
   status_t status;
-  team_t team = NULL;
   thread_t thread = NULL;
   int32_t thread_id = -1;
 
   watch (status_t)
   {
-    /*
-     * Initialize the team manager
-     */
-
-    dna_memset (& team_manager, 0, sizeof (team_manager_t));
-
     /*
      * Initialize the scheduler manager
      */
@@ -88,41 +79,11 @@ status_t core_create (void)
     dna_memset (& semaphore_pool, 0, sizeof (semaphore_pool_t));
 
     /*
-     * Allocate the system team structure.
-     */
-
-    team = kernel_malloc (sizeof (struct _team), true);
-    check (team_alloc, team != NULL, DNA_OUT_OF_MEM);
-
-    /*
-     * Fill-in the necessary fields.
-     */
-
-    team -> id = atomic_add (& team_manager . team_index, 1);
-    dna_strcpy (team -> name, DNA_SYSTEM_TEAM);
-
-    queue_item_init (& team -> sched_link, team);
-
-    /*
-     * Add the new team to the scheduler.
-     */
-
-    queue_add (& team_manager . team_list, & team -> sched_link);
-
-    /*
      * Create the idle threads
      */
 
     for (int32_t cpu_i = 0; cpu_i < cpu_mp_count; cpu_i++)
     {
-      /*
-       * Set the current team as the system team.
-       * We do that now because current_team is required
-       * by thread_create ().
-       */
-
-      scheduler . cpu[cpu_i] . current_team = team;
-
       /*
        * Create the Idle thread
        */
@@ -131,7 +92,7 @@ status_t core_create (void)
           cpu_i, DNA_IDLE_STACK_SIZE, & thread_id);
       check (create_threads, status == DNA_OK, DNA_ERROR);
 
-      thread = queue_lookup (& team -> thread_list,
+      thread = queue_lookup (& scheduler . thread_list,
           thread_id_inspector, (void *) & thread_id, NULL);
 
       /*
@@ -156,7 +117,7 @@ status_t core_create (void)
         DNA_NO_AFFINITY, DNA_THREAD_STACK_SIZE, & thread_id);
     check (create_threads, status == DNA_OK, DNA_ERROR);
 
-    thread = queue_lookup (& team -> thread_list,
+    thread = queue_lookup (& scheduler . thread_list,
         thread_id_inspector, (void *) & thread_id, NULL);
 
     scheduler . cpu[0] . current_thread = thread;
@@ -180,23 +141,10 @@ status_t core_create (void)
       {
         thread_destroy (idle_thread);
 
-        scheduler . cpu[cpu_i] . current_team = NULL;
         scheduler . cpu[cpu_i] . idle_thread = NULL;
         scheduler . cpu[cpu_i] . current_thread = NULL;
       }
     }
-
-    /*
-     * We free the team
-     */
-
-    kernel_free (team);
-  }
-  
-  rescue (team_alloc)
-  {
-    kernel_free (semaphore_pool . semaphore);
-  }
 
   rescue (sched_xt_alloc)
   {

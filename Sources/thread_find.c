@@ -55,12 +55,12 @@ status_t thread_find (char * name, int32_t * tid)
     else
     {
       it_status = cpu_trap_mask_and_backup();
-      lock_acquire (& team_manager . lock);
+      lock_acquire (& scheduler . lock);
 
-      thread = queue_lookup (& team_manager . thread_list,
+      thread = queue_lookup (& scheduler . thread_list,
           thread_name_inspector, (void *) name, NULL);
 
-      lock_release (& team_manager . lock);
+      lock_release (& scheduler . lock);
       cpu_trap_restore(it_status);
 
       ensure (thread != NULL, DNA_UNKNOWN_THREAD);

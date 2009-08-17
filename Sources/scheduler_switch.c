@@ -51,7 +51,6 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
      */
 
     scheduler . cpu[current_cpuid] . current_thread = thread;
-    scheduler . cpu[current_cpuid] . current_team = thread -> team;
 
     /*
      * Update the status of the target thread

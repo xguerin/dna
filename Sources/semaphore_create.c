@@ -67,7 +67,6 @@ status_t semaphore_create (char * name, int32_t tokens, int32_t * sid)
     semaphore -> id = index;
     dna_strcpy (semaphore -> name, name);
     semaphore -> tokens = tokens;
-    semaphore -> team = scheduler . cpu[cpu_mp_id()] . current_team;
 
     semaphore_pool . semaphore[index] = semaphore;
 

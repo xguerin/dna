@@ -23,7 +23,6 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include <Private/Team.h>
 #include <Core/Core.h>
 #include <DnaTools/DnaTools.h>
 
@@ -40,7 +39,6 @@ typedef struct _semaphore
   char name[DNA_NAME_LENGTH];
   int32_t tokens;
   spinlock_t lock;
-  team_t team;
   thread_t latest_holder;
   queue_t waiting_queue;
 }

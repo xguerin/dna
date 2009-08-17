@@ -40,22 +40,21 @@ status_t thread_resume (int32_t id)
 
 {
   uint32_t current_cpuid = cpu_mp_id();
-  team_t team = scheduler . cpu[current_cpuid] . current_team;
   thread_t target = NULL;
   interrupt_status_t it_status = 0;
 
   watch (status_t)
   {
     it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& team -> lock);
+    lock_acquire (& scheduler . lock);
 
-    target = queue_lookup (& team_manager . thread_list,
+    target = queue_lookup (& scheduler. thread_list,
         thread_id_inspector, (void *) & id, NULL);
 
     check (invalid_thread, target != NULL, DNA_UNKNOWN_THREAD);
     check (invalid_thread, target -> status == DNA_THREAD_SLEEP, DNA_ERROR);
 
-    lock_release (& team -> lock);
+    lock_release (& scheduler . lock);
 
     scheduler_dispatch (target);
 
@@ -65,7 +64,7 @@ status_t thread_resume (int32_t id)
 
   rescue (invalid_thread)
   {
-    lock_release (& team -> lock);
+    lock_release (& scheduler . lock);
     cpu_trap_restore(it_status);
 
     leave;

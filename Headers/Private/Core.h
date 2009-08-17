@@ -25,7 +25,6 @@
 #include <Private/Interrupt.h>
 #include <Private/Scheduler.h>
 #include <Private/Semaphore.h>
-#include <Private/Team.h>
 #include <Private/Thread.h>
 #include <Private/Time.h>
 

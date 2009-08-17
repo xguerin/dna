@@ -72,26 +72,6 @@
       <argument name="info" type="semaphore_info_t" direction="out"/>
     </method>
 
-    <!-- Team management -->
-
-    <type name="team_info_t"/>
-
-    <method name="team_create" return_type="int32_t">
-      <argument name="name" type="string" direction="in"/>
-      <argument name="thread_handler" type="thread_handler_t" direction="in"/>
-      <argument name="thread_arguments" type="access" direction="in"/>
-      <argument name="thread_name" type="string" direction="in"/>
-    </method>
-
-    <method name="team_find" return_type="int32_t">
-      <argument name="name" type="string" direction="in"/>
-    </method>
-
-    <method name="team_get_info" return_type="status_t">
-      <argument name="id" type="uint32_t" direction="in"/>
-      <argument name="team_info" type="team_info_t" direction="out"/>
-    </method>
-
     <!-- Thread management -->
 
     <type name="thread_info_t"/>

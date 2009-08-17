@@ -50,15 +50,15 @@ status_t thread_get_info (int32_t id, thread_info_t * info)
     ensure (info != NULL, DNA_BAD_ARGUMENT);
 
     it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& team_manager . lock);
+    lock_acquire (& scheduler . lock);
 
-    thread = queue_lookup (& team_manager . thread_list,
+    thread = queue_lookup (& scheduler . thread_list,
         thread_id_inspector, (void *) & id, NULL);
 
     check (invalid_thread, thread != NULL, DNA_INVALID_THREAD_ID);
 
     lock_acquire (& thread -> lock);
-    lock_release (& team_manager . lock);
+    lock_release (& scheduler . lock);
 
     dna_strcpy (info -> name, thread -> name);
     info -> cpu_id = cpu_mp_id ();
@@ -89,7 +89,7 @@ status_t thread_get_info (int32_t id, thread_info_t * info)
 
   rescue (invalid_thread)
   {
-    lock_release (& team_manager . lock);
+    lock_release (& scheduler . lock);
     cpu_trap_restore(it_status);
     leave;
   }
