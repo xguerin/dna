@@ -20,7 +20,7 @@
 
 /****f* framework/vfs_start
  * SUMMARY
- * Start the I/O subsystem.
+ * Start the VFS subsystem.
  *
  * SYNOPSIS
  */
@@ -29,14 +29,24 @@ status_t vfs_start (void)
 
 /*
  * FUNCTION
- * Do nothing.
+ * Mount the base file systems.
  *
  * SOURCE
  */
 
 {
+  status_t status = DNA_OK;
 
-  return DNA_OK;
+  watch (status_t)
+  {
+    status = vfs_mount ("", "/", "rootfs", 0, NULL);
+    ensure (status == DNA_OK, status);
+
+    status = vfs_mount ("", "/devices", "devfs", 0, NULL);
+    ensure (status == DNA_OK, status);
+
+    return DNA_OK;
+  }
 }
 
 /*

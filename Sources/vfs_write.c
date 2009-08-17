@@ -26,17 +26,16 @@
  * SYNOPSIS
  */
 
-status_t vfs_write (int16_t file_id, void * data,
-    int32_t count, int32_t * p_ret)
+status_t vfs_write (int16_t fd, void * data, int32_t count, int32_t * p_ret)
 
 /*
  * ARGUMENTS
- * * file_id : the identifier of the file.
+ * * fd : the identifier of the file.
  * * buffer : the destination buffer.
  * * count : the number of bytes to write.
  *
  * FUNCTION
- * * Looks-up for the file corresponding to file_id in the current team.
+ * * Looks-up for the file corresponding to fd in the current team.
  * * If it exists, then calls the file's write () function.
  *
  * RESULT
@@ -55,7 +54,7 @@ status_t vfs_write (int16_t file_id, void * data,
   watch (status_t)
   {
     ensure (data != NULL && p_ret != NULL && count > 0, DNA_ERROR);
-    ensure (file_id >= 0 && file_id < DNA_MAX_FILE, DNA_INVALID_FD);
+    ensure (fd >= 0 && fd < DNA_MAX_FILE, DNA_INVALID_FD);
 
     status = team_find (NULL, & current_team);
     ensure (status == DNA_OK, status);
@@ -71,7 +70,7 @@ status_t vfs_write (int16_t file_id, void * data,
     lock_acquire (& fdarray -> lock);
     lock_release (& fdarray_manager . fdarray_list . lock);
 
-    file = fdarray -> fds[file_id];
+    file = fdarray -> fds[fd];
 
     lock_release (& fdarray -> lock);
     cpu_trap_restore(it_status);

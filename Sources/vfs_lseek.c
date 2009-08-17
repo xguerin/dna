@@ -27,15 +27,14 @@
  * SYNOPSIS
  */
 
-status_t vfs_lseek (int16_t fd, int64_t offset,
-    int32_t whence, int64_t * p_offset)
+status_t vfs_lseek (int16_t fd, int64_t offset, int32_t whence, int64_t * p_ret)
 
 /*
  * ARGUMENTS
  * * fd : the identifier of the file.
  * * offset : the required offset
  * * whence : the directive
- * * p_offset : the return value
+ * * p_ret : the return value
  *
  * FUNCTION
  *
@@ -90,7 +89,7 @@ status_t vfs_lseek (int16_t fd, int64_t offset,
         return DNA_INVALID_WHENCE;
     }
 
-    *p_offset = file -> offset;
+    *p_ret = file -> offset;
 
     lock_release (& file -> lock);
     cpu_trap_restore(it_status);
