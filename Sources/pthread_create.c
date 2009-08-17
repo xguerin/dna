@@ -54,6 +54,8 @@ int pthread_create(pthread_t *thread, pthread_attr_t *attr, pthread_func_t start
   new -> attributs -> stacksize = info . stack . size;
   new -> tid = t_new;
 
+  thread_resume (t_new);
+
   *thread = new;
   return 0;
 }
