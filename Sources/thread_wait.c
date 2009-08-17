@@ -49,8 +49,6 @@ status_t thread_wait (int32_t id, int32_t * value)
 
   watch (status_t)
   {
-    ensure (value != NULL, DNA_BAD_ARGUMENT);
-
     /*
      * Disable interrupts, lock the team manager
      */
