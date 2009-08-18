@@ -50,8 +50,8 @@ int pthread_create(pthread_t *thread, pthread_attr_t *attr, pthread_func_t start
 
   thread_get_info (t_new, & info);
 
-  new -> attributs -> stackaddr = info . stack . base;
-  new -> attributs -> stacksize = info . stack . size;
+  new -> attributs -> stackaddr = NULL;
+  new -> attributs -> stacksize = 0x8000;
   new -> tid = t_new;
 
   thread_resume (t_new);

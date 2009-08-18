@@ -20,8 +20,8 @@ int __libthread_start (void)
   wrapper -> cancel_state = PTHREAD_CANCEL_ENABLE;
   wrapper -> cancel_bool = false;
   wrapper -> tid = my_id;
-  wrapper -> attributs -> stacksize = cur . stack . size;
-  wrapper -> attributs -> stackaddr = (void *)cur . stack . base;
+  wrapper -> attributs -> stacksize = 0;
+  wrapper -> attributs -> stackaddr = NULL;
   wrapper -> attributs -> detachstate = PTHREAD_CREATE_JOINABLE;
   wrapper -> attributs -> schedinherited = PTHREAD_EXPLICIT_SCHED;
   wrapper -> attributs -> schedpolicy = SCHED_FIFO;
