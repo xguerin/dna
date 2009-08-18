@@ -94,7 +94,7 @@ scheduler_t;
 
 extern scheduler_t scheduler;
 
-extern status_t scheduler_elect (thread_t * p_thread);
+extern status_t scheduler_elect (thread_t * p_thread, bool idle);
 extern status_t scheduler_dispatch (thread_t thread);
 extern status_t scheduler_alarm (void * data);
 

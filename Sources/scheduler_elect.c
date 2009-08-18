@@ -26,7 +26,7 @@
  * SYNOPSIS
  */
 
-status_t scheduler_elect (thread_t * p_thread)
+status_t scheduler_elect (thread_t * p_thread, bool idle)
 
 /*
  * ARGUMENTS
@@ -40,6 +40,7 @@ status_t scheduler_elect (thread_t * p_thread)
  */
 
 {
+  status_t status;
   thread_t thread = NULL;
   int32_t current_cpuid = cpu_mp_id();
 
@@ -81,7 +82,23 @@ status_t scheduler_elect (thread_t * p_thread)
       }
     }
 
-    return DNA_NO_AVAILABLE_THREAD;
+    /*
+     * If really nothing is available and idle is true then
+     * return the current idle thread
+     */
+
+    if (idle)
+    {
+      status = scheduler_push_cpu ();
+      ensure (status == DNA_OK, status);
+
+      *p_thread = scheduler . cpu[current_cpuid] . idle_thread;
+      return DNA_OK;
+    }
+    else
+    {
+      return DNA_NO_AVAILABLE_THREAD;
+    }
   }
 }
 

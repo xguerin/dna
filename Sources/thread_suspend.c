@@ -61,16 +61,8 @@ status_t thread_suspend (int32_t id)
        * since we disabled the interrupts.
        */
 
-      status = scheduler_elect (& target);
+      status = scheduler_elect (& target, true);
       ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
-
-      if (status == DNA_NO_AVAILABLE_THREAD)
-      {
-        status = scheduler_push_cpu ();
-        ensure (status == DNA_OK, status);
-
-        target = scheduler . cpu[current_cpuid] . idle_thread;
-      }
 
       status = scheduler_switch (target, NULL);
       ensure (status == DNA_OK, status);
