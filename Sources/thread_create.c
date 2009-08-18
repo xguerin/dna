@@ -49,7 +49,7 @@ status_t thread_create (thread_handler_t handler, void * arguments,
 
 {
   thread_t thread = NULL;
-  void * stack_base = NULL;
+  thread_stack_t stack = NULL;
   interrupt_status_t it_status = 0;
 
   watch (status_t)
@@ -69,61 +69,73 @@ status_t thread_create (thread_handler_t handler, void * arguments,
      * Allocate its stack.
      */
 
-    stack_base = kernel_malloc (stack_size, false);
-    check (stack_alloc, stack_base != NULL, DNA_OUT_OF_MEM);
+    stack = kernel_malloc (sizeof (struct _thread_stack) + stack_size, false);
+    check (stack_alloc, stack != NULL, DNA_OUT_OF_MEM);
+
+    stack -> size = stack_size;
 
     /*
-     * Fill-in the necessary fields.
+     * Fill-in the information, stack and signature
      */
 
-    dna_strcpy (thread -> name, name);
-    thread -> id = atomic_add (& scheduler . thread_index, 1);
-    thread -> status = DNA_THREAD_SLEEP;
-    thread -> cpu_id = -1;
+    thread -> info . id = -1;
+    thread -> info . cpu_id = -1;
+    thread -> info . status = DNA_THREAD_SLEEP;
+    dna_strcpy (thread -> info . name, name);
 
     if (affinity == DNA_NO_AFFINITY)
     {
-      thread -> cpu_affinity = scheduler . xt_index;
+      thread -> info .cpu_affinity = cpu_mp_count;
     }
     else 
     {
-      thread -> cpu_affinity = affinity;
+      thread -> info . cpu_affinity = affinity;
     }
 
+    thread -> stack = stack;
     thread -> signature . handler = handler;
     thread -> signature . arguments = arguments;
-    thread -> signature . stack_base = stack_base;
-    thread -> signature . stack_size = stack_size;
-
-    /*
-     * Initialize the queueing elements.
-     */
-
-    queue_item_init (& (thread -> status_link), thread);
-    queue_item_init (& (thread -> sched_link), thread);
 
     /*
      * Initialize the context.
      */
 
-    cpu_context_init ((& thread -> ctx), thread -> signature . stack_base,
-        thread -> signature . stack_size, thread_bootstrap,
-        & thread -> signature);
+    cpu_context_init (& thread -> context, & thread -> stack -> base,
+        thread -> stack -> size, thread_bootstrap, & thread -> signature);
 
     /*
-     * Register the thread in the global threads list
+     * Find a free thread slot
      */
 
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& scheduler . lock);
 
-    queue_add (& scheduler . thread_list, & thread -> sched_link);
+    for (int32_t i = 0; i < DNA_MAX_THREAD; i += 1)
+    {
+      if (scheduler . thread[i] == NULL)
+      {
+        scheduler . thread[i] = thread;
+        thread -> info . id = i;
+        break;
+      }
+    }
+
+    check (no_thread_slot, thread -> info . id != -1, DNA_ERROR);
 
     lock_release (& scheduler . lock);
     cpu_trap_restore(it_status);
 
-    *tid = thread -> id;
+    /*
+     * Return the thread ID and success
+     */
+
+    *tid = thread -> info . id;
     return DNA_OK;
+  }
+
+  rescue (no_thread_slot)
+  {
+    kernel_free (stack);
   }
 
   rescue (stack_alloc)

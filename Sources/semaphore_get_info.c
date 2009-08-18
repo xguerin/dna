@@ -75,7 +75,7 @@ status_t semaphore_get_info (int32_t sid, semaphore_info_t * info)
 
     if (sem -> latest_holder != NULL)
     {
-      info -> latest_holder = sem -> latest_holder -> id;
+      info -> latest_holder = sem -> latest_holder -> info . id;
     }
     else
     {

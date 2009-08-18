@@ -60,7 +60,7 @@ void thread_exit (int32_t value)
    * Mark self as zombie
    */
 
-  self -> status = DNA_THREAD_ZOMBIE;
+  self -> info . status = DNA_THREAD_ZOMBIE;
 
   lock_acquire (& self -> wait . lock);
   lock_release (& self -> lock);
@@ -71,14 +71,11 @@ void thread_exit (int32_t value)
 
   while ((p = queue_rem (& self -> wait)) != NULL)
   {
-    p -> status = DNA_THREAD_READY;
+    p -> info . status = DNA_THREAD_READY;
 
-    lock_acquire (& scheduler . xt[p -> cpu_affinity] . lock);
-
-    queue_add (& scheduler . xt[p -> cpu_affinity],
-        & p -> status_link);
-
-    lock_release (& scheduler . xt[p -> cpu_affinity] . lock);
+    lock_acquire (& scheduler . xt[p -> info . cpu_affinity] . lock);
+    queue_add (& scheduler . xt[p -> info . cpu_affinity], p);
+    lock_release (& scheduler . xt[p -> info . cpu_affinity] . lock);
   }
 
   lock_release (& self -> wait . lock);
@@ -97,13 +94,13 @@ void thread_exit (int32_t value)
   }
 
   lock_acquire (& target -> lock);
-  target -> status = DNA_THREAD_RUNNING;
-  target -> cpu_id = current_cpuid;
+  target -> info . status = DNA_THREAD_RUNNING;
+  target -> info . cpu_id = current_cpuid;
   lock_release (& target -> lock);
 
   scheduler . cpu[current_cpuid] . current_thread = target;
 
-  cpu_context_load((& target -> ctx));
+  cpu_context_load(& target -> context);
 }
 
 /*

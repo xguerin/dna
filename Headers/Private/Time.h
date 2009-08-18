@@ -35,17 +35,20 @@
  * SOURCE
  */
 
-typedef struct _alarm {
+typedef struct _alarm
+{
+  queue_item_t link;
+
   int32_t id;
   int32_t mode;
 
   bigtime_t quantum;
   bigtime_t deadline;
   alarm_callback_t callback;
-  void * data;
 
-  queue_item_t link;
-} * alarm_t;
+  void * data;
+}
+* alarm_t;
 
 /*
  ****/

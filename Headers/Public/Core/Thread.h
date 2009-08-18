@@ -39,6 +39,26 @@
 /*
  ****/
 
+/****v* thread/thread_status
+ * SUMMARY
+ * Available thread status.
+ *
+ * SOURCE
+ */
+
+typedef enum _thread_status
+{
+  DNA_THREAD_SLEEP      = 0xBAFF,
+  DNA_THREAD_READY      = 0xFACE,
+  DNA_THREAD_RUNNING    = 0xBEEF,
+  DNA_THREAD_WAIT       = 0xBADD,
+  DNA_THREAD_ZOMBIE     = 0xDEAD
+}
+thread_status_t;
+
+/*
+ ****/
+
 /****t* types/thread_handler_t
  * SUMMARY
  * Thread handler type.
@@ -60,24 +80,13 @@ typedef int32_t (* thread_handler_t) (void * args);
 
 typedef struct _thread_info
 {
+  int32_t id;
   char name[DNA_NAME_LENGTH];
-  uint32_t cpu_id;
-  uint32_t cpu_affinity;
 
-  struct
-   {
-    int32_t type;
-    void * base;
-    int32_t size;
-  }
-   stack;
-
-  struct
-   {
-    thread_handler_t handler;
-    void * arguments;
-  }
-   bootstrap;
+  int32_t cpu_id;
+  int32_t cpu_affinity;
+  int32_t priority;
+  thread_status_t status;
 
   bigtime_t kernel_time;
   bigtime_t user_time;

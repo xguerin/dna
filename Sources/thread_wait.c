@@ -42,7 +42,7 @@ status_t thread_wait (int32_t id, int32_t * value)
 
 {
   status_t status;
-  uint32_t current_cpuid = cpu_mp_id();
+  uint32_t current_cpuid = cpu_mp_id ();
   thread_t self = scheduler . cpu[current_cpuid] . current_thread;
   thread_t thread = NULL, target = NULL;
   interrupt_status_t it_status = 0;
@@ -50,19 +50,13 @@ status_t thread_wait (int32_t id, int32_t * value)
   watch (status_t)
   {
     /*
-     * Disable interrupts
+     * Get the thread corresponding to ID
      */
 
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& scheduler . lock);
 
-    /*
-     * We look for the thread to wait for
-     */
-
-    thread = queue_lookup (& scheduler . thread_list,
-        thread_id_inspector, (void *) & id, NULL);
-
+    thread = scheduler . thread[id];
     check (invalid_thread, thread != NULL, DNA_INVALID_THREAD_ID);
 
     lock_acquire (& thread -> lock);
@@ -73,7 +67,7 @@ status_t thread_wait (int32_t id, int32_t * value)
      * go through all the rescheduling pain
      */
 
-    if (thread -> status != DNA_THREAD_ZOMBIE)
+    if (thread -> info . status != DNA_THREAD_ZOMBIE)
     {
 
       lock_acquire (& thread -> wait . lock);
@@ -83,7 +77,7 @@ status_t thread_wait (int32_t id, int32_t * value)
        * If not, put ourselve in wait mode
        */
 
-      self -> status = DNA_THREAD_WAIT;
+      self -> info . status = DNA_THREAD_WAIT;
 
       /*
        * Elect a the next thread and run it

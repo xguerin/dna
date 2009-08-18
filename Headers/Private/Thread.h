@@ -30,22 +30,19 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****v* thread/thread_status
+/****t* types/thread_stack_t
  * SUMMARY
- * Available thread status.
+ * Thread stack type.
  *
  * SOURCE
  */
 
-typedef enum _thread_status
+typedef struct _thread_stack
 {
-  DNA_THREAD_SLEEP    = 0xBAFF,
-  DNA_THREAD_READY    = 0xFACE,
-  DNA_THREAD_RUNNING  = 0xBEEF,
-  DNA_THREAD_WAIT      = 0xBADD,
-  DNA_THREAD_ZOMBIE    = 0xDEAD
+  uint32_t size;
+  int8_t base[];
 }
-thread_status_t;
+* thread_stack_t;
 
 /*
  ****/
@@ -59,10 +56,6 @@ typedef struct _thread_signature
 {
   thread_handler_t handler;
   void * arguments;
-
-  void * stack_base;
-  int32_t stack_size;
-
   int32_t return_value;
 }
 thread_signature_t;
@@ -79,38 +72,17 @@ thread_signature_t;
 
 typedef struct _thread
 {
-  int32_t id;
-  char name[DNA_NAME_LENGTH];
+  queue_item_t link;
 
-  thread_status_t status;
-  int32_t stopwatch;
-  int32_t priority;
-  int32_t cpu_id;
-  int32_t cpu_affinity;
-
-  spinlock_t lock;
-  int32_t sem_tokens;
-
-  queue_item_t status_link;
-  queue_item_t sched_link;
   queue_t wait;
+  int32_t sem_tokens;
+  spinlock_t lock;
 
-  struct _kernel_time
-  {
-    bigtime_t start;
-    bigtime_t elapsed;
-  }
-  kernel_time;
-
-  struct _user_time
-   {
-    bigtime_t start;
-    bigtime_t elapsed;
-  }
-  user_time;
-
+  thread_info_t info;
   thread_signature_t signature;
-  cpu_context_t ctx;
+
+  thread_stack_t stack;
+  cpu_context_t context;
 }
 * thread_t;
 

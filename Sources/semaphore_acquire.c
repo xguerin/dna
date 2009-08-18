@@ -93,7 +93,7 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
 
         case -1 :
           self -> sem_tokens = -1 * rem_tokens;
-          self -> status = DNA_THREAD_WAIT;
+          self -> info . status = DNA_THREAD_WAIT;
 
           lock_acquire (& sem -> waiting_queue . lock);
           lock_release (& sem -> lock);
@@ -143,7 +143,7 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
           check (invalid_alarm, status == DNA_OK, status);
 
           self -> sem_tokens = -1 * rem_tokens;
-          self -> status = DNA_THREAD_WAIT;
+          self -> info . status = DNA_THREAD_WAIT;
 
           lock_acquire (& sem -> waiting_queue . lock);
           lock_release (& sem -> lock);
@@ -172,7 +172,7 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
 
           if (time_cancel_alarm (alarm) == DNA_ERROR)
           {
-            queue_extract (& sem -> waiting_queue, & self -> status_link);
+            queue_extract (& sem -> waiting_queue, self);
             status = DNA_TIMED_OUT;
             sem -> tokens = rem_tokens + tokens;
           }

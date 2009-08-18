@@ -72,7 +72,6 @@ status_t time_set_alarm (bigtime_t quantum, int32_t mode,
     new_alarm -> deadline = quantum + current_time;
     new_alarm -> callback = callback;
     new_alarm -> data = data;
-    queue_item_init (& new_alarm -> link, new_alarm);
 
     /*
      * Deal with the new alarm

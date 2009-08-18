@@ -90,12 +90,11 @@ status_t semaphore_linked_acquire (int32_t sid, int32_t lsid)
 
     if (thread != NULL) 
     {
-      thread -> status = DNA_THREAD_READY;
+      thread -> info . status = DNA_THREAD_READY;
 
-      lock_acquire (& scheduler . xt[thread -> cpu_affinity] . lock);
-      queue_add (& scheduler . xt[thread -> cpu_affinity],
-          & thread -> status_link);
-      lock_release (& scheduler . xt[thread -> cpu_affinity] . lock);
+      lock_acquire (& scheduler . xt[thread -> info . cpu_affinity] . lock);
+      queue_add (& scheduler . xt[thread -> info . cpu_affinity], thread);
+      lock_release (& scheduler . xt[thread -> info . cpu_affinity] . lock);
     }
 
     /*
@@ -106,7 +105,7 @@ status_t semaphore_linked_acquire (int32_t sid, int32_t lsid)
 
     if (sem -> tokens < 0)
     {
-      self -> status = DNA_THREAD_WAIT;
+      self -> info . status = DNA_THREAD_WAIT;
 
       lock_acquire (& sem -> waiting_queue . lock);
       lock_release (& sem -> lock);

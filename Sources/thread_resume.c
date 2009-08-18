@@ -47,25 +47,22 @@ status_t thread_resume (int32_t id)
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& scheduler . lock);
 
-    target = queue_lookup (& scheduler. thread_list,
-        thread_id_inspector, (void *) & id, NULL);
-
-    check (invalid_thread, target != NULL, DNA_UNKNOWN_THREAD);
-    check (invalid_thread, target -> status == DNA_THREAD_SLEEP, DNA_ERROR);
-
+    target = scheduler . thread[id];
     lock_release (& scheduler . lock);
 
-    scheduler_dispatch (target);
+    check (invalid_thread, target != NULL, DNA_UNKNOWN_THREAD);
+    check (invalid_thread, target -> info . status
+        == DNA_THREAD_SLEEP, DNA_ERROR);
 
-    cpu_trap_restore(it_status);
+    scheduler_dispatch (target);
+    cpu_trap_restore (it_status);
+
     return DNA_OK;
   }
 
   rescue (invalid_thread)
   {
-    lock_release (& scheduler . lock);
-    cpu_trap_restore(it_status);
-
+    cpu_trap_restore (it_status);
     leave;
   }
 }

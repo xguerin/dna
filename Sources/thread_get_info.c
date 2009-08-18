@@ -47,51 +47,43 @@ status_t thread_get_info (int32_t id, thread_info_t * info)
 
   watch (status_t)
   {
+    ensure (id >= 0 && id < DNA_MAX_THREAD, DNA_BAD_ARGUMENT);
     ensure (info != NULL, DNA_BAD_ARGUMENT);
+
+    /*
+     * Get the thread corresponding to the current id
+     */
 
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& scheduler . lock);
 
-    thread = queue_lookup (& scheduler . thread_list,
-        thread_id_inspector, (void *) & id, NULL);
-
-    check (invalid_thread, thread != NULL, DNA_INVALID_THREAD_ID);
+    thread = scheduler . thread[id];
+    ensure (thread != NULL, DNA_INVALID_THREAD_ID);
 
     lock_acquire (& thread -> lock);
     lock_release (& scheduler . lock);
 
-    dna_strcpy (info -> name, thread -> name);
-    info -> cpu_id = cpu_mp_id ();
-    info -> cpu_affinity = thread -> cpu_affinity;
-    info -> stack . base = thread -> signature . stack_base;
-    info -> stack . size = thread -> signature . stack_size;
-    info -> bootstrap . handler = thread -> signature . handler;
-    info -> bootstrap . arguments = thread -> signature . arguments;
+    /*
+     * Copy the thread information
+     */
 
-    if (thread -> status == DNA_THREAD_RUNNING)
+    *info = thread -> info;
+
+    /*
+     * Update the time of the running thread
+     */
+
+    if (thread -> info . status == DNA_THREAD_RUNNING)
     {
       time_manager . system_timer . get (& current_time);
-      info -> kernel_time = thread -> kernel_time . elapsed
-        + current_time - thread -> kernel_time . start;
+      info -> kernel_time = current_time;
+      info -> kernel_time -= scheduler . cpu[cpu_mp_id ()] . lap_date;
     }
-    else
-    {
-      info -> kernel_time = thread -> kernel_time . elapsed;
-    }
-
-    info -> user_time = thread -> user_time . elapsed;
 
     lock_release (& thread -> lock);
-    cpu_trap_restore(it_status);
+    cpu_trap_restore (it_status);
 
     return DNA_OK;
-  }
-
-  rescue (invalid_thread)
-  {
-    lock_release (& scheduler . lock);
-    cpu_trap_restore(it_status);
-    leave;
   }
 }
 

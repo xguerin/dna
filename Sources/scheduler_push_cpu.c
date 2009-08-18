@@ -42,7 +42,7 @@ status_t scheduler_push_cpu (void)
     scheduler . cpu[cpuid] . status = DNA_CPU_READY;
 
     lock_acquire (& scheduler . cpu_pool . lock);
-    queue_add (& scheduler . cpu_pool, & scheduler . cpu[cpuid] . link);
+    queue_add (& scheduler . cpu_pool, & scheduler . cpu[cpuid]);
     lock_release (& scheduler . cpu_pool . lock);
 
     return DNA_OK;

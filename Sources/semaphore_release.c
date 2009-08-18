@@ -88,7 +88,7 @@ status_t semaphore_release (int32_t sid, int32_t tokens, int32_t flags)
           thread -> sem_tokens -= tokens;
           tokens = 0;
 
-          queue_pushback (& sem -> waiting_queue, & thread -> status_link);
+          queue_pushback (& sem -> waiting_queue, thread);
         }
       }
       else

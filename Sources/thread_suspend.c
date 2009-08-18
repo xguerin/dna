@@ -48,12 +48,12 @@ status_t thread_suspend (int32_t id)
 
   watch (status_t)
   {
-    ensure (id == self -> id, DNA_NOT_IMPLEMENTED);
+    ensure (id == self -> info . id, DNA_NOT_IMPLEMENTED);
 
-    if (id == self -> id)
+    if (id == self -> info . id)
     {
-      it_status = cpu_trap_mask_and_backup();
-      self -> status = DNA_THREAD_SLEEP;
+      it_status = cpu_trap_mask_and_backup ();
+      self -> info . status = DNA_THREAD_SLEEP;
 
       /*
        * Elect a the next thread and run it

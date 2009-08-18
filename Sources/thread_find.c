@@ -49,7 +49,7 @@ status_t thread_find (char * name, int32_t * tid)
 
     if (name == NULL)
     {
-      *tid = scheduler . cpu[cpu_mp_id()] . current_thread -> id;
+      *tid = scheduler . cpu[cpu_mp_id()] . current_thread -> info . id;
       return DNA_OK;
     }
     else
@@ -57,15 +57,32 @@ status_t thread_find (char * name, int32_t * tid)
       it_status = cpu_trap_mask_and_backup();
       lock_acquire (& scheduler . lock);
 
-      thread = queue_lookup (& scheduler . thread_list,
-          thread_name_inspector, (void *) name, NULL);
+      /*
+       * Find the thread with name corresponding to name
+       */
+
+      for (int i = 0; i < DNA_MAX_THREAD; i += 1)
+      {
+        if (scheduler . thread[i] != NULL)
+        {
+          if (dna_strcmp (name, scheduler . thread[i] -> info . name) == 0)
+          {
+            thread = scheduler . thread[i];
+            break;
+          }
+        }
+      }
 
       lock_release (& scheduler . lock);
-      cpu_trap_restore(it_status);
+      cpu_trap_restore (it_status);
 
       ensure (thread != NULL, DNA_UNKNOWN_THREAD);
 
-      *tid = thread -> id;
+      /*
+       * Return the ID of the thread
+       */
+
+      *tid = thread -> info . id;
       return DNA_OK;
     }
   }

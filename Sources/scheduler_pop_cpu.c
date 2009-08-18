@@ -50,7 +50,7 @@ status_t scheduler_pop_cpu (int32_t affinity, int32_t * p_id)
     ensure (p_id != NULL, DNA_BAD_ARGUMENT);
     ensure (affinity >= 0 && affinity <= cpu_mp_count, DNA_BAD_ARGUMENT);
 
-    if (affinity == scheduler . xt_index)
+    if (affinity == cpu_mp_count)
     {
       if (scheduler . cpu_pool . status != 0)
       {
@@ -79,8 +79,7 @@ status_t scheduler_pop_cpu (int32_t affinity, int32_t * p_id)
 
       lock_acquire (& scheduler . cpu[affinity] . lock);
 
-      queue_extract (& scheduler . cpu_pool,
-          & scheduler . cpu[affinity] . link);
+      queue_extract (& scheduler . cpu_pool, & scheduler . cpu[affinity]);
 
       scheduler . cpu[affinity] . status = DNA_CPU_RUNNING;
       id = scheduler . cpu[affinity] . id;

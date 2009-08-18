@@ -56,8 +56,8 @@ status_t core_start (void)
       ensure (status == DNA_OK, status);
     }
 
-    thread -> status = DNA_THREAD_RUNNING;
-    cpu_context_load((& thread -> ctx));
+    thread -> info . status = DNA_THREAD_RUNNING;
+    cpu_context_load (& thread -> context);
 
     return DNA_OK;
   }

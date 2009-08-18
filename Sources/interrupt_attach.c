@@ -55,13 +55,12 @@ status_t interrupt_attach (interrupt_id_t id, int32_t mode,
     ensure (isr != NULL, DNA_OUT_OF_MEM);
 
     isr -> handler = handler;
-    queue_item_init (& isr -> link, isr);
 
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& interrupt_manager . lock);
 
     interrupt_manager . counter[id] += 1;
-    queue_add (& interrupt_manager . isr_list[id], & isr -> link);
+    queue_add (& interrupt_manager . isr_list[id], isr);
 
     if (interrupt_manager . counter[id] == 1)
     {

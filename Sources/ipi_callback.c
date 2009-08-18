@@ -51,7 +51,7 @@ status_t ipi_callback (int32_t command, void * cookie)
         target = cookie;
         ensure (target != NULL, DNA_ERROR);
 
-        log (4, "EXECUTE(%d) on processor %d", target -> id, cpu_mp_id ());
+        log (4, "%d EXECUTE %d", cpu_mp_id (), target -> info . id);
 
         status = scheduler_switch (target, NULL);
         ensure (status == DNA_OK, status);

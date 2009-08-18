@@ -41,12 +41,9 @@ status_t thread_alarm (void * data)
   {
     ensure (thread != NULL, DNA_ERROR);
 
-    lock_acquire (& scheduler . xt[thread -> cpu_affinity] . lock);
-
-    queue_add (& scheduler . xt[thread -> cpu_affinity],
-        & thread -> status_link);
-
-    lock_release (& scheduler . xt[thread -> cpu_affinity] . lock);
+    lock_acquire (& scheduler . xt[thread -> info . cpu_affinity] . lock);
+    queue_add (& scheduler . xt[thread -> info . cpu_affinity], thread);
+    lock_release (& scheduler . xt[thread -> info . cpu_affinity] . lock);
 
     return DNA_INVOKE_SCHEDULER;
   }

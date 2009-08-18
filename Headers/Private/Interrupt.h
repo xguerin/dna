@@ -39,8 +39,8 @@
 
 typedef struct _isr
 {
-  interrupt_handler_t handler;
   queue_item_t link;
+  interrupt_handler_t handler;
 }
 * isr_t;
 

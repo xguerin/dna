@@ -55,7 +55,7 @@ status_t thread_snooze (bigtime_t value)
 
     check (alarm_error, status == DNA_OK, status);
 
-    self -> status = DNA_THREAD_WAIT;
+    self -> info . status = DNA_THREAD_WAIT;
 
     /*
      * Elect a the next thread and run it

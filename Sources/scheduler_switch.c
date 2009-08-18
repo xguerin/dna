@@ -56,20 +56,20 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
      * Update the status of the target thread
      */
 
-    thread -> status = DNA_THREAD_RUNNING;
-    thread -> cpu_id = current_cpuid;
+    thread -> info . status = DNA_THREAD_RUNNING;
+    thread -> info . cpu_id = current_cpuid;
 
     /*
      * Update the status of the current thread
      */
 
-    self -> cpu_id = -1;
+    self -> info . cpu_id = -1;
 
     /*
      * Save the current context
      */
 
-    cpu_context_save((& self -> ctx), &__scheduler_switch_end);
+    cpu_context_save(& self -> context, & __scheduler_switch_end);
 
     /*
      * If queue is not NULL, then add the current thread to this queue
@@ -77,7 +77,7 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
 
     if (queue != NULL)
     {
-      queue_add (queue, & self -> status_link);
+      queue_add (queue, self);
       lock_release (& queue -> lock);
     }
 
@@ -88,15 +88,16 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
     if (time_manager . has_timer)
     {
       time_manager . system_timer . get (& current_time);
-      self -> kernel_time . elapsed += current_time - self -> kernel_time . start;
-      thread -> kernel_time . start = current_time;
+      self -> info . kernel_time = current_time;
+      self -> info . kernel_time -= scheduler . cpu[current_cpuid] . lap_date;
+      scheduler . cpu[current_cpuid] . lap_date = current_time;
     }
 
     /*
      * Load the target context
      */
 
-    cpu_context_load((& thread -> ctx));
+    cpu_context_load(& thread -> context);
 
     /*
      * FIXME If someone has a better idea to get the

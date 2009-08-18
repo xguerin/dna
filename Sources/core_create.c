@@ -42,7 +42,6 @@ status_t core_create (void)
 
 {
   status_t status;
-  thread_t thread = NULL;
   int32_t thread_id = -1;
 
   watch (status_t)
@@ -52,13 +51,6 @@ status_t core_create (void)
      */
 
     dna_memset (& scheduler, 0, sizeof (scheduler_t));
-    scheduler . xt_index = cpu_mp_count;
-
-    scheduler . cpu = kernel_malloc (sizeof (cpu_t) * DNA_MAX_CPU, true);
-    ensure (scheduler . cpu != NULL, DNA_OUT_OF_MEM);
-
-    scheduler . xt = kernel_malloc (sizeof (queue_t) * (DNA_MAX_CPU + 1), true);
-    check (sched_xt_alloc, scheduler . xt != NULL, DNA_OUT_OF_MEM);
 
     /*
      * Initialize the IT multiplexer
@@ -92,21 +84,14 @@ status_t core_create (void)
           cpu_i, DNA_IDLE_STACK_SIZE, & thread_id);
       check (create_threads, status == DNA_OK, DNA_ERROR);
 
-      thread = queue_lookup (& scheduler . thread_list,
-          thread_id_inspector, (void *) & thread_id, NULL);
-
       /*
        * Deal with the new thread
        */
 
       scheduler . cpu[cpu_i] . id = cpu_i;
       scheduler . cpu[cpu_i] . status = DNA_CPU_DISABLED;
-
-      queue_item_init (& scheduler . cpu[cpu_i] . link,
-          & scheduler . cpu[cpu_i]);
-
-      scheduler . cpu[cpu_i] . idle_thread = thread;
-      scheduler . cpu[cpu_i] . current_thread = thread;
+      scheduler . cpu[cpu_i] . idle_thread = scheduler . thread[thread_id];
+      scheduler . cpu[cpu_i] . current_thread = scheduler . thread[thread_id];
     }
 
     /*
@@ -117,11 +102,7 @@ status_t core_create (void)
         DNA_NO_AFFINITY, DNA_THREAD_STACK_SIZE, & thread_id);
     check (create_threads, status == DNA_OK, DNA_ERROR);
 
-    thread = queue_lookup (& scheduler . thread_list,
-        thread_id_inspector, (void *) & thread_id, NULL);
-
-    scheduler . cpu[0] . current_thread = thread;
-
+    scheduler . cpu[0] . current_thread = scheduler . thread[thread_id];
     return DNA_OK;
   }
 
@@ -145,11 +126,7 @@ status_t core_create (void)
         scheduler . cpu[cpu_i] . current_thread = NULL;
       }
     }
-  }
 
-  rescue (sched_xt_alloc)
-  {
-    kernel_free (scheduler . cpu);
     leave;
   }
 }
