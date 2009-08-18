@@ -127,7 +127,7 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
          */
 
         case 0 :
-          sem -> tokens += tokens;
+          sem -> tokens = rem_tokens + tokens;
           status = DNA_WOULD_BLOCK;
 
           break;
@@ -174,7 +174,7 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
           {
             queue_extract (& sem -> waiting_queue, & self -> status_link);
             status = DNA_TIMED_OUT;
-            sem -> tokens += tokens;
+            sem -> tokens = rem_tokens + tokens;
           }
           else
           {
