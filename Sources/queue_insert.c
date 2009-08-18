@@ -33,7 +33,7 @@ void queue_insert (queue_t * queue, queue_comparator_t comparator,
        * The comparator function is <
        */
 
-      if (comparator (current -> owner, item -> owner))
+      if (comparator (current, item))
       {
         if (current == queue -> head)
         {

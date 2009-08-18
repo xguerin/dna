@@ -17,8 +17,10 @@
 
 #include <DnaTools/DnaTools.h>
 
-status_t queue_pushback (queue_t * queue, queue_item_t * item)
+status_t queue_pushback (queue_t * queue, void * data)
 {
+  queue_item_t * item = data;
+
   watch (status_t)
   {
     check (queue_error, item -> next == NULL, DNA_ERROR);

@@ -17,20 +17,19 @@
 
 #include <DnaTools/DnaTools.h>
 
-void * queue_lookup (queue_t * queue, queue_inspector_t inspector, void * a0, void * a1)
+void * queue_lookup (queue_t * queue, queue_inspector_t inspector,
+    void * a0, void * a1)
 {
   queue_item_t * item = NULL;
-  void * owner = NULL;
 
-  if (queue -> status != 0) {
-    for (item = queue -> head; item != NULL; item = item -> next) {
-      if (inspector (item -> owner, a0, a1)) {
-        owner = item -> owner;
-        break;
-      }
+  if (queue -> status != 0)
+  {
+    for (item = queue -> head; item != NULL; item = item -> next)
+    {
+      if (inspector (item, a0, a1)) break;
     }
   }
 
-  return owner;
+  return item;
 }
 

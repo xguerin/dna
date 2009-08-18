@@ -32,5 +32,6 @@
 #define DNA_MAX_SEM               32
 #define DNA_MAX_FILE              32
 #define DNA_MAX_FDARRAY           32
+#define DNA_MAX_THREAD            128
 
 #endif

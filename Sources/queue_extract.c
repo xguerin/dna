@@ -17,11 +17,15 @@
 
 #include <DnaTools/DnaTools.h>
 
-void queue_extract (queue_t * queue, queue_item_t * item)
+void queue_extract (queue_t * queue, void * data)
 {
+  queue_item_t * item = data;
   queue_item_t * kitem = queue -> head;
 
-  if (queue -> head == item) queue -> head = item -> next;
+  if (queue -> head == item)
+  {
+    queue -> head = item -> next;
+  }
   else
   {
     while (kitem -> next != item) kitem = kitem -> next;

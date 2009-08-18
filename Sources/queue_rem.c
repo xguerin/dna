@@ -20,14 +20,12 @@
 void * queue_rem (queue_t * queue)
 {
   queue_item_t * item = NULL;
-  void * data = NULL;
 
   watch (void *)
   {
     if (queue -> status != 0)
     {
       item = queue -> head;
-      data = item -> owner;
       queue -> status -= 1;
 
       queue -> head = item -> next;
@@ -37,7 +35,7 @@ void * queue_rem (queue_t * queue)
       item -> next = NULL;
     }
 
-    return data;
+    return item;
   }
 
   rescue (queue_error)

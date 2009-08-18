@@ -63,7 +63,6 @@ typedef bool (* queue_comparator_t)(void * item1, void * item2);
 typedef struct _queue_item
 {
   struct _queue_item * next;
-  void * owner;
 }
 queue_item_t;
 
@@ -89,15 +88,11 @@ queue_t;
 /*
  ****/
 
-extern void queue_item_init (queue_item_t * item, void * owner);
-
-extern status_t queue_add (queue_t * queue, queue_item_t * item);
-
+extern status_t queue_add (queue_t * queue, void * data);
 extern void * queue_rem (queue_t * queue);
 
-extern status_t queue_pushback (queue_t * queue, queue_item_t * item);
-
-extern void queue_extract (queue_t * queue, queue_item_t * item);
+extern void queue_extract (queue_t * queue, void * data);
+extern status_t queue_pushback (queue_t * queue, void * data);
 
 extern void * queue_lookup (queue_t * queue,
     queue_inspector_t inspector, void * a0, void * a1);
