@@ -76,8 +76,7 @@ status_t vfs_open (char * restrict path, int32_t mode,
     check (invalid_file, fd_index != DNA_MAX_FILE, DNA_MAX_OPENED_FILES);
 
     /*
-     * TODO: the line that follows tag fd_index as reserved.
-     * We need to undo that when the operation fails.
+     * The line that follows tag fd_index as reserved.
      */
 
     fdarray -> fds[fd_index] = (file_t) -1;
