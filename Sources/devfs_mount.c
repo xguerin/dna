@@ -19,7 +19,9 @@
 #include <MemoryManager/MemoryManager.h>
 #include <DnaTools/DnaTools.h>
 
-status_t devfs_mount (int32_t vid, const char * dev_path, uint32_t flags, void * params, void ** data, int64_t * vnid) {
+status_t devfs_mount (int32_t vid, const char * dev_path, uint32_t flags,
+    void * params, void ** data, int64_t * vnid)
+{
   devfs_t devfs = NULL;
   devfs_inode_t inode = NULL, root_inode = NULL;
   devfs_entry_t entry = NULL;
@@ -37,8 +39,7 @@ status_t devfs_mount (int32_t vid, const char * dev_path, uint32_t flags, void *
   root_inode -> id = devfs -> inode_index ++;
   dna_strcpy (root_inode -> name, "");
   root_inode -> class = DNA_DEVFS_DIRECTORY;
-  queue_item_init (& root_inode -> link, root_inode);
-  queue_add (& devfs -> inode_list, & root_inode -> link);
+  queue_add (& devfs -> inode_list, root_inode);
 
   devfs -> root_vnid = root_inode -> id;
 
@@ -50,8 +51,7 @@ status_t devfs_mount (int32_t vid, const char * dev_path, uint32_t flags, void *
   if (entry == NULL) return DNA_OUT_OF_MEM;
   entry -> id = root_inode -> id;
   dna_strcpy (entry -> name, ".");
-  queue_item_init (& entry -> link, entry);
-  queue_add (& root_inode -> entry_list, & entry -> link);
+  queue_add (& root_inode -> entry_list, entry);
 
   /*
    * Add the ".." entry
@@ -61,14 +61,14 @@ status_t devfs_mount (int32_t vid, const char * dev_path, uint32_t flags, void *
   if (entry == NULL) return DNA_OUT_OF_MEM;
   entry -> id = root_inode -> id;
   dna_strcpy (entry -> name, "..");
-  queue_item_init (& entry -> link, entry);
-  queue_add (& root_inode -> entry_list, & entry -> link);
+  queue_add (& root_inode -> entry_list, entry);
 
   /*
    * Load the drivers and register them as files
    */
 
-  for (int32_t i = 0; i < OS_N_DRIVERS; i ++) {
+  for (int32_t i = 0; i < OS_N_DRIVERS; i ++)
+  {
     OS_DRIVERS_LIST[i] -> init_hardware ();
     OS_DRIVERS_LIST[i] -> init_driver ();
     devices = (char **) OS_DRIVERS_LIST[i] -> publish_devices ();
@@ -81,15 +81,13 @@ status_t devfs_mount (int32_t vid, const char * dev_path, uint32_t flags, void *
       dna_strcpy (inode -> name, devices[j]);
       inode -> class = DNA_DEVFS_FILE;
       inode -> dev_cmd = OS_DRIVERS_LIST[i] -> find_device (devices[j]);
-      queue_item_init (& inode -> link, inode);
-      queue_add (& devfs -> inode_list, & inode -> link);
+      queue_add (& devfs -> inode_list, inode);
 
       entry = kernel_malloc (sizeof (struct devfs_entry), true);
       if (entry == NULL) return DNA_OUT_OF_MEM;
       entry -> id = inode -> id;
       dna_strcpy (entry -> name, devices[j]);
-      queue_item_init (& entry -> link, entry);
-      queue_add (& root_inode -> entry_list, & entry -> link);
+      queue_add (& root_inode -> entry_list, entry);
     }
   }
 
