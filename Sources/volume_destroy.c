@@ -44,7 +44,7 @@ status_t volume_destroy (volume_t volume)
   it_status = cpu_trap_mask_and_backup();
   lock_acquire (& volume_manager . volume_list . lock);
 
-  queue_extract (& volume_manager . volume_list, & volume -> link);
+  queue_extract (& volume_manager . volume_list, volume);
 
   lock_release (& volume_manager . volume_list . lock);
   cpu_trap_restore(it_status);

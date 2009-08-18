@@ -89,8 +89,6 @@ status_t vnode_create (int64_t vnid, int32_t vid, void * data)
     vnode -> data = data;
     vnode -> usage_counter = 1;
 
-    queue_item_init (& vnode -> link, vnode);
-
     /*
      * And finally we add it to the vnode manager
      */
@@ -98,7 +96,7 @@ status_t vnode_create (int64_t vnid, int32_t vid, void * data)
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& vnode_manager . vnode_list . lock);
 
-    queue_add (& vnode_manager . vnode_list, & vnode -> link);
+    queue_add (& vnode_manager . vnode_list, vnode);
 
     lock_release (& vnode_manager . vnode_list . lock);
     cpu_trap_restore(it_status);

@@ -37,14 +37,14 @@
 
 typedef struct _vnode
 {
+  queue_item_t link;
+
   int64_t id;
   volume_t volume;
   bool destroy;
 
   int32_t usage_counter;
   void * data;
-
-  queue_item_t link;
 }
 * vnode_t;
 

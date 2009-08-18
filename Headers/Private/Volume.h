@@ -35,6 +35,8 @@
 
 typedef struct _volume
 {
+  queue_item_t link;
+
   int32_t id;
   int64_t root_vnid;
   spinlock_t lock;
@@ -44,8 +46,6 @@ typedef struct _volume
 
   filesystem_cmd_t * cmd;
   void * data;
-
-  queue_item_t link;
 }
 * volume_t;
 

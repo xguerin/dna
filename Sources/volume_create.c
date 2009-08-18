@@ -61,12 +61,11 @@ status_t volume_create (volume_t host_volume, int64_t host_vnid,
     volume -> host_volume = host_volume;
     volume -> host_vnid = host_vnid;
     volume -> cmd = cmd;
-    queue_item_init (& volume -> link, volume);
 
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& volume_manager . volume_list . lock);
 
-    queue_add (& volume_manager . volume_list, & volume -> link);
+    queue_add (& volume_manager . volume_list, volume);
 
     lock_release (& volume_manager . volume_list . lock);
     cpu_trap_restore(it_status);
