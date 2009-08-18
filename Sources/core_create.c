@@ -80,8 +80,9 @@ status_t core_create (void)
        * Create the Idle thread
        */
 
-      status = thread_create (thread_idle, NULL, "IdleThread",
-          cpu_i, DNA_IDLE_STACK_SIZE, & thread_id);
+      status = thread_create (thread_idle, NULL,
+          "IdleThread", cpu_i, & scheduler . cpu[cpu_i] . stack,
+          DNA_IDLE_STACK_SIZE, & thread_id);
       check (create_threads, status == DNA_OK, DNA_ERROR);
 
       /*
@@ -98,8 +99,9 @@ status_t core_create (void)
      * Create the root thread
      */
 
-    status = thread_create (thread_root, NULL, "RootThread",
-        DNA_NO_AFFINITY, DNA_THREAD_STACK_SIZE, & thread_id);
+    status = thread_create (thread_root, NULL,
+        "RootThread", DNA_NO_AFFINITY, NULL,
+        DNA_THREAD_STACK_SIZE, & thread_id);
     check (create_threads, status == DNA_OK, DNA_ERROR);
 
     scheduler . cpu[0] . current_thread = scheduler . thread[thread_id];

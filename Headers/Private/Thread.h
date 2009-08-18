@@ -40,9 +40,9 @@
 typedef struct _thread_stack
 {
   uint32_t size;
-  int8_t base[];
+  void * base;
 }
-* thread_stack_t;
+thread_stack_t;
 
 /*
  ****/

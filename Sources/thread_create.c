@@ -27,8 +27,9 @@
  * SYNOPSIS
  */
 
-status_t thread_create (thread_handler_t handler, void * arguments,
-    char * name, int32_t affinity, int32_t stack_size, int32_t * tid)
+status_t thread_create (thread_handler_t handler,
+    void * arguments, char * name, int32_t affinity,
+    void * stack_base, int32_t stack_size, int32_t * tid)
 
 /*
  * ARGUMENTS
@@ -36,6 +37,7 @@ status_t thread_create (thread_handler_t handler, void * arguments,
  * * arguments : the handler's arguments
  * * name : the thread's name
  * * affinity : the thread's processor affinity
+ * * stack_base : the base of the stack
  * * stack_size : the thread's stack size
  * * tid : the placeholder of the created thread's ID
  *
@@ -49,7 +51,6 @@ status_t thread_create (thread_handler_t handler, void * arguments,
 
 {
   thread_t thread = NULL;
-  thread_stack_t stack = NULL;
   interrupt_status_t it_status = 0;
 
   watch (status_t)
@@ -69,10 +70,17 @@ status_t thread_create (thread_handler_t handler, void * arguments,
      * Allocate its stack.
      */
 
-    stack = kernel_malloc (sizeof (struct _thread_stack) + stack_size, false);
-    check (stack_alloc, stack != NULL, DNA_OUT_OF_MEM);
+    if (stack_base == NULL)
+    {
+      thread -> stack . base = kernel_malloc (stack_size, false);
+      check (error, thread -> stack . base != NULL, DNA_OUT_OF_MEM);
+    }
+    else
+    {
+      thread -> stack . base = stack_base;
+    }
 
-    stack -> size = stack_size;
+    thread -> stack . size = stack_size;
 
     /*
      * Fill-in the information, stack and signature
@@ -92,7 +100,6 @@ status_t thread_create (thread_handler_t handler, void * arguments,
       thread -> info . cpu_affinity = affinity;
     }
 
-    thread -> stack = stack;
     thread -> signature . handler = handler;
     thread -> signature . arguments = arguments;
 
@@ -100,8 +107,8 @@ status_t thread_create (thread_handler_t handler, void * arguments,
      * Initialize the context.
      */
 
-    cpu_context_init (& thread -> context, & thread -> stack -> base,
-        thread -> stack -> size, thread_bootstrap, & thread -> signature);
+    cpu_context_init (& thread -> context, thread -> stack . base,
+        thread -> stack . size, thread_bootstrap, & thread -> signature);
 
     /*
      * Find a free thread slot
@@ -120,7 +127,7 @@ status_t thread_create (thread_handler_t handler, void * arguments,
       }
     }
 
-    check (no_thread_slot, thread -> info . id != -1, DNA_ERROR);
+    check (error, thread -> info . id != -1, DNA_ERROR);
 
     lock_release (& scheduler . lock);
     cpu_trap_restore(it_status);
@@ -133,13 +140,13 @@ status_t thread_create (thread_handler_t handler, void * arguments,
     return DNA_OK;
   }
 
-  rescue (no_thread_slot)
+  rescue (error)
   {
-    kernel_free (stack);
-  }
+    if (stack_base == NULL)
+    {
+      kernel_free (thread -> stack . base);
+    }
 
-  rescue (stack_alloc)
-  {
     kernel_free (thread);
     leave;
   }

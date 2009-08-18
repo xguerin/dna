@@ -53,7 +53,7 @@ status_t thread_destroy (thread_t thread)
     lock_release (& scheduler . lock);
     cpu_trap_restore(it_status);
 
-    kernel_free (thread -> stack);
+    kernel_free (thread -> stack . base);
     kernel_free (thread);
 
     return DNA_OK;

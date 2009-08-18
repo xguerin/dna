@@ -64,6 +64,8 @@ typedef struct _cpu
 
   thread_t current_thread;
   thread_t idle_thread;
+
+  int8_t stack[DNA_IDLE_STACK_SIZE];
 }
 cpu_t;
 

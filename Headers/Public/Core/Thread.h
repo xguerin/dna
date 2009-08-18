@@ -96,8 +96,9 @@ thread_info_t;
 /*
  ****/
 
-extern status_t thread_create (thread_handler_t handler, void * arguments,
-    char * name, int32_t affinity, int32_t stack_size, int32_t * tid);
+extern status_t thread_create (thread_handler_t handler,
+    void * arguments, char * name, int32_t affinity,
+    void * stack_base, int32_t stack_size, int32_t * tid);
 
 extern status_t thread_resume (int32_t id);
 extern status_t thread_suspend (int32_t id);
