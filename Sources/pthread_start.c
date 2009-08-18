@@ -11,7 +11,6 @@ int __libthread_start (void)
   pthread_t wrapper = malloc (sizeof (struct pthread));
 
   thread_find (NULL, & my_id);
-  thread_get_info (my_id, & cur);
 
   wrapper -> attributs = malloc (sizeof (pthread_attr_t));
   wrapper -> father = NULL;

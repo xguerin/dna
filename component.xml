@@ -42,6 +42,7 @@
 
     <method name="semaphore_acquire" return_type="status_t">
       <argument name="sid" type="int32_t" direction="in"/>
+      <argument name="tokens" type="int32_t" direction="in"/>
       <argument name="flags" type="int32_t" direction="in"/>
       <argument name="timeout" type="bigtime_t" direction="in"/>
     </method>
@@ -66,6 +67,7 @@
       <argument name="arguments" type="void" direction="in"/>
       <argument name="name" type="string" direction="in"/>
       <argument name="affinity" type="int32_t" direction="in"/>
+      <argument name="stack_base" type="access" direction="in"/>
       <argument name="stack_size" type="int32_t" direction="in"/>
     </method>
 

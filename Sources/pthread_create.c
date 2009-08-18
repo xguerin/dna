@@ -4,13 +4,15 @@
 #include <stdio.h>
 #include <string.h>
 
-int pthread_create(pthread_t *thread, pthread_attr_t *attr, pthread_func_t start, void *arg)
+int pthread_create (pthread_t *thread, pthread_attr_t *attr,
+    pthread_func_t start, void *arg)
 {
   static int32_t index = 0;
   int32_t t_new;
   thread_info_t info;
   pthread_t new;
   char * default_name = "pthread";
+  void * stack_base;
 
   ASSERT_RETURN( (thread == NULL), EINVAL );
 
@@ -26,7 +28,8 @@ int pthread_create(pthread_t *thread, pthread_attr_t *attr, pthread_func_t start
   new -> cancel_state = PTHREAD_CANCEL_ENABLE;
   new -> cancel_bool = false;
 
-  if (attr == NULL) {
+  if (attr == NULL)
+  {
     new -> attributs -> stacksize = 0x8000;
     new -> attributs -> detachstate = PTHREAD_CREATE_JOINABLE;
     new -> attributs -> schedinherited = PTHREAD_EXPLICIT_SCHED;
@@ -35,25 +38,41 @@ int pthread_create(pthread_t *thread, pthread_attr_t *attr, pthread_func_t start
     new -> attributs -> name = (char *) malloc (32);
 
     sprintf (new -> attributs -> name, "%s_%ld", default_name, index ++);
+
+    new -> attributs -> stacksize = 0x8000;
+    new -> attributs -> stackaddr = malloc (0x8000);
   }
-  else {
+  else
+  {
     memcpy (new -> attributs, attr, sizeof (pthread_attr_t));
+
     if (attr -> name == NULL)
      {
       new -> attributs -> name = (char *) malloc (32);
       sprintf (new -> attributs -> name, "%s_%ld", default_name, index ++);
     }
+
+    if (attr -> stackaddr == NULL)
+    {
+      if (attr -> stacksize == 0)
+      {
+        stack_base = malloc (0x8000);
+        attr -> stacksize = 0x8000;
+      }
+      else
+      {
+        stack_base = malloc (attr -> stacksize);
+      }
+
+      attr -> stackaddr = stack_base;
+    }
   }
 
   thread_create ((thread_handler_t)start, (void *) arg,
-      new -> attributs -> name, new -> attributs -> procid, 0x8000, & t_new);
+      new -> attributs -> name, new -> attributs -> procid,
+      new -> attributs -> stackaddr, new -> attributs -> stacksize, & t_new);
 
-  thread_get_info (t_new, & info);
-
-  new -> attributs -> stackaddr = NULL;
-  new -> attributs -> stacksize = 0x8000;
   new -> tid = t_new;
-
   thread_resume (t_new);
 
   *thread = new;

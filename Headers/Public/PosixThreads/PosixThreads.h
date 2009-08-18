@@ -24,7 +24,8 @@ typedef uint32_t pthread_state_t;
 typedef void *(*pthread_func_t)(void *); 
 typedef volatile unsigned int pthread_spinlock_t;
 
-typedef struct pthread_bootstrap {
+typedef struct pthread_bootstrap
+{
   thread_handler_t handler;
   void * argument;
 } * pthread_bootstrap_t;
@@ -44,26 +45,34 @@ enum { RT_RUN, RT_RESET };
 enum { RT_MODE_1, RT_MODE_2 };
 enum { PTHREAD_NOPROCID = 0xFFFFFFFF };
 
-typedef struct sched_param {
+typedef struct sched_param
+{
    int priority;
    int deadline;
    int procs;
-} sched_param_t;
+}
+sched_param_t;
 
 /*********
  * MUTEX *
  *********/
 
-typedef struct pthread_mutex {
+typedef struct pthread_mutex
+{
   int32_t flags;
   int32_t status;
   int32_t semaphore;
-} pthread_mutex_t;
+}
+pthread_mutex_t;
 
-typedef struct pthread_mutexattr {
-} pthread_mutexattr_t;
+typedef struct pthread_mutexattr
+{
 
-enum {
+}
+pthread_mutexattr_t;
+
+enum
+{
   MUTEX_UNLOCKED,
   MUTEX_LOCKED
 };
@@ -72,32 +81,41 @@ enum {
  * CONDITIONS *
  **************/
 
-typedef struct pthread_cond {
+typedef struct pthread_cond
+{
   int32_t semaphore;
   int32_t count;
-} pthread_cond_t;
+}
+pthread_cond_t;
 
-typedef struct pthread_condattr {
-} pthread_condattr_t;
+typedef struct pthread_condattr
+{
+}
+pthread_condattr_t;
  
 /***********
  * BARRIER *
  ***********/
 
-typedef volatile struct pthread_barrier {
+typedef volatile struct pthread_barrier
+{
   uint32_t threshold;
   uint32_t count;
   uint32_t sem;
-} pthread_barrier_t;
+}
+pthread_barrier_t;
 
-typedef struct pthread_barrierattr {
-} pthread_barrierattr_t;
+typedef struct pthread_barrierattr
+{
+}
+pthread_barrierattr_t;
 
 /***********
  * PTHREAD *
  ***********/
 
-typedef struct pthread_attr {
+typedef struct pthread_attr
+{
   void *stackaddr;
   size_t stacksize;
   uint32_t detachstate;
@@ -106,9 +124,11 @@ typedef struct pthread_attr {
   uint32_t procid;
   sched_param_t schedparam;
   char * name;
-} pthread_attr_t;
+}
+pthread_attr_t;
 
-typedef struct pthread {
+typedef struct pthread
+{
   struct pthread  *next;
   struct pthread  *prev;
 
@@ -125,7 +145,8 @@ typedef struct pthread {
   uint8_t cancel_async;           /* delete asap */
 
   int32_t errorno;
-} *pthread_t;
+}
+* pthread_t;
 
 /***********
  * METHODS *
