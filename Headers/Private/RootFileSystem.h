@@ -29,13 +29,17 @@ typedef enum rootfs_inode_class {
   DNA_ROOTFS_SYMLINK
 } rootfs_inode_class_t;
 
-typedef struct rootfs_entry {
+typedef struct rootfs_entry
+{
+  queue_item_t link;
   int64_t id;
   char name[ROOTFS_NAME_LENGTH];
-  queue_item_t link;
-} * rootfs_entry_t;
+}
+* rootfs_entry_t;
 
-typedef struct rootfs_inode {
+typedef struct rootfs_inode
+{
+  queue_item_t link;
   int64_t id;
   char name[ROOTFS_NAME_LENGTH];
   rootfs_inode_class_t class;
@@ -43,15 +47,17 @@ typedef struct rootfs_inode {
   int32_t mode;
   int32_t perms;
   queue_t entry_list;
-  queue_item_t link;
-} * rootfs_inode_t;
+}
+* rootfs_inode_t;
 
-typedef struct rootfs {
+typedef struct rootfs
+{
   int64_t inode_index;
   int64_t root_vnid;
   int32_t vid;
   queue_t inode_list;
-} * rootfs_t;
+}
+* rootfs_t;
 
 extern status_t rootfs_walk (void * ns, void * base, char * restrict path, char ** new_path, int64_t * vnid);
 extern status_t rootfs_mount (int32_t vid, const char * dev_path, uint32_t flags, void * params, void ** data, int64_t * p_vnid);

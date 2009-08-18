@@ -19,7 +19,9 @@
 #include <MemoryManager/MemoryManager.h>
 #include <DnaTools/DnaTools.h>
 
-status_t rootfs_create (void * ns, void * node, char * restrict path, int32_t mode, int32_t perms, int64_t * vnid, void ** data) {
+status_t rootfs_create (void * ns, void * node, char * restrict path,
+    int32_t mode, int32_t perms, int64_t * vnid, void ** data)
+{
   rootfs_t rootfs = ns;
   rootfs_inode_t root_inode = node, inode = NULL;
   rootfs_entry_t entry = NULL;
@@ -31,8 +33,7 @@ status_t rootfs_create (void * ns, void * node, char * restrict path, int32_t mo
   inode -> class = DNA_ROOTFS_FILE;
   inode -> perms = perms;
   inode -> mode = mode;
-  queue_item_init (& inode -> link, inode);
-  queue_add (& rootfs -> inode_list, & inode -> link);
+  queue_add (& rootfs -> inode_list, inode);
 
   /*
    * Add the new directory as an entry to its parent
@@ -42,8 +43,7 @@ status_t rootfs_create (void * ns, void * node, char * restrict path, int32_t mo
   if (entry == NULL) return DNA_OUT_OF_MEM;
   entry -> id = inode -> id;
   dna_strcpy (entry -> name, path);
-  queue_item_init (& entry -> link, entry);
-  queue_add (& root_inode -> entry_list, & entry -> link);
+  queue_add (& root_inode -> entry_list, entry);
 
   /*
    * Add the root vnode to the system

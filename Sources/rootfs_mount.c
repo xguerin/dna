@@ -37,8 +37,7 @@ status_t rootfs_mount (int32_t vid, const char * dev_path, uint32_t flags, void 
   root_inode -> id = rootfs -> inode_index ++;
   dna_strcpy (root_inode -> name, "");
   root_inode -> class = DNA_ROOTFS_DIRECTORY;
-  queue_item_init (& root_inode -> link, root_inode);
-  queue_add (& rootfs -> inode_list, & root_inode -> link);
+  queue_add (& rootfs -> inode_list, root_inode);
 
   rootfs -> root_vnid = root_inode -> id;
 
@@ -52,8 +51,7 @@ status_t rootfs_mount (int32_t vid, const char * dev_path, uint32_t flags, void 
 
     entry -> id = root_inode -> id;
     dna_strcpy (entry -> name, entry_name[i]);
-    queue_item_init (& entry -> link, entry);
-    queue_add (& root_inode -> entry_list, & entry -> link);
+    queue_add (& root_inode -> entry_list, entry);
   }
 
   /*
@@ -67,15 +65,13 @@ status_t rootfs_mount (int32_t vid, const char * dev_path, uint32_t flags, void 
     dna_strcpy (inode -> name, entry_name[i]);
     inode -> class = DNA_ROOTFS_DIRECTORY;
     inode -> mode = 0;
-    queue_item_init (& inode -> link, inode);
-    queue_add (& rootfs -> inode_list, & inode -> link);
+    queue_add (& rootfs -> inode_list, inode);
 
     entry = kernel_malloc (sizeof (struct rootfs_entry), true);
     if (entry == NULL) return DNA_OUT_OF_MEM;
     entry -> id = inode -> id;
     dna_strcpy (entry -> name, entry_name[i]);
-    queue_item_init (& entry -> link, entry);
-    queue_add (& root_inode -> entry_list, & entry -> link);
+    queue_add (& root_inode -> entry_list, entry);
   }
 
   /*

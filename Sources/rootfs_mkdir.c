@@ -40,8 +40,7 @@ status_t rootfs_mkdir (void * ns, void * node,
     dna_strcpy (inode -> name, name);
     inode -> class = DNA_ROOTFS_DIRECTORY;
     inode -> mode = mode;
-    queue_item_init (& inode -> link, inode);
-    queue_add (& rootfs -> inode_list, & inode -> link);
+    queue_add (& rootfs -> inode_list, inode);
 
     /*
      * Add the "." entry
@@ -52,8 +51,7 @@ status_t rootfs_mkdir (void * ns, void * node,
 
     dot_entry -> id = inode -> id;
     dna_strcpy (dot_entry -> name, ".");
-    queue_item_init (& dot_entry -> link, dot_entry);
-    queue_add (& inode -> entry_list, & dot_entry -> link);
+    queue_add (& inode -> entry_list, dot_entry);
 
     /*
      * Add the ".." entry
@@ -64,8 +62,7 @@ status_t rootfs_mkdir (void * ns, void * node,
 
     dotdot_entry -> id = root_inode -> id;
     dna_strcpy (dotdot_entry -> name, "..");
-    queue_item_init (& dotdot_entry -> link, dotdot_entry);
-    queue_add (& inode -> entry_list, & dotdot_entry -> link);
+    queue_add (& inode -> entry_list, dotdot_entry);
 
     /*
      * Add the new directory as an entry to its parent
@@ -76,8 +73,7 @@ status_t rootfs_mkdir (void * ns, void * node,
 
     root_entry -> id = inode -> id;
     dna_strcpy (root_entry -> name, name);
-    queue_item_init (& root_entry -> link, root_entry);
-    queue_add (& root_inode -> entry_list, & root_entry -> link);
+    queue_add (& root_inode -> entry_list, root_entry);
 
     return status;
   }
