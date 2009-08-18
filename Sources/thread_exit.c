@@ -37,6 +37,7 @@ void thread_exit (int32_t value)
  */
 
 {
+  status_t status;
   uint32_t current_cpuid = cpu_mp_id();
   thread_t self = scheduler . cpu[current_cpuid] . current_thread;
   thread_t target = NULL, p = NULL;
@@ -85,7 +86,8 @@ void thread_exit (int32_t value)
    * since we disabled the interrupts.
    */
 
-  scheduler_elect (& target, true);
+  status = scheduler_elect (& target, true);
+  panic (status == DNA_OK);
 
   lock_acquire (& target -> lock);
   target -> info . status = DNA_THREAD_RUNNING;
