@@ -26,20 +26,27 @@
 #define watch(type) type _rescue_status;
 #define leave return _rescue_status
 
-#define check(tag,condition,code)         \
-  if (! (condition))                      \
-  {                                       \
-    log (4, "<" #condition "> failed.");  \
-    _rescue_status = code;                \
-    goto tag;                             \
+#define panic(condition)                          \
+  if (! (condition))                              \
+  {                                               \
+    log (1, "PANIC! <" #condition "> failed.");   \
+    for (;;);                                     \
   }
 
-#define ensure(condition,code)            \
-  if (! (condition))                      \
-  {                                       \
-    log (4, "<" #condition "> failed.");  \
-    _rescue_status = code;                \
-    return _rescue_status;                \
+#define ensure(condition,code)                    \
+  if (! (condition))                              \
+  {                                               \
+    log (4, "<" #condition "> failed.");          \
+    _rescue_status = code;                        \
+    return _rescue_status;                        \
+  }
+
+#define check(tag,condition,code)                 \
+  if (! (condition))                              \
+  {                                               \
+    log (4, "<" #condition "> failed.");          \
+    _rescue_status = code;                        \
+    goto tag;                                     \
   }
 
 #define rescue(tag) tag:
