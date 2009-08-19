@@ -7,7 +7,6 @@ extern int main (void);
 int __libthread_start (void)
 {
   int32_t my_id;
-  thread_info_t cur;
   pthread_t wrapper = malloc (sizeof (struct pthread));
 
   thread_find (NULL, & my_id);
@@ -24,7 +23,7 @@ int __libthread_start (void)
   wrapper -> attributs -> detachstate = PTHREAD_CREATE_JOINABLE;
   wrapper -> attributs -> schedinherited = PTHREAD_EXPLICIT_SCHED;
   wrapper -> attributs -> schedpolicy = SCHED_FIFO;
-  wrapper -> attributs -> procid = cur . cpu_affinity;
+  wrapper -> attributs -> procid = PTHREAD_NOPROCID;
 
   return main ();
 }

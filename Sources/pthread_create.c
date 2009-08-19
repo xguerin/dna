@@ -9,7 +9,6 @@ int pthread_create (pthread_t *thread, pthread_attr_t *attr,
 {
   static int32_t index = 0;
   int32_t t_new;
-  thread_info_t info;
   pthread_t new;
   char * default_name = "pthread";
   void * stack_base;
