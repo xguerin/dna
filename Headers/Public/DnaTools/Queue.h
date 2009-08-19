@@ -101,7 +101,7 @@ extern void queue_walk (queue_t * queue,
     queue_inspector_t inspector, void * a0, void * a1);
 
 extern void queue_insert (queue_t * queue,
-    queue_comparator_t comparator, queue_item_t * item);
+    queue_comparator_t comparator, void * data);
 
 #endif
 

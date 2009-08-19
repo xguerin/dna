@@ -17,10 +17,9 @@
 
 #include <DnaTools/DnaTools.h>
 
-void queue_insert (queue_t * queue, queue_comparator_t comparator,
-    queue_item_t * item)
+void queue_insert (queue_t * queue, queue_comparator_t comparator, void * data)
 {
-  queue_item_t * current = NULL, * previous = NULL;
+  queue_item_t * item = data, * current = NULL, * previous = NULL;
 
   item -> next = NULL;
 
