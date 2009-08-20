@@ -59,9 +59,6 @@ typedef struct _interrupt_manager
   spinlock_t lock;
   int32_t counter[cpu_n_it];
   queue_t isr_list[cpu_n_it];
-
-  bool has_ipi;
-  ipi_manager_t ipi_manager;
 }
 interrupt_manager_t;
 
@@ -74,7 +71,6 @@ extern int32_t interrupt_demultiplexer (int32_t itn);
 extern bool interrupt_handler_inspector (void * p_isr,
     void * p_handler, void * dummy);
 
-extern status_t ipi_send (int32_t target, int32_t command, void * cookie);
 extern status_t ipi_callback (int32_t command, void * cookie);
 
 #endif

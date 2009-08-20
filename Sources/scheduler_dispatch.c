@@ -51,7 +51,7 @@ status_t scheduler_dispatch (thread_t thread)
         thread -> info . status = DNA_THREAD_RUNNING;
         lock_release (& thread -> lock);
 
-        ipi_send (next_cpuid, DNA_IPI_EXECUTE, thread);
+        cpu_mp_send_ipi (next_cpuid, DNA_IPI_EXECUTE, thread);
         break;
 
       case DNA_NO_AVAILABLE_CPU :

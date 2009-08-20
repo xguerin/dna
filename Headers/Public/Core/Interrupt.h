@@ -25,31 +25,11 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****t* interrupt/ipi_manager_t
- * SUMMARY
- * The system IPI manager type.
- *
- * SOURCE
- */
-
-typedef struct _system_ipi_manager
-{
-  status_t (* send) (int32_t target, int32_t command, void * cookie);
-}
-ipi_manager_t;
-
-/*
- ****/
-
 extern status_t interrupt_attach (interrupt_id_t id, int32_t mode,
     interrupt_handler_t handler);
 
 extern status_t interrupt_detach (interrupt_id_t id,
     interrupt_handler_t handler);
-
-extern status_t ipi_set_manager (ipi_manager_t timer, bool force);
-
-extern status_t ipi_callback (int32_t command, void * cookie);
 
 #endif
 

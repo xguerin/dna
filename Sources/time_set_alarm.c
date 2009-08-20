@@ -87,38 +87,22 @@ status_t time_set_alarm (bigtime_t quantum, int32_t mode,
     }
     else
     {
-      if (time_manager . current_alarm -> deadline > new_alarm -> deadline)
+      old_alarm = time_manager . current_alarm;
+
+      if (old_alarm -> deadline > new_alarm -> deadline)
       {
-        /*
-         * Cancel the current timer
-         */
-
         time_manager . system_timer . cancel ();
-
-        /*
-         * Replace the current alarm
-         */
-
-        old_alarm = time_manager . current_alarm;
         time_manager . current_alarm = new_alarm;
 
-        /*
-         * Insert the old alarm in the alarm list
-         */
-
         queue_insert (& time_manager . alarm_queue,
-            alarm_comparator, & old_alarm -> link);
+            alarm_comparator, old_alarm);
 
-        /*
-         * Set the new timer
-         */
-        
         time_manager . system_timer . set (quantum, time_callback, new_alarm);
       }
       else
       {
         queue_insert (& time_manager . alarm_queue,
-            alarm_comparator, & new_alarm -> link);
+            alarm_comparator, new_alarm);
       }
     }
 

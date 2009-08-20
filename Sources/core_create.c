@@ -105,6 +105,7 @@ status_t core_create (void)
     check (create_threads, status == DNA_OK, DNA_ERROR);
 
     scheduler . cpu[0] . current_thread = scheduler . thread[thread_id];
+
     return DNA_OK;
   }
 
