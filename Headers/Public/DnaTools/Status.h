@@ -92,6 +92,7 @@ typedef enum _status
    */
 
   DNA_NO_TIMER                        = 0xFBFF,
+  DNA_UNKNOWN_ALARM                   = 0xFBFE,
 
   /*
    * Ports and messages codes
