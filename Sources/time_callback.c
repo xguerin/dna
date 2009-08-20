@@ -110,11 +110,7 @@ status_t time_callback (void * data)
    * And reschedule if necessary
    */
 
-  if (reschedule)
-  {
-    thread_yield ();
-  }
-
+  if (reschedule) thread_yield ();
   return DNA_OK;
 }
 

@@ -63,6 +63,7 @@ status_t semaphore_release (int32_t sid, int32_t tokens, int32_t flags)
     check (invalid_semaphore, sem != NULL, DNA_BAD_SEM_ID);
 
     lock_acquire (& sem -> lock);
+    lock_acquire (& sem -> waiting_queue . lock);
     lock_release (& semaphore_pool . lock);
 
     /*
@@ -70,13 +71,12 @@ status_t semaphore_release (int32_t sid, int32_t tokens, int32_t flags)
      * of tokens required by a potential waiting thread
      */
 
-    lock_acquire (& sem -> waiting_queue . lock);
-
     while (tokens != 0)
     {
       thread = queue_rem (& sem -> waiting_queue);
 
-      if (thread != NULL)
+      if (thread == NULL) break;
+      else
       {
         if (thread -> sem_tokens <= tokens)
         {
@@ -93,36 +93,25 @@ status_t semaphore_release (int32_t sid, int32_t tokens, int32_t flags)
           queue_pushback (& sem -> waiting_queue, thread);
         }
       }
-      else
-      {
-        break;
-      }
     }
 
     lock_release (& sem -> waiting_queue . lock);
 
     /*
-     * Add the remaining number of tokens
+     * Add the remaining number of token
+     * and release the sem lock
      */
 
     sem -> tokens += tokens;
 
-    /*
-     * We release the sem's lock
-     */
-
     lock_release (& sem -> lock);
+    cpu_trap_restore(it_status);
 
     /*
      * Now we deal with the reschedule
      */
 
-    if ((flags & DNA_NO_RESCHEDULE) != 0)
-    {
-      thread_yield ();
-    }
- 
-    cpu_trap_restore(it_status);
+    if ((flags & DNA_NO_RESCHEDULE) != 0) thread_yield ();
     return status;
   }
 

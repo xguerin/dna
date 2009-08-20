@@ -81,7 +81,8 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
      * And decide what to do next depending on the result
      */
 
-    if (rem_tokens < 0)
+    if (rem_tokens >= 0) sem -> tokens -= tokens;
+    else
     {
       sem -> tokens = 0;
 
@@ -154,7 +155,10 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
 
           lock_acquire (& sem -> lock);
 
-          if (time_cancel_alarm (alarm) == DNA_ERROR)
+          status = time_cancel_alarm (alarm);
+          check (invalid_alarm, status != DNA_ERROR, status);
+
+          if (status == DNA_UNKNOWN_ALARM)
           {
             queue_extract (& sem -> waiting_queue, self);
             status = DNA_TIMED_OUT;
@@ -168,15 +172,8 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
           break;
       }
     }
-    else
-    {
-      sem -> tokens -= tokens;
-    }
     
-    if (status == DNA_OK)
-    {
-      sem -> latest_holder = self;
-    }
+    if (status == DNA_OK) sem -> latest_holder = self;
 
     lock_release (& sem -> lock);
     cpu_trap_restore(it_status);

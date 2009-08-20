@@ -42,6 +42,7 @@ status_t time_cancel_alarm (int32_t aid)
 {
   cpu_t * cpu = NULL;
   alarm_t alarm = NULL;
+  status_t status = DNA_OK;
   bigtime_t current_time = 0, quantum = 0;
   interrupt_status_t it_status = 0;
 
@@ -58,6 +59,7 @@ status_t time_cancel_alarm (int32_t aid)
     lock_acquire (& time_manager . lock);
 
     alarm = time_manager . alarm[aid];
+    check (alarm_error, alarm != NULL, DNA_ERROR);
 
     /*
      * Next, we lock the related CPU
@@ -95,25 +97,26 @@ status_t time_cancel_alarm (int32_t aid)
     {
       alarm = queue_lookup (& cpu -> alarm_queue,
           alarm_id_inspector, & aid, NULL); 
-      check (alarm_error, alarm != NULL, DNA_ERROR);
 
-      queue_extract (& cpu -> alarm_queue, alarm);
-      kernel_free (alarm);
+      if (alarm == NULL) status = DNA_UNKNOWN_ALARM;
+      else
+      {
+        queue_extract (& cpu -> alarm_queue, alarm);
+        kernel_free (alarm);
+      }
     }
 
     lock_release (& cpu -> lock);
     lock_release (& time_manager . lock);
-    cpu_trap_restore(it_status);
 
-    return DNA_OK;
+    cpu_trap_restore(it_status);
+    return status;
   }
 
   rescue (alarm_error)
   {
-    lock_release (& cpu -> lock);
     lock_release (& time_manager . lock);
     cpu_trap_restore(it_status);
-
     leave;
   }
 }
