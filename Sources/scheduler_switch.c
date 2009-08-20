@@ -69,7 +69,7 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
      * Save the current context
      */
 
-    cpu_context_save(& self -> context, & __scheduler_switch_end);
+    cpu_context_save (& self -> context, & __scheduler_switch_end);
 
     /*
      * If queue is not NULL, then add the current thread to this queue
@@ -97,7 +97,7 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
      * Load the target context
      */
 
-    cpu_context_load(& thread -> context);
+    cpu_context_load (& thread -> context);
 
     /*
      * FIXME If someone has a better idea to get the

@@ -70,6 +70,8 @@ status_t semaphore_release (int32_t sid, int32_t tokens, int32_t flags)
      * of tokens required by a potential waiting thread
      */
 
+    lock_acquire (& sem -> waiting_queue . lock);
+
     while (tokens != 0)
     {
       thread = queue_rem (& sem -> waiting_queue);
@@ -96,6 +98,8 @@ status_t semaphore_release (int32_t sid, int32_t tokens, int32_t flags)
         break;
       }
     }
+
+    lock_release (& sem -> waiting_queue . lock);
 
     /*
      * Add the remaining number of tokens
