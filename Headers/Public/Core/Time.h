@@ -63,16 +63,18 @@ typedef status_t (* alarm_callback_t) (void * data);
 
 typedef struct _system_timer
 {
-  status_t (* set) (bigtime_t quantum, alarm_callback_t callback, void * data);
-  status_t (* get) (bigtime_t * value);
-  status_t (* cancel) (void);
+  status_t (* set) (int32_t id, bigtime_t quantum, void * data);
+  status_t (* get) (int32_t id, bigtime_t * value);
+  status_t (* cancel) (int32_t id);
 }
 system_timer_t;
 
 /*
  ****/
 
-extern status_t time_set_timer (system_timer_t timer, bool force);
+extern status_t time_callback (void * data);
+
+extern status_t time_set_timer (system_timer_t timer);
 extern status_t time_get_system (bigtime_t * value);
 
 extern status_t time_set_alarm (bigtime_t quantum, int32_t mode,

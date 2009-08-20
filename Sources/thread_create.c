@@ -57,7 +57,7 @@ status_t thread_create (thread_handler_t handler,
   {
     ensure (handler != NULL && name != NULL && tid != NULL, DNA_BAD_ARGUMENT);
     ensure (affinity == DNA_NO_AFFINITY || (affinity >= 0
-          && affinity < cpu_mp_count), DNA_BAD_ARGUMENT);
+          && affinity < CPU_MP_COUNT), DNA_BAD_ARGUMENT);
 
     /*
      * Allocate the new thread structure.
@@ -93,7 +93,7 @@ status_t thread_create (thread_handler_t handler,
 
     if (affinity == DNA_NO_AFFINITY)
     {
-      thread -> info .cpu_affinity = cpu_mp_count;
+      thread -> info .cpu_affinity = CPU_MP_COUNT;
     }
     else 
     {
@@ -127,10 +127,10 @@ status_t thread_create (thread_handler_t handler,
       }
     }
 
-    check (error, thread -> info . id != -1, DNA_ERROR);
-
     lock_release (& scheduler . lock);
     cpu_trap_restore(it_status);
+
+    check (error, thread -> info . id != -1, DNA_ERROR);
 
     /*
      * Return the thread ID and success

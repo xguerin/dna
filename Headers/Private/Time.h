@@ -40,6 +40,7 @@ typedef struct _alarm
   queue_item_t link;
 
   int32_t id;
+  int32_t cpu_id;
   int32_t mode;
 
   bigtime_t quantum;
@@ -64,9 +65,7 @@ typedef struct _time_manager
 {
   spinlock_t lock;
 
-  int32_t alarm_counter;
-  alarm_t current_alarm;
-  queue_t alarm_queue;
+  alarm_t alarm[DNA_MAX_ALARM];
 
   bool has_timer;
   system_timer_t system_timer;
@@ -77,8 +76,6 @@ time_manager_t;
  ****/
 
 extern time_manager_t time_manager;
-
-extern status_t time_callback (void * data);
 
 extern bool alarm_comparator (void * item1, void * item2);
 extern bool alarm_id_inspector (void * item, void * a0, void * a1);

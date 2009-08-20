@@ -26,7 +26,8 @@
  * SYNOPSIS
  */
 
-status_t interrupt_detach (interrupt_id_t id, interrupt_handler_t handler)
+status_t interrupt_detach (int32_t cpuid, interrupt_id_t id,
+    interrupt_handler_t handler)
 
 /*
  * ARGUMENTS

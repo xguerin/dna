@@ -41,22 +41,33 @@ status_t ipi_callback (int32_t command, void * cookie)
 
 {
   status_t status;
-  thread_t target;
 
   watch (status_t)
   {
     switch (command)
     {
       case DNA_IPI_EXECUTE :
-        target = cookie;
-        ensure (target != NULL, DNA_ERROR);
+        {
+          thread_t target = cookie;
+          ensure (target != NULL, DNA_ERROR);
 
-        log (4, "%d EXECUTE %d", cpu_mp_id (), target -> info . id);
+          log (4, "%d EXECUTE %d", cpu_mp_id (), target -> info . id);
 
-        status = scheduler_switch (target, NULL);
-        ensure (status == DNA_OK, status);
+          status = scheduler_switch (target, NULL);
+          ensure (status == DNA_OK, status);
 
-        break;
+          break;
+        }
+
+      case DNA_IPI_TRAP_ENABLE:
+        {
+          int32_t id = (int32_t) cookie;
+
+          log (4, "%d ENABLE %d", cpu_mp_id (), id);
+          cpu_trap_enable (id);
+
+          break;
+        }
 
       default :
         log (1, "Unknown command received on processor %d", cpu_mp_id ());

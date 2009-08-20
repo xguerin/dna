@@ -25,10 +25,10 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-extern status_t interrupt_attach (interrupt_id_t id, int32_t mode,
-    interrupt_handler_t handler);
+extern status_t interrupt_attach (int32_t cpuid, interrupt_id_t id,
+    int32_t mode, interrupt_handler_t handler);
 
-extern status_t interrupt_detach (interrupt_id_t id,
+extern status_t interrupt_detach (int32_t cpuid, interrupt_id_t id,
     interrupt_handler_t handler);
 
 #endif

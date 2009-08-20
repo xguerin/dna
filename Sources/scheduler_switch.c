@@ -87,7 +87,7 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
 
     if (time_manager . has_timer)
     {
-      time_manager . system_timer . get (& current_time);
+      time_manager . system_timer . get (current_cpuid, & current_time);
       self -> info . kernel_time = current_time;
       self -> info . kernel_time -= scheduler . cpu[current_cpuid] . lap_date;
       scheduler . cpu[current_cpuid] . lap_date = current_time;

@@ -44,9 +44,11 @@ status_t time_set_alarm (bigtime_t quantum, int32_t mode,
  */
 
 {
-  alarm_t new_alarm = NULL, old_alarm = NULL;
   bigtime_t current_time = 0;
-  interrupt_status_t status;
+  int32_t current_cpuid = cpu_mp_id ();
+  cpu_t * cpu = & scheduler . cpu[current_cpuid];
+  interrupt_status_t it_status;
+  alarm_t new_alarm = NULL, old_alarm = NULL;
   
   watch (status_t)
   {
@@ -64,53 +66,79 @@ status_t time_set_alarm (bigtime_t quantum, int32_t mode,
      * Set its parameters
      */
 
-    new_alarm -> id = atomic_add (& time_manager . alarm_counter, 1);
+    new_alarm -> id = -1;
     new_alarm -> mode = mode;
+    new_alarm -> cpu_id = current_cpuid;
 
-    time_manager . system_timer . get (& current_time);
+    time_manager . system_timer . get (current_cpuid, & current_time);
     new_alarm -> quantum = quantum;
     new_alarm -> deadline = quantum + current_time;
     new_alarm -> callback = callback;
     new_alarm -> data = data;
 
     /*
-     * Deal with the new alarm
+     * Find an empty slot to store the alarm
      */
 
-    status = cpu_trap_mask_and_backup();
+    it_status = cpu_trap_mask_and_backup();
     lock_acquire (& time_manager . lock);
 
-    if (time_manager . current_alarm == NULL)
+    for (int32_t i = 0; i < DNA_MAX_THREAD; i += 1)
     {
-       time_manager . current_alarm = new_alarm;
-       time_manager . system_timer . set (quantum, time_callback, new_alarm);
-    }
-    else
-    {
-      old_alarm = time_manager . current_alarm;
-
-      if (old_alarm -> deadline > new_alarm -> deadline)
+      if (time_manager . alarm[i] == NULL)
       {
-        time_manager . system_timer . cancel ();
-        time_manager . current_alarm = new_alarm;
-
-        queue_insert (& time_manager . alarm_queue,
-            alarm_comparator, old_alarm);
-
-        time_manager . system_timer . set (quantum, time_callback, new_alarm);
-      }
-      else
-      {
-        queue_insert (& time_manager . alarm_queue,
-            alarm_comparator, new_alarm);
+        time_manager . alarm[i] = new_alarm;
+        new_alarm -> id = i;
+        break;
       }
     }
 
     lock_release (& time_manager . lock);
-    cpu_trap_restore(status);
+    cpu_trap_restore(it_status);
+
+    check (error, new_alarm -> id != -1, DNA_ERROR);
+
+    /*
+     * Deal with the new alarm
+     */
+
+    it_status = cpu_trap_mask_and_backup();
+    lock_acquire (& cpu -> lock);
+
+    if (cpu -> current_alarm == NULL)
+    {
+       cpu -> current_alarm = new_alarm;
+       time_manager . system_timer . set (current_cpuid, quantum, new_alarm);
+    }
+    else
+    {
+      old_alarm = cpu -> current_alarm;
+
+      if (old_alarm -> deadline > new_alarm -> deadline)
+      {
+        time_manager . system_timer . cancel (current_cpuid);
+        cpu -> current_alarm = new_alarm;
+
+        queue_insert (& cpu -> alarm_queue, alarm_comparator, old_alarm);
+        time_manager . system_timer . set (current_cpuid, quantum, new_alarm);
+      }
+      else
+      {
+        queue_insert (& cpu -> alarm_queue, alarm_comparator, new_alarm);
+      }
+    }
+
+    lock_release (& cpu -> lock);
+    cpu_trap_restore(it_status);
 
     *aid = new_alarm -> id;
     return DNA_OK;
+  }
+
+  rescue (error)
+  {
+    kernel_free (new_alarm);
+    leave;
   }
 }
 

@@ -48,9 +48,9 @@ status_t scheduler_pop_cpu (int32_t affinity, int32_t * p_id)
   watch (status_t)
   {
     ensure (p_id != NULL, DNA_BAD_ARGUMENT);
-    ensure (affinity >= 0 && affinity <= cpu_mp_count, DNA_BAD_ARGUMENT);
+    ensure (affinity >= 0 && affinity <= CPU_MP_COUNT, DNA_BAD_ARGUMENT);
 
-    if (affinity == cpu_mp_count)
+    if (affinity == CPU_MP_COUNT)
     {
       if (scheduler . cpu_pool . status != 0)
       {

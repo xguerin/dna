@@ -27,8 +27,10 @@
 #include <Platform/Platform.h>
 #include <DnaTools/DnaTools.h>
 
-#define DNA_IPI_ALL       cpu_mp_count
-#define DNA_IPI_EXECUTE   0xFFFF
+#define DNA_IPI_ALL       CPU_MP_COUNT
+
+#define DNA_IPI_EXECUTE       0xFFFF
+#define DNA_IPI_TRAP_ENABLE   0xFFFE
 
 /****t* interrupt/isr_t
  * SUMMARY
@@ -57,8 +59,8 @@ typedef struct _isr
 typedef struct _interrupt_manager
 {
   spinlock_t lock;
-  int32_t counter[cpu_n_it];
-  queue_t isr_list[cpu_n_it];
+  int32_t counter[CPU_MP_COUNT][CPU_TRAP_COUNT];
+  queue_t isr_list[CPU_MP_COUNT][CPU_TRAP_COUNT];
 }
 interrupt_manager_t;
 

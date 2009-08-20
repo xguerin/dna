@@ -27,8 +27,8 @@
  * SYNOPSIS
  */
 
-status_t interrupt_attach (interrupt_id_t id, int32_t mode,
-    interrupt_handler_t handler)
+status_t interrupt_attach (int32_t cpuid, interrupt_id_t id,
+    int32_t mode, interrupt_handler_t handler)
 
 /*
  * ARGUMENTS
@@ -49,7 +49,7 @@ status_t interrupt_attach (interrupt_id_t id, int32_t mode,
 
   watch (status_t)
   {
-    ensure (id < cpu_n_it, DNA_BAD_ARGUMENT);
+    ensure (id < CPU_TRAP_COUNT, DNA_BAD_ARGUMENT);
 
     isr = kernel_malloc (sizeof (struct _isr), true);
     ensure (isr != NULL, DNA_OUT_OF_MEM);
@@ -59,17 +59,25 @@ status_t interrupt_attach (interrupt_id_t id, int32_t mode,
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& interrupt_manager . lock);
 
-    interrupt_manager . counter[id] += 1;
-    queue_add (& interrupt_manager . isr_list[id], isr);
+    interrupt_manager . counter[cpuid][id] += 1;
+    queue_add (& interrupt_manager . isr_list[cpuid][id], isr);
 
-    if (interrupt_manager . counter[id] == 1)
+    if (interrupt_manager . counter[cpuid][id] == 1)
     {
-      cpu_trap_attach_isr (id, mode, handler);
-      cpu_trap_enable (id);
+      cpu_trap_attach_isr (cpuid, id, mode, handler);
+
+      if (cpuid == cpu_mp_id ())
+      {
+        cpu_trap_enable (id);
+      }
+      else
+      {
+        cpu_mp_send_ipi (cpuid, DNA_IPI_TRAP_ENABLE, (void *) id);
+      }
     }
-    else if (interrupt_manager . counter[id] == 2)
+    else if (interrupt_manager . counter[cpuid][id] == 2)
     {
-      cpu_trap_attach_isr (id, mode, interrupt_demultiplexer);
+      cpu_trap_attach_isr (cpuid, id, mode, interrupt_demultiplexer);
     }
 
     lock_release (& interrupt_manager . lock);

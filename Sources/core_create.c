@@ -74,7 +74,7 @@ status_t core_create (void)
      * Create the idle threads
      */
 
-    for (int32_t cpu_i = 0; cpu_i < cpu_mp_count; cpu_i++)
+    for (int32_t cpu_i = 0; cpu_i < CPU_MP_COUNT; cpu_i++)
     {
       /*
        * Create the Idle thread
@@ -117,7 +117,7 @@ status_t core_create (void)
      * We free each allocated thread and its stack
      */
 
-    for (int32_t cpu_i = 0; cpu_i < cpu_mp_count; cpu_i++)
+    for (int32_t cpu_i = 0; cpu_i < CPU_MP_COUNT; cpu_i++)
     {
       idle_thread = scheduler . cpu[cpu_i] . idle_thread;
 

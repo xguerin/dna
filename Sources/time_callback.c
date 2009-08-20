@@ -36,11 +36,12 @@ status_t time_callback (void * data)
  */
 
 {
-  bool reschedule = false, process_next_alarm = true;
-  alarm_t alarm = (alarm_t) data;
-  alarm_t next_alarm = NULL;
-  bigtime_t current_time = 0, quantum = 0;
   status_t status = DNA_OK;
+  alarm_t next_alarm = NULL;
+  alarm_t alarm = (alarm_t) data;
+  bigtime_t current_time = 0, quantum = 0;
+  bool reschedule = false, process_next_alarm = true;
+  cpu_t * cpu = & scheduler . cpu[cpu_mp_id ()];
 
   /*
    * Now we execute the alarm and those
@@ -52,12 +53,21 @@ status_t time_callback (void * data)
     status = alarm -> callback (alarm -> data);
     if (status == DNA_INVOKE_SCHEDULER) reschedule = true;
 
+    /*
+     * We lock the related cpu structure
+     */
+
+    lock_acquire (& cpu -> alarm_queue . lock);
+
+    /*
+     * We check whether or not the alarm has to be restarted
+     */
+
     if ((alarm -> mode & DNA_PERIODIC_ALARM) != 0)
     {
-      time_manager . system_timer . get (& current_time);
+      time_manager . system_timer . get (cpu -> id, & current_time);
       alarm -> deadline = alarm -> quantum +  current_time;
-      queue_insert (& time_manager . alarm_queue,
-          alarm_comparator, & alarm -> link);
+      queue_insert (& cpu -> alarm_queue, alarm_comparator, alarm);
     }
     else
     {
@@ -68,14 +78,12 @@ status_t time_callback (void * data)
      * Look through the alarms, and restart or cancel them if necessary
      */
 
-    lock_acquire (& time_manager . lock);
-
-    if (time_manager . alarm_queue . status != 0)
+    if (cpu -> alarm_queue . status != 0)
     {
-      next_alarm = queue_rem (& time_manager . alarm_queue);
-      time_manager . current_alarm = next_alarm;
+      next_alarm = queue_rem (& cpu -> alarm_queue);
+      cpu -> current_alarm = next_alarm;
 
-      time_manager . system_timer . get (& current_time);
+      time_manager . system_timer . get (cpu -> id, & current_time);
       quantum = next_alarm -> deadline - current_time;
 
       if (quantum <= DNA_TIMER_JIFFY)
@@ -85,16 +93,16 @@ status_t time_callback (void * data)
       else
       {
         process_next_alarm = false;
-        time_manager . system_timer . set (quantum, time_callback, next_alarm);
+        time_manager . system_timer . set (cpu -> id, quantum, next_alarm);
       }
     }
     else
     {
-      time_manager . current_alarm = NULL;
+      cpu -> current_alarm = NULL;
       process_next_alarm = false;
     }
 
-    lock_release (& time_manager . lock);
+    lock_release (& cpu -> alarm_queue . lock);
   }
   while (process_next_alarm);
 

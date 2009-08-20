@@ -21,6 +21,7 @@
 #ifndef DNA_CORE_SCHEDULER_PRIVATE_H
 #define DNA_CORE_SCHEDULER_PRIVATE_H
 
+#include <Private/Time.h>
 #include <Private/Thread.h>
 
 #include <Core/Core.h>
@@ -64,6 +65,9 @@ typedef struct _cpu
 
   thread_t current_thread;
   thread_t idle_thread;
+
+  alarm_t current_alarm;
+  queue_t alarm_queue;
 
   int8_t stack[DNA_IDLE_STACK_SIZE];
 }

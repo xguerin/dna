@@ -210,7 +210,7 @@
 
     <!-- Multiprocessor hooks -->
 
-    <method name="cpu_mp_count" return_type="int32_t"/>
+    <method name="CPU_MP_COUNT" return_type="int32_t"/>
 
     <method name="cpu_mp_id" return_type="int32_t"/>
 

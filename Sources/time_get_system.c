@@ -38,7 +38,7 @@ status_t time_get_system (bigtime_t * value)
   {
     ensure (time_manager . has_timer, DNA_NO_TIMER);
 
-    time_manager . system_timer . get (value);
+    time_manager . system_timer . get (0, value);
     return DNA_OK;
   }
 }

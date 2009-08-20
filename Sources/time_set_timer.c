@@ -27,12 +27,11 @@
  * SYNOPSIS
  */
 
-status_t time_set_timer (system_timer_t timer, bool force)
+status_t time_set_timer (system_timer_t timer)
 
 /*
  * ARGUMENTS
  * * timer : a timer
- * * force : force this timer, even if a timer has already been set
  *
  * SOURCE
  */
@@ -42,7 +41,7 @@ status_t time_set_timer (system_timer_t timer, bool force)
 
   watch (status_t)
   {
-    ensure (time_manager . has_timer || force, DNA_BAD_ARGUMENT);
+    ensure (! time_manager . has_timer, DNA_ERROR);
 
     /*
      * Set the timer to the time manager
