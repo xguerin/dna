@@ -56,14 +56,14 @@ int pthread_create (pthread_t *thread, pthread_attr_t *attr,
       if (attr -> stacksize == 0)
       {
         stack_base = malloc (0x8000);
-        attr -> stacksize = 0x8000;
+        new -> attributs -> stacksize = 0x8000;
       }
       else
       {
         stack_base = malloc (attr -> stacksize);
       }
 
-      attr -> stackaddr = stack_base;
+      new -> attributs -> stackaddr = stack_base;
     }
   }
 
