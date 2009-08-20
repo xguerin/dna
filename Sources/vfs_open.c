@@ -21,7 +21,7 @@
 #include <DnaTools/DnaTools.h>
 
 /****f* vfs/vfs_open
- * SUMMARY
+* SUMMARY
  * Open a file.
  *
  * SYNOPSIS
@@ -53,7 +53,7 @@ status_t vfs_open (char * restrict path, int32_t mode,
   void * data = NULL;
   void * file_data = NULL;
   char buffer[DNA_PATH_LENGTH], token[DNA_FILENAME_LENGTH];
-  fdarray_t fdarray = & fdarray_manager . fdarray[0];
+  fdarray_t fdarray = fdarray_manager . fdarray[0];
   interrupt_status_t it_status = 0;
   status_t status = DNA_OK;
 

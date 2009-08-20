@@ -46,7 +46,7 @@ status_t vfs_close (int16_t fd)
 {
   file_t file = NULL;
   status_t status = DNA_OK;
-  fdarray_t fdarray = & fdarray_manager . fdarray[0];
+  fdarray_t fdarray = fdarray_manager . fdarray[0];
   interrupt_status_t it_status = 0;
 
   watch (status_t)

@@ -73,7 +73,7 @@ typedef struct _fdarray
 typedef struct _fdarray_manager
 {
   spinlock_t lock;
-  struct _fdarray fdarray[DNA_MAX_FDARRAY];
+  fdarray_t fdarray[DNA_MAX_FDARRAY];
 }
 fdarray_manager_t;
 

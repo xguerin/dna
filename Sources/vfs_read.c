@@ -47,7 +47,7 @@ status_t vfs_read (int16_t fd, void * data, int32_t count, int32_t * p_ret)
 
 {
   file_t file = NULL;
-  fdarray_t fdarray = & fdarray_manager . fdarray[0];
+  fdarray_t fdarray = fdarray_manager . fdarray[0];
   int32_t n_data = count;
   interrupt_status_t it_status = 0;
   status_t status = DNA_OK;

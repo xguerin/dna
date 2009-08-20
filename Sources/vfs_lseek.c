@@ -45,7 +45,7 @@ status_t vfs_lseek (int16_t fd, int64_t offset, int32_t whence, int64_t * p_ret)
 
 {
   file_t file = NULL;
-  fdarray_t fdarray = & fdarray_manager . fdarray[0];
+  fdarray_t fdarray = fdarray_manager . fdarray[0];
   interrupt_status_t it_status = 0;
 
   watch (status_t)

@@ -47,7 +47,7 @@ status_t vfs_readdir (int16_t fd, directory_entry_t * entry_array,
   file_t file = NULL;
   int32_t n_data = count;
   status_t status = DNA_OK;
-  fdarray_t fdarray = & fdarray_manager . fdarray[0];
+  fdarray_t fdarray = fdarray_manager . fdarray[0];
   interrupt_status_t it_status = 0;
 
   watch (status_t);

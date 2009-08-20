@@ -47,7 +47,7 @@ status_t vfs_ioctl (int16_t fd, int32_t function,
 
 {
   file_t file = NULL;
-  fdarray_t fdarray = & fdarray_manager . fdarray[0];
+  fdarray_t fdarray = fdarray_manager . fdarray[0];
   interrupt_status_t it_status = 0;
   status_t status = DNA_OK;
 

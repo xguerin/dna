@@ -16,6 +16,7 @@
  */
 
 #include <Private/VirtualFileSystem.h>
+#include <MemoryManager/MemoryManager.h>
 #include <DnaTools/DnaTools.h>
 
 /****f* framework/vfs_create
@@ -39,6 +40,12 @@ status_t vfs_create (void)
   dna_memset (& vnode_manager, 0, sizeof (vnode_manager_t));
   dna_memset (& volume_manager, 0, sizeof (volume_manager_t));
   dna_memset (& fdarray_manager, 0, sizeof (fdarray_manager_t));
+
+  /*
+   * Allocate the default FdArray
+   */
+
+  fdarray_manager . fdarray[0] = kernel_malloc (sizeof (struct _fdarray), true);
 
   return DNA_OK;
 }
