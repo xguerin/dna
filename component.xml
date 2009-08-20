@@ -28,6 +28,7 @@
 
     <method name="semaphore_acquire" return_type="status_t">
       <argument name="sid" type="int32_t" direction="in"/>
+      <argument name="tokens" type="int32_t" direction="in"/>
       <argument name="flags" type="int32_t" direction="in"/>
       <argument name="timeout" type="bigtime_t" direction="in"/>
     </method>

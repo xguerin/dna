@@ -19,7 +19,9 @@
 #include <Processor/Processor.h>
 #include <DnaTools/DnaTools.h>
 
-status_t rdv_read (void * handler, void * destination, int64_t offset, int32_t * p_count) {
+status_t rdv_read (void * handler, void * destination,
+    int64_t offset, int32_t * p_count)
+{
   channel_rdv_t * rdv = handler;
   interrupt_status_t it_status = 0;
 
