@@ -26,7 +26,6 @@ status_t devfs_ioctl (void * ns, void * node, void * data,
   {
     ensure (ns != NULL, DNA_ERROR);
     ensure (node != NULL, DNA_ERROR);
-    ensure (function >= 0 && function <= DNA_CONTROL_CODES_END, DNA_ERROR);
 
     return inode -> dev_cmd -> control (data, function, arguments, p_ret);
   }
