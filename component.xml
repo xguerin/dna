@@ -11,6 +11,12 @@
   </provide>
 
   <require>
+    <!-- Application hook -->
+
+    <method name="main" return_type="int32_t">
+      <argument name="argc" type="int32_t" direction="in"/>
+      <argument name="argv" type="array of string" direction="in"/>
+    </method>
 
   </require>
 
