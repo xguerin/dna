@@ -104,8 +104,8 @@ extern status_t scheduler_elect (thread_t * p_thread, bool idle);
 extern status_t scheduler_dispatch (thread_t thread);
 extern status_t scheduler_alarm (void * data);
 
-extern status_t scheduler_push_cpu (void);
-extern status_t scheduler_pop_cpu (int32_t affinity, int32_t * p_id);
+extern status_t scheduler_push (void);
+extern status_t scheduler_pop (int32_t affinity, int32_t * p_id);
 
 extern status_t scheduler_switch (thread_t thread, queue_t * queue);
 

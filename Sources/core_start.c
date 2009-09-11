@@ -52,7 +52,7 @@ status_t core_start (void)
     }
     else
     {
-      status = scheduler_push_cpu ();
+      status = scheduler_push ();
       ensure (status == DNA_OK, status);
     }
 

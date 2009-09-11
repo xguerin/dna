@@ -19,14 +19,14 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* Core/scheduler_pop_cpu
+/****f* Core/scheduler_pop
  * SUMMARY
  * Get the next available CPU.
  *
  * SYNOPSIS
  */
 
-status_t scheduler_pop_cpu (int32_t affinity, int32_t * p_id)
+status_t scheduler_pop (int32_t affinity, int32_t * p_id)
 
 /*
  * ARGUMENTS

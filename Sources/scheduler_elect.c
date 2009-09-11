@@ -89,7 +89,7 @@ status_t scheduler_elect (thread_t * p_thread, bool idle)
 
     if (idle)
     {
-      status = scheduler_push_cpu ();
+      status = scheduler_push ();
       ensure (status == DNA_OK, status);
 
       *p_thread = scheduler . cpu[current_cpuid] . idle_thread;

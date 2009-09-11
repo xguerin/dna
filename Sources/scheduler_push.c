@@ -19,14 +19,14 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* Core/scheduler_push_cpu
+/****f* Core/scheduler_push
  * SUMMARY
  * Push the CPU(id) as ready.
  *
  * SYNOPSIS
  */
 
-status_t scheduler_push_cpu (void)
+status_t scheduler_push (void)
 
 /*
  * SOURCE
