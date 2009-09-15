@@ -71,6 +71,9 @@ status_t time_callback (void * data)
     }
     else
     {
+      lock_acquire (& time_manager . lock);
+      time_manager . alarm[alarm -> id] = NULL;
+      lock_release (& time_manager . lock);
       kernel_free (alarm);
     }
 

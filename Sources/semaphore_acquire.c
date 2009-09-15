@@ -156,7 +156,8 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
           lock_acquire (& sem -> lock);
 
           status = time_cancel_alarm (alarm);
-          check (invalid_alarm, status != DNA_ERROR, status);
+          check (invalid_alarm, status != DNA_NO_TIMER
+              && status != DNA_BAD_ARGUMENT, status);
 
           if (status == DNA_UNKNOWN_ALARM)
           {

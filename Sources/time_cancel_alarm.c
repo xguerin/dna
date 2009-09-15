@@ -33,7 +33,7 @@ status_t time_cancel_alarm (int32_t aid)
  * * alarm : the alarm to cancel
  *
  * RESULT
- * * DNA_ERROR if the alarm doesn't exist
+ * * DNA_UNKNOWN_ALARM if the alarm doesn't exist
  * * DNA_OK if the operation succeeded
  *
  * SOURCE
@@ -59,7 +59,7 @@ status_t time_cancel_alarm (int32_t aid)
     lock_acquire (& time_manager . lock);
 
     alarm = time_manager . alarm[aid];
-    check (alarm_error, alarm != NULL, DNA_ERROR);
+    check (alarm_error, alarm != NULL, DNA_UNKNOWN_ALARM);
 
     /*
      * Next, we lock the related CPU
@@ -102,6 +102,7 @@ status_t time_cancel_alarm (int32_t aid)
       else
       {
         queue_extract (& cpu -> alarm_queue, alarm);
+        time_manager . alarm[aid] = NULL;
         kernel_free (alarm);
       }
     }
