@@ -25,14 +25,14 @@
 #define DNA_FILENAME_LENGTH       256
 #define DNA_PATH_LENGTH           1024
 
-#define DNA_IDLE_STACK_SIZE       0x1000
-#define DNA_THREAD_STACK_SIZE     0x4000
+#define DNA_IDLE_STACK_SIZE       0x800
+#define DNA_THREAD_STACK_SIZE     0x2000
 
-#define DNA_MAX_CPU               8
+#define DNA_MAX_CPU               4
 #define DNA_MAX_SEM               16
-#define DNA_MAX_FILE              16
-#define DNA_MAX_FDARRAY           4
+#define DNA_MAX_FILE              8
+#define DNA_MAX_FDARRAY           1
 #define DNA_MAX_THREAD            128
-#define DNA_MAX_ALARM             128
+#define DNA_MAX_ALARM             16
 
 #endif
