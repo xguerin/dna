@@ -96,11 +96,11 @@ status_t core_create (void)
     }
 
     /*
-     * Create the root thread
+     * Create the main application thread
      */
 
-    status = thread_create (thread_root, NULL,
-        "RootThread", DNA_NO_AFFINITY, NULL,
+    status = thread_create (APP_ENTRY_POINT, NULL,
+        "ApplicationMain", DNA_NO_AFFINITY, NULL,
         DNA_THREAD_STACK_SIZE, & thread_id);
     check (create_threads, status == DNA_OK, DNA_ERROR);
 
