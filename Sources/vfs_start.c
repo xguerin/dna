@@ -35,14 +35,36 @@ status_t vfs_start (void)
  */
 
 {
+  int16_t dummy = -1;
   status_t status = DNA_OK;
 
   watch (status_t)
   {
+    /*
+     * Mounting the file systems
+     */
+
+    log (INFO_LEVEL, "Mounting the default file systems.");
+
     status = vfs_mount ("", "/", "rootfs", 0, NULL);
     ensure (status == DNA_OK, status);
 
     status = vfs_mount ("", "/devices", "devfs", 0, NULL);
+    ensure (status == DNA_OK, status);
+
+    /*
+     * Opening the default in/out/error files
+     */
+
+    log (INFO_LEVEL, "Opening the default in/out/error files.");
+
+    status = vfs_open ("/devices/console", 0, 0, & dummy);
+    ensure (status == DNA_OK, status);
+
+    status = vfs_open ("/devices/console", 0, 0, & dummy);
+    ensure (status == DNA_OK, status);
+
+    status = vfs_open ("/devices/console", 0, 0, & dummy);
     ensure (status == DNA_OK, status);
 
     return DNA_OK;
