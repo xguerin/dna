@@ -20,21 +20,25 @@
 #include <stdbool.h>
 #include <DnaTools/DnaTools.h>
 
-int32_t dna_itoa (int32_t integer, char * buffer) {
+int32_t dna_itoa (int32_t integer, char * buffer)
+{
   char ascii[64];
   int32_t value = integer, index = 0, rem = 0;
   bool negative = false;
 
-  if(value < 0) {
+  if(value < 0)
+  {
     value = -1 * value;
     negative = true;
   }
 
-  do {
+  do
+  {
     rem = value % 10;
     value = value / 10;
     ascii[index ++] = rem + '0';
-  } while(value > 0);
+  }
+  while(value > 0);
 
   if (negative) ascii[index ++] = '-';
 

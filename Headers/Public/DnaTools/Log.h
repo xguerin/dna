@@ -5,49 +5,35 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <DnaTools/DnaTools.h>
+#ifndef DNA_TOOLS_LOG_H
+#define DNA_TOOLS_LOG_H
 
-status_t queue_add (queue_t * queue, void * data)
-{
-  queue_item_t * item = data;
+#include <DnaTools/C.h>
+#include <Processor/Processor.h>
 
-  watch (status_t)
-  {
-    check (queue_error, item -> next == NULL, DNA_ERROR);
+#define PANIC_LEVEL 1
+#define INFO_LEVEL 2
+#define VERBOSE_LEVEL 3
 
-    if (queue -> status == 0)
-    {
-      queue -> head = item;
-      queue -> tail = item;
-    }
-    else
-    {
-      queue -> tail -> next = item;
-      queue -> tail = item;
-    }
-
-    queue -> status += 1;
-
-    return DNA_OK;
+#ifdef DNA_ENABLE_LOG
+#define log(level, string, ...)                               \
+  if (level <= DNA_ENABLE_LOG)                                \
+  {                                                           \
+    dna_printf ("<%d>(%s:%d): " string "\r\n", cpu_mp_id (),  \
+        __FUNCTION__, __LINE__,  ## __VA_ARGS__);             \
   }
+#else
+#define log(level, string, ...)
+#endif
 
-  rescue (queue_error)
-  {
-    log (PANIC_LEVEL, "Q(0x%x): status %d, item 0x%x",
-        queue, queue -> status, item);
-
-    leave;
-  }
-
-}
-
+#endif

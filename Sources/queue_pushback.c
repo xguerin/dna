@@ -43,7 +43,7 @@ status_t queue_pushback (queue_t * queue, void * data)
 
   rescue (queue_error)
   {
-    log (1, "Q(0x%x): status %d, item 0x%x",
+    log (PANIC_LEVEL, "Q(0x%x): status %d, item 0x%x",
         queue, queue -> status, item);
 
     leave;

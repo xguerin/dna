@@ -25,7 +25,7 @@
  * SYNOPSIS
  */
 
-void dna_printf (const char * restrict format, ...)
+void dna_printf (const char *  format, ...)
 
   /*
    * FUNCTION

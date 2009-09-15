@@ -15,33 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _DNALIBC_LIBOS_LIBC_H_
-#define _DNALIBC_LIBOS_LIBC_H_
+#ifndef DNA_TOOLS_C_H
+#define DNA_TOOLS_C_H
 
 #include <stddef.h>
 #include <stdint.h>
 
-extern void * dna_memcpy (void * restrict s1, const void * restrict s2, size_t n);
+extern void * dna_memcpy (void * s1, const void * s2, size_t n);
 extern void * dna_memset (void *s, int32_t c, size_t n);
 
-extern char * dna_strcpy (char * restrict s1, const char * restrict s2);
-extern char * dna_strcat (char * restrict dest, const char * restrict src);
+extern char * dna_strcpy (char *  s1, const char *  s2);
+extern char * dna_strcat (char *  dest, const char *  src);
 extern int32_t dna_strcmp (const char *s1, const char *s2);
 extern size_t dna_strlen (const char *s);
 
 extern int32_t dna_atoi (char * alpha);
 extern int32_t dna_itoa (int32_t integer, char * buffer);
 
-extern void dna_printf (const char * restrict format, ...);
-
-#ifdef DNA_ENABLE_LOG
-#define log(level, string, ...)                                                     \
-  if (level <= DNA_ENABLE_LOG)                                                      \
-  {                                                                                 \
-    dna_printf ("[%s:%d] " string "\r\n", __FUNCTION__, __LINE__,  ## __VA_ARGS__); \
-  }
-#else
-#define log(level, string, ...)
-#endif
+extern void dna_printf (const char *  format, ...);
 
 #endif

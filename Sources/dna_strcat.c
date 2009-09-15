@@ -18,7 +18,8 @@
 #include <stdint.h>
 #include <DnaTools/DnaTools.h>
 
-char * dna_strcat (char * restrict dest, const char * restrict src){
+char * dna_strcat (char *  dest, const char *  src)
+{
   char * s1 = dest;
   const char * s2 = src;
 

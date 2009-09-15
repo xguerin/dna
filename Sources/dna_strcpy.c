@@ -17,7 +17,8 @@
 
 #include <DnaTools/DnaTools.h>
 
-char * dna_strcpy (char * restrict s1, const char * restrict s2){
+char * dna_strcpy (char *  s1, const char *  s2)
+{
   char *s1_ptr = s1, *s2_ptr = (char *)s2;
   
   do *s1_ptr++ = *s2_ptr;
