@@ -33,6 +33,7 @@ void queue_extract (queue_t * queue, void * data)
     if (kitem -> next == NULL) queue -> tail = kitem;
   }
 
+  item -> next = NULL;
   queue -> status -= 1;
 }
 
