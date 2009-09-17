@@ -58,6 +58,14 @@ status_t core_create (void)
 
     dna_memset (& interrupt_manager, 0, sizeof (interrupt_manager_t));
 
+    for (int32_t i = 0; i < cpu_mp_count (); i += 1)
+    {
+      interrupt_manager . counter[i] = kernel_malloc (sizeof (int32_t) *
+          cpu_trap_count (), true);
+       interrupt_manager . isr_list[i] = kernel_malloc (sizeof (queue_t) *
+          cpu_trap_count (), true);
+    }
+
     /*
      * Initialize the time manager
      */
@@ -74,7 +82,7 @@ status_t core_create (void)
      * Create the idle threads
      */
 
-    for (int32_t cpu_i = 0; cpu_i < CPU_MP_COUNT; cpu_i++)
+    for (int32_t cpu_i = 0; cpu_i < cpu_mp_count (); cpu_i++)
     {
       /*
        * Create the Idle thread
@@ -117,7 +125,7 @@ status_t core_create (void)
      * We free each allocated thread and its stack
      */
 
-    for (int32_t cpu_i = 0; cpu_i < CPU_MP_COUNT; cpu_i++)
+    for (int32_t cpu_i = 0; cpu_i < cpu_mp_count (); cpu_i++)
     {
       idle_thread = scheduler . cpu[cpu_i] . idle_thread;
 

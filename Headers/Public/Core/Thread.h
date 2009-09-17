@@ -86,7 +86,9 @@ typedef struct _thread_info
   int32_t cpu_id;
   int32_t cpu_affinity;
   int32_t priority;
+  int32_t sem_tokens;
   thread_status_t status;
+  thread_status_t previous_status;
 
   bigtime_t kernel_time;
   bigtime_t user_time;

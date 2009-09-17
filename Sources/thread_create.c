@@ -57,7 +57,7 @@ status_t thread_create (thread_handler_t handler,
   {
     ensure (handler != NULL && name != NULL && tid != NULL, DNA_BAD_ARGUMENT);
     ensure (affinity == DNA_NO_AFFINITY || (affinity >= 0
-          && affinity < CPU_MP_COUNT), DNA_BAD_ARGUMENT);
+          && affinity < cpu_mp_count ()), DNA_BAD_ARGUMENT);
 
     /*
      * Allocate the new thread structure.
@@ -89,11 +89,12 @@ status_t thread_create (thread_handler_t handler,
     thread -> info . id = -1;
     thread -> info . cpu_id = -1;
     thread -> info . status = DNA_THREAD_SLEEP;
+    thread -> info . previous_status = DNA_THREAD_READY;
     dna_strcpy (thread -> info . name, name);
 
     if (affinity == DNA_NO_AFFINITY)
     {
-      thread -> info .cpu_affinity = CPU_MP_COUNT;
+      thread -> info .cpu_affinity = cpu_mp_count ();
     }
     else 
     {

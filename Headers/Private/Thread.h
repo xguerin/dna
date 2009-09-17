@@ -75,7 +75,6 @@ typedef struct _thread
   queue_item_t link;
 
   queue_t wait;
-  int32_t sem_tokens;
   spinlock_t lock;
 
   thread_info_t info;

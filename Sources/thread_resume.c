@@ -39,7 +39,7 @@ status_t thread_resume (int32_t id)
  */
 
 {
-  thread_t target = NULL;
+  thread_t thread = NULL;
   interrupt_status_t it_status = 0;
 
   watch (status_t)
@@ -47,20 +47,29 @@ status_t thread_resume (int32_t id)
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& scheduler . lock);
 
-    target = scheduler . thread[id];
+    thread = scheduler . thread[id];
+
     lock_release (& scheduler . lock);
+    check (bad_thread, thread != NULL, DNA_UNKNOWN_THREAD);
 
-    check (invalid_thread, target != NULL, DNA_UNKNOWN_THREAD);
-    check (invalid_thread, target -> info . status
-        == DNA_THREAD_SLEEP, DNA_ERROR);
+    lock_acquire (& thread -> lock);
+    check (bad_status, thread -> info . status == DNA_THREAD_SLEEP, DNA_ERROR);
 
-    scheduler_dispatch (target);
+    thread -> info . status = thread -> info . previous_status;
+    lock_release (& thread -> lock);
+
+    scheduler_dispatch (thread);
     cpu_trap_restore (it_status);
 
     return DNA_OK;
   }
 
-  rescue (invalid_thread)
+  rescue (bad_status)
+  {
+    lock_release (& thread -> lock);
+  }
+
+  rescue (bad_thread)
   {
     cpu_trap_restore (it_status);
     leave;

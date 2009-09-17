@@ -78,16 +78,16 @@ status_t semaphore_release (int32_t sid, int32_t tokens, int32_t flags)
       if (thread == NULL) break;
       else
       {
-        if (thread -> sem_tokens <= tokens)
+        if (thread -> info . sem_tokens <= tokens)
         {
-          tokens -= thread -> sem_tokens;
-          thread -> sem_tokens = 0;
+          tokens -= thread -> info . sem_tokens;
+          thread -> info . sem_tokens = 0;
 
           scheduler_dispatch (thread);
         }
         else
         {
-          thread -> sem_tokens -= tokens;
+          thread -> info . sem_tokens -= tokens;
           tokens = 0;
 
           queue_pushback (& sem -> waiting_queue, thread);

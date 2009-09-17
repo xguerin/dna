@@ -48,14 +48,27 @@ status_t ipi_callback (int32_t command, void * cookie)
     {
       case DNA_IPI_EXECUTE :
         {
-          thread_t target = cookie;
-          ensure (target != NULL, DNA_ERROR);
+          thread_t thread = cookie;
+          ensure (thread != NULL, DNA_ERROR);
 
-          log (VERBOSE_LEVEL, "%d EXECUTE %d", cpu_mp_id (), target -> info . id);
+          log (VERBOSE_LEVEL, "%d EXECUTE %d",
+              cpu_mp_id (), thread -> info . id);
 
-          status = scheduler_switch (target, NULL);
+          status = scheduler_switch (thread, NULL);
           ensure (status == DNA_OK, status);
 
+          break;
+        }
+
+      case DNA_IPI_SUSPEND :
+        {
+          thread_t thread = cookie;
+          ensure (thread != NULL, DNA_ERROR);
+
+          log (VERBOSE_LEVEL, "%d SUSPEND %d",
+              cpu_mp_id (), thread -> info . id);
+          
+          lock_release (& thread -> lock);
           break;
         }
 

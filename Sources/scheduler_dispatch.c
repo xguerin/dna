@@ -47,22 +47,12 @@ status_t scheduler_dispatch (thread_t thread)
     switch (status)
     {
       case DNA_OK :
-        lock_acquire (& thread -> lock); 
-        thread -> info . status = DNA_THREAD_RUNNING;
-        lock_release (& thread -> lock);
-
         cpu_mp_send_ipi (next_cpuid, DNA_IPI_EXECUTE, thread);
         break;
 
       case DNA_NO_AVAILABLE_CPU :
-        lock_acquire (& thread -> lock); 
-        thread -> info . status = DNA_THREAD_READY;
-
         lock_acquire (& scheduler . xt[thread -> info . cpu_affinity] . lock);
-        lock_release (& thread -> lock);
-
         queue_add (& scheduler . xt[thread -> info . cpu_affinity], thread);
-
         lock_release (& scheduler . xt[thread -> info . cpu_affinity] . lock);
         break;
 

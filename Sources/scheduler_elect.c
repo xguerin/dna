@@ -69,11 +69,11 @@ status_t scheduler_elect (thread_t * p_thread, bool idle)
      * If nothing is available, we look into the global thread list.
      */
 
-    if (scheduler . xt[CPU_MP_COUNT] . status != 0)
+    if (scheduler . xt[cpu_mp_count ()] . status != 0)
     {
-      lock_acquire (& scheduler . xt[CPU_MP_COUNT] . lock);
-      thread = queue_rem (& scheduler . xt[CPU_MP_COUNT]);
-      lock_release (& scheduler . xt[CPU_MP_COUNT] . lock);
+      lock_acquire (& scheduler . xt[cpu_mp_count ()] . lock);
+      thread = queue_rem (& scheduler . xt[cpu_mp_count ()]);
+      lock_release (& scheduler . xt[cpu_mp_count ()] . lock);
 
       if (thread != NULL)
       {

@@ -49,7 +49,7 @@ status_t interrupt_attach (int32_t cpuid, interrupt_id_t id,
 
   watch (status_t)
   {
-    ensure (id < CPU_TRAP_COUNT, DNA_BAD_ARGUMENT);
+    ensure (id < cpu_trap_count (), DNA_BAD_ARGUMENT);
 
     isr = kernel_malloc (sizeof (struct _isr), true);
     ensure (isr != NULL, DNA_OUT_OF_MEM);

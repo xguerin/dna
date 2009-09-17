@@ -41,36 +41,64 @@ status_t thread_suspend (int32_t id)
 
 {
   status_t status;
-  uint32_t current_cpuid = cpu_mp_id();
-  thread_t self = scheduler . cpu[current_cpuid] . current_thread;
   thread_t target = NULL;
+  uint32_t current_cpuid = cpu_mp_id();
+  thread_t thread = scheduler . thread[id];
   interrupt_status_t it_status = 0;
 
   watch (status_t)
   {
-    ensure (id == self -> info . id, DNA_NOT_IMPLEMENTED);
+    ensure (thread != NULL, DNA_BAD_ARGUMENT);
 
-    if (id == self -> info . id)
+    it_status = cpu_trap_mask_and_backup ();
+    lock_acquire (& thread -> lock);
+
+    check (bad_status, thread -> info . status != DNA_THREAD_ZOMBIE, DNA_ERROR);
+    check (bad_status, thread -> info . status != DNA_THREAD_SLEEP, DNA_ERROR);
+
+    if (thread -> info . status == DNA_THREAD_RUNNING)
     {
-      it_status = cpu_trap_mask_and_backup ();
-      self -> info . status = DNA_THREAD_SLEEP;
+      if (thread -> info . cpu_id == current_cpuid)
+      {
+        thread -> info . status = DNA_THREAD_SLEEP;
+        lock_release (& thread -> lock);
 
-      /*
-       * Elect a the next thread and run it
-       * If target is IDLE, we can safely push the CPU
-       * since we disabled the interrupts.
-       */
+        status = scheduler_elect (& target, true);
+        ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
 
-      status = scheduler_elect (& target, true);
-      ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
+        status = scheduler_switch (target, NULL);
+        ensure (status == DNA_OK, status);
+      }
+      else
+      {
+        cpu_mp_send_ipi (thread -> info . cpu_id,
+            DNA_IPI_SUSPEND, (void *) thread);
+      }
+    }
+    else
+    {
+      thread -> info . previous_status = thread -> info . status;
+      thread -> info . status = DNA_THREAD_SLEEP;
 
-      status = scheduler_switch (target, NULL);
-      ensure (status == DNA_OK, status);
+      if (thread -> info . previous_status == DNA_THREAD_READY)
+      {
+        lock_acquire (& scheduler . xt[thread -> info . cpu_affinity] . lock);
+        lock_release (& thread -> lock);
 
-      cpu_trap_restore(it_status);
+        queue_extract (& scheduler . xt[thread -> info . cpu_affinity], thread);
+        lock_release (& scheduler . xt[thread -> info . cpu_affinity] . lock);
+      }
+      else lock_release (& thread -> lock);
     }
 
+    cpu_trap_restore(it_status);
     return DNA_OK;
+  }
+
+  rescue (bad_status)
+  {
+    lock_release (& thread -> lock);
+    leave;
   }
 }
 
