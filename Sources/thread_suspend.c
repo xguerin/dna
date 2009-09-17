@@ -56,42 +56,71 @@ status_t thread_suspend (int32_t id)
     check (bad_status, thread -> info . status != DNA_THREAD_ZOMBIE, DNA_ERROR);
     check (bad_status, thread -> info . status != DNA_THREAD_SLEEP, DNA_ERROR);
 
-    if (thread -> info . status == DNA_THREAD_RUNNING)
+    switch (thread -> info . status)
     {
-      if (thread -> info . cpu_id == current_cpuid)
-      {
-        thread -> info . status = DNA_THREAD_SLEEP;
-        lock_release (& thread -> lock);
+      case DNA_THREAD_RUNNING :
+        {
+          if (thread -> info . cpu_id == current_cpuid)
+          {
+            thread -> info . previous_status = DNA_THREAD_READY;
+            thread -> info . status = DNA_THREAD_SLEEP;
+            lock_release (& thread -> lock);
 
-        status = scheduler_elect (& target, true);
-        ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
+            log (VERBOSE_LEVEL, "local suspend.");
 
-        status = scheduler_switch (target, NULL);
-        ensure (status == DNA_OK, status);
-      }
-      else
-      {
-        cpu_mp_send_ipi (thread -> info . cpu_id,
-            DNA_IPI_SUSPEND, (void *) thread);
-      }
+            status = scheduler_elect (& target, true);
+            ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
+
+            status = scheduler_switch (target, NULL);
+            ensure (status == DNA_OK, status);
+          }
+          else
+          {
+            lock_release (& thread -> lock);
+
+            log (VERBOSE_LEVEL, "remote suspend.");
+
+            cpu_mp_send_ipi (thread -> info . cpu_id,
+                DNA_IPI_SUSPEND, (void *) thread -> info . id);
+          }
+
+          break;
+        }
+
+      case DNA_THREAD_READY :
+        {
+          thread -> info . previous_status = thread -> info . status;
+          thread -> info . status = DNA_THREAD_SLEEP;
+
+          lock_acquire (& scheduler . xt[thread -> info . cpu_affinity] . lock);
+          lock_release (& thread -> lock);
+
+          queue_extract (& scheduler . xt[thread -> info . cpu_affinity], thread);
+          lock_release (& scheduler . xt[thread -> info . cpu_affinity] . lock);
+
+          log (VERBOSE_LEVEL, "READY suspend.");
+          break;
+        }
+
+      case DNA_THREAD_WAIT :
+        {
+          thread -> info . previous_status = thread -> info . status;
+          thread -> info . status = DNA_THREAD_SLEEP;
+
+          lock_release (& thread -> lock);
+          log (VERBOSE_LEVEL, "WAIT suspend.");
+
+          break;
+        }
+
+      default :
+        {
+          log (PANIC_LEVEL, "unknow thread status.");
+          break;
+        }
     }
-    else
-    {
-      thread -> info . previous_status = thread -> info . status;
-      thread -> info . status = DNA_THREAD_SLEEP;
 
-      if (thread -> info . previous_status == DNA_THREAD_READY)
-      {
-        lock_acquire (& scheduler . xt[thread -> info . cpu_affinity] . lock);
-        lock_release (& thread -> lock);
-
-        queue_extract (& scheduler . xt[thread -> info . cpu_affinity], thread);
-        lock_release (& scheduler . xt[thread -> info . cpu_affinity] . lock);
-      }
-      else lock_release (& thread -> lock);
-    }
-
-    cpu_trap_restore(it_status);
+    cpu_trap_restore (it_status);
     return DNA_OK;
   }
 

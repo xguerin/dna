@@ -82,8 +82,6 @@ void thread_exit (int32_t value)
 
   /*
    * Elect a the next thread and run it
-   * If target is IDLE, we can safely push the CPU
-   * since we disabled the interrupts.
    */
 
   status = scheduler_elect (& target, true);
@@ -95,8 +93,7 @@ void thread_exit (int32_t value)
   lock_release (& target -> lock);
 
   scheduler . cpu[current_cpuid] . current_thread = target;
-
-  cpu_context_load(& target -> context);
+  cpu_context_load (& target -> context);
 }
 
 /*

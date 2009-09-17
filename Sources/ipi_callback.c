@@ -49,10 +49,16 @@ status_t ipi_callback (int32_t command, void * cookie)
       case DNA_IPI_EXECUTE :
         {
           thread_t thread = cookie;
+          thread_t self = scheduler . cpu[cpu_mp_id ()] . current_thread;
           ensure (thread != NULL, DNA_ERROR);
 
-          log (VERBOSE_LEVEL, "%d EXECUTE %d",
-              cpu_mp_id (), thread -> info . id);
+          log (VERBOSE_LEVEL, "%d EXECUTE %d (was %d)",
+              cpu_mp_id (), thread -> info . id, self -> info . id);
+
+          lock_acquire (& self -> lock);
+          self -> info . status = DNA_THREAD_READY;
+          self -> info . previous_status = DNA_THREAD_RUNNING;
+          lock_release (& self -> lock);
 
           status = scheduler_switch (thread, NULL);
           ensure (status == DNA_OK, status);
@@ -62,13 +68,11 @@ status_t ipi_callback (int32_t command, void * cookie)
 
       case DNA_IPI_SUSPEND :
         {
-          thread_t thread = cookie;
-          ensure (thread != NULL, DNA_ERROR);
+          int32_t thread_id = (int32_t) cookie;
 
-          log (VERBOSE_LEVEL, "%d SUSPEND %d",
-              cpu_mp_id (), thread -> info . id);
+          log (VERBOSE_LEVEL, "%d SUSPEND %d", cpu_mp_id (), thread_id);
           
-          lock_release (& thread -> lock);
+          thread_suspend (thread_id);
           break;
         }
 
@@ -77,8 +81,8 @@ status_t ipi_callback (int32_t command, void * cookie)
           int32_t id = (int32_t) cookie;
 
           log (VERBOSE_LEVEL, "%d ENABLE %d", cpu_mp_id (), id);
-          cpu_trap_enable (id);
 
+          cpu_trap_enable (id);
           break;
         }
 

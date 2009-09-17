@@ -63,10 +63,10 @@ status_t scheduler_pop (int32_t affinity, int32_t * p_id)
         lock_release (& scheduler . cpu_pool . lock);
 
         cpu -> status = DNA_CPU_RUNNING;
+        lock_release (& cpu -> lock);
+
         id = cpu -> id;
         status = DNA_OK;
-
-        lock_release (& cpu -> lock);
       }
     }
     else
@@ -101,6 +101,6 @@ status_t scheduler_pop (int32_t affinity, int32_t * p_id)
 
 /*
  * NOTE
- * Interrupts must ne disabled.
+ * Interrupts must be disabled.
  ****/
 

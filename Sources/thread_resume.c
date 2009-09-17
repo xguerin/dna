@@ -58,9 +58,12 @@ status_t thread_resume (int32_t id)
     thread -> info . status = thread -> info . previous_status;
     lock_release (& thread -> lock);
 
-    scheduler_dispatch (thread);
-    cpu_trap_restore (it_status);
+    if (thread -> info . status == DNA_THREAD_READY)
+    {
+      scheduler_dispatch (thread);
+    }
 
+    cpu_trap_restore (it_status);
     return DNA_OK;
   }
 

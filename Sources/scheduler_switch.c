@@ -47,23 +47,23 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
     ensure (thread != NULL, DNA_BAD_ARGUMENT);
 
     /*
-     * Update the scheduler
-     */
-
-    scheduler . cpu[current_cpuid] . current_thread = thread;
-
-    /*
-     * Update the status of the target thread
-     */
-
-    thread -> info . status = DNA_THREAD_RUNNING;
-    thread -> info . cpu_id = current_cpuid;
-
-    /*
      * Update the status of the current thread
      */
 
+    lock_acquire (& self -> lock);
     self -> info . cpu_id = -1;
+
+    /*
+     * Compute the correct times if necessary
+     */
+
+    if (time_manager . has_timer)
+    {
+      time_manager . system_timer . get (current_cpuid, & current_time);
+      self -> info . kernel_time = current_time;
+      self -> info . kernel_time -= scheduler . cpu[current_cpuid] . lap_date;
+      scheduler . cpu[current_cpuid] . lap_date = current_time;
+    }
 
     /*
      * Save the current context
@@ -81,17 +81,25 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
       lock_release (& queue -> lock);
     }
 
+    lock_acquire (& thread -> lock);
+    lock_release (& self -> lock);
+
     /*
-     * Compute the correct times if necessary
+     * Update the status of the target thread
      */
 
-    if (time_manager . has_timer)
-    {
-      time_manager . system_timer . get (current_cpuid, & current_time);
-      self -> info . kernel_time = current_time;
-      self -> info . kernel_time -= scheduler . cpu[current_cpuid] . lap_date;
-      scheduler . cpu[current_cpuid] . lap_date = current_time;
-    }
+    thread -> info . status = DNA_THREAD_RUNNING;
+    thread -> info . cpu_id = current_cpuid;
+
+    lock_acquire (& scheduler . cpu[current_cpuid] . lock);
+    lock_release (& thread -> lock);
+
+    /*
+     * Update the processor's status
+     */
+    
+    scheduler . cpu[current_cpuid] . current_thread = thread;
+    lock_release (& scheduler . cpu[current_cpuid] . lock);
 
     /*
      * Load the target context

@@ -40,7 +40,7 @@ status_t time_callback (void * data)
   alarm_t next_alarm = NULL;
   alarm_t alarm = (alarm_t) data;
   bigtime_t current_time = 0, quantum = 0;
-  bool reschedule = false, process_next_alarm = true;
+  bool process_next_alarm = true;
   cpu_t * cpu = & scheduler . cpu[cpu_mp_id ()];
 
   /*
@@ -51,7 +51,6 @@ status_t time_callback (void * data)
   do
   {
     status = alarm -> callback (alarm -> data);
-    if (status == DNA_INVOKE_SCHEDULER) reschedule = true;
 
     /*
      * We lock the related cpu structure
@@ -109,11 +108,6 @@ status_t time_callback (void * data)
   }
   while (process_next_alarm);
 
-  /*
-   * And reschedule if necessary
-   */
-
-  if (reschedule) thread_yield ();
   return DNA_OK;
 }
 

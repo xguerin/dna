@@ -47,6 +47,9 @@ status_t scheduler_dispatch (thread_t thread)
     switch (status)
     {
       case DNA_OK :
+        log (VERBOSE_LEVEL, "dispatching %d on %d.",
+            thread -> info . id, next_cpuid);
+
         cpu_mp_send_ipi (next_cpuid, DNA_IPI_EXECUTE, thread);
         break;
 

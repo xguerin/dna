@@ -52,15 +52,14 @@ status_t thread_snooze (bigtime_t value)
 
     status = time_set_alarm (value, DNA_RELATIVE_ALARM | DNA_ONE_SHOT_ALARM,
         thread_alarm, self, & alarm_id);
-
     check (alarm_error, status == DNA_OK, status);
 
+    lock_acquire (& self -> lock);
     self -> info . status = DNA_THREAD_WAIT;
+    lock_release (& self -> lock);
 
     /*
      * Elect a the next thread and run it
-     * If target is IDLE, we can safely push the CPU
-     * since we disabled the interrupts.
      */
 
     status = scheduler_elect (& target, true);

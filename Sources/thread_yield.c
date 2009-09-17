@@ -50,9 +50,13 @@ status_t thread_yield (void)
 
     if (status == DNA_OK)
     {
+      lock_acquire (& self -> lock);
+
+      self -> info . previous_status = self -> info . status;
       self -> info . status = DNA_THREAD_READY;
 
       lock_acquire (& scheduler . xt[self -> info . cpu_affinity] . lock);
+      lock_release (& self -> lock);
 
       status = scheduler_switch (target,
           & scheduler . xt[self -> info . cpu_affinity]);
