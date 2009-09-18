@@ -62,11 +62,10 @@ status_t thread_suspend (int32_t id)
         {
           if (thread -> info . cpu_id == current_cpuid)
           {
-            thread -> info . previous_status = DNA_THREAD_READY;
             thread -> info . status = DNA_THREAD_SLEEP;
-            lock_release (& thread -> lock);
+            thread -> info . previous_status = DNA_THREAD_READY;
 
-            log (VERBOSE_LEVEL, "local suspend.");
+            log (VERBOSE_LEVEL, "Local RUN suspend.")
 
             status = scheduler_elect (& target, true);
             ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
@@ -76,12 +75,11 @@ status_t thread_suspend (int32_t id)
           }
           else
           {
+            log (VERBOSE_LEVEL, "Remote suspend.")
+
             lock_release (& thread -> lock);
-
-            log (VERBOSE_LEVEL, "remote suspend.");
-
-            cpu_mp_send_ipi (thread -> info . cpu_id,
-                DNA_IPI_SUSPEND, (void *) thread -> info . id);
+            cpu_mp_send_ipi (thread -> info . cpu_id, DNA_IPI_SUSPEND,
+                (void *) thread -> info . id);
           }
 
           break;
@@ -89,33 +87,33 @@ status_t thread_suspend (int32_t id)
 
       case DNA_THREAD_READY :
         {
-          thread -> info . previous_status = thread -> info . status;
+          log (VERBOSE_LEVEL, "Local READY suspend.")
+
           thread -> info . status = DNA_THREAD_SLEEP;
+          thread -> info . previous_status = DNA_THREAD_READY;
 
-          lock_acquire (& scheduler . xt[thread -> info . cpu_affinity] . lock);
+          lock_acquire (& scheduler . xt[thread -> info . affinity] . lock);
+          queue_extract (& scheduler . xt[thread -> info . affinity], thread);
+          lock_release (& scheduler . xt[thread -> info . affinity] . lock);
+
           lock_release (& thread -> lock);
-
-          queue_extract (& scheduler . xt[thread -> info . cpu_affinity], thread);
-          lock_release (& scheduler . xt[thread -> info . cpu_affinity] . lock);
-
-          log (VERBOSE_LEVEL, "READY suspend.");
           break;
         }
 
       case DNA_THREAD_WAIT :
         {
-          thread -> info . previous_status = thread -> info . status;
+          log (VERBOSE_LEVEL, "Local WAIT suspend.")
+
           thread -> info . status = DNA_THREAD_SLEEP;
-
+          thread -> info . previous_status = DNA_THREAD_WAIT;
           lock_release (& thread -> lock);
-          log (VERBOSE_LEVEL, "WAIT suspend.");
-
           break;
         }
 
       default :
         {
-          log (PANIC_LEVEL, "unknow thread status.");
+          log (PANIC_LEVEL, "unknown thread status.");
+          for (;;);
           break;
         }
     }

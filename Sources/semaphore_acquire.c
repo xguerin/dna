@@ -95,17 +95,12 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
         case -1 :
           lock_acquire (& self -> lock);
           self -> info . sem_tokens = -1 * rem_tokens;
+
+          self -> info . previous_status = DNA_THREAD_READY;
           self -> info . status = DNA_THREAD_WAIT;
-          lock_release (& self -> lock);
 
           lock_acquire (& sem -> waiting_queue . lock);
           lock_release (& sem -> lock);
-
-          /*
-           * Elect a the next thread and run it
-           * If target is IDLE, we can safely push the CPU
-           * since we disabled the interrupts.
-           */
 
           status = scheduler_elect (& thread, true);
           ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
@@ -138,17 +133,12 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
 
           lock_acquire (& self -> lock);
           self -> info . sem_tokens = -1 * rem_tokens;
+
+          self -> info . previous_status = DNA_THREAD_READY;
           self -> info . status = DNA_THREAD_WAIT;
-          lock_release (& self -> lock);
 
           lock_acquire (& sem -> waiting_queue . lock);
           lock_release (& sem -> lock);
-
-          /*
-           * Elect a the next thread and run it
-           * If target is IDLE, we can safely push the CPU
-           * since we disabled the interrupts.
-           */
 
           status = scheduler_elect (& thread, true);
           ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);

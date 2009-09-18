@@ -80,6 +80,7 @@ status_t semaphore_linked_acquire (int32_t sid, int32_t lsid)
      * Release the second semaphore
      */
 
+#if 0 // FIXME -> the token counting is wrong
     lsem -> tokens += 1;
 
     lock_acquire (& lsem -> waiting_queue . lock);
@@ -88,14 +89,8 @@ status_t semaphore_linked_acquire (int32_t sid, int32_t lsid)
     thread = queue_rem (& lsem -> waiting_queue);
     lock_release (& lsem -> waiting_queue . lock);
 
-    if (thread != NULL) 
-    {
-      thread -> info . status = DNA_THREAD_READY;
-
-      lock_acquire (& scheduler . xt[thread -> info . cpu_affinity] . lock);
-      queue_add (& scheduler . xt[thread -> info . cpu_affinity], thread);
-      lock_release (& scheduler . xt[thread -> info . cpu_affinity] . lock);
-    }
+    if (thread != NULL) scheduler_dispatch (thread);
+#endif
 
     /*
      * Acquire the first semaphore

@@ -93,6 +93,8 @@ status_t core_create (void)
           DNA_IDLE_STACK_SIZE, & thread_id);
       check (create_threads, status == DNA_OK, DNA_ERROR);
 
+      scheduler . thread[thread_id] -> info . status = DNA_THREAD_READY;
+
       /*
        * Deal with the new thread
        */

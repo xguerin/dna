@@ -42,11 +42,23 @@ status_t thread_alarm (void * data)
     ensure (thread != NULL, DNA_ERROR);
 
     lock_acquire (& thread -> lock);
-    thread -> info . status = DNA_THREAD_READY;
-    thread -> info . previous_status = DNA_THREAD_WAIT;
-    lock_release (& thread -> lock);
 
-    scheduler_dispatch (thread);
+    if (thread -> info . status == DNA_THREAD_WAIT)
+    {
+      thread -> info . previous_status = thread -> info . status;
+      thread -> info . status = DNA_THREAD_READY;
+      scheduler_dispatch (thread);
+    }
+    else 
+    {
+      if (thread -> info . previous_status == DNA_THREAD_WAIT)
+      {
+        thread -> info . previous_status = DNA_THREAD_READY;
+      }
+
+      lock_release (& thread -> lock);
+    }
+
     return DNA_OK;
   }
 }

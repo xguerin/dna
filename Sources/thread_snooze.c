@@ -56,11 +56,6 @@ status_t thread_snooze (bigtime_t value)
 
     lock_acquire (& self -> lock);
     self -> info . status = DNA_THREAD_WAIT;
-    lock_release (& self -> lock);
-
-    /*
-     * Elect a the next thread and run it
-     */
 
     status = scheduler_elect (& target, true);
     ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);

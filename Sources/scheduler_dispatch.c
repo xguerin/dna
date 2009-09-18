@@ -41,22 +41,23 @@ status_t scheduler_dispatch (thread_t thread)
 
   watch (status_t)
   {
-    status = scheduler_pop (thread -> info . cpu_affinity, & next_cpuid);
+    ensure (thread != NULL, DNA_BAD_ARGUMENT);
+
+    status = scheduler_pop (thread -> info . affinity, & next_cpuid);
     ensure (status != DNA_BAD_ARGUMENT, status);
 
     switch (status)
     {
       case DNA_OK :
-        log (VERBOSE_LEVEL, "dispatching %d on %d.",
-            thread -> info . id, next_cpuid);
-
         cpu_mp_send_ipi (next_cpuid, DNA_IPI_EXECUTE, thread);
         break;
 
       case DNA_NO_AVAILABLE_CPU :
-        lock_acquire (& scheduler . xt[thread -> info . cpu_affinity] . lock);
-        queue_add (& scheduler . xt[thread -> info . cpu_affinity], thread);
-        lock_release (& scheduler . xt[thread -> info . cpu_affinity] . lock);
+        lock_acquire (& scheduler . xt[thread -> info . affinity] . lock);
+        lock_release (& thread -> lock);
+
+        queue_add (& scheduler . xt[thread -> info . affinity], thread);
+        lock_release (& scheduler . xt[thread -> info . affinity] . lock);
         break;
 
       default:

@@ -56,13 +56,16 @@ status_t scheduler_elect (thread_t * p_thread, bool idle)
     {
       lock_acquire (& scheduler . xt[current_cpuid] . lock);
       thread = queue_rem (& scheduler . xt[current_cpuid]);
-      lock_release (& scheduler . xt[current_cpuid] . lock);
 
       if (thread != NULL)
       {
+        lock_acquire (& thread -> lock);
+        lock_release (& scheduler . xt[current_cpuid] . lock);
+
         *p_thread = thread;
         return DNA_OK;
       }
+      else lock_release (& scheduler . xt[current_cpuid] . lock);
     }
 
     /*
@@ -77,9 +80,13 @@ status_t scheduler_elect (thread_t * p_thread, bool idle)
 
       if (thread != NULL)
       {
+        lock_acquire (& thread -> lock);
+        lock_release (& scheduler . xt[cpu_mp_count ()] . lock);
+
         *p_thread = thread;
         return DNA_OK;
       }
+      else lock_release (& scheduler . xt[cpu_mp_count ()] . lock);
     }
 
     /*
@@ -92,6 +99,7 @@ status_t scheduler_elect (thread_t * p_thread, bool idle)
       status = scheduler_push ();
       ensure (status == DNA_OK, status);
 
+      lock_acquire (& scheduler . cpu[current_cpuid] . idle_thread -> lock);
       *p_thread = scheduler . cpu[current_cpuid] . idle_thread;
       return DNA_OK;
     }

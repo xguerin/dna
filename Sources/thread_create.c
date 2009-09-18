@@ -94,11 +94,11 @@ status_t thread_create (thread_handler_t handler,
 
     if (affinity == DNA_NO_AFFINITY)
     {
-      thread -> info .cpu_affinity = cpu_mp_count ();
+      thread -> info .affinity = cpu_mp_count ();
     }
     else 
     {
-      thread -> info . cpu_affinity = affinity;
+      thread -> info . affinity = affinity;
     }
 
     thread -> signature . handler = handler;

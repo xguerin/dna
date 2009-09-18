@@ -69,9 +69,7 @@ status_t thread_wait (int32_t id, int32_t * value)
 
     if (thread -> info . status != DNA_THREAD_ZOMBIE)
     {
-
       lock_acquire (& thread -> wait . lock);
-      lock_release (& thread -> lock);
 
       /*
        * If not, put ourselve in wait mode
@@ -81,8 +79,6 @@ status_t thread_wait (int32_t id, int32_t * value)
 
       /*
        * Elect a the next thread and run it
-       * If target is IDLE, we can safely push the CPU
-       * since we disabled the interrupts.
        */
 
       status = scheduler_elect (& target, true);

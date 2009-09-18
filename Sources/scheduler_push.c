@@ -50,5 +50,7 @@ status_t scheduler_push (void)
 }
 
 /*
+ * NOTE
+ * Interrupts must be disabled.
  ****/
 

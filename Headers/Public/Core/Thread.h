@@ -84,7 +84,7 @@ typedef struct _thread_info
   char name[DNA_NAME_LENGTH];
 
   int32_t cpu_id;
-  int32_t cpu_affinity;
+  int32_t affinity;
   int32_t priority;
   int32_t sem_tokens;
   thread_status_t status;

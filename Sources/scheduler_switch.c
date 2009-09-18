@@ -37,7 +37,7 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
  */
 
 {
-  uint32_t current_cpuid = cpu_mp_id();
+  uint32_t current_cpuid = cpu_mp_id ();
   bigtime_t current_time = 0;
   extern uint32_t __scheduler_switch_end;
   thread_t self = scheduler . cpu[current_cpuid] . current_thread;
@@ -50,7 +50,6 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
      * Update the status of the current thread
      */
 
-    lock_acquire (& self -> lock);
     self -> info . cpu_id = -1;
 
     /*
@@ -62,7 +61,6 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
       time_manager . system_timer . get (current_cpuid, & current_time);
       self -> info . kernel_time = current_time;
       self -> info . kernel_time -= scheduler . cpu[current_cpuid] . lap_date;
-      scheduler . cpu[current_cpuid] . lap_date = current_time;
     }
 
     /*
@@ -81,13 +79,13 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
       lock_release (& queue -> lock);
     }
 
-    lock_acquire (& thread -> lock);
     lock_release (& self -> lock);
 
     /*
      * Update the status of the target thread
      */
 
+    thread -> info . previous_status = thread -> info . status;
     thread -> info . status = DNA_THREAD_RUNNING;
     thread -> info . cpu_id = current_cpuid;
 
@@ -98,6 +96,7 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
      * Update the processor's status
      */
     
+    scheduler . cpu[current_cpuid] . lap_date = current_time;
     scheduler . cpu[current_cpuid] . current_thread = thread;
     lock_release (& scheduler . cpu[current_cpuid] . lock);
 

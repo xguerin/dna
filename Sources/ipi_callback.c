@@ -52,13 +52,14 @@ status_t ipi_callback (int32_t command, void * cookie)
           thread_t self = scheduler . cpu[cpu_mp_id ()] . current_thread;
           ensure (thread != NULL, DNA_ERROR);
 
+#if 0
           log (VERBOSE_LEVEL, "%d EXECUTE %d (was %d)",
               cpu_mp_id (), thread -> info . id, self -> info . id);
+#endif
 
           lock_acquire (& self -> lock);
           self -> info . status = DNA_THREAD_READY;
           self -> info . previous_status = DNA_THREAD_RUNNING;
-          lock_release (& self -> lock);
 
           status = scheduler_switch (thread, NULL);
           ensure (status == DNA_OK, status);
@@ -80,7 +81,9 @@ status_t ipi_callback (int32_t command, void * cookie)
         {
           int32_t id = (int32_t) cookie;
 
+#if 0
           log (VERBOSE_LEVEL, "%d ENABLE %d", cpu_mp_id (), id);
+#endif
 
           cpu_trap_enable (id);
           break;

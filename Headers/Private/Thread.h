@@ -22,6 +22,7 @@
 #define DNA_CORE_THREAD_PRIVATE_H
 
 #include <stdint.h>
+#include <stdbool.h>
 #include <stdarg.h>
 
 #include <Private/Time.h>
