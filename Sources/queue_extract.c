@@ -17,23 +17,30 @@
 
 #include <DnaTools/DnaTools.h>
 
-void queue_extract (queue_t * queue, void * data)
+status_t queue_extract (queue_t * queue, void * data)
 {
   queue_item_t * item = data;
   queue_item_t * kitem = queue -> head;
 
-  if (queue -> head == item)
+  watch (status_t)
   {
-    queue -> head = item -> next;
-  }
-  else
-  {
-    while (kitem -> next != item) kitem = kitem -> next;
-    kitem -> next = item -> next;
-    if (kitem -> next == NULL) queue -> tail = kitem;
-  }
+    ensure (item -> next != NULL, DNA_ERROR);
 
-  item -> next = NULL;
-  queue -> status -= 1;
+    if (queue -> head == item)
+    {
+      queue -> head = item -> next;
+    }
+    else
+    {
+      while (kitem -> next != item) kitem = kitem -> next;
+      kitem -> next = item -> next;
+      if (kitem -> next == NULL) queue -> tail = kitem;
+    }
+
+    item -> next = NULL;
+    queue -> status -= 1;
+
+    return DNA_OK;
+  }
 }
 

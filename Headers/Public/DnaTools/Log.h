@@ -25,15 +25,36 @@
 #define INFO_LEVEL 2
 #define VERBOSE_LEVEL 3
 
-#ifdef DNA_ENABLE_LOG
-#define log(level, string, ...)                               \
-  if (level <= DNA_ENABLE_LOG)                                \
-  {                                                           \
+#define LOG(string, ...)                                      \
     dna_printf ("<%d>(%s:%d): " string "\r\n", cpu_mp_id (),  \
-        __FUNCTION__, __LINE__,  ## __VA_ARGS__);             \
-  }
+        __FUNCTION__, __LINE__,  ## __VA_ARGS__);
+
+#ifndef DNA_ENABLE_LOG
+#define DNA_ENABLE_LOG 0
 #else
-#define log(level, string, ...)
+#if DNA_ENABLE_LOG < PANIC_LEVEL || DNA_ENABLE_LOG > VERBOSE_LEVEL
+#error __FUNCTION ", " __LINE__ ": invalid log level"
 #endif
+#endif
+
+#if (DNA_ENABLE_LOG >= PANIC_LEVEL)
+#define LOG_PANIC_LEVEL(string, ...) LOG(string, ## __VA_ARGS__)
+#else
+#define LOG_PANIC_LEVEL(string, ...)
+#endif
+
+#if (DNA_ENABLE_LOG >= INFO_LEVEL)
+#define LOG_INFO_LEVEL(string, ...) LOG(string, ## __VA_ARGS__)
+#else
+#define LOG_INFO_LEVEL(string, ...)
+#endif
+
+#if (DNA_ENABLE_LOG == VERBOSE_LEVEL)
+#define LOG_VERBOSE_LEVEL(string, ...) LOG(string, ## __VA_ARGS__)
+#else
+#define LOG_VERBOSE_LEVEL(string, ...)
+#endif
+
+#define log(level, string, ...) LOG_##level (string, ## __VA_ARGS__)
 
 #endif

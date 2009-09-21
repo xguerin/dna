@@ -28,7 +28,7 @@
 #define DNA_IDLE_STACK_SIZE       0x800
 #define DNA_THREAD_STACK_SIZE     0x2000
 
-#define DNA_MAX_CPU               4
+#define DNA_MAX_CPU               16
 #define DNA_MAX_SEM               32
 #define DNA_MAX_FILE              32
 #define DNA_MAX_FDARRAY           1
