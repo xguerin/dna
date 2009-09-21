@@ -30,6 +30,14 @@
 
     <type name="spinlock_t"/>
 
+    <method name="lock_create" return_type="status_t">
+      <argument name="lock" type="spinlock_t" direction="out"/>
+    </method>
+
+    <method name="lock_destroy" return_type="void">
+      <argument name="lock" type="spinlock_t" direction="out"/>
+    </method>
+
     <method name="lock_acquire" return_type="void">
       <argument name="lock" type="spinlock_t" direction="inout"/>
     </method>

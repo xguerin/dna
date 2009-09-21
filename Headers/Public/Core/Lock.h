@@ -35,6 +35,9 @@ typedef volatile int32_t spinlock_t;
 /*
  ****/
 
+extern status_t lock_create (spinlock_t * lock);
+extern void lock_destroy (spinlock_t * lock);
+
 extern void lock_acquire (spinlock_t * lock);
 extern void lock_release (spinlock_t * lock);
 
