@@ -61,7 +61,7 @@ typedef struct pthread_mutex
 {
   int32_t flags;
   int32_t status;
-  int32_t semaphore;
+  spinlock_t lock;
 }
 pthread_mutex_t;
 
