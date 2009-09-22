@@ -40,23 +40,12 @@ status_t time_callback (void * data)
   alarm_t next_alarm = NULL;
   alarm_t alarm = (alarm_t) data;
   bigtime_t current_time = 0, quantum = 0;
-  bool process_next_alarm = true;
+  bool process_next_alarm = true, delete_alarm = false;
   cpu_t * cpu = & scheduler . cpu[cpu_mp_id ()];
-
-  /*
-   * Now we execute the alarm and those
-   * which deadline is included in the Jiffy
-   */
 
   do
   {
-    status = alarm -> callback (alarm -> data);
-
-    /*
-     * We lock the related cpu structure
-     */
-
-    lock_acquire (& cpu -> alarm_queue . lock);
+    time_manager . system_timer . get (cpu -> id, & current_time);
 
     /*
      * We check whether or not the alarm has to be restarted
@@ -68,29 +57,42 @@ status_t time_callback (void * data)
       alarm -> deadline = alarm -> quantum +  current_time;
       queue_insert (& cpu -> alarm_queue, alarm_comparator, alarm);
     }
-    else
-    {
-      lock_acquire (& time_manager . lock);
-      time_manager . alarm[alarm -> id] = NULL;
-      lock_release (& time_manager . lock);
-      kernel_free (alarm);
-    }
+    else delete_alarm = true;
 
     /*
      * Look through the alarms, and restart or cancel them if necessary
      */
 
-    if (cpu -> alarm_queue . status != 0)
+    if (cpu -> alarm_queue . status == 0)
     {
+      cpu -> current_alarm = NULL;
+      process_next_alarm = false;
+    }
+    else
+    {
+      lock_acquire (& cpu -> alarm_queue . lock);
+
       next_alarm = queue_rem (& cpu -> alarm_queue);
       cpu -> current_alarm = next_alarm;
 
-      time_manager . system_timer . get (cpu -> id, & current_time);
       quantum = next_alarm -> deadline - current_time;
 
       if (quantum <= DNA_TIMER_JIFFY)
       {
-        log (PANIC_LEVEL, "low quantum (%d)", (int32_t) quantum);
+        log (PANIC_LEVEL, "alarm %d, low quantum (%d)",
+            next_alarm -> id, (int32_t) quantum);
+
+        status = alarm -> callback (alarm -> data);
+
+        if (delete_alarm)
+        {
+          delete_alarm = false;
+          lock_acquire (& time_manager . lock);
+          time_manager . alarm[alarm -> id] = NULL;
+          lock_release (& time_manager . lock);
+          kernel_free (alarm);
+        }
+
         alarm = next_alarm;
       }
       else
@@ -98,16 +100,25 @@ status_t time_callback (void * data)
         process_next_alarm = false;
         time_manager . system_timer . set (cpu -> id, quantum, next_alarm);
       }
+      
+      lock_release (& cpu -> alarm_queue . lock);
     }
-    else
-    {
-      cpu -> current_alarm = NULL;
-      process_next_alarm = false;
-    }
-
-    lock_release (& cpu -> alarm_queue . lock);
   }
   while (process_next_alarm);
+
+  /*
+   * Execute the next alarm
+   */
+
+  status = alarm -> callback (alarm -> data);
+
+  if (delete_alarm)
+  {
+    lock_acquire (& time_manager . lock);
+    time_manager . alarm[alarm -> id] = NULL;
+    lock_release (& time_manager . lock);
+    kernel_free (alarm);
+  }
 
   return DNA_OK;
 }

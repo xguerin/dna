@@ -26,7 +26,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Core/Core.h>
 
-#define DNA_TIMER_JIFFY 1000
+#define DNA_TIMER_JIFFY 10000
 
 /****t* time/alarm_t
  * SUMMARY
