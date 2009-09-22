@@ -75,7 +75,7 @@ status_t thread_wait (int32_t id, int32_t * value)
        * If not, put ourselve in wait mode
        */
 
-      self -> info . status = DNA_THREAD_WAIT;
+      self -> info . status = DNA_THREAD_WAITING;
 
       /*
        * Elect a the next thread and run it

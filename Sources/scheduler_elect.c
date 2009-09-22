@@ -52,27 +52,31 @@ status_t scheduler_elect (thread_t * p_thread, bool idle)
      * First, we look into the local thread list.
      */
 
-    if (scheduler . xt[current_cpuid] . status != 0)
+    while (scheduler . xt[current_cpuid] . status != 0)
     {
       lock_acquire (& scheduler . xt[current_cpuid] . lock);
       thread = queue_rem (& scheduler . xt[current_cpuid]);
+      lock_release (& scheduler . xt[current_cpuid] . lock);
 
       if (thread != NULL)
       {
         lock_acquire (& thread -> lock);
-        lock_release (& scheduler . xt[current_cpuid] . lock);
 
-        *p_thread = thread;
-        return DNA_OK;
+        if (thread -> info . status == DNA_THREAD_READY)
+        {
+          *p_thread = thread;
+          return DNA_OK;
+        }
+        
+        lock_release (& thread -> lock);
       }
-      else lock_release (& scheduler . xt[current_cpuid] . lock);
     }
 
     /*
      * If nothing is available, we look into the global thread list.
      */
 
-    if (scheduler . xt[cpu_mp_count ()] . status != 0)
+    while (scheduler . xt[cpu_mp_count ()] . status != 0)
     {
       lock_acquire (& scheduler . xt[cpu_mp_count ()] . lock);
       thread = queue_rem (& scheduler . xt[cpu_mp_count ()]);
@@ -81,12 +85,15 @@ status_t scheduler_elect (thread_t * p_thread, bool idle)
       if (thread != NULL)
       {
         lock_acquire (& thread -> lock);
-        lock_release (& scheduler . xt[cpu_mp_count ()] . lock);
 
-        *p_thread = thread;
-        return DNA_OK;
+        if (thread -> info . status == DNA_THREAD_READY)
+        {
+          *p_thread = thread;
+          return DNA_OK;
+        }
+
+        lock_release (& thread -> lock);
       }
-      else lock_release (& scheduler . xt[cpu_mp_count ()] . lock);
     }
 
     /*

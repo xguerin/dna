@@ -88,7 +88,7 @@ status_t thread_create (thread_handler_t handler,
 
     thread -> info . id = -1;
     thread -> info . cpu_id = -1;
-    thread -> info . status = DNA_THREAD_SLEEP;
+    thread -> info . status = DNA_THREAD_SUSPENDED;
     thread -> info . previous_status = DNA_THREAD_READY;
     dna_strcpy (thread -> info . name, name);
 

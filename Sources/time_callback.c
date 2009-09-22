@@ -90,6 +90,7 @@ status_t time_callback (void * data)
 
       if (quantum <= DNA_TIMER_JIFFY)
       {
+        log (PANIC_LEVEL, "low quantum (%d)", (int32_t) quantum);
         alarm = next_alarm;
       }
       else

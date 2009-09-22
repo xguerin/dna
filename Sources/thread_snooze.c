@@ -48,14 +48,16 @@ status_t thread_snooze (bigtime_t value)
 
   watch (status_t)
   {
-    it_status = cpu_trap_mask_and_backup();
+    it_status = cpu_trap_mask_and_backup ();
 
     status = time_set_alarm (value, DNA_RELATIVE_ALARM | DNA_ONE_SHOT_ALARM,
         thread_alarm, self, & alarm_id);
     check (alarm_error, status == DNA_OK, status);
 
     lock_acquire (& self -> lock);
-    self -> info . status = DNA_THREAD_WAIT;
+
+    self -> info . status = DNA_THREAD_SLEEPING;
+    self -> info . previous_status = DNA_THREAD_RUNNING;
 
     status = scheduler_elect (& target, true);
     ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
@@ -63,13 +65,13 @@ status_t thread_snooze (bigtime_t value)
     status = scheduler_switch (target, NULL);
     ensure (status == DNA_OK, status);
 
-    cpu_trap_restore(it_status);
+    cpu_trap_restore (it_status);
     return DNA_OK;
   }
 
   rescue (alarm_error)
   {
-    cpu_trap_restore(it_status);
+    cpu_trap_restore (it_status);
     leave;
   }
 }

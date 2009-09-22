@@ -41,7 +41,6 @@ status_t thread_resume (int32_t id)
 {
   thread_t thread = NULL;
   interrupt_status_t it_status = 0;
-  thread_status_t thread_status;
 
   watch (status_t)
   {
@@ -54,14 +53,23 @@ status_t thread_resume (int32_t id)
     check (bad_thread, thread != NULL, DNA_UNKNOWN_THREAD);
 
     lock_acquire (& thread -> lock);
-    check (bad_status, thread -> info . status == DNA_THREAD_SLEEP, DNA_ERROR);
 
-    thread_status = thread -> info . status;
+    check (bad_status,
+        thread -> info . status == DNA_THREAD_SUSPENDED,
+        DNA_ERROR);
+
     thread -> info . status = thread -> info . previous_status;
-    thread -> info . previous_status = thread_status;
+
+    if (thread -> info . status == DNA_THREAD_SLEEPING ||
+        thread -> info . status == DNA_THREAD_WAITING)
+    {
+      thread -> info . previous_status = DNA_THREAD_RUNNING;
+    }
+    else thread -> info . previous_status = DNA_THREAD_NOSTATUS;
 
     if (thread -> info . status == DNA_THREAD_READY)
     {
+      thread -> info . status = DNA_THREAD_READY;
       scheduler_dispatch (thread);
     }
     else lock_release (& thread -> lock);

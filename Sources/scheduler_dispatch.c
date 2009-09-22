@@ -49,19 +49,27 @@ status_t scheduler_dispatch (thread_t thread)
     switch (status)
     {
       case DNA_OK :
-        cpu_mp_send_ipi (next_cpuid, DNA_IPI_EXECUTE, thread);
-        break;
+        {
+          cpu_mp_send_ipi (next_cpuid, DNA_IPI_EXECUTE, thread);
+          break;
+        }
 
       case DNA_NO_AVAILABLE_CPU :
-        lock_acquire (& scheduler . xt[thread -> info . affinity] . lock);
-        lock_release (& thread -> lock);
+        {
+          lock_acquire (& scheduler . xt[thread -> info . affinity] . lock);
+          lock_release (& thread -> lock);
 
-        queue_add (& scheduler . xt[thread -> info . affinity], thread);
-        lock_release (& scheduler . xt[thread -> info . affinity] . lock);
-        break;
+          queue_add (& scheduler . xt[thread -> info . affinity], thread);
+          lock_release (& scheduler . xt[thread -> info . affinity] . lock);
+
+          break;
+        }
 
       default:
-        return DNA_ERROR;
+        {
+          log (PANIC_LEVEL, "unknown return value");
+          return DNA_ERROR;
+        }
     }
 
     return DNA_OK;
@@ -69,5 +77,7 @@ status_t scheduler_dispatch (thread_t thread)
 }
 
 /*
+ * NOTE
+ * Interrupts must be disabled.
  ****/
 

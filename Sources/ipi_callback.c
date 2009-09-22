@@ -50,6 +50,7 @@ status_t ipi_callback (int32_t command, void * cookie)
         {
           thread_t thread = cookie;
           thread_t self = scheduler . cpu[cpu_mp_id ()] . current_thread;
+
           ensure (thread != NULL, DNA_ERROR);
 
           log (VERBOSE_LEVEL, "%d EXECUTE %d (was %d)",

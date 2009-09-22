@@ -43,20 +43,36 @@ status_t thread_alarm (void * data)
 
     lock_acquire (& thread -> lock);
 
-    if (thread -> info . status == DNA_THREAD_WAIT)
+    switch (thread -> info . status)
     {
-      thread -> info . previous_status = thread -> info . status;
-      thread -> info . status = DNA_THREAD_READY;
-      scheduler_dispatch (thread);
-    }
-    else 
-    {
-      if (thread -> info . previous_status == DNA_THREAD_WAIT)
-      {
-        thread -> info . previous_status = DNA_THREAD_READY;
-      }
+      case DNA_THREAD_SUSPENDED :
+        {
+          log (VERBOSE_LEVEL, "thread %d supended, leave it this way",
+              thread -> info . id);
+          
+          thread -> info . previous_status = DNA_THREAD_READY;
+          lock_release (& thread -> lock);
 
-      lock_release (& thread -> lock);
+          break;
+        }
+
+      case DNA_THREAD_SLEEPING :
+        {
+          thread -> info . status = DNA_THREAD_READY;
+          thread -> info . previous_status = DNA_THREAD_SLEEPING;
+
+          scheduler_dispatch (thread);
+          break;
+        }
+
+      default :
+        {
+          log (PANIC_LEVEL, "status %x not handled.",
+              thread -> info . status);
+
+          lock_release (& thread -> lock);
+          break;
+        }
     }
 
     return DNA_OK;

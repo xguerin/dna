@@ -96,8 +96,8 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
           lock_acquire (& self -> lock);
           self -> info . sem_tokens = -1 * rem_tokens;
 
-          self -> info . previous_status = DNA_THREAD_READY;
-          self -> info . status = DNA_THREAD_WAIT;
+          self -> info . status = DNA_THREAD_WAITING;
+          self -> info . previous_status = DNA_THREAD_RUNNING;
 
           lock_acquire (& sem -> waiting_queue . lock);
           lock_release (& sem -> lock);
@@ -134,8 +134,8 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
           lock_acquire (& self -> lock);
           self -> info . sem_tokens = -1 * rem_tokens;
 
-          self -> info . previous_status = DNA_THREAD_READY;
-          self -> info . status = DNA_THREAD_WAIT;
+          self -> info . status = DNA_THREAD_WAITING;
+          self -> info . previous_status = DNA_THREAD_RUNNING;
 
           lock_acquire (& sem -> waiting_queue . lock);
           lock_release (& sem -> lock);

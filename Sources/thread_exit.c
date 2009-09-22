@@ -72,7 +72,9 @@ void thread_exit (int32_t value)
   while ((p = queue_rem (& self -> wait)) != NULL)
   {
     lock_acquire (& p -> lock);
+
     p -> info . status = DNA_THREAD_READY;
+    p -> info . previous_status = DNA_THREAD_WAITING;
 
     lock_acquire (& scheduler . xt[p -> info . affinity] . lock);
     lock_release (& p -> lock);
@@ -88,7 +90,7 @@ void thread_exit (int32_t value)
    */
 
   status = scheduler_elect (& target, true);
-  panic (status == DNA_OK);
+  panic (status != DNA_OK);
 
   target -> info . status = DNA_THREAD_RUNNING;
   target -> info . cpu_id = current_cpuid;

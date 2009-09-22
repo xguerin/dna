@@ -46,7 +46,6 @@ status_t semaphore_release (int32_t sid, int32_t tokens, int32_t flags)
   semaphore_t sem = NULL;
   interrupt_status_t it_status = 0;
   status_t status = DNA_OK;
-  thread_status_t thread_status;
   bool smart_to_reschedule = false;
 
   watch (status_t)
@@ -87,17 +86,15 @@ status_t semaphore_release (int32_t sid, int32_t tokens, int32_t flags)
           tokens -= thread -> info . sem_tokens;
           thread -> info . sem_tokens = 0;
 
-          thread_status = thread -> info . status;
-          thread -> info . status = thread -> info . previous_status;
-          thread -> info . previous_status = thread_status;
-
-          lock_release (& thread -> lock);
-
-          if (thread -> info . status == DNA_THREAD_READY)
+          if (thread -> info . status == DNA_THREAD_WAITING)
           {
+            thread -> info . status = DNA_THREAD_READY;
+            thread -> info . previous_status = DNA_THREAD_WAITING;
+
             scheduler_dispatch (thread);
             smart_to_reschedule = true;
           }
+          else lock_release (& thread -> lock);
         }
         else
         {
