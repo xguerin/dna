@@ -25,7 +25,7 @@
 #include <stdbool.h>
 #include <stdarg.h>
 
-#include <Private/Time.h>
+#include <Private/Alarm.h>
 #include <Core/Core.h>
 
 #include <DnaTools/DnaTools.h>

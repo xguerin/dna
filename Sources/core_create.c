@@ -70,7 +70,7 @@ status_t core_create (void)
      * Initialize the time manager
      */
 
-    dna_memset (& time_manager, 0, sizeof (time_manager_t));
+    dna_memset (& alarm_manager, 0, sizeof (alarm_manager_t));
 
     /*
      * Initialize the semaphore pool

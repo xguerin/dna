@@ -64,13 +64,14 @@ status_t semaphore_release (int32_t sid, int32_t tokens, int32_t flags)
     check (invalid_semaphore, sem != NULL, DNA_BAD_SEM_ID);
 
     lock_acquire (& sem -> lock);
-    lock_acquire (& sem -> waiting_queue . lock);
     lock_release (& semaphore_pool . lock);
 
     /*
      * Decide what to do according to the number
      * of tokens required by a potential waiting thread
      */
+
+    lock_acquire (& sem -> waiting_queue . lock);
 
     while (tokens != 0)
     {

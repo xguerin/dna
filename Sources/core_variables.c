@@ -61,14 +61,14 @@ interrupt_manager_t interrupt_manager;
 /*
  ****/
 
-/****v* Core/time_manager
+/****v* Core/alarm_manager
  * SUMMARY
  * The time manager instance.
  *
  * SOURCE
  */
 
-time_manager_t time_manager;
+alarm_manager_t alarm_manager;
 
 /*
  ****/

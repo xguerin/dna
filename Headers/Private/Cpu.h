@@ -18,44 +18,65 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DNA_CORE_SCHEDULER_PRIVATE_H
-#define DNA_CORE_SCHEDULER_PRIVATE_H
+#ifndef DNA_CORE_CPU_PRIVATE_H
+#define DNA_CORE_CPU_PRIVATE_H
 
-#include <Private/Cpu.h>
+#include <Private/Alarm.h>
 #include <Private/Thread.h>
 
 #include <Core/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****t* scheduler/scheduler_t
+/****t* scheduler/cpu_status_t
  * SUMMARY
- * Scheduler manager type.
+ * CPU status type.
  *
  * SOURCE
  */
 
-typedef struct _scheduler
+typedef enum _cpu_status
 {
-  spinlock_t lock;
-
-  cpu_t cpu[DNA_MAX_CPU];
-  queue_t cpu_pool;
-
-  queue_t xt[DNA_MAX_CPU + 1];
-  thread_t thread[DNA_MAX_THREAD];
+  DNA_CPU_READY               = 0xFACE,
+  DNA_CPU_RUNNING             = 0xBEEF,
+  DNA_CPU_SERVICING_INTERRUPT = 0xB10C,
+  DNA_CPU_DISABLED            = 0xDEAD
 }
-scheduler_t;
+cpu_status_t;
 
 /*
  ****/
 
-extern scheduler_t scheduler;
+/****t* scheduler/cpu_t
+ * SUMMARY
+ * CPU type. Contains various information concerning
+ * a CPU execution context.
+ *
+ * SOURCE
+ */
 
-extern status_t scheduler_elect (thread_t * p_thread);
-extern status_t scheduler_dispatch (thread_t thread);
+typedef struct _cpu
+{
+  queue_item_t link;
 
-extern status_t scheduler_pop (int32_t affinity, int32_t * p_id);
-extern status_t scheduler_switch (thread_t thread, queue_t * queue);
+  int32_t id;
+  cpu_status_t status;
+
+  spinlock_t lock;
+  spinlock_t ipi_lock;
+  bigtime_t lap_date;
+
+  thread_t current_thread;
+  thread_t idle_thread;
+
+  alarm_t current_alarm;
+  queue_t alarm_queue;
+
+  int8_t stack[DNA_IDLE_STACK_SIZE];
+}
+cpu_t;
+
+/*
+ ****/
 
 #endif
 

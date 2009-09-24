@@ -1,6 +1,6 @@
-/****h* core/time
+/****h* core/alarm
  * SUMMARY
- * Time management.
+ * Alarm management.
  ****
  * Copyright (C) 2007 TIMA Laboratory
  *
@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DNA_CORE_TIME_PRIVATE_H
-#define DNA_CORE_TIME_PRIVATE_H
+#ifndef DNA_CORE_ALARM_PRIVATE_H
+#define DNA_CORE_ALARM_PRIVATE_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -54,29 +54,26 @@ typedef struct _alarm
 /*
  ****/
 
-/****t* time/time_manager_t
+/****t* time/alarm_manager_t
  * SUMMARY
  * The time manager type.
  *
  * SOURCE
  */
 
-typedef struct _time_manager
+typedef struct _alarm_manager
 {
   spinlock_t lock;
-
   alarm_t alarm[DNA_MAX_ALARM];
-
-  bool has_timer;
-  system_timer_t system_timer;
 }
-time_manager_t;
+alarm_manager_t;
 
 /*
  ****/
 
-extern time_manager_t time_manager;
+extern alarm_manager_t alarm_manager;
 
+extern void timer_callback (void);
 extern bool alarm_comparator (void * item1, void * item2);
 extern bool alarm_id_inspector (void * item, void * a0, void * a1);
 

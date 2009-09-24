@@ -58,6 +58,9 @@ status_t thread_alarm (void * data)
 
       case DNA_THREAD_SLEEPING :
         {
+          log (VERBOSE_LEVEL, "thread %d sleeping, resuming...",
+              thread -> info . id);
+ 
           thread -> info . status = DNA_THREAD_READY;
           thread -> info . previous_status = DNA_THREAD_SLEEPING;
 

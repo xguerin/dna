@@ -44,6 +44,8 @@ status_t ipi_callback (int32_t command, void * cookie)
 
   watch (status_t)
   {
+    lock_release (& scheduler . cpu[cpu_mp_id ()] . ipi_lock);
+
     switch (command)
     {
       case DNA_IPI_EXECUTE :
@@ -53,10 +55,11 @@ status_t ipi_callback (int32_t command, void * cookie)
 
           ensure (thread != NULL, DNA_ERROR);
 
-          log (VERBOSE_LEVEL, "%d EXECUTE %d (was %d)",
+          log (INFO_LEVEL, "%d EXECUTE %d (was %d)",
               cpu_mp_id (), thread -> info . id, self -> info . id);
 
           lock_acquire (& self -> lock);
+
           self -> info . status = DNA_THREAD_READY;
           self -> info . previous_status = DNA_THREAD_RUNNING;
 
@@ -70,7 +73,7 @@ status_t ipi_callback (int32_t command, void * cookie)
         {
           int32_t thread_id = (int32_t) cookie;
 
-          log (VERBOSE_LEVEL, "%d SUSPEND %d", cpu_mp_id (), thread_id);
+          log (INFO_LEVEL, "%d SUSPEND %d", cpu_mp_id (), thread_id);
           
           thread_suspend (thread_id);
           break;

@@ -21,12 +21,13 @@
 #ifndef DNA_CORE_PRIVATE_H
 #define DNA_CORE_PRIVATE_H
 
+#include <Private/Alarm.h>
+#include <Private/Cpu.h>
 #include <Private/Framework.h>
 #include <Private/Interrupt.h>
 #include <Private/Scheduler.h>
 #include <Private/Semaphore.h>
 #include <Private/Thread.h>
-#include <Private/Time.h>
 
 #include <DnaTools/DnaTools.h>
 #include <Core/Core.h>

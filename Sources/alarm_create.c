@@ -20,14 +20,14 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* time/time_set_alarm
+/****f* alarm/alarm_create
  * SUMMARY
- * Set an alarm.
+ * Create an alarm.
  *
  * SYNOPSIS
  */
 
-status_t time_set_alarm (bigtime_t quantum, int32_t mode,
+status_t alarm_create (bigtime_t quantum, int32_t mode,
     alarm_callback_t callback, void * data, int32_t * aid)
 
 /*
@@ -53,7 +53,6 @@ status_t time_set_alarm (bigtime_t quantum, int32_t mode,
   watch (status_t)
   {
     ensure (! (mode & DNA_ABSOLUTE_ALARM), DNA_NOT_IMPLEMENTED);
-    ensure (time_manager . has_timer, DNA_NO_TIMER);
 
     /*
      * Allocate the new alarm
@@ -70,7 +69,7 @@ status_t time_set_alarm (bigtime_t quantum, int32_t mode,
     new_alarm -> mode = mode;
     new_alarm -> cpu_id = current_cpuid;
 
-    time_manager . system_timer . get (current_cpuid, & current_time);
+    cpu_timer_get (current_cpuid, & current_time);
     new_alarm -> quantum = quantum;
     new_alarm -> deadline = quantum + current_time;
     new_alarm -> callback = callback;
@@ -81,19 +80,19 @@ status_t time_set_alarm (bigtime_t quantum, int32_t mode,
      */
 
     it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& time_manager . lock);
+    lock_acquire (& alarm_manager . lock);
 
     for (int32_t i = 0; i < DNA_MAX_THREAD; i += 1)
     {
-      if (time_manager . alarm[i] == NULL)
+      if (alarm_manager . alarm[i] == NULL)
       {
-        time_manager . alarm[i] = new_alarm;
+        alarm_manager . alarm[i] = new_alarm;
         new_alarm -> id = i;
         break;
       }
     }
 
-    lock_release (& time_manager . lock);
+    lock_release (& alarm_manager . lock);
     cpu_trap_restore(it_status);
 
     check (error, new_alarm -> id != -1, DNA_ERROR);
@@ -108,7 +107,7 @@ status_t time_set_alarm (bigtime_t quantum, int32_t mode,
     if (cpu -> current_alarm == NULL)
     {
        cpu -> current_alarm = new_alarm;
-       time_manager . system_timer . set (current_cpuid, quantum, new_alarm);
+       cpu_timer_set (current_cpuid, quantum);
     }
     else
     {
@@ -116,11 +115,11 @@ status_t time_set_alarm (bigtime_t quantum, int32_t mode,
 
       if (old_alarm -> deadline > new_alarm -> deadline)
       {
-        time_manager . system_timer . cancel (current_cpuid);
+        cpu_timer_cancel (current_cpuid);
         cpu -> current_alarm = new_alarm;
 
         queue_insert (& cpu -> alarm_queue, alarm_comparator, old_alarm);
-        time_manager . system_timer . set (current_cpuid, quantum, new_alarm);
+        cpu_timer_set (current_cpuid, quantum);
       }
       else
       {

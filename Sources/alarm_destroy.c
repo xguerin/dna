@@ -19,14 +19,14 @@
 #include <DnaTools/DnaTools.h>
 #include <MemoryManager/MemoryManager.h>
 
-/****f* Core/time_cancel_alarm
+/****f* alarm/alarm_destroy
  * SUMMARY
- * Cancel an existing alarm.
+ * Destroy an existing alarm.
  *
  * SYNOPSIS
  */
 
-status_t time_cancel_alarm (int32_t aid)
+status_t alarm_destroy (int32_t aid)
 
 /*
  * ARGUMENTS
@@ -49,16 +49,15 @@ status_t time_cancel_alarm (int32_t aid)
   watch (status_t)
   {
     ensure (aid >= 0 && aid < DNA_MAX_ALARM, DNA_BAD_ARGUMENT);
-    ensure (time_manager . has_timer, DNA_NO_TIMER);
 
     /*
      * First, we lock the time manager and get the alarm
      */
 
     it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& time_manager . lock);
+    lock_acquire (& alarm_manager . lock);
 
-    alarm = time_manager . alarm[aid];
+    alarm = alarm_manager . alarm[aid];
     check (alarm_error, alarm != NULL, DNA_UNKNOWN_ALARM);
 
     /*
@@ -74,19 +73,19 @@ status_t time_cancel_alarm (int32_t aid)
 
     if (cpu -> current_alarm != NULL && cpu -> current_alarm -> id == aid)
     {
-      time_manager . system_timer . cancel (cpu -> id);
+      cpu_timer_cancel (cpu -> id);
 
-      time_manager . alarm[aid] = NULL;
+      alarm_manager . alarm[aid] = NULL;
       kernel_free (alarm);
 
       if (cpu -> alarm_queue . status != 0)
       {
         alarm = queue_rem (& cpu -> alarm_queue);
-        time_manager . system_timer . get (cpu -> id, & current_time);
+        cpu_timer_get (cpu -> id, & current_time);
 
         quantum = alarm -> deadline - current_time;
         cpu -> current_alarm = alarm;
-        time_manager . system_timer . set (cpu -> id, quantum, alarm);
+        cpu_timer_set (cpu -> id, quantum);
       }
       else
       {
@@ -102,13 +101,13 @@ status_t time_cancel_alarm (int32_t aid)
       else
       {
         queue_extract (& cpu -> alarm_queue, alarm);
-        time_manager . alarm[aid] = NULL;
+        alarm_manager . alarm[aid] = NULL;
         kernel_free (alarm);
       }
     }
 
     lock_release (& cpu -> lock);
-    lock_release (& time_manager . lock);
+    lock_release (& alarm_manager . lock);
 
     cpu_trap_restore(it_status);
     return status;
@@ -116,7 +115,7 @@ status_t time_cancel_alarm (int32_t aid)
 
   rescue (alarm_error)
   {
-    lock_release (& time_manager . lock);
+    lock_release (& alarm_manager . lock);
     cpu_trap_restore(it_status);
     leave;
   }

@@ -24,7 +24,7 @@
 #include <stdint.h>
 #include <Processor/Processor.h>
 
-#include <Core/Time.h>
+#include <Core/Alarm.h>
 #include <DnaTools/DnaTools.h>
 
 /****d* thread/DNA_NO_AFFINITY
@@ -50,7 +50,7 @@ typedef enum _thread_status
 {
   DNA_THREAD_READY      = 0xFACE,
   DNA_THREAD_RUNNING    = 0xBEEF,
-  DNA_THREAD_SLEEPING     = 0xBEDD,
+  DNA_THREAD_SLEEPING   = 0xBEDD,
   DNA_THREAD_SUSPENDED  = 0xD15A,
   DNA_THREAD_WAITING    = 0xB10C,
   DNA_THREAD_ZOMBIE     = 0xDEAD,

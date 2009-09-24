@@ -44,8 +44,8 @@ status_t interrupt_attach (int32_t cpuid, interrupt_id_t id,
  */
 
 {
-  interrupt_status_t it_status = 0;
   isr_t isr = NULL;
+  interrupt_status_t it_status = 0;
 
   watch (status_t)
   {
@@ -72,6 +72,7 @@ status_t interrupt_attach (int32_t cpuid, interrupt_id_t id,
       }
       else
       {
+        lock_acquire (& scheduler . cpu[cpuid] . ipi_lock);
         cpu_mp_send_ipi (cpuid, DNA_IPI_TRAP_ENABLE, (void *) id);
       }
     }

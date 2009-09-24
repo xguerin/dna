@@ -1,6 +1,6 @@
 /****h* core/time
  * SUMMARY
- * Time management.
+ * Alarm management.
  ****
  * Copyright (C) 2007 TIMA Laboratory
  *
@@ -18,29 +18,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DNA_CORE_TIME_PUBLIC_H
-#define DNA_CORE_TIME_PUBLIC_H
+#ifndef DNA_CORE_ALARM_PUBLIC_H
+#define DNA_CORE_ALARM_PUBLIC_H
 
 #include <stdint.h>
 #include <stdbool.h>
 #include <DnaTools/DnaTools.h>
+#include <Processor/Processor.h>
 
 #define DNA_PERIODIC_ALARM    0x1
 #define DNA_ONE_SHOT_ALARM    0x2
 #define DNA_RELATIVE_ALARM    0x4
 #define DNA_ABSOLUTE_ALARM    0x8
-
-/****t* time/bigtime_t
- * SUMMARY
- * 64-bit precision time type.
- *
- * SOURCE
- */
-
-typedef int64_t bigtime_t;
-
-/*
- ****/
 
 /****t* time/alarm_callback_t
  * SUMMARY
@@ -54,33 +43,10 @@ typedef status_t (* alarm_callback_t) (void * data);
 /*
  ****/
 
-/****t* time/system_timer_t
- * SUMMARY
- * The system timer type.
- *
- * SOURCE
- */
-
-typedef struct _system_timer
-{
-  status_t (* set) (int32_t id, bigtime_t quantum, void * data);
-  status_t (* get) (int32_t id, bigtime_t * value);
-  status_t (* cancel) (int32_t id);
-}
-system_timer_t;
-
-/*
- ****/
-
-extern status_t time_callback (void * data);
-
-extern status_t time_set_timer (system_timer_t timer);
-extern status_t time_get_system (bigtime_t * value);
-
-extern status_t time_set_alarm (bigtime_t quantum, int32_t mode,
+extern status_t alarm_create (bigtime_t quantum, int32_t mode,
     alarm_callback_t callback, void * data, int32_t * aid);
-extern status_t time_cancel_alarm (int32_t aid);
-extern status_t time_reset_alarm (int32_t aid);
+
+extern status_t alarm_destroy (int32_t aid);
 
 #endif
 

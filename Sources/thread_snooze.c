@@ -50,7 +50,7 @@ status_t thread_snooze (bigtime_t value)
   {
     it_status = cpu_trap_mask_and_backup ();
 
-    status = time_set_alarm (value, DNA_RELATIVE_ALARM | DNA_ONE_SHOT_ALARM,
+    status = alarm_create (value, DNA_RELATIVE_ALARM | DNA_ONE_SHOT_ALARM,
         thread_alarm, self, & alarm_id);
     check (alarm_error, status == DNA_OK, status);
 
@@ -59,7 +59,7 @@ status_t thread_snooze (bigtime_t value)
     self -> info . status = DNA_THREAD_SLEEPING;
     self -> info . previous_status = DNA_THREAD_RUNNING;
 
-    status = scheduler_elect (& target, true);
+    status = scheduler_elect (& target);
     ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
 
     status = scheduler_switch (target, NULL);

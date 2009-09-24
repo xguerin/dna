@@ -89,7 +89,7 @@ void thread_exit (int32_t value)
    * Elect a the next thread and run it
    */
 
-  status = scheduler_elect (& target, true);
+  status = scheduler_elect (& target);
   panic (status != DNA_OK);
 
   target -> info . status = DNA_THREAD_RUNNING;

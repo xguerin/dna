@@ -50,6 +50,10 @@ status_t scheduler_dispatch (thread_t thread)
     {
       case DNA_OK :
         {
+          log (VERBOSE_LEVEL, "Remote execute %d on %d.",
+              thread -> info . id, next_cpuid);
+
+          lock_acquire (& scheduler . cpu[next_cpuid] . ipi_lock);
           cpu_mp_send_ipi (next_cpuid, DNA_IPI_EXECUTE, thread);
           break;
         }

@@ -45,7 +45,7 @@ status_t thread_yield (void)
   {
     it_status = cpu_trap_mask_and_backup();
 
-    status = scheduler_elect (& thread, false);
+    status = scheduler_elect (& thread);
     ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
 
     if (status == DNA_OK)

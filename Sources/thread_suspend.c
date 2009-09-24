@@ -42,7 +42,7 @@ status_t thread_suspend (int32_t id)
 {
   status_t status;
   thread_t target = NULL;
-  uint32_t current_cpuid = cpu_mp_id();
+  uint32_t current_cpuid = cpu_mp_id(), next_cpuid;
   thread_t thread = scheduler . thread[id];
   interrupt_status_t it_status = 0;
 
@@ -67,9 +67,9 @@ status_t thread_suspend (int32_t id)
             thread -> info . status = DNA_THREAD_SUSPENDED;
             thread -> info . previous_status = DNA_THREAD_READY;
 
-            log (VERBOSE_LEVEL, "Local RUN suspend.")
+            log (VERBOSE_LEVEL, "Local RUN suspend %d.", thread -> info . id)
 
-            status = scheduler_elect (& target, true);
+            status = scheduler_elect (& target);
             ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
 
             status = scheduler_switch (target, NULL);
@@ -77,10 +77,15 @@ status_t thread_suspend (int32_t id)
           }
           else
           {
-            log (VERBOSE_LEVEL, "Remote suspend.")
+            log (VERBOSE_LEVEL, "Remote suspend %d on %d.",
+                thread -> info . id, thread -> info . cpu_id);
 
+            next_cpuid = thread -> info . cpu_id;
+
+            lock_acquire (& scheduler . cpu[next_cpuid] . ipi_lock);
             lock_release (& thread -> lock);
-            cpu_mp_send_ipi (thread -> info . cpu_id, DNA_IPI_SUSPEND,
+
+            cpu_mp_send_ipi (next_cpuid, DNA_IPI_SUSPEND,
                 (void *) thread -> info . id);
           }
 
@@ -89,7 +94,7 @@ status_t thread_suspend (int32_t id)
 
       case DNA_THREAD_READY :
         {
-          log (VERBOSE_LEVEL, "Local READY suspend.")
+          log (VERBOSE_LEVEL, "Local READY suspend %d.", thread -> info . id)
 
           thread -> info . status = DNA_THREAD_SUSPENDED;
           thread -> info . previous_status = DNA_THREAD_READY;
@@ -104,7 +109,7 @@ status_t thread_suspend (int32_t id)
 
       case DNA_THREAD_SLEEPING :
         {
-          log (VERBOSE_LEVEL, "Local SLEEP suspend.")
+          log (VERBOSE_LEVEL, "Local SLEEP suspend %d.", thread -> info . id)
 
           thread -> info . status = DNA_THREAD_SUSPENDED;
           thread -> info . previous_status = DNA_THREAD_SLEEPING;
@@ -114,7 +119,7 @@ status_t thread_suspend (int32_t id)
 
       case DNA_THREAD_WAITING :
         {
-          log (VERBOSE_LEVEL, "Local WAIT suspend.")
+          log (VERBOSE_LEVEL, "Local WAIT suspend %d.", thread -> info . id)
 
           thread -> info . status = DNA_THREAD_SUSPENDED;
           thread -> info . previous_status = DNA_THREAD_WAITING;
@@ -136,6 +141,7 @@ status_t thread_suspend (int32_t id)
 
   rescue (bad_status)
   {
+    log (PANIC_LEVEL, "Oups! bad status");
     lock_release (& thread -> lock);
     leave;
   }

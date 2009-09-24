@@ -1,4 +1,4 @@
-/****h* semaphore/operation
+/****h* core/semaphore
  * SUMMARY
  * Semaphore management.
  ****

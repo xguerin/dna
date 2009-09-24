@@ -102,7 +102,7 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
           lock_acquire (& sem -> waiting_queue . lock);
           lock_release (& sem -> lock);
 
-          status = scheduler_elect (& thread, true);
+          status = scheduler_elect (& thread);
           ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
 
           status = scheduler_switch (thread, & sem -> waiting_queue);
@@ -127,7 +127,7 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
          */
 
         default :
-          status = time_set_alarm (timeout, DNA_RELATIVE_ALARM
+          status = alarm_create (timeout, DNA_RELATIVE_ALARM
               | DNA_ONE_SHOT_ALARM, thread_alarm, self, & alarm);
           check (invalid_alarm, status == DNA_OK, status);
 
@@ -140,7 +140,7 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
           lock_acquire (& sem -> waiting_queue . lock);
           lock_release (& sem -> lock);
 
-          status = scheduler_elect (& thread, true);
+          status = scheduler_elect (& thread);
           ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
 
           status = scheduler_switch (thread, & sem -> waiting_queue);
@@ -148,7 +148,7 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
 
           lock_acquire (& sem -> lock);
 
-          status = time_cancel_alarm (alarm);
+          status = alarm_destroy (alarm);
           check (invalid_alarm, status != DNA_NO_TIMER
               && status != DNA_BAD_ARGUMENT, status);
 

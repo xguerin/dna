@@ -38,7 +38,6 @@ status_t core_start (void)
  */
 
 {
-  status_t status;
   uint32_t current_cpuid = cpu_mp_id ();
   thread_t thread = scheduler . cpu[current_cpuid] . current_thread;
 
@@ -48,12 +47,20 @@ status_t core_start (void)
 
     if (current_cpuid == 0)
     {
+      lock_acquire (& scheduler . cpu[current_cpuid] . lock);
       scheduler . cpu[current_cpuid] . status = DNA_CPU_RUNNING;
+      lock_release (& scheduler . cpu[current_cpuid] . lock);
     }
     else
     {
-      status = scheduler_push ();
-      ensure (status == DNA_OK, status);
+      lock_acquire (& scheduler . cpu[current_cpuid] . lock);
+      scheduler . cpu[current_cpuid] . status = DNA_CPU_READY;
+
+      lock_acquire (& scheduler . cpu_pool . lock);
+      lock_release (& scheduler . cpu[current_cpuid] . lock);
+
+      queue_add (& scheduler . cpu_pool, & scheduler . cpu[current_cpuid]);
+      lock_release (& scheduler . cpu_pool . lock);
     }
 
     thread -> info . status = DNA_THREAD_RUNNING;

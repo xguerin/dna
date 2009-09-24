@@ -37,85 +37,102 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
  */
 
 {
+  bool release_cpu = false;
   uint32_t current_cpuid = cpu_mp_id ();
   bigtime_t current_time = 0;
   extern uint32_t __scheduler_switch_end;
-  thread_t self = scheduler . cpu[current_cpuid] . current_thread;
+  cpu_t * cpu = & scheduler . cpu[current_cpuid];
+  thread_t self = cpu -> current_thread;
 
-  watch (status_t)
+  /*
+   * Update the status of the current thread
+   */
+
+  self -> info . cpu_id = -1;
+
+  /*
+   * Compute the correct times if necessary
+   */
+
+  cpu_timer_get (current_cpuid, & current_time);
+  self -> info . kernel_time = current_time;
+  self -> info . kernel_time -= cpu -> lap_date;
+
+  /*
+   * Save the current context
+   */
+
+  cpu_context_save (& self -> context, & __scheduler_switch_end);
+
+  /*
+   * If queue is not NULL, then add the current thread to this queue
+   */
+
+  if (queue != NULL)
   {
-    ensure (thread != NULL, DNA_BAD_ARGUMENT);
-
-    /*
-     * Update the status of the current thread
-     */
-
-    self -> info . cpu_id = -1;
-
-    /*
-     * Compute the correct times if necessary
-     */
-
-    if (time_manager . has_timer)
-    {
-      time_manager . system_timer . get (current_cpuid, & current_time);
-      self -> info . kernel_time = current_time;
-      self -> info . kernel_time -= scheduler . cpu[current_cpuid] . lap_date;
-    }
-
-    /*
-     * Save the current context
-     */
-
-    cpu_context_save (& self -> context, & __scheduler_switch_end);
-
-    /*
-     * If queue is not NULL, then add the current thread to this queue
-     */
-
-    if (queue != NULL)
-    {
-      queue_add (queue, self);
-      lock_release (& queue -> lock);
-    }
-
-    lock_release (& self -> lock);
-
-    /*
-     * Update the status of the target thread
-     */
-
-    thread -> info . previous_status = thread -> info . status;
-    thread -> info . status = DNA_THREAD_RUNNING;
-    thread -> info . cpu_id = current_cpuid;
-
-    lock_acquire (& scheduler . cpu[current_cpuid] . lock);
-    lock_release (& thread -> lock);
-
-    /*
-     * Update the processor's status
-     */
-    
-    scheduler . cpu[current_cpuid] . lap_date = current_time;
-    scheduler . cpu[current_cpuid] . current_thread = thread;
-    lock_release (& scheduler . cpu[current_cpuid] . lock);
-
-    /*
-     * Load the target context
-     */
-
-    cpu_context_load (& thread -> context);
-
-    /*
-     * FIXME If someone has a better idea to get the
-     * right address after cpu_context_load, one can change
-     * what follows ...
-     */
-
-    __asm__ volatile ("__scheduler_switch_end:");
-
-    return DNA_OK;
+    queue_add (queue, self);
+    lock_release (& queue -> lock);
   }
+
+  lock_release (& self -> lock);
+
+  /*
+   * Update the status of the target thread
+   */
+
+  if (thread == NULL)
+  {
+    release_cpu = true;
+    thread = cpu -> idle_thread;
+    lock_acquire (& thread -> lock);
+  }
+
+  thread -> info . previous_status = thread -> info . status;
+  thread -> info . status = DNA_THREAD_RUNNING;
+  thread -> info . cpu_id = current_cpuid;
+
+  lock_acquire (& cpu -> lock);
+  lock_release (& thread -> lock);
+
+  /*
+   * Update the processor's status
+   */
+
+  cpu -> lap_date = current_time;
+  cpu -> current_thread = thread;
+
+  if (release_cpu)
+  {
+    cpu -> status = DNA_CPU_READY;
+
+    lock_acquire (& scheduler . cpu_pool . lock);
+    lock_release (& cpu -> lock);
+
+    queue_add (& scheduler . cpu_pool, cpu);
+    lock_release (& scheduler . cpu_pool . lock);
+  }
+  else if (self == cpu -> idle_thread) 
+  {
+    cpu -> status = DNA_CPU_RUNNING;
+    lock_release (& cpu -> lock);
+  }
+  else lock_release (& cpu -> lock);
+
+  /*
+   * Load the target context
+   */
+
+  cpu_context_load (& thread -> context);
+
+  /*
+   * FIXME If someone has a better idea to get the
+   * right address after cpu_context_load, one can change
+   * what follows ...
+   */
+
+  __asm__ volatile ("__scheduler_switch_end:");
+
+  return DNA_OK;
 }
 
 /*
