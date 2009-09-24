@@ -37,7 +37,6 @@ void thread_exit (int32_t value)
  */
 
 {
-  status_t status;
   uint32_t current_cpuid = cpu_mp_id();
   thread_t self = scheduler . cpu[current_cpuid] . current_thread;
   thread_t target = NULL, p = NULL;
@@ -89,19 +88,8 @@ void thread_exit (int32_t value)
    * Elect a the next thread and run it
    */
 
-  status = scheduler_elect (& target);
-  panic (status != DNA_OK);
-
-  target -> info . status = DNA_THREAD_RUNNING;
-  target -> info . cpu_id = current_cpuid;
-
-  lock_acquire (& scheduler . cpu[current_cpuid] . lock);
-  lock_release (& target -> lock);
-
-  scheduler . cpu[current_cpuid] . current_thread = target;
-  lock_release (& scheduler . cpu[current_cpuid] . lock);
-
-  cpu_context_load (& target -> context);
+  scheduler_elect (& target);
+  scheduler_switch (target, NULL);
 }
 
 /*

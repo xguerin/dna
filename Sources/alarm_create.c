@@ -94,8 +94,6 @@ status_t alarm_create (bigtime_t quantum, int32_t mode,
     }
 
     lock_release (& alarm_manager . lock);
-    cpu_trap_restore(it_status);
-
     check (error, new_alarm -> id != -1, DNA_ERROR);
 
     /*
@@ -107,8 +105,10 @@ status_t alarm_create (bigtime_t quantum, int32_t mode,
 
     if (cpu -> current_alarm == NULL)
     {
-       cpu -> current_alarm = new_alarm;
-       cpu_timer_set (current_cpuid, quantum);
+      log (VERBOSE_LEVEL, "Set alarm %d", new_alarm -> id);
+
+      cpu -> current_alarm = new_alarm;
+      cpu_timer_set (current_cpuid, quantum);
     }
     else
     {
@@ -116,14 +116,17 @@ status_t alarm_create (bigtime_t quantum, int32_t mode,
 
       if (old_alarm -> deadline > new_alarm -> deadline)
       {
+        log (VERBOSE_LEVEL, "Reset alarm %d and set %d",
+            cpu -> current_alarm -> id, new_alarm -> id);
+
         cpu_timer_cancel (current_cpuid);
         cpu -> current_alarm = new_alarm;
-
         queue_insert (& cpu -> alarm_queue, alarm_comparator, old_alarm);
         cpu_timer_set (current_cpuid, quantum);
       }
       else
       {
+        log (VERBOSE_LEVEL, "Enqueue alarm %d", new_alarm -> id);
         queue_insert (& cpu -> alarm_queue, alarm_comparator, new_alarm);
       }
     }
@@ -137,6 +140,7 @@ status_t alarm_create (bigtime_t quantum, int32_t mode,
 
   rescue (error)
   {
+    cpu_trap_restore(it_status);
     kernel_free (new_alarm);
     leave;
   }

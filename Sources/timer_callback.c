@@ -33,15 +33,14 @@ void timer_callback (void)
  */
 
 {
+  alarm_t alarm = NULL;
   status_t status = DNA_OK;
   cpu_status_t cpu_status;
-  alarm_t next_alarm = NULL;
   int32_t current_cpuid = cpu_mp_id ();
   bigtime_t current_time = 0, quantum = 0;
   bool reschedule = false;
   bool process_next_alarm = true, delete_alarm = false;
   cpu_t * cpu = & scheduler . cpu[current_cpuid];
-  alarm_t alarm = cpu -> current_alarm;
 
   /*
    * Save the previous CPU status,
@@ -57,9 +56,25 @@ void timer_callback (void)
    * Proceed with the alarm
    */
 
-  do
+  lock_acquire (& cpu -> lock);
+  alarm = cpu -> current_alarm;
+
+  while (process_next_alarm)
   {
     cpu_timer_get (cpu -> id, & current_time);
+
+    /*
+     * Check if this is not a false alarm
+     */
+
+    if (alarm -> deadline > current_time + DNA_TIMER_JIFFY)
+    {
+      quantum = alarm -> deadline - current_time;
+      cpu_timer_set (cpu -> id, quantum);
+      break;
+    }
+
+    log (VERBOSE_LEVEL, "Processing alarm %d", alarm -> id);
 
     /*
      * We check whether or not the alarm has to be restarted
@@ -68,12 +83,11 @@ void timer_callback (void)
     if ((alarm -> mode & DNA_PERIODIC_ALARM) != 0)
     {
       alarm -> deadline = alarm -> quantum +  current_time;
-
-      lock_acquire (& cpu -> alarm_queue . lock);
       queue_insert (& cpu -> alarm_queue, alarm_comparator, alarm);
-      lock_release (& cpu -> alarm_queue . lock);
     }
     else delete_alarm = true;
+
+    lock_release (& cpu -> lock);
 
     /*
      * Execute the alarm
@@ -96,30 +110,19 @@ void timer_callback (void)
      * Look through the next alarm
      */
 
-    if (cpu -> alarm_queue . status == 0)
+    lock_acquire (& cpu -> lock);
+
+    alarm = queue_rem (& cpu -> alarm_queue);
+    cpu -> current_alarm = alarm;
+
+    if (alarm != NULL)
     {
-      cpu -> current_alarm = NULL;
-      process_next_alarm = false;
-    }
-    else
-    {
-      lock_acquire (& cpu -> alarm_queue . lock);
-      next_alarm = queue_rem (& cpu -> alarm_queue);
-
-      lock_acquire (& cpu -> lock);
-      lock_release (& cpu -> alarm_queue . lock);
-
-      cpu -> current_alarm = next_alarm;
-      lock_release (& cpu -> lock);
-
-      quantum = next_alarm -> deadline - current_time;
+      quantum = alarm -> deadline - current_time;
 
       if (quantum <= DNA_TIMER_JIFFY)
       {
         log (PANIC_LEVEL, "alarm %d from %d, low quantum (%d)",
-            next_alarm -> id, next_alarm -> thread_id, (int32_t) quantum);
-
-        alarm = next_alarm;
+            alarm -> id, alarm -> thread_id, (int32_t) quantum);
       }
       else
       {
@@ -127,8 +130,16 @@ void timer_callback (void)
         cpu_timer_set (cpu -> id, quantum);
       }
     }
+    else process_next_alarm = false;
   }
-  while (process_next_alarm);
+
+  lock_release (& cpu -> lock);
+
+  /*
+   * Reschedule of necessary
+   */
+
+  if (reschedule) thread_yield ();
 
   /*
    * Restore the previous CPU status
@@ -137,12 +148,6 @@ void timer_callback (void)
   lock_acquire (& scheduler . lock);
   scheduler . cpu[current_cpuid] . status = cpu_status;
   lock_release (& scheduler . lock);
-
-  /*
-   * Reschedule of necessary
-   */
-
-  if (reschedule) thread_yield ();
 }
 
 /*
