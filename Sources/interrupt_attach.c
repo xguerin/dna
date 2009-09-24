@@ -57,31 +57,23 @@ status_t interrupt_attach (int32_t cpuid, interrupt_id_t id,
     isr -> handler = handler;
 
     it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& interrupt_manager . lock);
+    lock_acquire (& scheduler . cpu[cpuid] . isr_list . lock);
 
-    interrupt_manager . counter[cpuid][id] += 1;
-    queue_add (& interrupt_manager . isr_list[cpuid][id], isr);
+    queue_add (& scheduler . cpu[cpuid] . isr_list, isr);
 
-    if (interrupt_manager . counter[cpuid][id] == 1)
+    if (scheduler . cpu[cpuid] . isr_list . status == 1)
     {
-      cpu_trap_attach_isr (cpuid, id, mode, handler);
+      cpu_trap_attach_isr (cpuid, id, mode, interrupt_demultiplexer);
 
-      if (cpuid == cpu_mp_id ())
-      {
-        cpu_trap_enable (id);
-      }
+      if (cpuid == cpu_mp_id ()) cpu_trap_enable (id);
       else
       {
         lock_acquire (& scheduler . cpu[cpuid] . ipi_lock);
         cpu_mp_send_ipi (cpuid, DNA_IPI_TRAP_ENABLE, (void *) id);
       }
     }
-    else if (interrupt_manager . counter[cpuid][id] == 2)
-    {
-      cpu_trap_attach_isr (cpuid, id, mode, interrupt_demultiplexer);
-    }
 
-    lock_release (& interrupt_manager . lock);
+    lock_release (& scheduler . cpu[cpuid] . isr_list . lock);
     cpu_trap_restore(it_status);
 
     return DNA_OK;

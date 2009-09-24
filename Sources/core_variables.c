@@ -49,18 +49,6 @@ scheduler_t scheduler;
 /*
  ****/
 
-/****v* Core/interrupt_manager
- * SUMMARY
- * The interrupt multiplexer instance.
- *
- * SOURCE
- */
-
-interrupt_manager_t interrupt_manager;
-
-/*
- ****/
-
 /****v* Core/alarm_manager
  * SUMMARY
  * The time manager instance.

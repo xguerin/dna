@@ -21,7 +21,10 @@
 #ifndef DNA_CORE_CPU_PRIVATE_H
 #define DNA_CORE_CPU_PRIVATE_H
 
+#include <stdbool.h>
+
 #include <Private/Alarm.h>
+#include <Private/Interrupt.h>
 #include <Private/Thread.h>
 
 #include <Core/Core.h>
@@ -39,7 +42,6 @@ typedef enum _cpu_status
   DNA_CPU_READY               = 0xFACE,
   DNA_CPU_RUNNING             = 0xBEEF,
   DNA_CPU_SERVICING_INTERRUPT = 0xB10C,
-  DNA_CPU_ON_HOLD             = 0xBADD,
   DNA_CPU_DISABLED            = 0xDEAD
 }
 cpu_status_t;
@@ -60,11 +62,14 @@ typedef struct _cpu
   queue_item_t link;
 
   int32_t id;
+  bool on_hold;
   cpu_status_t status;
 
   spinlock_t lock;
   spinlock_t ipi_lock;
+
   bigtime_t lap_date;
+  queue_t isr_list;
 
   thread_t current_thread;
   thread_t idle_thread;

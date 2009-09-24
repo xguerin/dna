@@ -40,6 +40,7 @@ typedef struct _alarm
   queue_item_t link;
 
   int32_t id;
+  int32_t thread_id;
   int32_t cpu_id;
   int32_t mode;
 
@@ -73,7 +74,6 @@ alarm_manager_t;
 
 extern alarm_manager_t alarm_manager;
 
-extern void timer_callback (void);
 extern bool alarm_comparator (void * item1, void * item2);
 extern bool alarm_id_inspector (void * item, void * a0, void * a1);
 

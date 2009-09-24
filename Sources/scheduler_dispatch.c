@@ -36,6 +36,8 @@ status_t scheduler_dispatch (thread_t thread)
  */
 
 {
+  cpu_t * current_cpu = NULL;
+  status_t status = DNA_OK;
   int32_t next_cpuid = -1;
 
   watch (status_t)
@@ -52,9 +54,10 @@ status_t scheduler_dispatch (thread_t thread)
 
       for (int32_t i = 0; i < cpu_mp_count (); i += 1)
       {
-        if (scheduler . cpu[i] . status == DNA_CPU_READY)
+        if (scheduler . cpu[i] . status == DNA_CPU_READY
+            && ! scheduler . cpu[i] . on_hold)
         {
-          scheduler . cpu[i] . status = DNA_CPU_ON_HOLD;
+          scheduler . cpu[i] . on_hold = true;
           next_cpuid = i;
           break;
         }
@@ -66,9 +69,10 @@ status_t scheduler_dispatch (thread_t thread)
     {
       lock_acquire (& scheduler . lock);
 
-      if (scheduler . cpu[thread -> info . affinity] . status == DNA_CPU_READY)
+      if (scheduler . cpu[thread -> info . affinity] . status == DNA_CPU_READY
+          && ! scheduler . cpu[thread -> info . affinity] . on_hold)
       {
-        scheduler . cpu[thread -> info . affinity] . status = DNA_CPU_ON_HOLD;
+        scheduler . cpu[thread -> info . affinity] . on_hold = true;
         next_cpuid = thread -> info . affinity;
       }
 
@@ -97,9 +101,24 @@ status_t scheduler_dispatch (thread_t thread)
 
       queue_add (& scheduler . xt[thread -> info . affinity], thread);
       lock_release (& scheduler . xt[thread -> info . affinity] . lock);
+
+      /*
+       * Check if we can yield the current processor
+       */
+
+      current_cpu = & scheduler . cpu[cpu_mp_id ()];
+
+      if (current_cpu -> current_thread == current_cpu -> idle_thread)
+      {
+        if (thread -> info . affinity == cpu_mp_count ()
+            || thread -> info . affinity == cpu_mp_id ())
+        {
+          status = DNA_INVOKE_SCHEDULER;
+        }
+      }
     }
 
-    return DNA_OK;
+    return status;
   }
 }
 

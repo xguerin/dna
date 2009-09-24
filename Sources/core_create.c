@@ -53,20 +53,6 @@ status_t core_create (void)
     dna_memset (& scheduler, 0, sizeof (scheduler_t));
 
     /*
-     * Initialize the IT multiplexer
-     */
-
-    dna_memset (& interrupt_manager, 0, sizeof (interrupt_manager_t));
-
-    for (int32_t i = 0; i < cpu_mp_count (); i += 1)
-    {
-      interrupt_manager . counter[i] = kernel_malloc (sizeof (int32_t) *
-          cpu_trap_count (), true);
-       interrupt_manager . isr_list[i] = kernel_malloc (sizeof (queue_t) *
-          cpu_trap_count (), true);
-    }
-
-    /*
      * Initialize the time manager
      */
 

@@ -48,31 +48,10 @@ typedef struct _isr
 /*
  ****/
 
-/****t* interrupt/interrupt_manager_t
- * SUMMARY
- * Describes the interrupt manager.
- *
- * SOURCE
- */
-
-typedef struct _interrupt_manager
-{
-  spinlock_t lock;
-  int32_t * counter[DNA_MAX_CPU];
-  queue_t * isr_list[DNA_MAX_CPU];
-}
-interrupt_manager_t;
-
-/*
- ****/
-
-extern interrupt_manager_t interrupt_manager;
-
 extern int32_t interrupt_demultiplexer (int32_t itn);
+
 extern bool interrupt_handler_inspector (void * p_isr,
     void * p_handler, void * dummy);
-
-extern status_t ipi_callback (int32_t command, void * cookie);
 
 #endif
 

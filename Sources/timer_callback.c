@@ -38,6 +38,7 @@ void timer_callback (void)
   alarm_t next_alarm = NULL;
   int32_t current_cpuid = cpu_mp_id ();
   bigtime_t current_time = 0, quantum = 0;
+  bool reschedule = false;
   bool process_next_alarm = true, delete_alarm = false;
   cpu_t * cpu = & scheduler . cpu[current_cpuid];
   alarm_t alarm = cpu -> current_alarm;
@@ -79,6 +80,7 @@ void timer_callback (void)
      */
 
     status = alarm -> callback (alarm -> data);
+    if (status == DNA_INVOKE_SCHEDULER) reschedule = true;
 
     if (delete_alarm)
     {
@@ -114,8 +116,8 @@ void timer_callback (void)
 
       if (quantum <= DNA_TIMER_JIFFY)
       {
-        log (PANIC_LEVEL, "alarm %d, low quantum (%d)",
-            next_alarm -> id, (int32_t) quantum);
+        log (PANIC_LEVEL, "alarm %d from %d, low quantum (%d)",
+            next_alarm -> id, next_alarm -> thread_id, (int32_t) quantum);
 
         alarm = next_alarm;
       }
@@ -135,6 +137,12 @@ void timer_callback (void)
   lock_acquire (& scheduler . lock);
   scheduler . cpu[current_cpuid] . status = cpu_status;
   lock_release (& scheduler . lock);
+
+  /*
+   * Reschedule of necessary
+   */
+
+  if (reschedule) thread_yield ();
 }
 
 /*

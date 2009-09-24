@@ -67,6 +67,7 @@ status_t alarm_create (bigtime_t quantum, int32_t mode,
 
     new_alarm -> id = -1;
     new_alarm -> mode = mode;
+    new_alarm -> thread_id = cpu -> current_thread -> info . id;
     new_alarm -> cpu_id = current_cpuid;
 
     cpu_timer_get (current_cpuid, & current_time);

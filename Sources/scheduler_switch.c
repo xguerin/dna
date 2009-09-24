@@ -111,6 +111,8 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
   }
   else
   {
+    if (cpu -> on_hold) cpu -> on_hold = false;
+
     lock_acquire (& scheduler . lock);
     lock_release (& cpu -> lock);
 

@@ -38,6 +38,7 @@ status_t thread_yield (void)
 {
   status_t status;
   thread_t thread = NULL;
+  queue_t * queue = NULL;
   interrupt_status_t it_status = 0;
   thread_t self = scheduler . cpu[cpu_mp_id()] . current_thread;
 
@@ -48,20 +49,19 @@ status_t thread_yield (void)
     status = scheduler_elect (& thread);
     ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
 
-    if (status == DNA_OK)
+    lock_acquire (& self -> lock);
+
+    self -> info . previous_status = self -> info . status;
+    self -> info . status = DNA_THREAD_READY;
+
+    if (self != scheduler . cpu[cpu_mp_id()] . idle_thread)
     {
-      lock_acquire (& self -> lock);
-
-      self -> info . previous_status = self -> info . status;
-      self -> info . status = DNA_THREAD_READY;
-
-      lock_acquire (& scheduler . xt[self -> info . affinity] . lock);
-
-      status = scheduler_switch (thread,
-          & scheduler . xt[self -> info . affinity]);
-      ensure (status == DNA_OK, status);
+      queue = & scheduler . xt[self -> info . affinity];
+      lock_acquire (& queue -> lock);
     }
-    else lock_release (& thread -> lock);
+
+    status = scheduler_switch (thread, queue);
+    ensure (status == DNA_OK, status);
 
     cpu_trap_restore(it_status);
     return DNA_OK;

@@ -35,6 +35,7 @@ status_t thread_alarm (void * data)
  */
 
 {
+  status_t status = DNA_OK;
   thread_t thread = data;
 
   watch (status_t)
@@ -64,7 +65,7 @@ status_t thread_alarm (void * data)
           thread -> info . status = DNA_THREAD_READY;
           thread -> info . previous_status = DNA_THREAD_SLEEPING;
 
-          scheduler_dispatch (thread);
+          status = scheduler_dispatch (thread);
           break;
         }
 
@@ -78,7 +79,7 @@ status_t thread_alarm (void * data)
         }
     }
 
-    return DNA_OK;
+    return status;
   }
 }
 
