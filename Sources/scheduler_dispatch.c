@@ -36,44 +36,67 @@ status_t scheduler_dispatch (thread_t thread)
  */
 
 {
-  int32_t next_cpuid;
-  status_t status;
+  int32_t next_cpuid = -1;
 
   watch (status_t)
   {
     ensure (thread != NULL, DNA_BAD_ARGUMENT);
 
-    status = scheduler_pop (thread -> info . affinity, & next_cpuid);
-    ensure (status != DNA_BAD_ARGUMENT, status);
+    /*
+     * Look for an available processor
+     */
 
-    switch (status)
+    if (thread -> info . affinity == cpu_mp_count ())
     {
-      case DNA_OK :
-        {
-          log (VERBOSE_LEVEL, "Remote execute %d on %d.",
-              thread -> info . id, next_cpuid);
+      lock_acquire (& scheduler . lock);
 
-          lock_acquire (& scheduler . cpu[next_cpuid] . ipi_lock);
-          cpu_mp_send_ipi (next_cpuid, DNA_IPI_EXECUTE, thread);
+      for (int32_t i = 0; i < cpu_mp_count (); i += 1)
+      {
+        if (scheduler . cpu[i] . status == DNA_CPU_READY)
+        {
+          scheduler . cpu[i] . status = DNA_CPU_ON_HOLD;
+          next_cpuid = i;
           break;
         }
+      }
 
-      case DNA_NO_AVAILABLE_CPU :
-        {
-          lock_acquire (& scheduler . xt[thread -> info . affinity] . lock);
-          lock_release (& thread -> lock);
+      lock_release (& scheduler . lock);
+    }
+    else
+    {
+      lock_acquire (& scheduler . lock);
 
-          queue_add (& scheduler . xt[thread -> info . affinity], thread);
-          lock_release (& scheduler . xt[thread -> info . affinity] . lock);
+      if (scheduler . cpu[thread -> info . affinity] . status == DNA_CPU_READY)
+      {
+        scheduler . cpu[thread -> info . affinity] . status = DNA_CPU_ON_HOLD;
+        next_cpuid = thread -> info . affinity;
+      }
 
-          break;
-        }
+      lock_release (& scheduler . lock);
+    }
 
-      default:
-        {
-          log (PANIC_LEVEL, "unknown return value");
-          return DNA_ERROR;
-        }
+    /*
+     * Deal with the dispatch
+     */
+
+    if (next_cpuid != -1)
+    {
+      log (VERBOSE_LEVEL, "Remote execute %d on %d.",
+          thread -> info . id, next_cpuid);
+
+      lock_acquire (& scheduler . cpu[next_cpuid] . ipi_lock);
+      cpu_mp_send_ipi (next_cpuid, DNA_IPI_EXECUTE, thread);
+    }
+    else
+    {
+      log (VERBOSE_LEVEL, "Enqueue %d on %d.",
+          thread -> info . id, thread -> info . affinity);
+
+      lock_acquire (& scheduler . xt[thread -> info . affinity] . lock);
+      lock_release (& thread -> lock);
+
+      queue_add (& scheduler . xt[thread -> info . affinity], thread);
+      lock_release (& scheduler . xt[thread -> info . affinity] . lock);
     }
 
     return DNA_OK;

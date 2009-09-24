@@ -34,11 +34,27 @@ void timer_callback (void)
 
 {
   status_t status = DNA_OK;
+  cpu_status_t cpu_status;
   alarm_t next_alarm = NULL;
+  int32_t current_cpuid = cpu_mp_id ();
   bigtime_t current_time = 0, quantum = 0;
   bool process_next_alarm = true, delete_alarm = false;
-  cpu_t * cpu = & scheduler . cpu[cpu_mp_id ()];
+  cpu_t * cpu = & scheduler . cpu[current_cpuid];
   alarm_t alarm = cpu -> current_alarm;
+
+  /*
+   * Save the previous CPU status,
+   * replace with SERVICING_INTERRUPT
+   */
+
+  lock_acquire (& scheduler . lock);
+  cpu_status = scheduler . cpu[current_cpuid] . status;
+  scheduler . cpu[current_cpuid] . status = DNA_CPU_SERVICING_INTERRUPT;
+  lock_release (& scheduler . lock);
+
+  /*
+   * Proceed with the alarm
+   */
 
   do
   {
@@ -59,7 +75,23 @@ void timer_callback (void)
     else delete_alarm = true;
 
     /*
-     * Look through the alarms, and restart or cancel them if necessary
+     * Execute the alarm
+     */
+
+    status = alarm -> callback (alarm -> data);
+
+    if (delete_alarm)
+    {
+      lock_acquire (& alarm_manager . lock);
+      alarm_manager . alarm[alarm -> id] = NULL;
+      lock_release (& alarm_manager . lock);
+
+      delete_alarm = false;
+      kernel_free (alarm);
+    }
+
+    /*
+     * Look through the next alarm
      */
 
     if (cpu -> alarm_queue . status == 0)
@@ -85,18 +117,6 @@ void timer_callback (void)
         log (PANIC_LEVEL, "alarm %d, low quantum (%d)",
             next_alarm -> id, (int32_t) quantum);
 
-        status = alarm -> callback (alarm -> data);
-
-        if (delete_alarm)
-        {
-          lock_acquire (& alarm_manager . lock);
-          alarm_manager . alarm[alarm -> id] = NULL;
-          lock_release (& alarm_manager . lock);
-
-          delete_alarm = false;
-          kernel_free (alarm);
-        }
-
         alarm = next_alarm;
       }
       else
@@ -109,18 +129,12 @@ void timer_callback (void)
   while (process_next_alarm);
 
   /*
-   * Execute the next alarm
+   * Restore the previous CPU status
    */
 
-  status = alarm -> callback (alarm -> data);
-
-  if (delete_alarm)
-  {
-    lock_acquire (& alarm_manager . lock);
-    alarm_manager . alarm[alarm -> id] = NULL;
-    lock_release (& alarm_manager . lock);
-    kernel_free (alarm);
-  }
+  lock_acquire (& scheduler . lock);
+  scheduler . cpu[current_cpuid] . status = cpu_status;
+  lock_release (& scheduler . lock);
 }
 
 /*

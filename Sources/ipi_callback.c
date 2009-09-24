@@ -41,10 +41,15 @@ status_t ipi_callback (int32_t command, void * cookie)
 
 {
   status_t status;
+  int32_t current_cpuid = cpu_mp_id ();
 
   watch (status_t)
   {
-    lock_release (& scheduler . cpu[cpu_mp_id ()] . ipi_lock);
+    /*
+     * Release the IPI lock and proceed with the IPI
+     */
+
+    lock_release (& scheduler . cpu[current_cpuid] . ipi_lock);
 
     switch (command)
     {
@@ -55,7 +60,7 @@ status_t ipi_callback (int32_t command, void * cookie)
 
           ensure (thread != NULL, DNA_ERROR);
 
-          log (INFO_LEVEL, "%d EXECUTE %d (was %d)",
+          log (VERBOSE_LEVEL, "%d EXECUTE %d (was %d)",
               cpu_mp_id (), thread -> info . id, self -> info . id);
 
           lock_acquire (& self -> lock);
@@ -73,7 +78,7 @@ status_t ipi_callback (int32_t command, void * cookie)
         {
           int32_t thread_id = (int32_t) cookie;
 
-          log (INFO_LEVEL, "%d SUSPEND %d", cpu_mp_id (), thread_id);
+          log (VERBOSE_LEVEL, "%d SUSPEND %d", cpu_mp_id (), thread_id);
           
           thread_suspend (thread_id);
           break;

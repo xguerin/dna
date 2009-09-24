@@ -103,20 +103,20 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
 
   if (release_cpu)
   {
+    lock_acquire (& scheduler . lock);
+    lock_release (& cpu -> lock);
+
     cpu -> status = DNA_CPU_READY;
-
-    lock_acquire (& scheduler . cpu_pool . lock);
-    lock_release (& cpu -> lock);
-
-    queue_add (& scheduler . cpu_pool, cpu);
-    lock_release (& scheduler . cpu_pool . lock);
+    lock_release (& scheduler . lock);
   }
-  else if (self == cpu -> idle_thread) 
+  else
   {
-    cpu -> status = DNA_CPU_RUNNING;
+    lock_acquire (& scheduler . lock);
     lock_release (& cpu -> lock);
+
+    cpu -> status = DNA_CPU_RUNNING;
+    lock_release (& scheduler . lock);
   }
-  else lock_release (& cpu -> lock);
 
   /*
    * Load the target context

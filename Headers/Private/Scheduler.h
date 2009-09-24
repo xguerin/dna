@@ -39,8 +39,6 @@ typedef struct _scheduler
   spinlock_t lock;
 
   cpu_t cpu[DNA_MAX_CPU];
-  queue_t cpu_pool;
-
   queue_t xt[DNA_MAX_CPU + 1];
   thread_t thread[DNA_MAX_THREAD];
 }
@@ -53,8 +51,6 @@ extern scheduler_t scheduler;
 
 extern status_t scheduler_elect (thread_t * p_thread);
 extern status_t scheduler_dispatch (thread_t thread);
-
-extern status_t scheduler_pop (int32_t affinity, int32_t * p_id);
 extern status_t scheduler_switch (thread_t thread, queue_t * queue);
 
 #endif
