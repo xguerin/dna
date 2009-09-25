@@ -27,7 +27,7 @@
 #define leave return _rescue_status
 
 #define panic(condition)                          \
-  if (! (condition))                              \
+  if (condition)                                  \
   {                                               \
     log (PANIC_LEVEL, "PANIC! " #condition " failed.");   \
     for (;;);                                     \

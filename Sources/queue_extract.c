@@ -24,7 +24,8 @@ status_t queue_extract (queue_t * queue, void * data)
 
   watch (status_t)
   {
-    ensure (item -> next != NULL, DNA_ERROR);
+    ensure (queue != NULL && data != NULL, DNA_BAD_ARGUMENT);
+    ensure (queue -> status != 0, DNA_ERROR);
 
     if (queue -> head == item)
     {
@@ -32,9 +33,19 @@ status_t queue_extract (queue_t * queue, void * data)
     }
     else
     {
-      while (kitem -> next != item) kitem = kitem -> next;
+      while (kitem -> next != item && kitem -> next != NULL)
+      {
+        kitem = kitem -> next;
+      }
+
+      ensure (kitem -> next == item, DNA_ERROR);
+
       kitem -> next = item -> next;
-      if (kitem -> next == NULL) queue -> tail = kitem;
+
+      if (kitem -> next == NULL)
+      {
+        queue -> tail = kitem;
+      }
     }
 
     item -> next = NULL;

@@ -23,17 +23,16 @@ void * queue_rem (queue_t * queue)
 
   watch (void *)
   {
-    if (queue -> status != 0)
-    {
-      item = queue -> head;
-      queue -> status -= 1;
+    ensure (queue -> status != 0, NULL);
 
-      queue -> head = item -> next;
-      check (queue_error, queue -> head != NULL ||
-          (queue -> head == NULL && queue -> status == 0), NULL);
+    item = queue -> head;
+    queue -> status -= 1;
 
-      item -> next = NULL;
-    }
+    queue -> head = item -> next;
+    check (queue_error, queue -> head != NULL ||
+        (queue -> head == NULL && queue -> status == 0), NULL);
+
+    item -> next = NULL;
 
     return item;
   }
