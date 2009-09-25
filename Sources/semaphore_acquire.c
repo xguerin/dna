@@ -102,7 +102,7 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
           lock_acquire (& sem -> waiting_queue . lock);
           lock_release (& sem -> lock);
 
-          status = scheduler_elect (& thread);
+          status = scheduler_elect (& thread, true);
           ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
 
           status = scheduler_switch (thread, & sem -> waiting_queue);
@@ -140,7 +140,7 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
           lock_acquire (& sem -> waiting_queue . lock);
           lock_release (& sem -> lock);
 
-          status = scheduler_elect (& thread);
+          status = scheduler_elect (& thread, true);
           ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
 
           status = scheduler_switch (thread, & sem -> waiting_queue);

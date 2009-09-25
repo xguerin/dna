@@ -62,7 +62,6 @@ typedef struct _cpu
   queue_item_t link;
 
   int32_t id;
-  bool on_hold;
   cpu_status_t status;
 
   spinlock_t lock;

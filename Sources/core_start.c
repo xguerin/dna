@@ -47,15 +47,14 @@ status_t core_start (void)
 
     if (current_cpuid == 0)
     {
-      lock_acquire (& scheduler . lock);
       scheduler . cpu[current_cpuid] . status = DNA_CPU_RUNNING;
-      lock_release (& scheduler . lock);
     }
     else
     {
-      lock_acquire (& scheduler . lock);
       scheduler . cpu[current_cpuid] . status = DNA_CPU_READY;
-      lock_release (& scheduler . lock);
+      lock_acquire (& scheduler . cpu_pool . lock);
+      queue_add (& scheduler . cpu_pool, & scheduler . cpu[current_cpuid]);
+      lock_release (& scheduler . cpu_pool . lock);
     }
 
     thread -> info . status = DNA_THREAD_RUNNING;

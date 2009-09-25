@@ -37,11 +37,9 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
  */
 
 {
-  bool release_cpu = false;
   uint32_t current_cpuid = cpu_mp_id ();
   bigtime_t current_time = 0;
   extern uint32_t __scheduler_switch_end;
-  cpu_status_t cpu_status;
   cpu_t * cpu = & scheduler . cpu[current_cpuid];
   thread_t self = cpu -> current_thread;
 
@@ -58,13 +56,6 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
    * Update the status of the target thread
    */
 
-  if (thread == NULL)
-  {
-    release_cpu = true;
-    thread = cpu -> idle_thread;
-    lock_acquire (& thread -> lock);
-  }
-
   thread -> info . previous_status = thread -> info . status;
   thread -> info . status = DNA_THREAD_RUNNING;
   thread -> info . cpu_id = current_cpuid;
@@ -74,16 +65,8 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
    * Update the processor's status
    */
 
-  lock_acquire (& cpu -> lock);
   cpu -> lap_date = current_time;
   cpu -> current_thread = thread;
-  lock_release (& cpu -> lock);
-
-  lock_acquire (& scheduler . lock);
-  cpu -> on_hold = false;
-  cpu_status = cpu -> status;
-  cpu -> status = release_cpu ? DNA_CPU_READY : DNA_CPU_RUNNING;
-  lock_release (& scheduler . lock);
 
   /*
    * Save the current context

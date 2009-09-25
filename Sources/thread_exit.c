@@ -88,7 +88,7 @@ void thread_exit (int32_t value)
    * Elect a the next thread and run it
    */
 
-  scheduler_elect (& target);
+  scheduler_elect (& target, true);
   scheduler_switch (target, NULL);
 }
 

@@ -27,7 +27,7 @@
 #include <Platform/Platform.h>
 #include <DnaTools/DnaTools.h>
 
-#define DNA_IPI_EXECUTE       0xFFFF
+#define DNA_IPI_YIELD         0xFFFF
 #define DNA_IPI_SUSPEND       0xFFFE
 #define DNA_IPI_TRAP_ENABLE   0xFFFD
 

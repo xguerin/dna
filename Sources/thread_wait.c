@@ -81,7 +81,7 @@ status_t thread_wait (int32_t id, int32_t * value)
        * Elect a the next thread and run it
        */
 
-      status = scheduler_elect (& target);
+      status = scheduler_elect (& target, true);
       ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
 
       status = scheduler_switch (target, & thread -> wait);

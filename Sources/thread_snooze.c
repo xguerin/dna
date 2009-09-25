@@ -59,7 +59,7 @@ status_t thread_snooze (bigtime_t value)
     self -> info . status = DNA_THREAD_SLEEPING;
     self -> info . previous_status = DNA_THREAD_RUNNING;
 
-    status = scheduler_elect (& target);
+    status = scheduler_elect (& target, true);
     ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
 
     status = scheduler_switch (target, NULL);

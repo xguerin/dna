@@ -21,6 +21,8 @@
 #ifndef DNA_CORE_SCHEDULER_PRIVATE_H
 #define DNA_CORE_SCHEDULER_PRIVATE_H
 
+#include <stdbool.h>
+
 #include <Private/Cpu.h>
 #include <Private/Thread.h>
 
@@ -39,6 +41,8 @@ typedef struct _scheduler
   spinlock_t lock;
 
   cpu_t cpu[DNA_MAX_CPU];
+  queue_t cpu_pool;
+
   queue_t xt[DNA_MAX_CPU + 1];
   thread_t thread[DNA_MAX_THREAD];
 }
@@ -49,7 +53,7 @@ scheduler_t;
 
 extern scheduler_t scheduler;
 
-extern status_t scheduler_elect (thread_t * p_thread);
+extern status_t scheduler_elect (thread_t * p_thread, bool with_idle);
 extern status_t scheduler_dispatch (thread_t thread);
 extern status_t scheduler_switch (thread_t thread, queue_t * queue);
 

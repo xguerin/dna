@@ -69,7 +69,7 @@ status_t thread_suspend (int32_t id)
 
             log (VERBOSE_LEVEL, "Local RUN suspend %d.", thread -> info . id)
 
-            status = scheduler_elect (& target);
+            status = scheduler_elect (& target, true);
             ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
 
             status = scheduler_switch (target, NULL);
