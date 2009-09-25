@@ -36,7 +36,7 @@ status_t thread_yield (void)
  */
 
 {
-  status_t status;
+  status_t status = DNA_OK;
   thread_t thread = NULL;
   queue_t * queue = NULL;
   interrupt_status_t it_status = 0;
@@ -67,7 +67,7 @@ status_t thread_yield (void)
     }
 
     cpu_trap_restore(it_status);
-    return DNA_OK;
+    return status;
   }
 }
 

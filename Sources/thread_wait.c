@@ -70,11 +70,13 @@ status_t thread_wait (int32_t id, int32_t * value)
     if (thread -> info . status != DNA_THREAD_ZOMBIE)
     {
       lock_acquire (& thread -> wait . lock);
+      lock_release (& thread -> lock);
 
       /*
        * If not, put ourselve in wait mode
        */
 
+      lock_acquire (& self -> lock);
       self -> info . status = DNA_THREAD_WAITING;
 
       /*
@@ -89,20 +91,13 @@ status_t thread_wait (int32_t id, int32_t * value)
 
       cpu_trap_restore(it_status);
     }
-    else
-    {
-      lock_release (& thread -> lock);
-    }
+    else lock_release (& thread -> lock);
 
     /*
      * We get the return value of the thread and return
      */
 
-    if (value != NULL)
-    {
-      *value = thread -> signature . return_value;
-    }
-
+    if (value != NULL) *value = thread -> signature . return_value;
     return DNA_OK;
   }
 

@@ -39,18 +39,7 @@ int32_t interrupt_demultiplexer (int32_t data)
  */
 
 {
-  cpu_status_t cpu_status;
   int32_t current_cpuid = cpu_mp_id ();
-
-  /*
-   * Save the previous CPU status,
-   * replace with SERVICING_INTERRUPT
-   */
-
-  lock_acquire (& scheduler . lock);
-  cpu_status = scheduler . cpu[current_cpuid] . status;
-  scheduler . cpu[current_cpuid] . status = DNA_CPU_SERVICING_INTERRUPT;
-  lock_release (& scheduler . lock);
 
   /*
    * Look for the corresponding handler
@@ -62,15 +51,6 @@ int32_t interrupt_demultiplexer (int32_t data)
       interrupt_handler_inspector, & data, NULL);
 
   lock_release (& scheduler . cpu[current_cpuid]. isr_list . lock);
-
-  /*
-   * Restore the previous CPU status
-   */
-
-  lock_acquire (& scheduler . lock);
-  scheduler . cpu[current_cpuid] . status = cpu_status;
-  lock_release (& scheduler . lock);
-
   return DNA_OK;
 }
 

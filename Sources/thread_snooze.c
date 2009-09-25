@@ -54,13 +54,12 @@ status_t thread_snooze (bigtime_t value)
         thread_alarm, self, & alarm_id);
     check (alarm_error, status == DNA_OK, status);
 
-    lock_acquire (& self -> lock);
-
-    self -> info . status = DNA_THREAD_SLEEPING;
-    self -> info . previous_status = DNA_THREAD_RUNNING;
-
     status = scheduler_elect (& target, true);
     ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
+
+    lock_acquire (& self -> lock);
+    self -> info . status = DNA_THREAD_SLEEPING;
+    self -> info . previous_status = DNA_THREAD_RUNNING;
 
     status = scheduler_switch (target, NULL);
     ensure (status == DNA_OK, status);

@@ -52,28 +52,29 @@ status_t scheduler_dispatch (thread_t thread)
     lock_release (& thread -> lock);
 
     queue_add (& scheduler . xt[thread -> info . affinity], thread);
-    lock_release (& scheduler . xt[thread -> info . affinity] . lock);
 
     /*
      * Look for an available processor.
      */
 
+    lock_acquire (& scheduler . cpu_pool . lock);
+    lock_release (& scheduler . xt[thread -> info . affinity] . lock);
+
     if (thread -> info . affinity == cpu_mp_count ())
     {
-      lock_acquire (& scheduler . cpu_pool . lock);
       cpu = queue_rem (& scheduler . cpu_pool);
-      lock_release (& scheduler . cpu_pool . lock);
     }
     else
     {
-      lock_acquire (& scheduler . cpu_pool . lock);
-      if (scheduler . cpu[thread -> info . affinity] . status == DNA_CPU_READY)
+      cpu = & scheduler . cpu[thread -> info . affinity] ;
+      if (cpu -> status == DNA_CPU_READY)
       {
-        cpu = & scheduler . cpu[thread -> info . affinity] ;
         queue_extract (& scheduler . cpu_pool, cpu);
       }
-      lock_release (& scheduler . cpu_pool . lock);
+      else cpu = NULL;
     }
+
+    lock_release (& scheduler . cpu_pool . lock);
 
     /*
      * Deal with the dispatch.
@@ -81,10 +82,6 @@ status_t scheduler_dispatch (thread_t thread)
 
     if (cpu != NULL)
     {
-      log (VERBOSE_LEVEL, "Remote execute %d on %d.",
-          thread -> info . id, next_cpuid);
-
-      cpu -> status = DNA_CPU_RUNNING;
       lock_acquire (& cpu -> ipi_lock);
       cpu_mp_send_ipi (cpu -> id, DNA_IPI_YIELD, NULL);
     }

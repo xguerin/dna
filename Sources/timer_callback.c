@@ -35,22 +35,11 @@ void timer_callback (void)
 {
   alarm_t alarm = NULL;
   status_t status = DNA_OK;
-  cpu_status_t cpu_status;
   int32_t current_cpuid = cpu_mp_id ();
   bigtime_t current_time = 0, quantum = 0;
   bool reschedule = false;
   bool process_next_alarm = true, delete_alarm = false;
   cpu_t * cpu = & scheduler . cpu[current_cpuid];
-
-  /*
-   * Save the previous CPU status,
-   * replace with SERVICING_INTERRUPT
-   */
-
-  lock_acquire (& scheduler . lock);
-  cpu_status = scheduler . cpu[current_cpuid] . status;
-  scheduler . cpu[current_cpuid] . status = DNA_CPU_SERVICING_INTERRUPT;
-  lock_release (& scheduler . lock);
 
   /*
    * Proceed with the alarm
@@ -140,14 +129,6 @@ void timer_callback (void)
    */
 
   if (reschedule) thread_yield ();
-
-  /*
-   * Restore the previous CPU status
-   */
-
-  lock_acquire (& scheduler . lock);
-  scheduler . cpu[current_cpuid] . status = cpu_status;
-  lock_release (& scheduler . lock);
 }
 
 /*

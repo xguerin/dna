@@ -26,7 +26,7 @@
  * SYNOPSIS
  */
 
-status_t ipi_callback (int32_t command, void * cookie)
+void ipi_callback (int32_t command, void * cookie)
 
 /*
  * ARGUMENTS
@@ -40,18 +40,8 @@ status_t ipi_callback (int32_t command, void * cookie)
  */
 
 {
-  cpu_status_t cpu_status;
+  status_t status;
   int32_t current_cpuid = cpu_mp_id ();
-
-  /*
-   * Save the previous CPU status,
-   * replace with SERVICING_INTERRUPT
-   */
-
-  lock_acquire (& scheduler . lock);
-  cpu_status = scheduler . cpu[current_cpuid] . status;
-  scheduler . cpu[current_cpuid] . status = DNA_CPU_SERVICING_INTERRUPT;
-  lock_release (& scheduler . lock);
 
   /*
    * Release the IPI lock and proceed with the IPI
@@ -63,9 +53,19 @@ status_t ipi_callback (int32_t command, void * cookie)
   {
     case DNA_IPI_YIELD :
       {
-        log (VERBOSE_LEVEL, "%d YIELD", cpu_mp_id ());
+        log (VERBOSE_LEVEL, "%d YIELD", current_cpuid);
 
-        thread_yield ();
+        scheduler . cpu[current_cpuid] . status = DNA_CPU_RUNNING;
+        status = thread_yield ();
+
+        if (status == DNA_NO_AVAILABLE_THREAD)
+        {
+          scheduler . cpu[current_cpuid] . status = DNA_CPU_READY;
+          lock_acquire (& scheduler . cpu_pool . lock);
+          queue_add (& scheduler . cpu_pool, & scheduler . cpu[current_cpuid]);
+          lock_release (& scheduler . cpu_pool . lock);
+        }
+
         break;
       }
 
@@ -93,16 +93,6 @@ status_t ipi_callback (int32_t command, void * cookie)
       log (PANIC_LEVEL, "Unknown command: %d", command);
       break;
   }
-
-  /*
-   * Restore the previous CPU status
-   */
-
-  lock_acquire (& scheduler . lock);
-  scheduler . cpu[current_cpuid] . status = cpu_status;
-  lock_release (& scheduler . lock);
-
-  return DNA_OK;
 }
 
 /*

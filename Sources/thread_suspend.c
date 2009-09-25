@@ -49,9 +49,22 @@ status_t thread_suspend (int32_t id)
   watch (status_t)
   {
     ensure (thread != NULL, DNA_BAD_ARGUMENT);
-
     it_status = cpu_trap_mask_and_backup ();
+
+    /*
+     * We need to extract the thread right away,
+     * even if the thread is not present in the queue
+     */
+
+    lock_acquire (& scheduler . xt[thread -> info . affinity] . lock);
+    queue_extract (& scheduler . xt[thread -> info . affinity], thread);
+
     lock_acquire (& thread -> lock);
+    lock_release (& scheduler . xt[thread -> info . affinity] . lock);
+
+    /*
+     * And now we deal with the thread according to its status
+     */
 
     check (bad_status,
         thread -> info . status != DNA_THREAD_ZOMBIE &&
@@ -99,10 +112,6 @@ status_t thread_suspend (int32_t id)
           thread -> info . status = DNA_THREAD_SUSPENDED;
           thread -> info . previous_status = DNA_THREAD_READY;
 
-          lock_acquire (& scheduler . xt[thread -> info . affinity] . lock);
-          queue_extract (& scheduler . xt[thread -> info . affinity], thread);
-          lock_release (& scheduler . xt[thread -> info . affinity] . lock);
-
           lock_release (& thread -> lock);
           break;
         }
@@ -113,6 +122,7 @@ status_t thread_suspend (int32_t id)
 
           thread -> info . status = DNA_THREAD_SUSPENDED;
           thread -> info . previous_status = DNA_THREAD_SLEEPING;
+
           lock_release (& thread -> lock);
           break;
         }
@@ -123,6 +133,7 @@ status_t thread_suspend (int32_t id)
 
           thread -> info . status = DNA_THREAD_SUSPENDED;
           thread -> info . previous_status = DNA_THREAD_WAITING;
+
           lock_release (& thread -> lock);
           break;
         }

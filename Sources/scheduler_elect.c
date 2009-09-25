@@ -48,56 +48,41 @@ status_t scheduler_elect (thread_t * p_thread, bool with_idle)
     ensure (p_thread != NULL, DNA_BAD_ARGUMENT);
 
     /*
-     * First, we look into the local thread list.
+     * Check the local queue
      */
 
-    while (scheduler . xt[current_cpuid] . status != 0)
+    lock_acquire (& scheduler . xt[current_cpuid] . lock);
+    thread = queue_rem (& scheduler . xt[current_cpuid]);
+
+    if (thread != NULL)
     {
-      lock_acquire (& scheduler . xt[current_cpuid] . lock);
-      thread = queue_rem (& scheduler . xt[current_cpuid]);
+      lock_acquire (& thread -> lock);
       lock_release (& scheduler . xt[current_cpuid] . lock);
 
-      if (thread != NULL)
-      {
-        lock_acquire (& thread -> lock);
-
-        if (thread -> info . status == DNA_THREAD_READY)
-        {
-          *p_thread = thread;
-          return DNA_OK;
-        }
-        
-        lock_release (& thread -> lock);
-      }
+      *p_thread = thread;
+      return DNA_OK;
     }
 
     /*
-     * If nothing is available, we look into the global thread list.
+     * Check the global queue
      */
 
-    while (scheduler . xt[cpu_mp_count ()] . status != 0)
+    lock_acquire (& scheduler . xt[cpu_mp_count ()] . lock);
+    lock_release (& scheduler . xt[current_cpuid] . lock);
+
+    thread = queue_rem (& scheduler . xt[cpu_mp_count ()]);
+
+    if (thread != NULL)
     {
-      lock_acquire (& scheduler . xt[cpu_mp_count ()] . lock);
-      thread = queue_rem (& scheduler . xt[cpu_mp_count ()]);
+      lock_acquire (& thread -> lock);
       lock_release (& scheduler . xt[cpu_mp_count ()] . lock);
 
-      if (thread != NULL)
-      {
-        lock_acquire (& thread -> lock);
-
-        if (thread -> info . status == DNA_THREAD_READY)
-        {
-          *p_thread = thread;
-          return DNA_OK;
-        }
-
-        lock_release (& thread -> lock);
-      }
+      *p_thread = thread;
+      return DNA_OK;
     }
 
     /*
-     * If really nothing is available and with_idle == true,
-     * then return the IDLE thread
+     * Return the IDLE thread
      */
 
     if (with_idle)
@@ -105,17 +90,21 @@ status_t scheduler_elect (thread_t * p_thread, bool with_idle)
       scheduler . cpu[current_cpuid] . status = DNA_CPU_READY;
 
       lock_acquire (& scheduler . cpu_pool . lock);
+      lock_release (& scheduler . xt[cpu_mp_count ()] . lock);
+
       queue_add (& scheduler . cpu_pool, & scheduler . cpu[current_cpuid]);
       lock_release (& scheduler . cpu_pool . lock);
 
       thread = scheduler . cpu[current_cpuid] . idle_thread;
       lock_acquire (& thread -> lock);
-      *p_thread = thread;
 
+      *p_thread = thread;
       return DNA_OK;
     }
     else
     {
+      lock_release (& scheduler . xt[cpu_mp_count ()] . lock);
+
       *p_thread = NULL;
       return DNA_NO_AVAILABLE_THREAD;
     }
