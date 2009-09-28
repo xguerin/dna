@@ -80,7 +80,7 @@ status_t scheduler_dispatch (thread_t thread)
      * Deal with the dispatch.
      */
 
-    if (cpu != NULL)
+    if (cpu != NULL && cpu -> id != cpu_mp_id ())
     {
       lock_acquire (& cpu -> ipi_lock);
       cpu_mp_send_ipi (cpu -> id, DNA_IPI_YIELD, NULL);
@@ -88,9 +88,8 @@ status_t scheduler_dispatch (thread_t thread)
     else
     {
       affinity = thread -> info . affinity;
-      cpu = & scheduler . cpu[cpu_mp_id ()];
 
-      if (cpu -> current_thread == cpu -> idle_thread)
+      if (cpu != NULL)
       {
         if (affinity == cpu_mp_count () || affinity == cpu_mp_id ())
         {

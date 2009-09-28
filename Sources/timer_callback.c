@@ -128,7 +128,17 @@ void timer_callback (void)
    * Reschedule of necessary
    */
 
-  if (reschedule) thread_yield ();
+  if (reschedule)
+  {
+    if (thread_yield () == DNA_NO_AVAILABLE_THREAD &&
+        scheduler . cpu[current_cpuid] . status == DNA_CPU_READY)
+    {
+      log (INFO_LEVEL, "Nothing to do...");
+      lock_acquire (& scheduler . cpu_pool . lock);
+      queue_add (& scheduler . cpu_pool, & scheduler . cpu[current_cpuid]);
+      lock_release (& scheduler . cpu_pool . lock);
+    }
+  }
 }
 
 /*
