@@ -94,13 +94,11 @@ status_t alarm_destroy (int32_t aid)
     }
     else
     {
-      alarm = queue_lookup (& cpu -> alarm_queue,
-          alarm_id_inspector, & aid, NULL); 
+      status = queue_extract (& cpu -> alarm_queue, alarm);
 
-      if (alarm == NULL) status = DNA_UNKNOWN_ALARM;
+      if (status == DNA_ERROR) status = DNA_UNKNOWN_ALARM;
       else
       {
-        queue_extract (& cpu -> alarm_queue, alarm);
         alarm_manager . alarm[aid] = NULL;
         kernel_free (alarm);
       }

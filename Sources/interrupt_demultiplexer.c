@@ -26,7 +26,7 @@
  * SYNOPSIS
  */
 
-int32_t interrupt_demultiplexer (int32_t data)
+int32_t interrupt_demultiplexer (int32_t itn)
 
 /*
  * ARGUMENTS
@@ -39,19 +39,52 @@ int32_t interrupt_demultiplexer (int32_t data)
  */
 
 {
+  isr_t isr;
+  status_t status = DNA_UNHANDLED_INTERRUPT;
   int32_t current_cpuid = cpu_mp_id ();
+  cpu_t * cpu = & scheduler . cpu[current_cpuid];
+  queue_t * queue = & cpu -> isr_list[itn];
 
-  /*
-   * Look for the corresponding handler
-   */
+  watch (int32_t)
+  {
+    ensure (itn < cpu_trap_count (), DNA_BAD_ARGUMENT);
 
-  lock_acquire (& scheduler . cpu[current_cpuid]. isr_list . lock);
+    /*
+     * Look for the corresponding handler
+     */
 
-  queue_lookup (& scheduler . cpu[current_cpuid]. isr_list,
-      interrupt_handler_inspector, & data, NULL);
+    lock_acquire (& queue -> lock);
 
-  lock_release (& scheduler . cpu[current_cpuid]. isr_list . lock);
-  return DNA_OK;
+    for (isr = (isr_t) queue -> head; isr != NULL; isr = isr -> next)
+    {
+      status = isr -> handler (itn);
+      if (status == DNA_INVOKE_SCHEDULER || status == DNA_HANDLED_INTERRUPT)
+      {
+        break;
+      }
+    }
+
+    lock_release (& queue -> lock);
+
+    /*
+     * Depending on the status, invoke the scheduler
+     */
+
+    if (status == DNA_INVOKE_SCHEDULER)
+    {
+      status = thread_yield ();
+
+      if (status == DNA_NO_AVAILABLE_THREAD && cpu -> status == DNA_CPU_READY)
+      {
+        log (INFO_LEVEL, "Nothing to do...");
+        lock_acquire (& scheduler . cpu_pool . lock);
+        queue_add (& scheduler . cpu_pool, cpu);
+        lock_release (& scheduler . cpu_pool . lock);
+      }
+    }
+
+    return status;
+  }
 }
 
 /*

@@ -37,7 +37,7 @@
 
 typedef struct _alarm
 {
-  queue_item_t link;
+  struct _alarm * next;
 
   int32_t id;
   int32_t thread_id;
@@ -73,9 +73,7 @@ alarm_manager_t;
  ****/
 
 extern alarm_manager_t alarm_manager;
-
 extern bool alarm_comparator (void * item1, void * item2);
-extern bool alarm_id_inspector (void * item, void * a0, void * a1);
 
 #endif
 

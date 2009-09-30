@@ -57,8 +57,8 @@ cpu_status_t;
  */
 
 typedef struct _cpu
-{
-  queue_item_t link;
+{ 
+  struct _cpu * next;
 
   int32_t id;
   cpu_status_t status;
@@ -67,7 +67,7 @@ typedef struct _cpu
   spinlock_t ipi_lock;
 
   bigtime_t lap_date;
-  queue_t isr_list;
+  queue_t * isr_list;
 
   thread_t current_thread;
   thread_t idle_thread;

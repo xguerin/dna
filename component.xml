@@ -138,22 +138,14 @@
     <type name="bigtime_t"/>
     <type name="alarm_callback_t"/>
 
-    <method name="time_ticker" return_type="void">
-      <argument name="value" type="bigtime_t" direction="in"/>
-    </method>
-
-    <method name="time_set_alarm" return_type="int32_t">
+    <method name="alarm_create" return_type="int32_t">
       <argument name="deadline" type="bigtime_t" direction="in"/>
       <argument name="mode" type="int32_t" direction="in"/>
       <argument name="callback" type="alarm_callback_t" direction="in"/>
       <argument name="data" type="access" direction="in"/>
     </method>
 
-    <method name="time_cancel_alarm" return_type="status_t">
-      <argument name="alarm" type="int32_t" direction="in"/>
-    </method>
-
-    <method name="time_reset_alarm" return_type="status_t">
+    <method name="alarm_destroy" return_type="status_t">
       <argument name="alarm" type="int32_t" direction="in"/>
     </method>
   </provide>

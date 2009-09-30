@@ -18,49 +18,38 @@
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* Core/interrupt_handler_inspector
+/****f* Core/semaphore_alarm
  * SUMMARY
- * Look for the handler that can deal with the IT.
+ * Semaqphore acquire alarm.
  *
  * SYNOPSIS
  */
 
-bool interrupt_handler_inspector (void * item, void * p_id, void * dummy)
+status_t semaphore_alarm (void * data)
 
 /*
  * ARGUMENTS
- * * item : an isr_t
- * * p_id : a pointer to the interrupt's ID
- *
- * RESULT
- * True if the handler corresponds, false otherwise.
+ * * data : a thread_t element.
  *
  * SOURCE
  */
 
 {
-  isr_t isr = item;
-  int32_t * id = p_id;
-  status_t status = DNA_UNHANDLED_INTERRUPT;
+  status_t status = DNA_OK;
+  thread_t thread = data;
 
-  watch (bool)
+  watch (status_t)
   {
-    ensure (isr != NULL, false);
-    ensure (id != NULL, false);
+    ensure (thread != NULL, DNA_ERROR);
+    ensure (thread -> info . status == DNA_THREAD_WAITING, DNA_ERROR);
 
-    status = isr -> handler (*id);
+    lock_acquire (& thread -> lock);
 
-    switch (status)
-    {
-      case DNA_UNHANDLED_INTERRUPT :
-        return false;
+    thread -> info . status = DNA_THREAD_READY;
+    thread -> info . previous_status = DNA_THREAD_WAITING;
 
-      case DNA_INVOKE_SCHEDULER :
-      case DNA_HANDLED_INTERRUPT :
-        return true;
-
-      default : return false;
-    }
+    status = scheduler_dispatch (thread);
+    return status;
   }
 }
 

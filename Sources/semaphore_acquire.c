@@ -128,7 +128,7 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
 
         default :
           status = alarm_create (timeout, DNA_RELATIVE_ALARM
-              | DNA_ONE_SHOT_ALARM, thread_alarm, self, & alarm);
+              | DNA_ONE_SHOT_ALARM, semaphore_alarm, self, & alarm);
           check (invalid_alarm, status == DNA_OK, status);
 
           lock_acquire (& self -> lock);

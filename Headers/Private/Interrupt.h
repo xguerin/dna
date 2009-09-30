@@ -40,7 +40,7 @@
 
 typedef struct _isr
 {
-  queue_item_t link;
+  struct _isr * next;
   interrupt_handler_t handler;
 }
 * isr_t;
@@ -49,9 +49,6 @@ typedef struct _isr
  ****/
 
 extern int32_t interrupt_demultiplexer (int32_t itn);
-
-extern bool interrupt_handler_inspector (void * p_isr,
-    void * p_handler, void * dummy);
 
 #endif
 

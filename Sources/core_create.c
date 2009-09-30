@@ -42,6 +42,7 @@ status_t core_create (void)
 
 {
   status_t status;
+  cpu_t * cpu = NULL;
   int32_t thread_id = -1;
 
   watch (status_t)
@@ -65,17 +66,26 @@ status_t core_create (void)
     dna_memset (& semaphore_pool, 0, sizeof (semaphore_pool_t));
 
     /*
-     * Create the idle threads
+     * Initialize the CPUs
      */
 
     for (int32_t cpu_i = 0; cpu_i < cpu_mp_count (); cpu_i++)
     {
+      cpu = & scheduler . cpu[cpu_i];
+
+      /*
+       * Create the ISR lists
+       */
+
+       cpu -> isr_list = kernel_malloc (sizeof (queue_t) *
+           cpu_trap_count (), false);
+
       /*
        * Create the Idle thread
        */
 
       status = thread_create (thread_idle, NULL,
-          "IdleThread", cpu_i, & scheduler . cpu[cpu_i] . stack,
+          "IdleThread", cpu_i, cpu -> stack,
           DNA_IDLE_STACK_SIZE, & thread_id);
       check (create_threads, status == DNA_OK, DNA_ERROR);
 
@@ -85,10 +95,10 @@ status_t core_create (void)
        * Deal with the new thread
        */
 
-      scheduler . cpu[cpu_i] . id = cpu_i;
-      scheduler . cpu[cpu_i] . status = DNA_CPU_DISABLED;
-      scheduler . cpu[cpu_i] . idle_thread = scheduler . thread[thread_id];
-      scheduler . cpu[cpu_i] . current_thread = scheduler . thread[thread_id];
+      cpu -> id = cpu_i;
+      cpu -> status = DNA_CPU_DISABLED;
+      cpu -> idle_thread = scheduler . thread[thread_id];
+      cpu -> current_thread = scheduler . thread[thread_id];
     }
 
     /*

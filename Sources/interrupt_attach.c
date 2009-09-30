@@ -46,6 +46,7 @@ status_t interrupt_attach (int32_t cpuid, interrupt_id_t id,
 {
   isr_t isr = NULL;
   interrupt_status_t it_status = 0;
+  queue_t * queue = & scheduler . cpu[cpu_mp_id ()] . isr_list[id];
 
   watch (status_t)
   {
@@ -57,11 +58,11 @@ status_t interrupt_attach (int32_t cpuid, interrupt_id_t id,
     isr -> handler = handler;
 
     it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& scheduler . cpu[cpuid] . isr_list . lock);
+    lock_acquire (& queue -> lock);
 
-    queue_add (& scheduler . cpu[cpuid] . isr_list, isr);
+    queue_add (queue, isr);
 
-    if (scheduler . cpu[cpuid] . isr_list . status == 1)
+    if (queue -> status == 1)
     {
       cpu_trap_attach_isr (cpuid, id, mode, interrupt_demultiplexer);
 
@@ -73,7 +74,7 @@ status_t interrupt_attach (int32_t cpuid, interrupt_id_t id,
       }
     }
 
-    lock_release (& scheduler . cpu[cpuid] . isr_list . lock);
+    lock_release (& queue -> lock);
     cpu_trap_restore(it_status);
 
     return DNA_OK;
