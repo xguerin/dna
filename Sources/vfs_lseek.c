@@ -59,6 +59,12 @@ status_t vfs_lseek (int16_t fd, int64_t offset, int32_t whence, int64_t * p_ret)
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& fdarray -> lock);
 
+    file = fdarray -> fds[fd];
+    check (bad_file, file != NULL && file != (file_t) -1, DNA_INVALID_FD);
+
+    lock_acquire (& file -> lock);
+    lock_release (& fdarray -> lock);
+
     switch (whence)
     {
       case DNA_SEEK_SET :
@@ -87,6 +93,14 @@ status_t vfs_lseek (int16_t fd, int64_t offset, int32_t whence, int64_t * p_ret)
     
     return DNA_OK;
   }
+  
+  rescue (bad_file)
+  {
+    lock_release (& fdarray -> lock);
+    cpu_trap_restore(it_status);
+    leave;
+  }
+
 }
 
 /*
