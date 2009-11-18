@@ -39,9 +39,9 @@
 
 typedef enum _cpu_status
 {
-  DNA_CPU_READY               = 0xFACE,
-  DNA_CPU_RUNNING             = 0xBEEF,
-  DNA_CPU_DISABLED            = 0xDEAD
+  DNA_CPU_READY     = 0xFACE,
+  DNA_CPU_RUNNING   = 0xBEEF,
+  DNA_CPU_DISABLED  = 0xDEAD
 }
 cpu_status_t;
 

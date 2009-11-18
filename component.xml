@@ -148,6 +148,13 @@
     <method name="alarm_destroy" return_type="status_t">
       <argument name="alarm" type="int32_t" direction="in"/>
     </method>
+
+    <method name="time_callback" return_type=""/>
+
+    <method name="ipi_callback" return_type="">
+      <argument name="command" type="int32_t" direction="in"/>
+      <argument name="data" type="access" direction="in"/>
+    </method>
   </provide>
 
   <require>
