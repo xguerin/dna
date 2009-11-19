@@ -40,7 +40,7 @@ void lock_release (spinlock_t * lock)
 
 {
   *lock = 0;
-  cpu_cache_wbflush ();
+  cpu_cache_sync ();
 }
 
 /*

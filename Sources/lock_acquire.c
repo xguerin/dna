@@ -40,7 +40,7 @@ void lock_acquire (spinlock_t * lock)
 
 {
   while (cpu_test_and_set (lock) == 1);
-  cpu_cache_wbflush ();
+  cpu_cache_sync ();
 }
 
 /*
