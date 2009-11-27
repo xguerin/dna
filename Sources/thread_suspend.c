@@ -52,14 +52,18 @@ status_t thread_suspend (int32_t id)
     it_status = cpu_trap_mask_and_backup ();
 
     /*
+     * Lock the thread to suspend
+     */
+
+    lock_acquire (& thread -> lock);
+
+    /*
      * We need to extract the thread right away,
      * even if the thread is not present in the queue
      */
 
     lock_acquire (& scheduler . xt[thread -> info . affinity] . lock);
     queue_extract (& scheduler . xt[thread -> info . affinity], thread);
-
-    lock_acquire (& thread -> lock);
     lock_release (& scheduler . xt[thread -> info . affinity] . lock);
 
     /*
