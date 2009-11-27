@@ -39,6 +39,7 @@ extern status_t lock_create (spinlock_t * lock);
 extern void lock_destroy (spinlock_t * lock);
 
 extern void lock_acquire (spinlock_t * lock);
+extern status_t lock_try (spinlock_t * lock, bool acquire);
 extern void lock_release (spinlock_t * lock);
 
 #endif

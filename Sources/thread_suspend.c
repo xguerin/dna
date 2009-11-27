@@ -40,7 +40,7 @@ status_t thread_suspend (int32_t id)
  */
 
 {
-  status_t status;
+  status_t status, result;
   thread_t target = NULL;
   uint32_t current_cpuid = cpu_mp_id(), next_cpuid;
   thread_t thread = scheduler . thread[id];
@@ -52,28 +52,38 @@ status_t thread_suspend (int32_t id)
     it_status = cpu_trap_mask_and_backup ();
 
     /*
-     * Lock the thread to suspend
+     * Apply trading algorithm to lock the thread and the scheduler
      */
 
-    lock_acquire (& thread -> lock);
+    do
+    {
+      lock_acquire (& thread -> lock);
+      result = lock_try
+        (& scheduler . xt[thread -> info . affinity] . lock, true);
+      if (result == DNA_ERROR) lock_release (& thread -> lock);
+    }
+    while (result == DNA_ERROR);
 
     /*
-     * We need to extract the thread right away,
-     * even if the thread is not present in the queue
-     */
-
-    lock_acquire (& scheduler . xt[thread -> info . affinity] . lock);
-    queue_extract (& scheduler . xt[thread -> info . affinity], thread);
-    lock_release (& scheduler . xt[thread -> info . affinity] . lock);
-
-    /*
-     * And now we deal with the thread according to its status
+     * Check the thread status
      */
 
     check (bad_status,
         thread -> info . status != DNA_THREAD_ZOMBIE &&
         thread -> info . status != DNA_THREAD_SUSPENDED,
         DNA_ERROR);
+
+    /*
+     * We need to extract the thread right away,
+     * even if the thread is not present in the queue
+     */
+
+    queue_extract (& scheduler . xt[thread -> info . affinity], thread);
+    lock_release (& scheduler . xt[thread -> info . affinity] . lock);
+
+    /*
+     * And now we deal with the thread according to its status
+     */
 
     switch (thread -> info . status)
     {
@@ -157,7 +167,10 @@ status_t thread_suspend (int32_t id)
   rescue (bad_status)
   {
     log (PANIC_LEVEL, "Oups! bad status");
+
     lock_release (& thread -> lock);
+    lock_release (& scheduler . xt[thread -> info . affinity] . lock);
+
     leave;
   }
 }
