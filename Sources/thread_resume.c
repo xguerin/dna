@@ -39,19 +39,14 @@ status_t thread_resume (int32_t id)
  */
 
 {
-  thread_t thread = NULL;
+  thread_t thread = scheduler . thread[id];
   interrupt_status_t it_status = 0;
 
   watch (status_t)
   {
-    it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& scheduler . lock);
-
-    thread = scheduler . thread[id];
-
-    lock_release (& scheduler . lock);
     check (bad_thread, thread != NULL, DNA_UNKNOWN_THREAD);
 
+    it_status = cpu_trap_mask_and_backup();
     lock_acquire (& thread -> lock);
 
     check (bad_status,

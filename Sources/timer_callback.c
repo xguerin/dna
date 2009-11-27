@@ -110,8 +110,8 @@ void timer_callback (void)
 
       if (quantum <= DNA_TIMER_JIFFY)
       {
-        log (PANIC_LEVEL, "alarm %d from %d, low quantum (%d)",
-            alarm -> id, alarm -> thread_id, (int32_t) quantum);
+        log (PANIC_LEVEL, "WARNING: low quantum (%d), alarm %d from thread %d",
+            (int32_t) quantum, alarm -> id, alarm -> thread_id);
       }
       else
       {
@@ -133,7 +133,7 @@ void timer_callback (void)
     if (thread_yield () == DNA_NO_AVAILABLE_THREAD &&
         scheduler . cpu[current_cpuid] . status == DNA_CPU_READY)
     {
-      log (INFO_LEVEL, "Nothing to do...");
+      log (VERBOSE_LEVEL, "Nothing to do...");
       lock_acquire (& scheduler . cpu_pool . lock);
       queue_add (& scheduler . cpu_pool, & scheduler . cpu[current_cpuid]);
       lock_release (& scheduler . cpu_pool . lock);
