@@ -82,7 +82,9 @@ status_t scheduler_dispatch (thread_t thread)
 
     if (cpu != NULL && cpu -> id != cpu_mp_id ())
     {
+#if 0
       lock_acquire (& cpu -> ipi_lock);
+#endif
       cpu_mp_send_ipi (cpu -> id, DNA_IPI_YIELD, NULL);
     }
     else

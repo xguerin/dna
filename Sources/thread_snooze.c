@@ -48,6 +48,10 @@ status_t thread_snooze (bigtime_t value)
 
   watch (status_t)
   {
+#if 0
+    check (idle_thread, self -> info . id >= 4, DNA_ERROR);
+#endif
+
     it_status = cpu_trap_mask_and_backup ();
 
     status = alarm_create (value, DNA_RELATIVE_ALARM | DNA_ONE_SHOT_ALARM,
@@ -73,6 +77,14 @@ status_t thread_snooze (bigtime_t value)
     cpu_trap_restore (it_status);
     leave;
   }
+
+#if 0
+  rescue (idle_thread)
+  {
+    log (PANIC_LEVEL, "An alarm for an IDLE thread ??");
+    leave;
+  }
+#endif
 }
 
 /*

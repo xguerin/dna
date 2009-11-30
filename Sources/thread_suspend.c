@@ -52,7 +52,7 @@ status_t thread_suspend (int32_t id)
     it_status = cpu_trap_mask_and_backup ();
 
     /*
-     * Apply trading algorithm to lock the thread and the scheduler
+     * Apply banker's algorithm to lock the thread and the scheduler
      */
 
     do
@@ -109,7 +109,9 @@ status_t thread_suspend (int32_t id)
 
             next_cpuid = thread -> info . cpu_id;
 
+#if 0
             lock_acquire (& scheduler . cpu[next_cpuid] . ipi_lock);
+#endif
             lock_release (& thread -> lock);
 
             cpu_mp_send_ipi (next_cpuid, DNA_IPI_SUSPEND,
