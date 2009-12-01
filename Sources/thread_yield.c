@@ -37,14 +37,14 @@ status_t thread_yield (void)
 
 {
   status_t status = DNA_OK;
-  thread_t thread = NULL;
+  thread_t thread = NULL, self = NULL;
   queue_t * queue = NULL;
   interrupt_status_t it_status = 0;
-  thread_t self = scheduler . cpu[cpu_mp_id()] . current_thread;
 
   watch (status_t)
   {
     it_status = cpu_trap_mask_and_backup();
+    self = scheduler . cpu[cpu_mp_id()] . current_thread;
 
     status = scheduler_elect (& thread, false);
     ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);

@@ -42,8 +42,8 @@ status_t thread_wait (int32_t id, int32_t * value)
 
 {
   status_t status;
-  uint32_t current_cpuid = cpu_mp_id ();
-  thread_t self = scheduler . cpu[current_cpuid] . current_thread;
+  uint32_t current_cpuid = 0;
+  thread_t self = NULL;
   thread_t thread = NULL, target = NULL;
   interrupt_status_t it_status = 0;
 
@@ -54,6 +54,9 @@ status_t thread_wait (int32_t id, int32_t * value)
      */
 
     it_status = cpu_trap_mask_and_backup();
+    current_cpuid = cpu_mp_id ();
+    self = scheduler . cpu[current_cpuid] . current_thread;
+
     lock_acquire (& scheduler . lock);
 
     thread = scheduler . thread[id];

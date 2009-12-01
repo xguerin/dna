@@ -37,8 +37,8 @@ void thread_exit (int32_t value)
  */
 
 {
-  uint32_t current_cpuid = cpu_mp_id();
-  thread_t self = scheduler . cpu[current_cpuid] . current_thread;
+  uint32_t current_cpuid = 0;
+  thread_t self = NULL;
   thread_t target = NULL, p = NULL;
   interrupt_status_t it_status = 0;
 
@@ -47,6 +47,8 @@ void thread_exit (int32_t value)
    */
 
   it_status = cpu_trap_mask_and_backup();
+  current_cpuid = cpu_mp_id();
+  self = scheduler . cpu[current_cpuid] . current_thread;
   lock_acquire (& self -> lock);
 
   /*

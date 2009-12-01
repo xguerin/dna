@@ -40,8 +40,8 @@ status_t thread_snooze (bigtime_t value)
 
 {
   int32_t alarm_id = -1;
-  uint32_t current_cpuid = cpu_mp_id();
-  thread_t self = scheduler . cpu[current_cpuid] . current_thread;
+  uint32_t current_cpuid = 0;
+  thread_t self = NULL;
   thread_t target = NULL;
   interrupt_status_t it_status = 0;
   status_t status = DNA_OK;
@@ -52,7 +52,18 @@ status_t thread_snooze (bigtime_t value)
     check (idle_thread, self -> info . id >= 4, DNA_ERROR);
 #endif
 
+    /*
+     * Disable interrupts and get current information
+     */
+
     it_status = cpu_trap_mask_and_backup ();
+
+    current_cpuid = cpu_mp_id();
+    self = scheduler . cpu[current_cpuid] . current_thread;
+
+    /*
+     * Create the snooze alarm
+     */
 
     status = alarm_create (value, DNA_RELATIVE_ALARM | DNA_ONE_SHOT_ALARM,
         thread_alarm, self, & alarm_id);

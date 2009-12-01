@@ -44,9 +44,9 @@ status_t alarm_create (bigtime_t quantum, int32_t mode,
  */
 
 {
+  cpu_t * cpu = NULL;
   bigtime_t current_time = 0;
-  int32_t current_cpuid = cpu_mp_id ();
-  cpu_t * cpu = & scheduler . cpu[current_cpuid];
+  int32_t current_cpuid = 0;
   interrupt_status_t it_status;
   alarm_t new_alarm = NULL, old_alarm = NULL;
   
@@ -60,6 +60,14 @@ status_t alarm_create (bigtime_t quantum, int32_t mode,
 
     new_alarm = kernel_malloc (sizeof (struct _alarm), true);
     ensure (new_alarm != NULL, DNA_OUT_OF_MEM);
+
+    /*
+     * Deactivate interrupts and get current information
+     */
+
+    it_status = cpu_trap_mask_and_backup();
+    current_cpuid = cpu_mp_id ();
+    cpu = & scheduler . cpu[current_cpuid];
 
     /*
      * Set its parameters
@@ -80,7 +88,6 @@ status_t alarm_create (bigtime_t quantum, int32_t mode,
      * Find an empty slot to store the alarm
      */
 
-    it_status = cpu_trap_mask_and_backup();
     lock_acquire (& alarm_manager . lock);
 
     for (int32_t i = 0; i < DNA_MAX_THREAD; i += 1)
@@ -100,7 +107,6 @@ status_t alarm_create (bigtime_t quantum, int32_t mode,
      * Deal with the new alarm
      */
 
-    it_status = cpu_trap_mask_and_backup();
     lock_acquire (& cpu -> lock);
 
     if (cpu -> current_alarm == NULL)

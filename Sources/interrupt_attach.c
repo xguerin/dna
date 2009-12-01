@@ -45,21 +45,30 @@ status_t interrupt_attach (int32_t cpuid, interrupt_id_t id,
 
 {
   isr_t isr = NULL;
+  queue_t * queue = NULL;
   interrupt_status_t it_status = 0;
-  queue_t * queue = & scheduler . cpu[cpu_mp_id ()] . isr_list[id];
 
   watch (status_t)
   {
     ensure (id < cpu_trap_count (), DNA_BAD_ARGUMENT);
+
+    /*
+     * Create the new ISR
+     */
 
     isr = kernel_malloc (sizeof (struct _isr), true);
     ensure (isr != NULL, DNA_OUT_OF_MEM);
 
     isr -> handler = handler;
 
-    it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& queue -> lock);
+    /*
+     * Add the new ISR in the appropriate queue
+     */
 
+    it_status = cpu_trap_mask_and_backup();
+    queue = & scheduler . cpu[cpu_mp_id ()] . isr_list[id];
+
+    lock_acquire (& queue -> lock);
     queue_add (queue, isr);
 
     if (queue -> status == 1)

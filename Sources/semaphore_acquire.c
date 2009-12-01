@@ -45,13 +45,13 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
  */
 
 {
-  uint32_t current_cpuid = cpu_mp_id();
-  thread_t self = scheduler . cpu[current_cpuid] . current_thread;
+  thread_t self = NULL;
   thread_t thread = NULL;
   semaphore_t sem = NULL;
-  int32_t alarm, rem_tokens;
-  interrupt_status_t it_status = 0;
   status_t status = DNA_OK;
+  int32_t alarm, rem_tokens;
+  uint32_t current_cpuid = 0;
+  interrupt_status_t it_status = 0;
 
   watch (status_t)
   {
@@ -59,11 +59,14 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
     ensure (tokens > 0, DNA_BAD_ARGUMENT);
 
     it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& semaphore_pool . lock);
+    current_cpuid = cpu_mp_id();
+    self = scheduler . cpu[current_cpuid] . current_thread;
 
     /*
      * Look for the semaphore with ID sid
      */
+
+    lock_acquire (& semaphore_pool . lock);
 
     sem = semaphore_pool . semaphore[sid];
     check (invalid_semaphore, sem != NULL, DNA_BAD_SEM_ID);

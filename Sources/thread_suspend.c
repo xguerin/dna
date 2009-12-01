@@ -42,14 +42,16 @@ status_t thread_suspend (int32_t id)
 {
   status_t status, result;
   thread_t target = NULL;
-  uint32_t current_cpuid = cpu_mp_id(), next_cpuid;
+  uint32_t current_cpuid = 0, next_cpuid = 0;
   thread_t thread = scheduler . thread[id];
   interrupt_status_t it_status = 0;
 
   watch (status_t)
   {
     ensure (thread != NULL, DNA_BAD_ARGUMENT);
+
     it_status = cpu_trap_mask_and_backup ();
+    current_cpuid = cpu_mp_id ();
 
     /*
      * Apply banker's algorithm to lock the thread and the scheduler
