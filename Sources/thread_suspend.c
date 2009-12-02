@@ -110,10 +110,6 @@ status_t thread_suspend (int32_t id)
                 thread -> info . id, thread -> info . cpu_id);
 
             next_cpuid = thread -> info . cpu_id;
-
-#if 0
-            lock_acquire (& scheduler . cpu[next_cpuid] . ipi_lock);
-#endif
             lock_release (& thread -> lock);
 
             cpu_mp_send_ipi (next_cpuid, DNA_IPI_SUSPEND,

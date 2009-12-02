@@ -44,14 +44,6 @@ void ipi_callback (int32_t command, void * cookie)
   int32_t current_cpuid = cpu_mp_id ();
 
   /*
-   * Release the IPI lock and proceed with the IPI
-   */
-
-#if 0
-  lock_release (& scheduler . cpu[current_cpuid] . ipi_lock);
-#endif
-
-  /*
    * Process the command
    */
 
