@@ -42,7 +42,7 @@ int32_t interrupt_demultiplexer (int32_t itn)
   isr_t isr;
   status_t status = DNA_UNHANDLED_INTERRUPT;
   int32_t current_cpuid = cpu_mp_id ();
-  cpu_t * cpu = & scheduler . cpu[current_cpuid];
+  cpu_t * cpu = & cpu_pool . cpu[current_cpuid];
   queue_t * queue = & cpu -> isr_list[itn];
 
   watch (int32_t)
@@ -77,9 +77,9 @@ int32_t interrupt_demultiplexer (int32_t itn)
       if (status == DNA_NO_AVAILABLE_THREAD && cpu -> status == DNA_CPU_READY)
       {
         log (INFO_LEVEL, "Nothing to do...");
-        lock_acquire (& scheduler . cpu_pool . lock);
-        queue_add (& scheduler . cpu_pool, cpu);
-        lock_release (& scheduler . cpu_pool . lock);
+        lock_acquire (& cpu_pool . cpu_queue . lock);
+        queue_add (& cpu_pool . cpu_queue, cpu);
+        lock_release (& cpu_pool . cpu_queue . lock);
       }
     }
 

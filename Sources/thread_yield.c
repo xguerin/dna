@@ -44,7 +44,7 @@ status_t thread_yield (void)
   watch (status_t)
   {
     it_status = cpu_trap_mask_and_backup();
-    self = scheduler . cpu[cpu_mp_id()] . current_thread;
+    self = cpu_pool . cpu[cpu_mp_id()] . current_thread;
 
     status = scheduler_elect (& thread, false);
     ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
@@ -56,9 +56,9 @@ status_t thread_yield (void)
       self -> info . previous_status = self -> info . status;
       self -> info . status = DNA_THREAD_READY;
 
-      if (self != scheduler . cpu[cpu_mp_id()] . idle_thread)
+      if (self != cpu_pool . cpu[cpu_mp_id()] . idle_thread)
       {
-        queue = & scheduler . xt[self -> info . affinity];
+        queue = & scheduler . thread_queue[self -> info . affinity];
         lock_acquire (& queue -> lock);
       }
 

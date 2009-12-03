@@ -77,7 +77,7 @@ status_t thread_get_info (int32_t id, thread_info_t * info)
     {
       cpu_timer_get (thread -> info .  cpu_id, & current_time);
       info -> kernel_time = current_time;
-      info -> kernel_time -= scheduler . cpu[thread -> info
+      info -> kernel_time -= cpu_pool . cpu[thread -> info
         .  cpu_id] . lap_date;
     }
 

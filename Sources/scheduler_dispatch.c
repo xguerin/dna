@@ -48,33 +48,33 @@ status_t scheduler_dispatch (thread_t thread)
      * Add the thread to the list it belongs to.
      */
 
-    lock_acquire (& scheduler . xt[thread -> info . affinity] . lock);
+    lock_acquire (& scheduler . thread_queue[thread -> info . affinity] . lock);
     lock_release (& thread -> lock);
 
-    queue_add (& scheduler . xt[thread -> info . affinity], thread);
+    queue_add (& scheduler . thread_queue[thread -> info . affinity], thread);
 
     /*
      * Look for an available processor.
      */
 
-    lock_acquire (& scheduler . cpu_pool . lock);
-    lock_release (& scheduler . xt[thread -> info . affinity] . lock);
+    lock_acquire (& cpu_pool . cpu_queue . lock);
+    lock_release (& scheduler . thread_queue[thread -> info . affinity] . lock);
 
     if (thread -> info . affinity == cpu_mp_count ())
     {
-      cpu = queue_rem (& scheduler . cpu_pool);
+      cpu = queue_rem (& cpu_pool . cpu_queue);
     }
     else
     {
-      cpu = & scheduler . cpu[thread -> info . affinity] ;
+      cpu = & cpu_pool . cpu[thread -> info . affinity] ;
       if (cpu -> status == DNA_CPU_READY)
       {
-        queue_extract (& scheduler . cpu_pool, cpu);
+        queue_extract (& cpu_pool . cpu_queue, cpu);
       }
       else cpu = NULL;
     }
 
-    lock_release (& scheduler . cpu_pool . lock);
+    lock_release (& cpu_pool . cpu_queue . lock);
 
     /*
      * Deal with the dispatch.

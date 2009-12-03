@@ -48,7 +48,7 @@ void thread_exit (int32_t value)
 
   it_status = cpu_trap_mask_and_backup();
   current_cpuid = cpu_mp_id();
-  self = scheduler . cpu[current_cpuid] . current_thread;
+  self = cpu_pool . cpu[current_cpuid] . current_thread;
   lock_acquire (& self -> lock);
 
   /*
@@ -77,11 +77,11 @@ void thread_exit (int32_t value)
     p -> info . status = DNA_THREAD_READY;
     p -> info . previous_status = DNA_THREAD_WAITING;
 
-    lock_acquire (& scheduler . xt[p -> info . affinity] . lock);
+    lock_acquire (& scheduler . thread_queue[p -> info . affinity] . lock);
     lock_release (& p -> lock);
 
-    queue_add (& scheduler . xt[p -> info . affinity], p);
-    lock_release (& scheduler . xt[p -> info . affinity] . lock);
+    queue_add (& scheduler . thread_queue[p -> info . affinity], p);
+    lock_release (& scheduler . thread_queue[p -> info . affinity] . lock);
   }
 
   lock_release (& self -> wait . lock);

@@ -39,7 +39,7 @@ void timer_callback (void)
   bigtime_t current_time = 0, quantum = 0;
   bool reschedule = false;
   bool process_next_alarm = true, delete_alarm = false;
-  cpu_t * cpu = & scheduler . cpu[current_cpuid];
+  cpu_t * cpu = & cpu_pool . cpu[current_cpuid];
 
   /*
    * Proceed with the alarm
@@ -131,12 +131,12 @@ void timer_callback (void)
   if (reschedule)
   {
     if (thread_yield () == DNA_NO_AVAILABLE_THREAD &&
-        scheduler . cpu[current_cpuid] . status == DNA_CPU_READY)
+        cpu_pool . cpu[current_cpuid] . status == DNA_CPU_READY)
     {
       log (VERBOSE_LEVEL, "Nothing to do...");
-      lock_acquire (& scheduler . cpu_pool . lock);
-      queue_add (& scheduler . cpu_pool, & scheduler . cpu[current_cpuid]);
-      lock_release (& scheduler . cpu_pool . lock);
+      lock_acquire (& cpu_pool . cpu_queue . lock);
+      queue_add (& cpu_pool . cpu_queue, & cpu_pool . cpu[current_cpuid]);
+      lock_release (& cpu_pool . cpu_queue . lock);
     }
   }
 }

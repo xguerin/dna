@@ -61,10 +61,10 @@ status_t alarm_destroy (int32_t aid)
     check (alarm_error, alarm != NULL, DNA_UNKNOWN_ALARM);
 
     /*
-     * Next, we lock the related CPU
+     * Nethread_queue, we lock the related CPU
      */
 
-    cpu = & scheduler . cpu[alarm -> cpu_id];
+    cpu = & cpu_pool . cpu[alarm -> cpu_id];
     lock_acquire (& cpu -> lock);
 
     /*

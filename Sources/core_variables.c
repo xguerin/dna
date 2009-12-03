@@ -49,6 +49,18 @@ scheduler_t scheduler;
 /*
  ****/
 
+/****v* Core/cpu_pool
+ * SUMMARY
+ * The CPU pool instance.
+ *
+ * SOURCE
+ */
+
+cpu_pool_t cpu_pool;
+
+/*
+ ****/
+
 /****v* Core/alarm_manager
  * SUMMARY
  * The time manager instance.

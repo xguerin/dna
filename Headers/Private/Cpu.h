@@ -1,6 +1,6 @@
-/****h* core/scheduler
+/****h* core/cpu
  * SUMMARY
- * Scheduler management.
+ * CPU management.
  ****
  * Copyright (C) 2007 TIMA Laboratory
  *
@@ -30,7 +30,7 @@
 #include <Core/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****t* scheduler/cpu_status_t
+/****t* cpu/cpu_status_t
  * SUMMARY
  * CPU status type.
  *
@@ -48,7 +48,7 @@ cpu_status_t;
 /*
  ****/
 
-/****t* scheduler/cpu_t
+/****t* cpu/cpu_t
  * SUMMARY
  * CPU type. Contains various information concerning
  * a CPU execution context.
@@ -80,6 +80,27 @@ cpu_t;
 
 /*
  ****/
+
+/****t* cpu/cpu_pool_t
+ * SUMMARY
+ * CPU pool type.
+ *
+ * SOURCE
+ */
+
+typedef struct _cpu_pool
+{
+  spinlock_t lock;
+
+  cpu_t cpu[DNA_MAX_CPU];
+  queue_t cpu_queue;
+}
+cpu_pool_t;
+
+/*
+ ****/
+
+extern cpu_pool_t cpu_pool;
 
 #endif
 

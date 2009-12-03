@@ -67,7 +67,7 @@ status_t alarm_create (bigtime_t quantum, int32_t mode,
 
     it_status = cpu_trap_mask_and_backup();
     current_cpuid = cpu_mp_id ();
-    cpu = & scheduler . cpu[current_cpuid];
+    cpu = & cpu_pool . cpu[current_cpuid];
 
     /*
      * Set its parameters

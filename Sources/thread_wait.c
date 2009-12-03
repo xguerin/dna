@@ -55,7 +55,7 @@ status_t thread_wait (int32_t id, int32_t * value)
 
     it_status = cpu_trap_mask_and_backup();
     current_cpuid = cpu_mp_id ();
-    self = scheduler . cpu[current_cpuid] . current_thread;
+    self = cpu_pool . cpu[current_cpuid] . current_thread;
 
     lock_acquire (& scheduler . lock);
 

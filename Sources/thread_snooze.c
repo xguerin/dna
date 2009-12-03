@@ -59,7 +59,7 @@ status_t thread_snooze (bigtime_t value)
     it_status = cpu_trap_mask_and_backup ();
 
     current_cpuid = cpu_mp_id();
-    self = scheduler . cpu[current_cpuid] . current_thread;
+    self = cpu_pool . cpu[current_cpuid] . current_thread;
 
     /*
      * Create the snooze alarm

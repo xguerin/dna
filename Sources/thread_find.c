@@ -49,7 +49,7 @@ status_t thread_find (char * name, int32_t * tid)
 
     if (name == NULL)
     {
-      *tid = scheduler . cpu[cpu_mp_id()] . current_thread -> info . id;
+      *tid = cpu_pool . cpu[cpu_mp_id()] . current_thread -> info . id;
       return DNA_OK;
     }
     else

@@ -40,7 +40,7 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
   uint32_t current_cpuid = cpu_mp_id ();
   bigtime_t current_time = 0;
   extern uint32_t __scheduler_switch_end;
-  cpu_t * cpu = & scheduler . cpu[current_cpuid];
+  cpu_t * cpu = & cpu_pool . cpu[current_cpuid];
   thread_t self = cpu -> current_thread;
 
   /*

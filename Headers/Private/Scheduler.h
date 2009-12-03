@@ -22,8 +22,6 @@
 #define DNA_CORE_SCHEDULER_PRIVATE_H
 
 #include <stdbool.h>
-
-#include <Private/Cpu.h>
 #include <Private/Thread.h>
 
 #include <Core/Core.h>
@@ -40,10 +38,7 @@ typedef struct _scheduler
 {
   spinlock_t lock;
 
-  cpu_t cpu[DNA_MAX_CPU];
-  queue_t cpu_pool;
-
-  queue_t xt[DNA_MAX_CPU + 1];
+  queue_t thread_queue[DNA_MAX_CPU + 1];
   thread_t thread[DNA_MAX_THREAD];
 }
 scheduler_t;

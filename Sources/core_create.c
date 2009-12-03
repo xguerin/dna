@@ -54,6 +54,12 @@ status_t core_create (void)
     dna_memset (& scheduler, 0, sizeof (scheduler_t));
 
     /*
+     * Initialize the scheduler manager
+     */
+
+    dna_memset (& cpu_pool, 0, sizeof (cpu_pool_t));
+
+    /*
      * Initialize the time manager
      */
 
@@ -71,7 +77,7 @@ status_t core_create (void)
 
     for (int32_t cpu_i = 0; cpu_i < cpu_mp_count (); cpu_i++)
     {
-      cpu = & scheduler . cpu[cpu_i];
+      cpu = & cpu_pool . cpu[cpu_i];
 
       /*
        * Create the ISR lists
@@ -110,7 +116,7 @@ status_t core_create (void)
         DNA_THREAD_STACK_SIZE, & thread_id);
     check (create_threads, status == DNA_OK, DNA_ERROR);
 
-    scheduler . cpu[0] . current_thread = scheduler . thread[thread_id];
+    cpu_pool . cpu[0] . current_thread = scheduler . thread[thread_id];
 
     return DNA_OK;
   }
@@ -125,14 +131,14 @@ status_t core_create (void)
 
     for (int32_t cpu_i = 0; cpu_i < cpu_mp_count (); cpu_i++)
     {
-      idle_thread = scheduler . cpu[cpu_i] . idle_thread;
+      idle_thread = cpu_pool . cpu[cpu_i] . idle_thread;
 
       if (idle_thread != NULL)
       {
         thread_destroy (idle_thread);
 
-        scheduler . cpu[cpu_i] . idle_thread = NULL;
-        scheduler . cpu[cpu_i] . current_thread = NULL;
+        cpu_pool . cpu[cpu_i] . idle_thread = NULL;
+        cpu_pool . cpu[cpu_i] . current_thread = NULL;
       }
     }
 
