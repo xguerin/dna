@@ -88,12 +88,18 @@ status_t scheduler_dispatch (thread_t thread)
     {
       affinity = thread -> info . affinity;
 
-      if (cpu != NULL)
+      /*
+       * Explanation of what follows: in the first part of the test,
+       * we check whether a distant, compatible CPU is available. If
+       * not, if the thread is compatible with the current processor,
+       * and whether this processor is available or not, we return
+       * that it is necessary to invoke the scheduler. It will be the
+       * role of the calling function to decide what to do.
+       */
+
+      if (affinity == cpu_mp_count () || affinity == cpu_mp_id ())
       {
-        if (affinity == cpu_mp_count () || affinity == cpu_mp_id ())
-        {
-          status = DNA_INVOKE_SCHEDULER;
-        }
+        status = DNA_INVOKE_SCHEDULER;
       }
     }
 
