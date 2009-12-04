@@ -40,30 +40,13 @@ void ipi_callback (int32_t command, void * cookie)
  */
 
 {
-  status_t status;
-  int32_t current_cpuid = cpu_mp_id ();
-
-  /*
-   * Process the command
-   */
-
   switch (command)
   {
     case DNA_IPI_YIELD :
       {
         log (VERBOSE_LEVEL, "%d YIELD", current_cpuid);
 
-        scheduler . cpu[current_cpuid] . status = DNA_CPU_RUNNING;
-        status = thread_yield ();
-
-        if (status == DNA_NO_AVAILABLE_THREAD)
-        {
-          scheduler . cpu[current_cpuid] . status = DNA_CPU_READY;
-          lock_acquire (& scheduler . cpu_pool . lock);
-          queue_add (& scheduler . cpu_pool, & scheduler . cpu[current_cpuid]);
-          lock_release (& scheduler . cpu_pool . lock);
-        }
-
+        thread_yield ();
         break;
       }
 
