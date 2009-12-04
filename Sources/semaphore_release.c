@@ -92,8 +92,10 @@ status_t semaphore_release (int32_t sid, int32_t tokens, int32_t flags)
             thread -> info . status = DNA_THREAD_READY;
             thread -> info . previous_status = DNA_THREAD_WAITING;
 
-            scheduler_dispatch (thread);
-            smart_to_reschedule = true;
+            if (scheduler_dispatch (thread) == DNA_INVOKE_SCHEDULER)
+            {
+              smart_to_reschedule = true;
+            }
           }
           else lock_release (& thread -> lock);
         }
@@ -124,7 +126,7 @@ status_t semaphore_release (int32_t sid, int32_t tokens, int32_t flags)
      * Now we deal with the reschedule
      */
 
-    if ((flags & DNA_NO_RESCHEDULE) != 0 && smart_to_reschedule)
+    if ((flags & DNA_NO_RESCHEDULE) == 0 && smart_to_reschedule)
     {
       thread_yield ();
     }
