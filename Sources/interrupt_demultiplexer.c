@@ -70,19 +70,7 @@ int32_t interrupt_demultiplexer (int32_t itn)
      * Depending on the status, invoke the scheduler
      */
 
-    if (status == DNA_INVOKE_SCHEDULER)
-    {
-      status = thread_yield ();
-
-      if (status == DNA_NO_AVAILABLE_THREAD && cpu -> status == DNA_CPU_READY)
-      {
-        log (INFO_LEVEL, "Nothing to do...");
-        lock_acquire (& cpu_pool . cpu_queue . lock);
-        queue_add (& cpu_pool . cpu_queue, cpu);
-        lock_release (& cpu_pool . cpu_queue . lock);
-      }
-    }
-
+    if (status == DNA_INVOKE_SCHEDULER) status = thread_yield ();
     return status;
   }
 }
