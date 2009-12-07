@@ -61,7 +61,7 @@ status_t alarm_destroy (int32_t aid)
     check (alarm_error, alarm != NULL, DNA_UNKNOWN_ALARM);
 
     /*
-     * Nethread_queue, we lock the related CPU
+     * Next, we lock the related CPU
      */
 
     cpu = & cpu_pool . cpu[alarm -> cpu_id];

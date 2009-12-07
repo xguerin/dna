@@ -44,7 +44,7 @@ void ipi_callback (int32_t command, void * cookie)
   {
     case DNA_IPI_YIELD :
       {
-        log (VERBOSE_LEVEL, "%d YIELD", current_cpuid);
+        log (VERBOSE_LEVEL, "%d YIELD", cpu_mp_id ());
 
         thread_yield ();
         break;

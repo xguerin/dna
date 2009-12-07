@@ -48,10 +48,6 @@ status_t thread_snooze (bigtime_t value)
 
   watch (status_t)
   {
-#if 0
-    check (idle_thread, self -> info . id >= 4, DNA_ERROR);
-#endif
-
     /*
      * Disable interrupts and get current information
      */
@@ -88,14 +84,6 @@ status_t thread_snooze (bigtime_t value)
     cpu_trap_restore (it_status);
     leave;
   }
-
-#if 0
-  rescue (idle_thread)
-  {
-    log (PANIC_LEVEL, "An alarm for an IDLE thread ??");
-    leave;
-  }
-#endif
 }
 
 /*

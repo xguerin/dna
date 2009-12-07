@@ -76,7 +76,7 @@ status_t thread_suspend (int32_t id)
         DNA_ERROR);
 
     /*
-     * We need to ethread_queueract the thread right away,
+     * We need to extract the thread right away,
      * even if the thread is not present in the queue
      */
 
@@ -155,7 +155,6 @@ status_t thread_suspend (int32_t id)
       default :
         {
           log (PANIC_LEVEL, "unknown thread status.");
-          for (;;);
           break;
         }
     }
