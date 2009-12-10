@@ -35,7 +35,7 @@
 
 typedef struct _volume
 {
-  queue_item_t link;
+  queue_link_t link;
 
   int32_t id;
   int64_t root_vnid;

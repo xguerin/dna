@@ -37,7 +37,7 @@
 
 typedef struct _vnode
 {
-  queue_item_t link;
+  queue_link_t link;
 
   int64_t id;
   volume_t volume;

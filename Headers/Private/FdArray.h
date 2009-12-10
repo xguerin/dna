@@ -56,7 +56,7 @@ typedef struct _fdarray
   spinlock_t lock;
   int32_t associated_id;
   file_t fds[DNA_MAX_FILE];
-  queue_item_t link;
+  queue_link_t link;
 }
 * fdarray_t;
 
