@@ -33,7 +33,7 @@ devfs_inode_class_t;
 
 typedef struct devfs_entry
 {
-  queue_item_t link;
+  queue_link_t link;
   int64_t id;
   char name[DEVFS_NAME_LENGTH];
 }
@@ -41,7 +41,7 @@ typedef struct devfs_entry
 
 typedef struct devfs_inode
 {
-  queue_item_t link;
+  queue_link_t link;
 
   int64_t id;
   char name[DEVFS_NAME_LENGTH];
