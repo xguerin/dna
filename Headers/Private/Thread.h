@@ -73,7 +73,7 @@ thread_signature_t;
 
 typedef struct _thread
 {
-  struct _thread * next;
+  queue_item_t next;
 
   queue_t wait;
   spinlock_t lock;

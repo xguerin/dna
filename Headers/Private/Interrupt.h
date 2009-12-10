@@ -40,7 +40,7 @@
 
 typedef struct _isr
 {
-  struct _isr * next;
+  queue_item_t next;
   interrupt_handler_t handler;
 }
 * isr_t;

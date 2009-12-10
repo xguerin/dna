@@ -39,7 +39,7 @@ int32_t interrupt_demultiplexer (int32_t itn)
  */
 
 {
-  isr_t isr;
+  queue_item_t * isr;
   status_t status = DNA_UNHANDLED_INTERRUPT;
   int32_t current_cpuid = cpu_mp_id ();
   cpu_t * cpu = & cpu_pool . cpu[current_cpuid];
@@ -55,9 +55,9 @@ int32_t interrupt_demultiplexer (int32_t itn)
 
     lock_acquire (& queue -> lock);
 
-    for (isr = (isr_t) queue -> head; isr != NULL; isr = isr -> next)
+    for (isr = queue -> head; isr != NULL; isr = isr -> next)
     {
-      status = isr -> handler (itn);
+      status = ((isr_t)isr) -> handler (itn);
       if (status == DNA_INVOKE_SCHEDULER || status == DNA_HANDLED_INTERRUPT)
       {
         break;
