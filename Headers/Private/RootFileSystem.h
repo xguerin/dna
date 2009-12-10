@@ -31,7 +31,7 @@ typedef enum rootfs_inode_class {
 
 typedef struct rootfs_entry
 {
-  queue_item_t link;
+  queue_link_t link;
   int64_t id;
   char name[ROOTFS_NAME_LENGTH];
 }
@@ -39,7 +39,7 @@ typedef struct rootfs_entry
 
 typedef struct rootfs_inode
 {
-  queue_item_t link;
+  queue_link_t link;
   int64_t id;
   char name[ROOTFS_NAME_LENGTH];
   rootfs_inode_class_t class;
