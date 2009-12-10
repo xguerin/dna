@@ -39,7 +39,7 @@ int32_t interrupt_demultiplexer (int32_t itn)
  */
 
 {
-  queue_item_t * isr;
+  queue_link_t * isr;
   status_t status = DNA_UNHANDLED_INTERRUPT;
   int32_t current_cpuid = cpu_mp_id ();
   cpu_t * cpu = & cpu_pool . cpu[current_cpuid];

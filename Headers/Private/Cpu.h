@@ -58,7 +58,7 @@ cpu_status_t;
 
 typedef struct _cpu
 { 
-  queue_item_t next;
+  queue_link_t link;
 
   int32_t id;
   cpu_status_t status;

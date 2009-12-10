@@ -37,7 +37,7 @@
 
 typedef struct _alarm
 {
-  queue_item_t next;
+  queue_link_t link;
 
   int32_t id;
   int32_t thread_id;
