@@ -19,26 +19,34 @@
 #include <MemoryManager/MemoryManager.h>
 #include <DnaTools/DnaTools.h>
 
-status_t rdv_open (char * name, int32_t mode, void ** data) {
-  channel_rdv_t * rdv = NULL;
-  status_t status = DNA_OK;
+status_t rdv_open (char * name, int32_t mode, void ** data)
+{
+  int32_t index = 0, id;
 
   watch (status_t)
   {
-    rdv = kernel_malloc (sizeof (channel_rdv_t), true);
-    ensure (rdv != NULL, DNA_OUT_OF_MEM);
+    ensure (name != NULL, DNA_ERROR);
 
-    status = semaphore_create (name, 0, & rdv -> sem);
-    check (invalid_semaphore, status == DNA_OK, status);
+    /*
+     * Find the '.' marker
+     */
 
-    *data = (void *) rdv;
+    while (name[index] != '\0' && name[index++] != '.');
+    ensure (name[index - 1] == '.', DNA_ERROR);
+
+    /*
+     * Get the channel ID
+     */
+
+    id = dna_atoi (& name[index]);
+    ensure (id >= 0 && id < CHANNEL_RDV_NDEV, DNA_ERROR);
+
+    /*
+     * Return the device
+     */
+
+    *data = (void *) & rdv[id];
     return DNA_OK;
-  }
-
-  rescue (invalid_semaphore)
-  {
-    kernel_free (rdv);
-    leave;
   }
 }
 

@@ -20,6 +20,7 @@
 #include <DnaTools/DnaTools.h>
 
 const char ** rdv_devices;
+channel_rdv_t * rdv;
 
 driver_t rdv_module = {
   "rdv",
@@ -33,6 +34,7 @@ driver_t rdv_module = {
 status_t rdv_init_driver (void) {
   char * base = "rdv.", * buffer, ascii[64];
   int32_t i = 0;
+  status_t status;
 
   watch (status_t)
   {
@@ -40,8 +42,15 @@ status_t rdv_init_driver (void) {
         * (CHANNEL_RDV_NDEV + 1), true);
     ensure (rdv_devices != NULL, DNA_OUT_OF_MEM);
 
+    rdv = kernel_malloc (sizeof (channel_rdv_t) * (CHANNEL_RDV_NDEV), true);
+    ensure (rdv_devices != NULL, DNA_OUT_OF_MEM);
+
     for (i = 0; i < CHANNEL_RDV_NDEV; i++)
     {
+      /*
+       * Create the channel name
+       */
+
       buffer = kernel_malloc (DNA_FILENAME_LENGTH, false);
       check (invalid_buffer, buffer != NULL, DNA_OUT_OF_MEM);
       
@@ -49,6 +58,13 @@ status_t rdv_init_driver (void) {
       dna_strcpy (buffer, base);
       dna_strcat (buffer, ascii);
       rdv_devices[i] = buffer;
+
+      /*
+       * Create the channel semaphore
+       */
+
+      status = semaphore_create (buffer, 0, & rdv[i] . sem);
+      ensure (status == DNA_OK, status);
     }
 
     rdv_devices[i] = NULL;

@@ -39,6 +39,7 @@ typedef struct channel_rdv {
 extern int32_t CHANNEL_RDV_NDEV;
 
 extern const char ** rdv_devices;
+extern channel_rdv_t * rdv;
 
 extern status_t rdv_init_hardware (void);
 extern status_t rdv_init_driver (void);
