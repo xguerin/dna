@@ -19,7 +19,7 @@
 
 status_t queue_add (queue_t * queue, void * data)
 {
-  queue_item_t * item = data;
+  queue_link_t * item = data;
 
   watch (status_t)
   {

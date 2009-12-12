@@ -19,7 +19,7 @@
 
 void queue_insert (queue_t * queue, queue_comparator_t comparator, void * data)
 {
-  queue_item_t * item = data, * current = NULL, * previous = NULL;
+  queue_link_t * item = data, * current = NULL, * previous = NULL;
 
   item -> next = NULL;
 

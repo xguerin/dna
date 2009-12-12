@@ -19,8 +19,8 @@
 
 status_t queue_extract (queue_t * queue, void * data)
 {
-  queue_item_t * item = data;
-  queue_item_t * kitem = queue -> head;
+  queue_link_t * item = data;
+  queue_link_t * kitem = queue -> head;
 
   watch (status_t)
   {

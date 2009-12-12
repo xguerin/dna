@@ -20,7 +20,7 @@
 void * queue_lookup (queue_t * queue, queue_inspector_t inspector,
     void * a0, void * a1)
 {
-  queue_item_t * item = NULL;
+  queue_link_t * item = NULL;
 
   if (queue -> status != 0)
   {
