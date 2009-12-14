@@ -45,11 +45,15 @@ void timer_callback (void)
    * Proceed with the alarm
    */
 
-  lock_acquire (& cpu -> lock);
-  alarm = cpu -> current_alarm;
-
   while (process_next_alarm)
   {
+    lock_acquire (& cpu -> lock);
+    alarm = cpu -> current_alarm;
+
+    /*
+     * Get the present time
+     */
+
     cpu_timer_get (cpu -> id, & current_time);
 
     /*
@@ -76,30 +80,9 @@ void timer_callback (void)
     }
     else delete_alarm = true;
 
-    lock_release (& cpu -> lock);
-
-    /*
-     * Execute the alarm
-     */
-
-    status = alarm -> callback (alarm -> data);
-    if (status == DNA_INVOKE_SCHEDULER) reschedule = true;
-
-    if (delete_alarm)
-    {
-      lock_acquire (& alarm_manager . lock);
-      alarm_manager . alarm[alarm -> id] = NULL;
-      lock_release (& alarm_manager . lock);
-
-      delete_alarm = false;
-      kernel_free (alarm);
-    }
-
     /*
      * Look through the next alarm
      */
-
-    lock_acquire (& cpu -> lock);
 
     alarm = queue_rem (& cpu -> alarm_queue);
     cpu -> current_alarm = alarm;
@@ -120,9 +103,26 @@ void timer_callback (void)
       }
     }
     else process_next_alarm = false;
-  }
 
-  lock_release (& cpu -> lock);
+    lock_release (& cpu -> lock);
+
+    /*
+     * Execute the alarm
+     */
+
+    status = alarm -> callback (alarm -> data);
+    if (status == DNA_INVOKE_SCHEDULER) reschedule = true;
+
+    if (delete_alarm)
+    {
+      lock_acquire (& alarm_manager . lock);
+      alarm_manager . alarm[alarm -> id] = NULL;
+      lock_release (& alarm_manager . lock);
+
+      delete_alarm = false;
+      kernel_free (alarm);
+    }
+  }
 
   /*
    * Reschedule of necessary
