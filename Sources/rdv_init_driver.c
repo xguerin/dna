@@ -22,7 +22,8 @@
 const char ** rdv_devices;
 channel_rdv_t * rdv;
 
-driver_t rdv_module = {
+driver_t rdv_module =
+{
   "rdv",
   rdv_init_hardware,
   rdv_init_driver,
@@ -31,7 +32,8 @@ driver_t rdv_module = {
   rdv_find_device
 };
 
-status_t rdv_init_driver (void) {
+status_t rdv_init_driver (void)
+{
   char * base = "rdv.", * buffer, ascii[64];
   int32_t i = 0;
   status_t status;

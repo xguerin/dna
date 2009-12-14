@@ -18,7 +18,8 @@
 #include <Private/RendezVousChannel.h>
 #include <DnaTools/DnaTools.h>
 
-device_cmd_t rdv_commands = {
+device_cmd_t rdv_commands =
+{
   rdv_open,
   rdv_close,
   rdv_free,
@@ -27,8 +28,8 @@ device_cmd_t rdv_commands = {
   rdv_control
 };
 
-device_cmd_t * rdv_find_device (const char * name) {
-
+device_cmd_t * rdv_find_device (const char * name)
+{
   return & rdv_commands;
 }
 

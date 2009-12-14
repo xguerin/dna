@@ -17,8 +17,8 @@
 
 #include <Private/RendezVousChannel.h>
 
-const char ** rdv_publish_devices (void) {
-
+const char ** rdv_publish_devices (void)
+{
   return rdv_devices;
 }
 

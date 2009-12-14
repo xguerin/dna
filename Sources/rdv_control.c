@@ -17,8 +17,11 @@
 
 #include <Private/RendezVousChannel.h>
 
-status_t rdv_control (void * handler, int32_t operation, void * data, int32_t * p_res) {
+status_t rdv_control (void * handler, int32_t operation,
+    void * data, int32_t * p_res)
+{
 
-  return -1;
+  *p_res = -1;
+  return DNA_OK;
 }
 

@@ -18,8 +18,8 @@
 #include <Private/RendezVousChannel.h>
 #include <DnaTools/DnaTools.h>
 
-status_t rdv_init_hardware (void) {
-
+status_t rdv_init_hardware (void)
+{
   return DNA_OK;
 }
 

@@ -18,8 +18,8 @@
 #include <Private/RendezVousChannel.h>
 #include <DnaTools/DnaTools.h>
 
-status_t rdv_free (void * data) {
-
+status_t rdv_free (void * data)
+{
   return DNA_NOT_IMPLEMENTED;
 }
 
