@@ -21,7 +21,8 @@
 #include <Core/Core.h>
 #include <DnaTools/DnaTools.h>
 
-typedef struct channel_rdv {
+typedef struct channel_rdv
+{
   int32_t sem;
   spinlock_t lock;
 
@@ -34,7 +35,8 @@ typedef struct channel_rdv {
     const void * buffer;
     volatile bool ready;
   } getter;
-} channel_rdv_t;
+}
+channel_rdv_t;
 
 extern int32_t CHANNEL_RDV_NDEV;
 
@@ -51,9 +53,12 @@ extern status_t rdv_open (char * name, int32_t mode, void ** data);
 extern status_t rdv_close (void * data);
 extern status_t rdv_free (void * data);
 
-extern status_t rdv_read (void * handler, void * destination, int64_t offset, int32_t * p_count);
-extern status_t rdv_write (void * handler, void * source, int64_t offset, int32_t * p_count);
-extern status_t rdv_control (void * handler, int32_t operation, void * data, int32_t * p_res);
+extern status_t rdv_read (void * handler, void * destination,
+    int64_t offset, int32_t * p_count);
+extern status_t rdv_write (void * handler, void * source,
+    int64_t offset, int32_t * p_count);
+extern status_t rdv_control (void * handler, int32_t operation,
+    void * data, int32_t * p_res);
 
 #endif
 

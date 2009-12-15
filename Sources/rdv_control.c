@@ -16,12 +16,77 @@
  */
 
 #include <Private/RendezVousChannel.h>
+#include <RendezVousChannel/RendezVousChannel.h>
 
 status_t rdv_control (void * handler, int32_t operation,
     void * data, int32_t * p_res)
 {
+  channel_rdv_t * rdv = (channel_rdv_t *)handler;
+  bool * result = NULL;
+  status_t status = DNA_OK;
+  interrupt_status_t it_status;
 
-  *p_res = -1;
-  return DNA_OK;
+  it_status = cpu_trap_mask_and_backup ();
+  lock_acquire (& rdv -> lock);
+  
+  switch (operation)
+  {
+    case RDV_RTEST :
+      result = ((bool **)data)[0];
+
+      if (rdv -> setter . ready)
+      {
+        *result = true;
+        *p_res = 1;
+      }
+      else
+      {
+        *result = false;
+        *p_res = 0;
+      }
+
+      break;
+
+    case RDV_WTEST :
+      result = ((bool **)data)[0];
+
+      if (rdv -> getter . ready)
+      {
+        *result = true;
+        *p_res = 1;
+      }
+      else
+      {
+        *result = false;
+        *p_res = 0;
+      }
+
+      break;
+
+    case RDV_RESET :
+      if (rdv -> getter . ready || rdv -> setter . ready)
+      {
+        rdv -> getter . ready = false;
+        rdv -> setter . ready = false;
+        semaphore_release (rdv -> sem, 1, DNA_NO_RESCHEDULE);
+        *p_res = 1;
+      }
+      else
+      {
+        *p_res = 0;
+      }
+
+      break;
+
+    default :
+      *p_res = -1;
+      status = DNA_ERROR;
+      break;
+  }
+
+  lock_release (& rdv -> lock);
+  cpu_trap_restore (it_status);
+ 
+  return status;
 }
 
