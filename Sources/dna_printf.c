@@ -25,140 +25,311 @@
  * SYNOPSIS
  */
 
-void dna_printf (const char *  format, ...)
+void dna_printf (const char * format, ...)
 
-  /*
-   * FUNCTION
-   * Print formatted text.
-   *
-   * SOURCE
-   */
+/*
+ * FUNCTION
+ * Print formatted text.
+ *
+ * SOURCE
+ */
 
 {
-  int32_t d_val = 0, ascii_index = 0, len = 0;
-  uint32_t u_val = 0, rem = 0;
-  char * fmt_ptr = (char *)format, ascii[32];
-  char buffer[256], * b_ptr = buffer;
-  char c_val = 0, * ptr = NULL;
+  bool is_long = false, is_long_long = false;
+  char char_value, ascii[32], * string_value, buffer[256];
+  int32_t ascii_index, string_length, j = 0;
+  int64_t signed_value;
+  uint64_t unsigned_value, remainder;
+
+  enum { NORMAL, ESCAPE, FORMAT } state = NORMAL;
 
   va_list arg;
   va_start (arg, format);
 
-  while(*fmt_ptr)
+  for (int32_t i = 0; format[i] != '\0'; i += 1)
   {
-    switch(*fmt_ptr)
+    switch (state)
     {
-      case '\\':
-        fmt_ptr += 1;
-
-        switch(*fmt_ptr)
+      case NORMAL :
         {
-          case 'n':
-            *b_ptr++ = '\n';
-            break;
+          switch (format[i])
+          {
+            case '\\' :
+              {
+                state = ESCAPE;
+                break;
+              }
 
-          case 't':
-            *b_ptr++ = '\t';
-            break;
+            case '%' :
+              {
+                state = FORMAT;
+                break;
+              }
 
-          default:
-            *b_ptr++ = *fmt_ptr;
-            break;
+            default :
+              buffer[j] = format[i];
+              j += 1;
+              break;
+          }
+
+          break;
         }
 
-        fmt_ptr++;
-        break;
-
-      case '%':
-        fmt_ptr++;
-
-        switch (*fmt_ptr)
+      case ESCAPE :
         {
-          case '%' :
-            * b_ptr ++ = * fmt_ptr;
-            break;
+          switch (format[i])
+          {
+            case 'n' :
+              {
+                buffer[j] = '\n';
+                j += 1;
+                break;
+              }
 
-          case 'd' :
-            d_val = va_arg(arg, long int);
-            ascii_index = 0;
+            case 't' :
+              {
+                buffer[j] = '\t';
+                j += 1;
+                break;
+              }
 
-            if(d_val < 0) u_val = -1 * d_val;
-            else u_val = d_val;
+            default :
+              {
+                buffer[j] = '\\';
+                buffer[j + 1] = format[i];
+                j += 2;
+                break;
+              }
+          }
 
-            do
-            {
-              rem = u_val % 10;
-              u_val = u_val / 10;
-              ascii[ascii_index ++] = rem + '0';
-            }
-            while(u_val > 0);
-
-            if (d_val < 0) ascii[ascii_index ++] = '-';
-
-            for(int32_t i = ascii_index - 1; i >= 0; i--) *b_ptr++ = ascii[i];
-
-            break;
-
-          case 'u' :
-            u_val = va_arg(arg, unsigned long int);
-            ascii_index = 0;
-
-            do
-            {
-              rem = u_val % 10;
-              u_val = u_val / 10;
-              ascii[ascii_index ++] = rem + '0';
-            }
-            while (u_val > 0);
-
-            for(int32_t i = ascii_index - 1; i >= 0; i--) *b_ptr++ = ascii[i];
-
-            break;
-
-          case 'x' :
-            u_val = va_arg(arg, unsigned long int);
-            ascii_index = 0;
-
-            do
-            {
-              rem = u_val & 0xf;
-              u_val >>= 4;
-              if(rem < 10) ascii[ascii_index ++] = rem + '0'; 
-              else ascii[ascii_index ++] = rem - 10 + 'a';
-            }
-            while(u_val > 0);
-
-            for(int32_t i = ascii_index - 1; i >= 0; i--) *b_ptr++ = ascii[i];
-
-            break;
-
-          case 'c' :
-            u_val = va_arg(arg, unsigned long int);
-            c_val = u_val;
-            * b_ptr ++ = c_val;
-            break;
-
-          case 's' :
-            ptr = va_arg(arg, char *);
-            len = dna_strlen (ptr);
-
-            for (int32_t i = 0; i < len; i ++) * b_ptr ++ = ptr[i];
-            break;
-
-          default : break;
+          state = NORMAL;
+          break;
         }
 
-        fmt_ptr += 1;
-        break;
+      case FORMAT :
+        {
+          switch (format[i])
+          {
+            case 'l' :
+              {
+                if (! is_long)
+                {
+                  is_long = true;
+                }
+                else if (! is_long_long)
+                {
+                  is_long_long = true;
+                }
+                else
+                {
+                  state = NORMAL;
+                }
 
-      default :
-        *b_ptr++ = *fmt_ptr;
-        fmt_ptr += 1;
-        break;
+                break;
+              }
+
+            case 'u' :
+              {
+                ascii_index = 0;
+
+                /*
+                 * Check the data size
+                 */
+
+                if (is_long)
+                {
+                  unsigned_value = va_arg (arg, unsigned long int);
+                }
+                else if (is_long_long)
+                {
+                  unsigned_value = va_arg (arg, unsigned long long int);
+                }
+                else
+                {
+                  unsigned_value = va_arg (arg, unsigned int);
+                }
+
+                /*
+                 * Compute the data
+                 */
+
+                do
+                {
+                  remainder = unsigned_value % 10;
+                  unsigned_value = unsigned_value / 10;
+                  ascii[ascii_index] = remainder + '0';
+                  ascii_index += 1;
+                }
+                while (unsigned_value > 0);
+
+                /*
+                 * Echo the data into the buffer
+                 */
+
+                for (int32_t i = ascii_index - 1; i >= 0; i--)
+                {
+                  buffer[j] = ascii[i];
+                  j += 1;
+                }
+
+                /*
+                 * Return to NORMAL state
+                 */
+
+                is_long = false;
+                is_long_long = false;
+
+                state = NORMAL;
+                break;
+              }
+
+            case 'd' :
+              {
+                ascii_index = 0;
+
+                /*
+                 * Check the data size
+                 */
+
+                if (is_long)
+                {
+                  signed_value = va_arg (arg, long int);
+                }
+                else if (is_long_long)
+                {
+                  signed_value = va_arg (arg, long long int);
+                }
+                else
+                {
+                  signed_value = va_arg (arg, int);
+                }
+
+                /*
+                 * Check the data sign
+                 */
+
+                if (signed_value < 0)
+                {
+                  unsigned_value = -1 * signed_value;
+                }
+                else
+                {
+                  unsigned_value = signed_value;
+                }
+
+                /*
+                 * Compute the data
+                 */
+
+                do
+                {
+                  remainder = unsigned_value % 10;
+                  unsigned_value = unsigned_value / 10;
+                  ascii[ascii_index] = remainder + '0';
+                  ascii_index += 1;
+                }
+                while (unsigned_value > 0);
+
+                /*
+                 * Adjust the sign
+                 */
+
+                if (signed_value < 0)
+                {
+                  ascii[ascii_index ++] = '-';
+                }
+
+                /*
+                 * Echo the data into the buffer
+                 */
+
+                for (int32_t i = ascii_index - 1; i >= 0; i--)
+                {
+                  buffer[j] = ascii[i];
+                  j += 1;
+                }
+
+                /*
+                 * Return to NORMAL state
+                 */
+
+                is_long = false;
+                is_long_long = false;
+
+                state = NORMAL;
+                break;
+              }
+
+            case 'x' :
+              {
+                ascii_index = 0;
+                unsigned_value = va_arg (arg, unsigned long int);
+
+                do
+                {
+                  remainder = unsigned_value & 0xf;
+                  unsigned_value >>= 4;
+
+                  if (remainder < 10)
+                  {
+                    ascii[ascii_index] = remainder + '0'; 
+                    ascii_index += 1;
+                  }
+                  else
+                  {
+                    ascii[ascii_index] = remainder - 10 + 'a';
+                    ascii_index += 1;
+                  }
+                }
+                while (unsigned_value > 0);
+
+                for(int32_t i = ascii_index - 1; i >= 0; i--)
+                {
+                  buffer[j] = ascii[i];
+                  j += 1;
+                }
+
+                state = NORMAL;
+                break;
+              }
+
+            case 'c' :
+              {
+                unsigned_value = va_arg (arg, unsigned long int);
+                char_value = unsigned_value;
+                buffer[j] = char_value;
+                j += 1;
+                break;
+              }
+
+            case 's' :
+              {
+                string_value = va_arg (arg, char *);
+                string_length = dna_strlen (string_value);
+
+                for (int32_t i = 0; i < string_length; i ++)
+                {
+                  buffer[j] = string_value[i];
+                  j += 1;
+                }
+
+                state = NORMAL;
+                break;
+              }
+
+            default :
+              {
+                state = NORMAL;
+                break;
+              }
+          }
+
+          break;
+        }
     }
   }
 
-  *b_ptr ++ = '\0';
+  buffer[j] = '\0';
   platform_debug_puts (buffer);
 
   va_end (arg);

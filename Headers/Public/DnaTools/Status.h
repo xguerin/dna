@@ -50,6 +50,7 @@ typedef enum _status
   DNA_NOT_IMPLEMENTED                 = 0xFFFE,
   DNA_OUT_OF_MEM                      = 0xFFFD,
   DNA_BAD_ARGUMENT                    = 0xFFFC,
+  DNA_ACCES_DENIED                    = 0xFFFB,
 
   /*
    * VFS error codes
