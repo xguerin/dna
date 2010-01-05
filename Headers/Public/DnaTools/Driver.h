@@ -128,7 +128,5 @@ driver_t;
 extern int32_t OS_N_DRIVERS;
 extern driver_t * OS_DRIVERS_LIST [];
 
-extern status_t driver_load (char * name, driver_t ** drv);
-
 #endif
 
