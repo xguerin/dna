@@ -75,11 +75,6 @@
     <type name="device_cmd_t"/>
     <type name="device_info_t"/>
 
-    <method name="driver_load" return_type="status_t">
-      <argument name="name" type="string" direction="in"/>
-      <argument name="driver" type="access driver_t" direction="out"/>
-    </method>
-
     <!-- File system management -->
 
     <type name="filesystem_t"/>
