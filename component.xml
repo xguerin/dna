@@ -227,17 +227,6 @@
       <argument name="lock" type="int32_t" direction="inout"/>
     </method>
 
-    <!-- FDArray hooks -->
-
-    <method name="fdarray_create" return_type="status_t">
-      <argument name="id" type="int32_t" direction="in"/>
-      <argument name="parent" type="int32_t" direction="in"/>
-    </method>
-
-    <method name="fdarray_destroy" return_type="status_t">
-      <argument name="id" type="int32_t" direction="in"/>
-    </method>
-
     <!-- Memory hooks -->
 
     <method name="kernel_malloc" return_type="access">
