@@ -18,7 +18,6 @@
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
 #include <MemoryManager/MemoryManager.h>
-#include <VirtualFileSystem/VirtualFileSystem.h>
 #include <Processor/Processor.h>
 
 /****f* Core/core_initialize
