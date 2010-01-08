@@ -83,8 +83,14 @@ status_t core_create (void)
        * Create the ISR lists
        */
 
-       cpu -> isr_list = kernel_malloc (sizeof (queue_t) *
-           cpu_trap_count (), true);
+      cpu -> isr_list = kernel_malloc (sizeof (queue_t) *
+          cpu_trap_count (), true);
+
+      /*
+       * Create the Idle stack
+       */
+
+      cpu -> stack = kernel_malloc (DNA_IDLE_STACK_SIZE, true);
 
       /*
        * Create the Idle thread

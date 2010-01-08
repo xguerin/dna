@@ -74,7 +74,7 @@ typedef struct _cpu
   alarm_t current_alarm;
   queue_t alarm_queue;
 
-  int8_t stack[DNA_IDLE_STACK_SIZE];
+  uint8_t * stack;
 }
 cpu_t;
 

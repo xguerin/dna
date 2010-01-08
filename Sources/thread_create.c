@@ -90,6 +90,7 @@ status_t thread_create (thread_handler_t handler,
     thread -> info . cpu_id = 0;
     thread -> info . status = DNA_THREAD_SUSPENDED;
     thread -> info . previous_status = DNA_THREAD_READY;
+    thread -> info . resource = DNA_NO_RESOURCE;
     dna_strcpy (thread -> info . name, name);
 
     if (affinity == DNA_NO_AFFINITY)

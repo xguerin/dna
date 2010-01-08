@@ -72,15 +72,7 @@ status_t semaphore_get_info (int32_t sid, semaphore_info_t * info)
     info -> id = sem -> id;
     dna_strcpy (info -> name, sem -> name);
     info -> tokens = sem -> tokens;
-
-    if (sem -> latest_holder != NULL)
-    {
-      info -> latest_holder = sem -> latest_holder -> info . id;
-    }
-    else
-    {
-      info -> latest_holder = -1;
-    }
+    info -> latest_holder = sem -> latest_holder;
 
     lock_release (& sem -> lock);
     cpu_trap_restore(it_status);

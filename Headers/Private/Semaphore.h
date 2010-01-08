@@ -39,7 +39,7 @@ typedef struct _semaphore
   char name[DNA_NAME_LENGTH];
   int32_t tokens;
   spinlock_t lock;
-  thread_t latest_holder;
+  int32_t latest_holder;
   queue_t waiting_queue;
 }
 * semaphore_t;

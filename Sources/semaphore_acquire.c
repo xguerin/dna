@@ -102,6 +102,9 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
           self -> info . status = DNA_THREAD_WAITING;
           self -> info . previous_status = DNA_THREAD_RUNNING;
 
+          self -> info . resource = DNA_RESOURCE_SEMAPHORE;
+          self -> resource . semaphore = sem;
+
           lock_acquire (& sem -> waiting_queue . lock);
           lock_release (& sem -> lock);
 
@@ -112,6 +115,8 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
           ensure (status == DNA_OK, status);
 
           lock_acquire (& sem -> lock);
+          self -> info . resource = DNA_NO_RESOURCE;
+
           break;
 
         /*
@@ -140,6 +145,9 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
           self -> info . status = DNA_THREAD_WAITING;
           self -> info . previous_status = DNA_THREAD_RUNNING;
 
+          self -> info . resource = DNA_RESOURCE_SEMAPHORE;
+          self -> resource . semaphore = sem;
+
           lock_acquire (& sem -> waiting_queue . lock);
           lock_release (& sem -> lock);
 
@@ -150,6 +158,7 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
           ensure (status == DNA_OK, status);
 
           lock_acquire (& sem -> lock);
+          self -> info . resource = DNA_NO_RESOURCE;
 
           status = alarm_destroy (alarm);
           check (invalid_alarm, status != DNA_NO_TIMER
@@ -170,7 +179,10 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
       }
     }
     
-    if (status == DNA_OK) sem -> latest_holder = self;
+    if (status == DNA_OK)
+    {
+      sem -> latest_holder = self -> info . id;
+    }
 
     lock_release (& sem -> lock);
     cpu_trap_restore(it_status);

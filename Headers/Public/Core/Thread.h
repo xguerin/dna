@@ -61,6 +61,23 @@ thread_status_t;
 /*
  ****/
 
+/****t* types/thread_resource_t
+ * SUMMARY
+ * Type of the resource for which a thread can wait.
+ *
+ * SOURCE
+ */
+
+typedef enum
+{
+  DNA_NO_RESOURCE,
+  DNA_RESOURCE_SEMAPHORE
+}
+thread_resource_t;
+
+/*
+ ****/
+
 /****t* types/thread_handler_t
  * SUMMARY
  * Thread handler type.
@@ -89,8 +106,10 @@ typedef struct _thread_info
   int32_t affinity;
   int32_t priority;
   int32_t sem_tokens;
+
   thread_status_t status;
   thread_status_t previous_status;
+  thread_resource_t resource;
 
   bigtime_t kernel_time;
   bigtime_t user_time;

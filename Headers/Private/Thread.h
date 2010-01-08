@@ -26,6 +26,7 @@
 #include <stdarg.h>
 
 #include <Private/Alarm.h>
+#include <Private/Semaphore.h>
 #include <Core/Core.h>
 
 #include <DnaTools/DnaTools.h>
@@ -77,6 +78,12 @@ typedef struct _thread
 
   queue_t wait;
   spinlock_t lock;
+
+  union
+  {
+    semaphore_t semaphore;
+  }
+  resource;
 
   thread_info_t info;
   thread_signature_t signature;
