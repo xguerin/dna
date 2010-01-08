@@ -109,7 +109,9 @@ typedef struct _thread_info
 
   thread_status_t status;
   thread_status_t previous_status;
+
   thread_resource_t resource;
+  int32_t resource_id;
 
   bigtime_t kernel_time;
   bigtime_t user_time;

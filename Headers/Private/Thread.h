@@ -79,12 +79,6 @@ typedef struct _thread
   queue_t wait;
   spinlock_t lock;
 
-  union _resource
-  {
-    semaphore_t semaphore;
-  }
-  resource;
-
   thread_info_t info;
   thread_signature_t signature;
 

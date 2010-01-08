@@ -83,15 +83,12 @@ status_t thread_create (thread_handler_t handler,
     thread -> stack . size = stack_size;
 
     /*
-     * Fill-in the information, stack and signature
+     * Fill in the information
      */
 
     thread -> info . id = -1;
-    thread -> info . cpu_id = 0;
-    thread -> info . status = DNA_THREAD_SUSPENDED;
-    thread -> info . previous_status = DNA_THREAD_READY;
-    thread -> info . resource = DNA_NO_RESOURCE;
     dna_strcpy (thread -> info . name, name);
+    thread -> info . cpu_id = 0;
 
     if (affinity == DNA_NO_AFFINITY)
     {
@@ -101,6 +98,15 @@ status_t thread_create (thread_handler_t handler,
     {
       thread -> info . affinity = affinity;
     }
+
+    thread -> info . status = DNA_THREAD_SUSPENDED;
+    thread -> info . previous_status = DNA_THREAD_READY;
+    thread -> info . resource = DNA_NO_RESOURCE;
+    thread -> info . resource_id = -1;
+
+    /*
+     * Fill in the signature
+     */
 
     thread -> signature . handler = handler;
     thread -> signature . arguments = arguments;

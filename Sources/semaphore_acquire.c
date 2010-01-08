@@ -84,7 +84,10 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
      * And decide what to do next depending on the result
      */
 
-    if (rem_tokens >= 0) sem -> tokens -= tokens;
+    if (rem_tokens >= 0)
+    {
+      sem -> tokens -= tokens;
+    }
     else
     {
       sem -> tokens = 0;
@@ -103,7 +106,7 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
           self -> info . previous_status = DNA_THREAD_RUNNING;
 
           self -> info . resource = DNA_RESOURCE_SEMAPHORE;
-          self -> resource . semaphore = sem;
+          self -> info . resource_id = sem -> id;
 
           lock_acquire (& sem -> waiting_queue . lock);
           lock_release (& sem -> lock);
@@ -116,8 +119,8 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
 
           lock_acquire (& sem -> lock);
 
-          self -> resource . semaphore = NULL;
           self -> info . resource = DNA_NO_RESOURCE;
+          self -> info . resource_id = -1;
 
           break;
 
@@ -148,7 +151,7 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
           self -> info . previous_status = DNA_THREAD_RUNNING;
 
           self -> info . resource = DNA_RESOURCE_SEMAPHORE;
-          self -> resource . semaphore = sem;
+          self -> info . resource_id = sem -> id;
 
           lock_acquire (& sem -> waiting_queue . lock);
           lock_release (& sem -> lock);
@@ -161,8 +164,8 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
 
           lock_acquire (& sem -> lock);
 
-          self -> resource . semaphore = NULL;
           self -> info . resource = DNA_NO_RESOURCE;
+          self -> info . resource_id = -1;
 
           status = alarm_destroy (alarm);
           check (invalid_alarm, status != DNA_NO_TIMER

@@ -45,14 +45,22 @@ status_t semaphore_alarm (void * data)
     ensure (thread -> info . status == DNA_THREAD_WAITING, DNA_ERROR);
     ensure (thread -> info . resource == DNA_RESOURCE_SEMAPHORE, DNA_ERROR);
 
-    semaphore = thread -> resource . semaphore;
-    ensure (semaphore != NULL, DNA_ERROR);
-
     /*
-     * First, we extract the thread from the waiting list
+     * Get the corresponding semaphore
      */
 
+    lock_acquire (& semaphore_pool . lock);
+
+    semaphore = semaphore_pool . semaphore[thread -> info . resource_id];
+    check (invalid_semaphore, semaphore != NULL, DNA_ERROR);
+
     lock_acquire (& semaphore -> waiting_queue . lock);
+    lock_release (& semaphore_pool . lock);
+
+    /*
+     * Extract the thread from the waiting list
+     */
+
     status = queue_extract (& semaphore -> waiting_queue, thread);
     lock_release (& semaphore -> waiting_queue . lock);
 
@@ -71,6 +79,12 @@ status_t semaphore_alarm (void * data)
     }
 
     return status;
+  }
+
+  rescue (invalid_semaphore)
+  {
+    lock_release (& semaphore_pool . lock);
+    leave;
   }
 }
 
