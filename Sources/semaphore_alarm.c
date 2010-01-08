@@ -37,18 +37,39 @@ status_t semaphore_alarm (void * data)
 {
   status_t status = DNA_OK;
   thread_t thread = data;
+  semaphore_t semaphore;
 
   watch (status_t)
   {
     ensure (thread != NULL, DNA_ERROR);
     ensure (thread -> info . status == DNA_THREAD_WAITING, DNA_ERROR);
+    ensure (thread -> info . resource == DNA_RESOURCE_SEMAPHORE, DNA_ERROR);
 
-    lock_acquire (& thread -> lock);
+    semaphore = thread -> resource . semaphore;
+    ensure (semaphore != NULL, DNA_ERROR);
 
-    thread -> info . status = DNA_THREAD_READY;
-    thread -> info . previous_status = DNA_THREAD_WAITING;
+    /*
+     * First, we extract the thread from the waiting list
+     */
 
-    status = scheduler_dispatch (thread);
+    lock_acquire (& semaphore -> waiting_queue . lock);
+    status = queue_extract (& semaphore -> waiting_queue, thread);
+    lock_release (& semaphore -> waiting_queue . lock);
+
+    /*
+     * If the thread was waiting, we can dispatch it
+     */
+
+    if (status == DNA_OK)
+    {
+      lock_acquire (& thread -> lock);
+
+      thread -> info . status = DNA_THREAD_READY;
+      thread -> info . previous_status = DNA_THREAD_WAITING;
+
+      status = scheduler_dispatch (thread);
+    }
+
     return status;
   }
 }

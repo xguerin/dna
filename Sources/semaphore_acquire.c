@@ -115,6 +115,8 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
           ensure (status == DNA_OK, status);
 
           lock_acquire (& sem -> lock);
+
+          self -> resource . semaphore = NULL;
           self -> info . resource = DNA_NO_RESOURCE;
 
           break;
@@ -158,6 +160,8 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
           ensure (status == DNA_OK, status);
 
           lock_acquire (& sem -> lock);
+
+          self -> resource . semaphore = NULL;
           self -> info . resource = DNA_NO_RESOURCE;
 
           status = alarm_destroy (alarm);
