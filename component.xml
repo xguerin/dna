@@ -5,10 +5,26 @@
   <id name="ArmV6Processor" short_name="ArmV6" version="1.0"/>
 
   <restrict>
-
+    <id name="SoclibPlatform" version="1.0"/>
   </restrict>
 
   <provide>
+    
+    <!-- Cache management -->
+
+    <type name="cpu_cache_t"/>
+
+    <definition name="CPU_ICACHE_SIZE_LOG2"/>
+    <definition name="CPU_DCACHE_SIZE_LOG2"/>
+    <definition name="CPU_CACHE_ALL"/>
+
+    <method name="cpu_cache_sync" return_type=""/>
+
+    <method name="cpu_cache_invalidate" return_type="">
+      <argument name="cache_type" type="cpu_cache_t" direction="in"/>
+      <argument name="address" type="access" direction="in"/>
+      <argument name="words" type="int32_t" direction="in"/>
+    </method>
     
     <!-- Endianness management -->
 
@@ -166,12 +182,38 @@
       <argument name="old" type="int32_t" direction="in"/>
       <argument name="new" type="int32_t" direction="in"/>
     </method>
+
+    <!-- Timer management -->
+
+    <type name="bigtime_t"/>
+
+    <method name="cpu_timer_set" return_type="">
+      <argument name="id" type="int32_t" direction="in"/>
+      <argument name="quantum" type="bigtime_t" direction="in"/>
+    </method>
+
+    <method name="cpu_timer_get" return_type="">
+      <argument name="id" type="int32_t" direction="in"/>
+      <argument name="quantum" type="bigtime_t" direction="out"/>
+    </method>
+
+    <method name="cpu_timer_cancel" return_type="">
+      <argument name="id" type="int32_t" direction="in"/>
+    </method>
+
   </provide>
 
   <require>
     <definition name="PLATFORM_ENDIANNESS"/>
 
     <method name="system_kickstart" return_type=""/>
+
+    <method name="time_callback" return_type=""/>
+
+    <method name="ipi_callback" return_type="">
+      <argument name="command" type="int32_t" direction="in"/>
+      <argument name="data" type="access" direction="in"/>
+    </method>
   </require>
 
 </component>
