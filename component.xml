@@ -128,14 +128,13 @@
       <argument name="info" type="thread_info_t" direction="out"/>
     </method>
 
-    <!-- Time management -->
+    <!-- Alarm management -->
 
     <definition name="DNA_PERIODIC_ALARM"/>
     <definition name="DNA_ONE_SHOT_ALARM"/>
     <definition name="DNA_RELATIVE_ALARM"/>
     <definition name="DNA_ABSOLUTE_ALARM"/>
 
-    <type name="bigtime_t"/>
     <type name="alarm_callback_t"/>
 
     <method name="alarm_create" return_type="int32_t">
@@ -149,7 +148,9 @@
       <argument name="alarm" type="int32_t" direction="in"/>
     </method>
 
-    <method name="time_callback" return_type=""/>
+    <method name="timer_callback" return_type=""/>
+
+    <!-- IPI management -->
 
     <method name="ipi_callback" return_type="">
       <argument name="command" type="int32_t" direction="in"/>
