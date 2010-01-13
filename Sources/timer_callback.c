@@ -67,7 +67,9 @@ void timer_callback (void)
       break;
     }
 
-    log (VERBOSE_LEVEL, "Processing alarm %d", current_alarm -> id);
+    log (VERBOSE_LEVEL, "Processing alarm (%d:%d) of thread %d",
+        current_alarm -> id . s . value, current_alarm -> id . s . index,
+        current_alarm -> thread_id);
 
     /*
      * We check whether or not the alarm has to be restarted
@@ -96,8 +98,9 @@ void timer_callback (void)
 
       if (quantum <= DNA_TIMER_JIFFY)
       {
-        log (PANIC_LEVEL, "WARNING: low quantum (%d), alarm %d from thread %d",
-            (int32_t) quantum, next_alarm -> id, next_alarm -> thread_id);
+        log (PANIC_LEVEL, "low quantum (%d), alarm (%d:%d) from thread %d",
+            (int32_t) quantum, next_alarm -> id . s . value,
+            next_alarm -> id . s . index, next_alarm -> thread_id);
       }
       else
       {

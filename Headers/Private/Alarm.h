@@ -26,7 +26,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Core/Core.h>
 
-#define DNA_TIMER_JIFFY 1000
+#define DNA_TIMER_JIFFY   1000
 
 /****t* time/alarm_callback_t
  * SUMMARY
@@ -41,8 +41,8 @@ typedef union _alarm_id
 
   struct _s
   {
-    uint32_t value :20;
-    uint32_t index :12;
+    uint16_t value;
+    uint16_t index;
   }
   s;
 }
@@ -88,7 +88,7 @@ typedef struct _alarm
 typedef struct _alarm_manager
 {
   spinlock_t lock;
-  int32_t counter;
+  uint16_t counter;
   alarm_t alarm[DNA_MAX_ALARM];
 }
 alarm_manager_t;

@@ -95,9 +95,10 @@ status_t alarm_create (bigtime_t quantum, int32_t mode,
       {
         alarm_manager . alarm[index] = new_alarm;
 
-        new_alarm -> id . s . value = atomic_add (& alarm_manager . counter, 1);
         new_alarm -> id . s . index = index;
+        new_alarm -> id . s . value = alarm_manager . counter;
 
+        alarm_manager . counter += 1;
         break;
       }
     }
@@ -113,7 +114,8 @@ status_t alarm_create (bigtime_t quantum, int32_t mode,
 
     if (cpu -> current_alarm == NULL)
     {
-      log (INFO_LEVEL, "Set alarm %d", new_alarm -> id . raw);
+      log (VERBOSE_LEVEL, "Set alarm (%d:%d)", new_alarm -> id . s . value,
+          new_alarm -> id . s . index);
 
       cpu -> current_alarm = new_alarm;
       cpu_timer_set (current_cpuid, quantum);
@@ -124,8 +126,10 @@ status_t alarm_create (bigtime_t quantum, int32_t mode,
 
       if (old_alarm -> deadline > new_alarm -> deadline)
       {
-        log (INFO_LEVEL, "Reset alarm %d and set %d",
-            cpu -> current_alarm -> id, new_alarm -> id);
+        log (VERBOSE_LEVEL, "Reset alarm (%d:%d) and set (%d:%d)",
+            cpu -> current_alarm -> id . s . value,
+            cpu -> current_alarm -> id . s . index,
+            new_alarm -> id . s . value, new_alarm -> id . s . index);
 
         cpu_timer_cancel (current_cpuid);
         cpu -> current_alarm = new_alarm;
@@ -134,7 +138,9 @@ status_t alarm_create (bigtime_t quantum, int32_t mode,
       }
       else
       {
-        log (INFO_LEVEL, "Enqueue alarm %d", new_alarm -> id);
+        log (VERBOSE_LEVEL, "Enqueue alarm (%d:%d)",
+            new_alarm -> id . s . value, new_alarm -> id . s . index);
+
         queue_insert (& cpu -> alarm_queue, alarm_comparator, new_alarm);
       }
     }
