@@ -78,7 +78,10 @@ void timer_callback (void)
       current_alarm -> deadline = current_alarm -> quantum +  current_time;
       queue_insert (& cpu -> alarm_queue, alarm_comparator, current_alarm);
     }
-    else delete_alarm = true;
+    else
+    {
+      delete_alarm = true;
+    }
 
     /*
      * Look through the next alarm
@@ -102,7 +105,10 @@ void timer_callback (void)
         cpu_timer_set (cpu -> id, quantum);
       }
     }
-    else process_next_alarm = false;
+    else
+    {
+      process_next_alarm = false;
+    }
 
     lock_release (& cpu -> lock);
 
@@ -111,7 +117,10 @@ void timer_callback (void)
      */
 
     status = current_alarm -> callback (current_alarm -> data);
-    if (status == DNA_INVOKE_SCHEDULER) reschedule = true;
+    if (status == DNA_INVOKE_SCHEDULER)
+    {
+      reschedule = true;
+    }
 
     /*
      * Delete the alarm if necessary
@@ -120,7 +129,7 @@ void timer_callback (void)
     if (delete_alarm)
     {
       lock_acquire (& alarm_manager . lock);
-      alarm_manager . alarm[current_alarm -> id] = NULL;
+      alarm_manager . alarm[current_alarm -> id . s . index] = NULL;
       lock_release (& alarm_manager . lock);
 
       delete_alarm = false;
@@ -132,7 +141,10 @@ void timer_callback (void)
    * Reschedule of necessary
    */
 
-  if (reschedule) thread_yield ();
+  if (reschedule)
+  {
+    thread_yield ();
+  }
 }
 
 /*

@@ -46,7 +46,7 @@ status_t alarm_create (bigtime_t quantum, int32_t mode,
 {
   cpu_t * cpu = NULL;
   bigtime_t current_time = 0;
-  int32_t current_cpuid = 0;
+  int32_t current_cpuid = 0, index = 0;
   interrupt_status_t it_status;
   alarm_t new_alarm = NULL, old_alarm = NULL;
   
@@ -73,7 +73,6 @@ status_t alarm_create (bigtime_t quantum, int32_t mode,
      * Set its parameters
      */
 
-    new_alarm -> id = -1;
     new_alarm -> mode = mode;
     new_alarm -> thread_id = cpu -> current_thread -> info . id;
     new_alarm -> cpu_id = current_cpuid;
@@ -90,18 +89,21 @@ status_t alarm_create (bigtime_t quantum, int32_t mode,
 
     lock_acquire (& alarm_manager . lock);
 
-    for (int32_t i = 0; i < DNA_MAX_THREAD; i += 1)
+    for (index = 0; index < DNA_MAX_ALARM; index += 1)
     {
-      if (alarm_manager . alarm[i] == NULL)
+      if (alarm_manager . alarm[index] == NULL)
       {
-        alarm_manager . alarm[i] = new_alarm;
-        new_alarm -> id = i;
+        alarm_manager . alarm[index] = new_alarm;
+
+        new_alarm -> id . s . value = atomic_add (& alarm_manager . counter, 1);
+        new_alarm -> id . s . index = index;
+
         break;
       }
     }
 
     lock_release (& alarm_manager . lock);
-    check (error, new_alarm -> id != -1, DNA_ERROR);
+    check (error, index != DNA_MAX_ALARM, DNA_ERROR);
 
     /*
      * Deal with the new alarm
@@ -111,7 +113,7 @@ status_t alarm_create (bigtime_t quantum, int32_t mode,
 
     if (cpu -> current_alarm == NULL)
     {
-      log (VERBOSE_LEVEL, "Set alarm %d", new_alarm -> id);
+      log (INFO_LEVEL, "Set alarm %d", new_alarm -> id . raw);
 
       cpu -> current_alarm = new_alarm;
       cpu_timer_set (current_cpuid, quantum);
@@ -122,7 +124,7 @@ status_t alarm_create (bigtime_t quantum, int32_t mode,
 
       if (old_alarm -> deadline > new_alarm -> deadline)
       {
-        log (VERBOSE_LEVEL, "Reset alarm %d and set %d",
+        log (INFO_LEVEL, "Reset alarm %d and set %d",
             cpu -> current_alarm -> id, new_alarm -> id);
 
         cpu_timer_cancel (current_cpuid);
@@ -132,7 +134,7 @@ status_t alarm_create (bigtime_t quantum, int32_t mode,
       }
       else
       {
-        log (VERBOSE_LEVEL, "Enqueue alarm %d", new_alarm -> id);
+        log (INFO_LEVEL, "Enqueue alarm %d", new_alarm -> id);
         queue_insert (& cpu -> alarm_queue, alarm_comparator, new_alarm);
       }
     }
@@ -140,7 +142,7 @@ status_t alarm_create (bigtime_t quantum, int32_t mode,
     lock_release (& cpu -> lock);
     cpu_trap_restore(it_status);
 
-    *aid = new_alarm -> id;
+    *aid = new_alarm -> id . raw;
     return DNA_OK;
   }
 

@@ -28,6 +28,29 @@
 
 #define DNA_TIMER_JIFFY 1000
 
+/****t* time/alarm_callback_t
+ * SUMMARY
+ * Alarm callback type.
+ *
+ * SOURCE
+ */
+
+typedef union _alarm_id
+{
+  int32_t raw;
+
+  struct _s
+  {
+    uint32_t value :20;
+    uint32_t index :12;
+  }
+  s;
+}
+alarm_id_t;
+
+/*
+ ****/
+
 /****t* time/alarm_t
  * SUMMARY
  * Alarm type.
@@ -39,7 +62,7 @@ typedef struct _alarm
 {
   queue_link_t link;
 
-  int32_t id;
+  alarm_id_t id;
   int32_t thread_id;
   int32_t cpu_id;
   int32_t mode;
@@ -65,6 +88,7 @@ typedef struct _alarm
 typedef struct _alarm_manager
 {
   spinlock_t lock;
+  int32_t counter;
   alarm_t alarm[DNA_MAX_ALARM];
 }
 alarm_manager_t;
