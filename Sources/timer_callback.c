@@ -64,6 +64,8 @@ void timer_callback (void)
     {
       quantum = current_alarm -> deadline - current_time;
       cpu_timer_set (cpu -> id, quantum);
+      
+      lock_release (& cpu -> lock);
       break;
     }
 
