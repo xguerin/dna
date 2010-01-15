@@ -51,8 +51,8 @@ status_t semaphore_release (int32_t sid, int32_t tokens, int32_t flags)
 
   watch (status_t)
   {
-    ensure (sid >= 0 && sid < DNA_MAX_SEM, DNA_BAD_SEM_ID);
     ensure (tokens > 0, DNA_BAD_ARGUMENT);
+    ensure (sem_id . s . index < DNA_MAX_SEM, DNA_BAD_SEM_ID);
 
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& semaphore_pool . lock);
@@ -64,6 +64,10 @@ status_t semaphore_release (int32_t sid, int32_t tokens, int32_t flags)
     sem = semaphore_pool . semaphore[sem_id . s . index];
     check (invalid_semaphore, sem != NULL, DNA_BAD_SEM_ID);
     check (invalid_semaphore, sem -> id . raw == sem_id . raw, DNA_BAD_SEM_ID);
+
+    log (VERBOSE_LEVEL, "%d tokens on ID(%d:%d) TOKEN(%d)",
+        tokens, sem_id . s . value,
+        sem_id . s . index, sem -> info . tokens);
 
     lock_acquire (& sem -> lock);
     lock_release (& semaphore_pool . lock);

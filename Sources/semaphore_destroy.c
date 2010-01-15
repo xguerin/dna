@@ -45,6 +45,8 @@ status_t semaphore_destroy (int32_t sid)
 
   watch (status_t)
   {
+    ensure (sem_id . s . index < DNA_MAX_SEM, DNA_BAD_SEM_ID);
+
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& semaphore_pool . lock);
 

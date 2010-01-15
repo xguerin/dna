@@ -49,8 +49,8 @@ status_t semaphore_get_info (int32_t sid, semaphore_info_t * info)
 
   watch (status_t)
   {
-    ensure (sid >= 0 && sid < DNA_MAX_SEM, DNA_BAD_SEM_ID);
     ensure (info != NULL, DNA_BAD_ARGUMENT);
+    ensure (sem_id . s . index < DNA_MAX_SEM, DNA_BAD_SEM_ID);
 
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& semaphore_pool . lock);
@@ -69,6 +69,9 @@ status_t semaphore_get_info (int32_t sid, semaphore_info_t * info)
     /*
      * Copy the semaphore information
      */
+
+    log (VERBOSE_LEVEL, "ID(%d:%d) TOKEN(%d)",
+        sem -> id . s . value, sem -> id . s . index, sem -> info . tokens);
 
     *info = sem -> info;
 
