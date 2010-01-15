@@ -51,35 +51,52 @@ status_t semaphore_create (char * name, int32_t tokens, int32_t * sid)
   {
     ensure (name != NULL && sid != NULL, DNA_BAD_ARGUMENT);
 
+    /*
+     * Create the semaphore and fill in its information
+     */
+
     semaphore = kernel_malloc (sizeof (struct _semaphore), true);
     ensure (semaphore != NULL, DNA_OUT_OF_MEM);
+
+    /*
+     * Fill in the information
+     */
+
+    dna_strcpy (semaphore -> info . name, name);
+    semaphore -> info . tokens = tokens;
+
+    /*
+     * Insert the semaphore if a room is available
+     */
 
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& semaphore_pool . lock);
 
     for (index = 0; index < DNA_MAX_SEM; index ++)
     {
-      if (semaphore_pool . semaphore[index] == NULL) break;
+      if (semaphore_pool . semaphore[index] == NULL)
+      {
+        semaphore -> id . s . value = semaphore_pool . counter;
+        semaphore -> id . s . index = index;
+
+        semaphore_pool . counter += 1;
+        semaphore_pool . semaphore[index] = semaphore;
+
+        break;
+      }
     }
 
+    lock_release (& semaphore_pool . lock);
     check (pool_error, index < DNA_MAX_SEM, DNA_NO_MORE_SEM);
 
-    semaphore -> id = index;
-    dna_strcpy (semaphore -> name, name);
-    semaphore -> tokens = tokens;
-
-    semaphore_pool . semaphore[index] = semaphore;
-
-    lock_release (& semaphore_pool . lock);
     cpu_trap_restore(it_status);
 
-    *sid = semaphore -> id;
+    *sid = semaphore -> id . raw;
     return DNA_OK;
   }
 
   rescue (pool_error)
   {
-    lock_release (& semaphore_pool . lock);
     cpu_trap_restore(it_status);
     kernel_free (semaphore);
     leave;

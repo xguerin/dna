@@ -43,6 +43,7 @@ status_t semaphore_get_info (int32_t sid, semaphore_info_t * info)
 
 {
   semaphore_t sem = NULL;
+  semaphore_id_t sem_id = { .raw = sid };
   interrupt_status_t it_status = 0;
   status_t status = DNA_OK;
 
@@ -58,21 +59,18 @@ status_t semaphore_get_info (int32_t sid, semaphore_info_t * info)
      * Look for the semaphore with ID sid
      */
 
-    sem = semaphore_pool . semaphore[sid];
+    sem = semaphore_pool . semaphore[sem_id . s . index];
     check (invalid_semaphore, sem != NULL, DNA_BAD_SEM_ID);
+    check (invalid_semaphore, sem -> id . raw == sem_id . raw, DNA_BAD_SEM_ID);
 
     lock_acquire (& sem -> lock);
     lock_release (& semaphore_pool . lock);
 
     /*
-     * Copy information from the semaphore to the
-     * information structure
+     * Copy the semaphore information
      */
 
-    info -> id = sem -> id;
-    dna_strcpy (info -> name, sem -> name);
-    info -> tokens = sem -> tokens;
-    info -> latest_holder = sem -> latest_holder;
+    *info = sem -> info;
 
     lock_release (& sem -> lock);
     cpu_trap_restore(it_status);

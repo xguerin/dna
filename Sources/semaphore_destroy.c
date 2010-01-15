@@ -39,8 +39,33 @@ status_t semaphore_destroy (int32_t sid)
  */
 
 {
+  semaphore_t sem = NULL;
+  semaphore_id_t sem_id = { .raw = sid };
+  interrupt_status_t it_status = 0;
 
-  return DNA_NOT_IMPLEMENTED;
+  watch (status_t)
+  {
+    it_status = cpu_trap_mask_and_backup();
+    lock_acquire (& semaphore_pool . lock);
+
+    /*
+     * Look for the semaphore with ID sid
+     */
+
+    sem = semaphore_pool . semaphore[sem_id . s . index];
+    check (invalid_semaphore, sem != NULL, DNA_BAD_SEM_ID);
+    check (invalid_semaphore, sem -> id . raw == sem_id . raw, DNA_BAD_SEM_ID);
+
+    lock_release (& semaphore_pool . lock);
+    return DNA_NOT_IMPLEMENTED;
+  }
+
+  rescue (invalid_semaphore)
+  {
+    lock_release (& semaphore_pool . lock);
+    cpu_trap_restore(it_status);
+    leave;
+  }
 }
 
 /*

@@ -39,7 +39,7 @@ typedef union _alarm_id
 {
   int32_t raw;
 
-  struct _s
+  struct _alarm_id_s
   {
     uint16_t value;
     uint16_t index;

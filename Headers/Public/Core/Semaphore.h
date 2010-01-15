@@ -30,7 +30,6 @@
 
 typedef struct _semaphore_info
 {
-  int32_t id;
   char name[DNA_NAME_LENGTH];
   int32_t tokens;
   int32_t latest_holder;

@@ -26,6 +26,29 @@
 #include <Core/Core.h>
 #include <DnaTools/DnaTools.h>
 
+/****t* semaphore/semaphore_id_t
+ * SUMMARY
+ * Semaphore ID type.
+ *
+ * SOURCE
+ */
+
+typedef union _semaphore_id
+{
+  int32_t raw;
+
+  struct _semaphore_id_s
+  {
+    uint16_t value;
+    uint16_t index;
+  }
+  s;
+}
+semaphore_id_t;
+
+/*
+ ****/
+
 /****t* semaphore/semaphore_t
  * SUMMARY
  * Semaphore type.
@@ -35,12 +58,11 @@
 
 typedef struct _semaphore
 {
-  int32_t id;
-  char name[DNA_NAME_LENGTH];
-  int32_t tokens;
+  semaphore_id_t id;
   spinlock_t lock;
-  int32_t latest_holder;
   queue_t waiting_queue;
+
+  semaphore_info_t info;
 }
 * semaphore_t;
 
@@ -57,6 +79,7 @@ typedef struct _semaphore
 typedef struct _semaphore_pool
 {
   spinlock_t lock;
+  int16_t counter;
   semaphore_t semaphore[DNA_MAX_SEM];
 }
 semaphore_pool_t;

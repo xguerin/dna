@@ -44,6 +44,7 @@ status_t semaphore_release (int32_t sid, int32_t tokens, int32_t flags)
 {
   thread_t thread = NULL;
   semaphore_t sem = NULL;
+  semaphore_id_t sem_id = { .raw = sid };
   interrupt_status_t it_status = 0;
   status_t status = DNA_OK;
   bool smart_to_reschedule = false;
@@ -60,8 +61,9 @@ status_t semaphore_release (int32_t sid, int32_t tokens, int32_t flags)
      * Look for the semaphore with ID sid
      */
 
-    sem = semaphore_pool . semaphore[sid];
+    sem = semaphore_pool . semaphore[sem_id . s . index];
     check (invalid_semaphore, sem != NULL, DNA_BAD_SEM_ID);
+    check (invalid_semaphore, sem -> id . raw == sem_id . raw, DNA_BAD_SEM_ID);
 
     lock_acquire (& sem -> lock);
     lock_release (& semaphore_pool . lock);
@@ -92,6 +94,9 @@ status_t semaphore_release (int32_t sid, int32_t tokens, int32_t flags)
             thread -> info . status = DNA_THREAD_READY;
             thread -> info . previous_status = DNA_THREAD_WAITING;
 
+            thread -> info . resource = DNA_NO_RESOURCE;
+            thread -> info . resource_id = -1;
+
             if (scheduler_dispatch (thread) == DNA_INVOKE_SCHEDULER)
             {
               smart_to_reschedule = true;
@@ -117,7 +122,7 @@ status_t semaphore_release (int32_t sid, int32_t tokens, int32_t flags)
      * and release the sem lock
      */
 
-    sem -> tokens += tokens;
+    sem -> info . tokens += tokens;
 
     lock_release (& sem -> lock);
     cpu_trap_restore(it_status);

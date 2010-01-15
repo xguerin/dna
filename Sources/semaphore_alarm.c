@@ -38,6 +38,7 @@ status_t semaphore_alarm (void * data)
   status_t status = DNA_OK;
   thread_t thread = data;
   semaphore_t semaphore;
+  semaphore_id_t sem_id;
 
   watch (status_t)
   {
@@ -51,7 +52,9 @@ status_t semaphore_alarm (void * data)
 
     lock_acquire (& semaphore_pool . lock);
 
-    semaphore = semaphore_pool . semaphore[thread -> info . resource_id];
+    sem_id . raw = thread -> info . resource_id;
+    semaphore = semaphore_pool . semaphore[sem_id . s . index];
+
     check (invalid_semaphore, semaphore != NULL, DNA_ERROR);
 
     lock_acquire (& semaphore -> waiting_queue . lock);
