@@ -29,10 +29,10 @@
 #define DNA_THREAD_STACK_SIZE     0x2000
 
 #define DNA_MAX_CPU               16
-#define DNA_MAX_SEM               32
+#define DNA_MAX_SEM               128
 #define DNA_MAX_FILE              64
 #define DNA_MAX_FDARRAY           1
 #define DNA_MAX_THREAD            128
-#define DNA_MAX_ALARM             16
+#define DNA_MAX_ALARM             128
 
 #endif
