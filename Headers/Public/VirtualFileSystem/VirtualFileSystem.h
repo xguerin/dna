@@ -22,7 +22,6 @@
 #define DNA_VFS_PUBLIC_H
 
 #include <VirtualFileSystem/Operation.h>
-#include <VirtualFileSystem/Path.h>
 #include <VirtualFileSystem/VNode.h>
 #include <DnaTools/DnaTools.h>
 

@@ -25,16 +25,16 @@
 #include <DnaTools/DnaTools.h>
 
 #define DNA_SEEK_SET                    0x00000000
-#define DNA_SEEK_FROM_CURRENT            0x00000001
-#define DNA_SEEK_FROM_END                0x00000002
+#define DNA_SEEK_FROM_CURRENT           0x00000001
+#define DNA_SEEK_FROM_END               0x00000002
 
-#define DNA_READ_ONLY                    0x00000000
+#define DNA_READ_ONLY                   0x00000000
 #define DNA_WRITE_ONLY                  0x00000001
 #define DNA_READ_WRITE                  0x00000002
 #define DNA_APPEND                      0x00000008
 #define DNA_CREATE                      0x00000200
 #define DNA_TRUNCATE                    0x00000400
-#define DNA_FAIL_IF_EXIST                0x00000800
+#define DNA_FAIL_IF_EXIST               0x00000800
 #define DNA_NON_BLOCKING                0x00004000
 
 /****t* vfs/directory_entry_t
