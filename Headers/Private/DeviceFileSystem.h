@@ -64,8 +64,14 @@ typedef struct devfs
 }
 * devfs_t;
 
-extern status_t devfs_walk (void * ns, void * base, char * restrict path, char ** new_path, int64_t * vnid);
-extern status_t devfs_mount (int32_t vid, const char * dev_path, uint32_t flags, void * params, void ** data, int64_t * p_vnid);
+/*
+ * VFS operations.
+ */
+
+extern status_t devfs_walk (void * ns, void * base,
+    char * restrict path, char ** new_path, int64_t * vnid);
+extern status_t devfs_mount (int32_t vid, const char * dev_path,
+    uint32_t flags, void * params, void ** data, int64_t * p_vnid);
 
 extern status_t devfs_read_vnode (void * ns, int64_t vnid, void ** data);
 extern status_t devfs_write_vnode (void * ns, void * node);
@@ -73,11 +79,26 @@ extern status_t devfs_write_vnode (void * ns, void * node);
 extern status_t devfs_open (void * ns, void * node, int32_t mode, void ** data);
 extern status_t devfs_close (void * ns, void * node, void * data);
 
-extern status_t devfs_read (void * ns, void * node, void * file, void * data, int64_t offset, int32_t * p_count);
-extern status_t devfs_write (void * ns, void * node, void * file, void * data, int64_t offset, int32_t * p_count);
+extern status_t devfs_read (void * ns, void * node, void * file,
+    void * data, int64_t offset, int32_t * p_count);
+extern status_t devfs_write (void * ns, void * node, void * file,
+    void * data, int64_t offset, int32_t * p_count);
 
-extern status_t devfs_readdir (void * ns, void * node, void * data, void * entry_array, int64_t * offset, int32_t * p_count);
-extern status_t devfs_ioctl (void * ns, void * node, void * data, int32_t function, void * arguments, int32_t * p_ret);
+extern status_t devfs_readdir (void * ns, void * node, void * data,
+    void * entry_array, int64_t * offset, int32_t * p_count);
+extern status_t devfs_ioctl (void * ns, void * node, void * data,
+    int32_t function, void * arguments, int32_t * p_ret);
+
+/*
+ * Private operations.
+ */
+
+extern status_t devfs_insert_path (devfs_t fs, devfs_inode_t inode,
+    char * path, device_cmd_t * commands);
+
+/*
+ * Inspectors.
+ */
 
 extern bool devfs_entry_name_inspector (void * entry, void * entry_name, void * dummy);
 extern bool devfs_entry_index_inspector (void * entry, void * entry_index, void * dummy);

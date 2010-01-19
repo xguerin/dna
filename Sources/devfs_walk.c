@@ -30,13 +30,17 @@ status_t devfs_walk (void * ns, void * base, char * restrict path,
   {
     ensure (ns != NULL, DNA_ERROR);
 
+    log (INFO_LEVEL, "path = %s", path);
+
     entry = queue_lookup (& base_inode -> entry_list,
         devfs_entry_name_inspector, (void *) path, NULL);
     ensure (entry != NULL, DNA_NO_ENTRY);
 
+    log (INFO_LEVEL, "inode found");
+
     vnid = entry -> id;
-    ensure (vnid != devfs -> root_vnid
-        || dna_strcmp (path, "..") != 0, DNA_ALREADY_AT_ROOT);
+    ensure (vnid != devfs -> root_vnid, DNA_ALREADY_AT_ROOT);
+    ensure (dna_strcmp (path, "..") != 0, DNA_ALREADY_AT_ROOT);
 
     *p_vnid = vnid;
     return DNA_OK;

@@ -23,81 +23,114 @@ status_t devfs_mount (int32_t vid, const char * dev_path, uint32_t flags,
     void * params, void ** data, int64_t * vnid)
 {
   devfs_t devfs = NULL;
-  devfs_inode_t inode = NULL, root_inode = NULL;
+  devfs_inode_t root_inode = NULL;
   devfs_entry_t entry = NULL;
-  char ** devices = NULL;
+  device_cmd_t * commands = NULL;
+  status_t status_hw, status_sw;
+  char ** devices = NULL, * path = NULL;
 
-   devfs = kernel_malloc (sizeof (struct devfs), true);
-  if (devfs == NULL) return DNA_OUT_OF_MEM;
-
-   root_inode = kernel_malloc (sizeof (struct devfs_inode), true);
-  if (root_inode == NULL) return DNA_OUT_OF_MEM;
-
-  devfs -> inode_index = 1;
-  devfs -> vid = vid;
-
-  root_inode -> id = devfs -> inode_index ++;
-  dna_strcpy (root_inode -> name, "");
-  root_inode -> class = DNA_DEVFS_DIRECTORY;
-  queue_add (& devfs -> inode_list, root_inode);
-
-  devfs -> root_vnid = root_inode -> id;
-
-  /*
-   * Add the "." entry
-   */
-
-  entry = kernel_malloc (sizeof (struct devfs_entry), true);
-  if (entry == NULL) return DNA_OUT_OF_MEM;
-  entry -> id = root_inode -> id;
-  dna_strcpy (entry -> name, ".");
-  queue_add (& root_inode -> entry_list, entry);
-
-  /*
-   * Add the ".." entry
-   */
-
-  entry = kernel_malloc (sizeof (struct devfs_entry), true);
-  if (entry == NULL) return DNA_OUT_OF_MEM;
-  entry -> id = root_inode -> id;
-  dna_strcpy (entry -> name, "..");
-  queue_add (& root_inode -> entry_list, entry);
-
-  /*
-   * Load the drivers and register them as files
-   */
-
-  for (int32_t i = 0; i < OS_N_DRIVERS; i ++)
+  watch (status_t)
   {
-    OS_DRIVERS_LIST[i] -> init_hardware ();
-    OS_DRIVERS_LIST[i] -> init_driver ();
-    devices = (char **) OS_DRIVERS_LIST[i] -> publish_devices ();
+    /*
+     * Allocate the base structures
+     */
 
-    for (int32_t j = 0; devices[j] != NULL; j ++) {
-       inode = kernel_malloc (sizeof (struct devfs_inode), true);
-      if (inode == NULL) return DNA_OUT_OF_MEM;
+    devfs = kernel_malloc (sizeof (struct devfs), true);
+    ensure (devfs != NULL, DNA_OUT_OF_MEM);
 
-      inode -> id = devfs -> inode_index ++;
-      dna_strcpy (inode -> name, devices[j]);
-      inode -> class = DNA_DEVFS_FILE;
-      inode -> dev_cmd = OS_DRIVERS_LIST[i] -> find_device (devices[j]);
-      queue_add (& devfs -> inode_list, inode);
+    root_inode = kernel_malloc (sizeof (struct devfs_inode), true);
+    check (root_malloc, root_inode != NULL, DNA_OUT_OF_MEM);
 
-      entry = kernel_malloc (sizeof (struct devfs_entry), true);
-      if (entry == NULL) return DNA_OUT_OF_MEM;
-      entry -> id = inode -> id;
-      dna_strcpy (entry -> name, devices[j]);
-      queue_add (& root_inode -> entry_list, entry);
+    /*
+     * Initialize the devfs structure
+     */
+
+    devfs -> inode_index = 1;
+    devfs -> vid = vid;
+    devfs -> root_vnid = devfs -> inode_index ++;
+
+    /*
+     * Initialize the root inode structure
+     */
+
+    root_inode -> id = devfs -> root_vnid;
+    dna_strcpy (root_inode -> name, "");
+    root_inode -> class = DNA_DEVFS_DIRECTORY;
+    queue_add (& devfs -> inode_list, root_inode);
+
+    /*
+     * Add the "." entry
+     */
+
+    entry = kernel_malloc (sizeof (struct devfs_entry), true);
+    check (dot_malloc, entry != NULL, DNA_OUT_OF_MEM);
+
+    entry -> id = root_inode -> id;
+    dna_strcpy (entry -> name, ".");
+    queue_add (& root_inode -> entry_list, entry);
+
+    /*
+     * Add the ".." entry
+     */
+
+    entry = kernel_malloc (sizeof (struct devfs_entry), true);
+    check (dotdot_malloc, entry != NULL, DNA_OUT_OF_MEM);
+
+    entry -> id = root_inode -> id;
+    dna_strcpy (entry -> name, "..");
+    queue_add (& root_inode -> entry_list, entry);
+
+    /*
+     * Load the drivers and register them as files
+     */
+
+    path = kernel_malloc (DNA_PATH_LENGTH, false);
+
+    for (int32_t i = 0; i < OS_N_DRIVERS; i ++)
+    {
+      status_hw = OS_DRIVERS_LIST[i] -> init_hardware ();
+      status_sw = OS_DRIVERS_LIST[i] -> init_driver ();
+
+      if (status_hw == DNA_OK && status_sw == DNA_OK)
+      {
+        devices = (char **) OS_DRIVERS_LIST[i] -> publish_devices ();
+
+        for (int32_t j = 0; devices[j] != NULL; j ++)
+        {
+          dna_strcpy (path, devices[j]);
+          commands = OS_DRIVERS_LIST[i] -> find_device (path);
+          devfs_insert_path (devfs, root_inode, path, commands);
+        }
+      }
     }
+
+    kernel_free (path);
+
+    /*
+     * Add the root vnode to the system
+     */
+
+    *data = devfs;
+    *vnid = root_inode -> id;
+
+    return vnode_create (root_inode -> id, devfs -> vid, (void *) root_inode);
   }
 
-  /*
-   * Add the root vnode to the system
-   */
+  rescue (dotdot_malloc)
+  {
+    devfs_entry_t entry = queue_rem (& root_inode -> entry_list);
+    kernel_free (entry);
+  }
 
-  *data = devfs;
-  *vnid = root_inode -> id;
+  rescue (dot_malloc)
+  {
+    kernel_free (root_inode);
+  }
 
-  return vnode_create (root_inode -> id, devfs -> vid, (void *) root_inode);
+  rescue (root_malloc)
+  {
+    kernel_free (devfs);
+    leave;
+  }
 }
 
