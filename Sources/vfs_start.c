@@ -58,13 +58,13 @@ status_t vfs_start (void)
 
     log (INFO_LEVEL, "Opening the default in/out/error files.");
 
-    status = vfs_open ("/devices/console", 0, 0, & dummy);
+    status = vfs_open ("/devices/serial/kernel/console", 0, 0, & dummy);
     ensure (status == DNA_OK, status);
 
-    status = vfs_open ("/devices/console", 0, 0, & dummy);
+    status = vfs_open ("/devices/serial/kernel/console", 0, 0, & dummy);
     ensure (status == DNA_OK, status);
 
-    status = vfs_open ("/devices/console", 0, 0, & dummy);
+    status = vfs_open ("/devices/serial/kernel/debug", 0, 0, & dummy);
     ensure (status == DNA_OK, status);
 
     return DNA_OK;
