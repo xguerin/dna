@@ -46,11 +46,13 @@ typedef enum _status
   /*
    * Standard error codes
    */
+
   DNA_ERROR                           = 0xFFFF,
   DNA_NOT_IMPLEMENTED                 = 0xFFFE,
   DNA_OUT_OF_MEM                      = 0xFFFD,
   DNA_BAD_ARGUMENT                    = 0xFFFC,
   DNA_ACCES_DENIED                    = 0xFFFB,
+  DNA_NAME_TOO_LONG                   = 0xFFFA,
 
   /*
    * VFS error codes
@@ -67,6 +69,7 @@ typedef enum _status
   DNA_BAD_INODE_TYPE                  = 0xFEF7,
   DNA_INVALID_WHENCE                  = 0xFEF6,
   DNA_VOLUME_IN_USE                   = 0xFEF5,
+  DNA_INODE_EXISTS                    = 0xFEF4,
 
   /*
    * Semaphore error codes
