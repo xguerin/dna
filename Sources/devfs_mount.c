@@ -99,6 +99,11 @@ status_t devfs_mount (int32_t vid, const char * dev_path, uint32_t flags,
         {
           dna_strcpy (path, devices[j]);
           commands = OS_DRIVERS_LIST[i] -> find_device (path);
+
+          /*
+           * TODO: we need to check if the insertion went correctly.
+           */
+
           devfs_insert_path (devfs, root_inode, path, commands);
         }
       }
