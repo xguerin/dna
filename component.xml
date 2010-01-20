@@ -208,7 +208,7 @@
 
     <method name="system_kickstart" return_type=""/>
 
-    <method name="time_callback" return_type=""/>
+    <method name="timer_callback" return_type=""/>
 
     <method name="ipi_callback" return_type="">
       <argument name="command" type="int32_t" direction="in"/>
