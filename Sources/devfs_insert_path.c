@@ -33,7 +33,7 @@ status_t devfs_insert_path (devfs_t fs, devfs_inode_t inode,
 
     path_get_next_entry (& path, token);
 
-    log (INFO_LEVEL, "token = %s, path = %s, inode = %s",
+    log (VERBOSE_LEVEL, "token = %s, path = %s, inode = %s",
         token, path, inode -> name);
 
     entry = queue_lookup (& inode -> entry_list,
@@ -68,7 +68,7 @@ status_t devfs_insert_path (devfs_t fs, devfs_inode_t inode,
 
       if (dna_strlen (path) != 0)
       {
-        log (INFO_LEVEL, "parsing %s", token);
+        log (VERBOSE_LEVEL, "parsing %s", token);
         next_inode -> class = DNA_DEVFS_DIRECTORY;
 
         status = devfs_insert_path (fs, next_inode, path, commands);
@@ -86,7 +86,7 @@ status_t devfs_insert_path (devfs_t fs, devfs_inode_t inode,
       queue_add (& fs -> inode_list, next_inode);
       queue_add (& inode -> entry_list, entry);
 
-      log (INFO_LEVEL, "file %s created", token);
+      log (VERBOSE_LEVEL, "file %s created", token);
     }
     else
     {
@@ -97,7 +97,7 @@ status_t devfs_insert_path (devfs_t fs, devfs_inode_t inode,
        * the devfs_read_vnode hook since we are in a pseudo file system.
        */
 
-      log (INFO_LEVEL, "read vnode");
+      log (VERBOSE_LEVEL, "read vnode");
 
       devfs_read_vnode ((void *)fs, entry -> id, (void **) & next_inode);
       ensure (next_inode != NULL, DNA_NO_VNODE);
@@ -107,7 +107,7 @@ status_t devfs_insert_path (devfs_t fs, devfs_inode_t inode,
        * Parse the rest of the path.
        */
 
-      log (INFO_LEVEL, "parsing %s", token);
+      log (VERBOSE_LEVEL, "parsing %s", token);
       status = devfs_insert_path (fs, next_inode, path, commands);
     }
 
