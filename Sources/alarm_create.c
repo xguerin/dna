@@ -52,6 +52,7 @@ status_t alarm_create (bigtime_t quantum, int32_t mode,
   
   watch (status_t)
   {
+    ensure (quantum != 0, DNA_BAD_ARGUMENT);
     ensure (! (mode & DNA_ABSOLUTE_ALARM), DNA_NOT_IMPLEMENTED);
 
     /*
