@@ -55,6 +55,8 @@ status_t semaphore_alarm (void * data)
     sem_id . raw = thread -> info . resource_id;
     check (invalid_semaphore, sem_id . s . index < DNA_MAX_SEM, DNA_ERROR);
 
+    log (VERBOSE_LEVEL, "ID(%d:%d)", sem_id . s . value, sem_id . s . index);
+
     semaphore = semaphore_pool . semaphore[sem_id . s . index];
     check (invalid_semaphore, semaphore != NULL, DNA_ERROR);
     check (invalid_semaphore, semaphore -> id . raw == sem_id . raw, DNA_ERROR);

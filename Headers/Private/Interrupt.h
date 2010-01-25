@@ -24,7 +24,6 @@
 #include <stdint.h>
 #include <Core/Core.h>
 #include <Processor/Processor.h>
-#include <Platform/Platform.h>
 #include <DnaTools/DnaTools.h>
 
 #define DNA_IPI_YIELD         0xFFFF

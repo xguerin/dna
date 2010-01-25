@@ -83,7 +83,10 @@ status_t semaphore_release (int32_t sid, int32_t tokens, int32_t flags)
     {
       thread = queue_rem (& sem -> waiting_queue);
 
-      if (thread == NULL) break;
+      if (thread == NULL)
+      {
+        break;
+      }
       else
       {
         lock_acquire (& thread -> lock);

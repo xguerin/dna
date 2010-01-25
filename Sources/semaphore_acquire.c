@@ -180,9 +180,18 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
 
           if (status == DNA_UNKNOWN_ALARM)
           {
-            queue_extract (& sem -> waiting_queue, self);
-            status = DNA_TIMED_OUT;
-            sem -> info . tokens = rem_tokens + tokens;
+            if (sem -> info . tokens >= tokens)
+            {
+              sem -> info . tokens -= tokens;
+              self -> info . sem_tokens = 0;
+              status = DNA_OK;
+            }
+            else
+            {
+              queue_extract (& sem -> waiting_queue, self);
+              sem -> info . tokens = rem_tokens + tokens;
+              status = DNA_TIMED_OUT;
+            }
           }
           else
           {
