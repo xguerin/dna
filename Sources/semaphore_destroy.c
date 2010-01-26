@@ -17,6 +17,7 @@
 
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
+#include <MemoryManager/MemoryManager.h>
 #include <Processor/Processor.h>
 
 /****f* Core/semaphore_destroy
@@ -39,9 +40,11 @@ status_t semaphore_destroy (int32_t sid)
  */
 
 {
+  thread_t thread = NULL;
   semaphore_t sem = NULL;
   semaphore_id_t sem_id = { .raw = sid };
   interrupt_status_t it_status = 0;
+  bool smart_to_reschedule = false;
 
   watch (status_t)
   {
@@ -51,15 +54,56 @@ status_t semaphore_destroy (int32_t sid)
     lock_acquire (& semaphore_pool . lock);
 
     /*
-     * Look for the semaphore with ID sid
+     * Look for the semaphore with ID sid. If found,
+     * remove its entry from the pool.
      */
 
     sem = semaphore_pool . semaphore[sem_id . s . index];
     check (invalid_semaphore, sem != NULL, DNA_BAD_SEM_ID);
     check (invalid_semaphore, sem -> id . raw == sem_id . raw, DNA_BAD_SEM_ID);
 
+    semaphore_pool . semaphore[sem_id . s . index] = NULL;
+
+    lock_acquire (& sem -> lock);
     lock_release (& semaphore_pool . lock);
-    return DNA_NOT_IMPLEMENTED;
+
+    /*
+     * Reschedule each waiting thread, and
+     * reset its information.
+     */
+
+    lock_acquire (& sem -> waiting_queue . lock);
+
+    while ((thread = queue_rem (& sem -> waiting_queue)) != NULL)
+    {
+      lock_acquire (& thread -> lock);
+
+      thread -> info . sem_tokens = 0;
+      thread -> info . resource = DNA_NO_RESOURCE;
+      thread -> info . resource_id = -1;
+
+      if (thread -> info . status == DNA_THREAD_WAITING)
+      {
+        thread -> info . status = DNA_THREAD_READY;
+        thread -> info . previous_status = DNA_THREAD_WAITING;
+
+        if (scheduler_dispatch (thread) == DNA_INVOKE_SCHEDULER)
+        {
+          smart_to_reschedule = true;
+        }
+      }
+
+      lock_release (& thread -> lock);
+    }
+
+    lock_release (& sem -> waiting_queue . lock);
+
+    /*
+     * Delete the semaphore's memory.
+     */
+
+    kernel_free (sem);
+    return DNA_OK;
   }
 
   rescue (invalid_semaphore)

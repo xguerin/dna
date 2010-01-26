@@ -94,15 +94,15 @@ status_t semaphore_release (int32_t sid, int32_t tokens, int32_t flags)
         if (thread -> info . sem_tokens <= tokens)
         {
           tokens -= thread -> info . sem_tokens;
+
           thread -> info . sem_tokens = 0;
+          thread -> info . resource = DNA_NO_RESOURCE;
+          thread -> info . resource_id = -1;
 
           if (thread -> info . status == DNA_THREAD_WAITING)
           {
             thread -> info . status = DNA_THREAD_READY;
             thread -> info . previous_status = DNA_THREAD_WAITING;
-
-            thread -> info . resource = DNA_NO_RESOURCE;
-            thread -> info . resource_id = -1;
 
             if (scheduler_dispatch (thread) == DNA_INVOKE_SCHEDULER)
             {

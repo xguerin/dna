@@ -34,11 +34,13 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
  * * sid : the ID of the semaphore to acquire.
  * * tokens : the number of tokens to acquire
  * * flags : flags of the operation.
- * * timeout : time, in millisecond, when the acquire process must abort.
+ * * timeout : time, in nanosecond, when the acquire process must abort.
  *
  * RESULT
+ * * DNA_BAD_ARGUMENT if the tokens parameter is invalid.
  * * DNA_BAD_SEM_ID if the sid parameter is invalid.
  * * DNA_WOULD_BLOCK if the semaphore is already locked and the timeout is 0.
+ * * DNA_SEM_DESTROYED if the semaphore has been deleted during a wait operation.
  * * DNA_OK if the operation succeded.
  *
  * SOURCE
@@ -59,6 +61,11 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
     ensure (tokens > 0, DNA_BAD_ARGUMENT);
     ensure (sem_id . s . index < DNA_MAX_SEM, DNA_BAD_SEM_ID);
 
+    /*
+     * Disable the interrupts, and get the current
+     * execution environment (cpuid, self_id).
+     */
+
     it_status = cpu_trap_mask_and_backup();
     current_cpuid = cpu_mp_id();
     self = cpu_pool . cpu[current_cpuid] . current_thread;
@@ -70,8 +77,8 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
     lock_acquire (& semaphore_pool . lock);
 
     sem = semaphore_pool . semaphore[sem_id . s . index];
-    check (invalid_semaphore, sem != NULL, DNA_BAD_SEM_ID);
-    check (invalid_semaphore, sem -> id . raw == sem_id . raw, DNA_BAD_SEM_ID);
+    check (bad_semid, sem != NULL, DNA_BAD_SEM_ID);
+    check (bad_semid, sem -> id . raw == sem_id . raw, DNA_BAD_SEM_ID);
 
     log (VERBOSE_LEVEL, "%d tokens on ID(%d:%d) TOKEN(%d)",
         tokens, sem_id . s . value,
@@ -81,30 +88,41 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
     lock_release (& semaphore_pool . lock);
 
     /*
-     * Remove the necessary tokens
+     * Remove the necessary tokens and decide what
+     * to do next depending on the result.
      */
 
     rem_tokens = sem -> info . tokens - tokens;
 
-    /*
-     * And decide what to do next depending on the result
-     */
-
     if (rem_tokens >= 0)
     {
+      /*
+       * Everything is OK, take the requested tokens.
+       */
+
       sem -> info . tokens -= tokens;
     }
     else
     {
+      /*
+       * Not enough tokens. Set the sem -> tokens to 0
+       * and, take the action corresponding to the timeout.
+       */
+
       sem -> info . tokens = 0;
 
       switch (timeout)
       {
         /*
-         * First choice, we just wait
+         * First case: timeout == -1, self wait whatever happens.
          */
 
         case -1 :
+
+          /*
+           * Update self information.
+           */
+
           lock_acquire (& self -> lock);
           self -> info . sem_tokens = -1 * rem_tokens;
 
@@ -113,6 +131,10 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
 
           self -> info . resource = DNA_RESOURCE_SEMAPHORE;
           self -> info . resource_id = sem -> id . raw;
+
+          /*
+           * Reschedule self.
+           */
 
           lock_acquire (& sem -> waiting_queue . lock);
           lock_release (& sem -> lock);
@@ -124,15 +146,24 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
           ensure (status == DNA_OK, status);
 
           /*
-           * TODO: check if the semaphore still exist
+           * Check if the semaphore still exist. In the
+           * affirmative re-lock it, it is ours.
            */
 
+          lock_acquire (& semaphore_pool . lock);
+
+          sem = semaphore_pool . semaphore[sem_id . s . index];
+          check (bad_semid, sem != NULL, DNA_SEM_DESTROYED);
+          check (bad_semid, sem -> id . raw == sem_id . raw, DNA_SEM_DESTROYED);
+
           lock_acquire (& sem -> lock);
+          lock_release (& semaphore_pool . lock);
+
           break;
 
         /*
          * Second choice, it was just a check, so 
-         * we return DNA_WOULD_BLOCK
+         * we return DNA_WOULD_BLOCK.
          */
 
         case 0 :
@@ -142,13 +173,22 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
           break;
 
         /*
-         * Last choice, we set a timer
+         * Last choice, we set a timer.
          */
 
         default :
+
+          /*
+           * Create the related alarm.
+           */
+
           status = alarm_create (timeout, DNA_RELATIVE_ALARM
               | DNA_ONE_SHOT_ALARM, semaphore_alarm, self, & alarm);
           check (invalid_alarm, status == DNA_OK, status);
+
+          /*
+           * Update self information.
+           */
 
           lock_acquire (& self -> lock);
           self -> info . sem_tokens = -1 * rem_tokens;
@@ -158,6 +198,10 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
 
           self -> info . resource = DNA_RESOURCE_SEMAPHORE;
           self -> info . resource_id = sem -> id . raw;
+
+          /*
+           * Reschedule self.
+           */
 
           lock_acquire (& sem -> waiting_queue . lock);
           lock_release (& sem -> lock);
@@ -169,10 +213,22 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
           ensure (status == DNA_OK, status);
 
           /*
-           * TODO: check if the semaphore still exist
+           * Check if the semaphore still exist.
            */
 
+          lock_acquire (& semaphore_pool . lock);
+
+          sem = semaphore_pool . semaphore[sem_id . s . index];
+          check (bad_semid, sem != NULL, DNA_SEM_DESTROYED);
+          check (bad_semid, sem -> id . raw == sem_id . raw, DNA_SEM_DESTROYED);
+
           lock_acquire (& sem -> lock);
+          lock_release (& semaphore_pool . lock);
+
+          /*
+           * Check if the semaphore is ready, or if we are
+           * here only due to the timeout.
+           */
 
           status = alarm_destroy (alarm);
           check (invalid_alarm, status != DNA_NO_TIMER, status);
@@ -213,7 +269,7 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
     return status;
   }
 
-  rescue (invalid_semaphore)
+  rescue (bad_semid)
   {
     lock_release (& semaphore_pool . lock);
     cpu_trap_restore(it_status);
