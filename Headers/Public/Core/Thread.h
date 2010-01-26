@@ -99,7 +99,6 @@ typedef int32_t (* thread_handler_t) (void * args);
 
 typedef struct _thread_info
 {
-  int32_t id;
   char name[DNA_NAME_LENGTH];
 
   int32_t cpu_id;

@@ -32,6 +32,31 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
+/****t* thread/thread_id_t
+ * SUMMARY
+ * Thread ID type.
+ *
+ * SOURCE
+ */
+
+typedef union _thread_id
+{
+  int32_t raw;
+
+  struct _thread_id_s
+  {
+    uint16_t value;
+    uint8_t group;
+    uint8_t index;
+  }
+  s;
+}
+thread_id_t;
+
+/*
+ ****/
+
+
 /****t* types/thread_stack_t
  * SUMMARY
  * Thread stack type.
@@ -79,6 +104,7 @@ typedef struct _thread
   queue_t wait;
   spinlock_t lock;
 
+  thread_id_t id;
   thread_info_t info;
   thread_signature_t signature;
 
@@ -90,6 +116,25 @@ typedef struct _thread
 /*
  ****/
 
+/****t* thread/thread_pool_t
+ * SUMMARY
+ * Thread manager type.
+ *
+ * SOURCE
+ */
+
+typedef struct _thread_pool
+{
+  spinlock_t lock;
+  int16_t counter;
+  thread_t thread[DNA_MAX_GROUP][DNA_MAX_THREAD];
+}
+thread_pool_t;
+
+/*
+ ****/
+
+extern thread_pool_t thread_pool;
 extern thread_handler_t APP_ENTRY_POINT;
 
 extern status_t thread_destroy (thread_t thread);

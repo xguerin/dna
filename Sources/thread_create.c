@@ -27,8 +27,8 @@
  * SYNOPSIS
  */
 
-status_t thread_create (thread_handler_t handler,
-    void * arguments, char * name, int32_t affinity,
+status_t thread_create (thread_handler_t handler, void * arguments,
+    char * name, int32_t group, int32_t affinity,
     void * stack_base, int32_t stack_size, int32_t * tid)
 
 /*
@@ -36,6 +36,7 @@ status_t thread_create (thread_handler_t handler,
  * * handler : the thread's handler
  * * arguments : the handler's arguments
  * * name : the thread's name
+ * * group : the thread's group
  * * affinity : the thread's processor affinity
  * * stack_base : the base of the stack
  * * stack_size : the thread's stack size
@@ -50,6 +51,7 @@ status_t thread_create (thread_handler_t handler,
  */
 
 {
+  int32_t index = 0;
   thread_t thread = NULL;
   interrupt_status_t it_status = 0;
 
@@ -86,7 +88,7 @@ status_t thread_create (thread_handler_t handler,
      * Fill in the information
      */
 
-    thread -> info . id = -1;
+    thread -> info . id . group = group;
     dna_strcpy (thread -> info . name, name);
     thread -> info . cpu_id = 0;
 
@@ -125,12 +127,12 @@ status_t thread_create (thread_handler_t handler,
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& scheduler . lock);
 
-    for (int32_t i = 0; i < DNA_MAX_THREAD; i += 1)
+    for (index = 0; index < DNA_MAX_THREAD; index += 1)
     {
-      if (scheduler . thread[i] == NULL)
+      if (scheduler . thread[index] == NULL)
       {
-        scheduler . thread[i] = thread;
-        thread -> info . id = i;
+        scheduler . thread[index] = thread;
+        thread -> info . id = index;
         break;
       }
     }
@@ -138,7 +140,7 @@ status_t thread_create (thread_handler_t handler,
     lock_release (& scheduler . lock);
     cpu_trap_restore(it_status);
 
-    check (error, thread -> info . id != -1, DNA_ERROR);
+    check (error, index != DNA_NO_MORE_THREAD, DNA_ERROR);
 
     /*
      * Return the thread ID and success
