@@ -79,6 +79,7 @@ typedef enum _status
   DNA_NO_MORE_SEM                     = 0xFDFE,
   DNA_WOULD_BLOCK                     = 0xFDFD,
   DNA_TIMED_OUT                       = 0xFDFC,
+  DNA_SEM_DESTROYED                   = 0xFDFB,
 
   /*
    * Team and threads error codes
