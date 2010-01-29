@@ -82,15 +82,13 @@ typedef enum _status
   DNA_SEM_DESTROYED                   = 0xFDFB,
 
   /*
-   * Team and threads error codes
+   * Threads error codes
    */
 
-  DNA_UNKNOWN_TEAM                    = 0xFCFF,
-  DNA_INVALID_TEAM_ID                 = 0xFCFE,
-  DNA_UNKNOWN_THREAD                  = 0xFCFD,
-  DNA_INVALID_THREAD_ID               = 0xFCFC,
-  DNA_NO_AVAILABLE_CPU                = 0xFCFC,
-  DNA_NO_AVAILABLE_THREAD             = 0xFCFB,
+  DNA_UNKNOWN_THREAD                  = 0xFCFF,
+  DNA_INVALID_THREAD_ID               = 0xFCFE,
+  DNA_NO_AVAILABLE_THREAD             = 0xFCFD,
+  DNA_NO_MORE_THREAD                  = 0xFCFC,
 
   /*
    * Timer error code

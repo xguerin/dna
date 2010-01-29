@@ -33,6 +33,7 @@
 #define DNA_MAX_FILE              64
 #define DNA_MAX_FDARRAY           1
 #define DNA_MAX_THREAD            128
+#define DNA_MAX_GROUP             1
 #define DNA_MAX_ALARM             128
 
 #endif
