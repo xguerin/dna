@@ -92,8 +92,8 @@ typedef struct _cpu_pool
 {
   spinlock_t lock;
 
-  cpu_t cpu[DNA_MAX_CPU];
-  queue_t cpu_queue;
+  cpu_t * cpu;
+  queue_t queue;
 }
 cpu_pool_t;
 

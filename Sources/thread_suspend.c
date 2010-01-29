@@ -61,7 +61,7 @@ status_t thread_suspend (int32_t id)
     {
       lock_acquire (& thread -> lock);
       result = lock_try
-        (& scheduler . thread_queue[thread -> info . affinity] . lock, true);
+        (& scheduler . queue[thread -> info . affinity] . lock, true);
       if (result == DNA_ERROR) lock_release (& thread -> lock);
     }
     while (result == DNA_ERROR);
@@ -80,8 +80,8 @@ status_t thread_suspend (int32_t id)
      * even if the thread is not present in the queue
      */
 
-    queue_extract (& scheduler . thread_queue[thread -> info . affinity], thread);
-    lock_release (& scheduler . thread_queue[thread -> info . affinity] . lock);
+    queue_extract (& scheduler . queue[thread -> info . affinity], thread);
+    lock_release (& scheduler . queue[thread -> info . affinity] . lock);
 
     /*
      * And now we deal with the thread according to its status
@@ -168,7 +168,7 @@ status_t thread_suspend (int32_t id)
     log (PANIC_LEVEL, "Oups! bad status");
 
     lock_release (& thread -> lock);
-    lock_release (& scheduler . thread_queue[thread -> info . affinity] . lock);
+    lock_release (& scheduler . queue[thread -> info . affinity] . lock);
 
     leave;
   }

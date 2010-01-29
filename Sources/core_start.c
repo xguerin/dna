@@ -51,9 +51,9 @@ status_t core_start (void)
     else
     {
       cpu_pool . cpu[current_cpuid] . status = DNA_CPU_READY;
-      lock_acquire (& cpu_pool . cpu_queue . lock);
-      queue_add (& cpu_pool . cpu_queue, & cpu_pool . cpu[current_cpuid]);
-      lock_release (& cpu_pool . cpu_queue . lock);
+      lock_acquire (& cpu_pool . queue . lock);
+      queue_add (& cpu_pool . queue, & cpu_pool . cpu[current_cpuid]);
+      lock_release (& cpu_pool . queue . lock);
     }
 
     thread -> info . status = DNA_THREAD_RUNNING;

@@ -58,7 +58,7 @@ status_t thread_yield (void)
 
       if (self != cpu_pool . cpu[cpu_mp_id()] . idle_thread)
       {
-        queue = & scheduler . thread_queue[self -> info . affinity];
+        queue = & scheduler . queue[self -> info . affinity];
         lock_acquire (& queue -> lock);
       }
       else
@@ -71,9 +71,9 @@ status_t thread_yield (void)
     }
     else if (self == cpu_pool . cpu[cpu_mp_id()] . idle_thread)
     {
-      lock_acquire (& cpu_pool . cpu_queue . lock);
-      queue_add (& cpu_pool . cpu_queue, & cpu_pool . cpu[cpu_mp_id ()]);
-      lock_release (& cpu_pool . cpu_queue . lock);
+      lock_acquire (& cpu_pool . queue . lock);
+      queue_add (& cpu_pool . queue, & cpu_pool . cpu[cpu_mp_id ()]);
+      lock_release (& cpu_pool . queue . lock);
     }
 
     cpu_trap_restore(it_status);

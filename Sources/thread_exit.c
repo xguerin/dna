@@ -77,11 +77,11 @@ void thread_exit (int32_t value)
     p -> info . status = DNA_THREAD_READY;
     p -> info . previous_status = DNA_THREAD_WAITING;
 
-    lock_acquire (& scheduler . thread_queue[p -> info . affinity] . lock);
+    lock_acquire (& scheduler . queue[p -> info . affinity] . lock);
     lock_release (& p -> lock);
 
-    queue_add (& scheduler . thread_queue[p -> info . affinity], p);
-    lock_release (& scheduler . thread_queue[p -> info . affinity] . lock);
+    queue_add (& scheduler . queue[p -> info . affinity], p);
+    lock_release (& scheduler . queue[p -> info . affinity] . lock);
   }
 
   lock_release (& self -> wait . lock);

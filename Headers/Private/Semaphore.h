@@ -80,7 +80,7 @@ typedef struct _semaphore_pool
 {
   spinlock_t lock;
   int16_t counter;
-  semaphore_t semaphore[DNA_MAX_SEM];
+  semaphore_t * semaphore;
 }
 semaphore_pool_t;
 
