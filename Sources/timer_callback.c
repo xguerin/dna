@@ -69,7 +69,7 @@ void timer_callback (void)
       break;
     }
 
-    log (VERBOSE_LEVEL, "Processing alarm (%d:%d) of thread %d",
+    log (VERBOSE_LEVEL, "Processing alarm (%d:%d) of thread 0x%x",
         current_alarm -> id . s . value, current_alarm -> id . s . index,
         current_alarm -> thread_id);
 
@@ -100,7 +100,7 @@ void timer_callback (void)
 
       if (quantum <= DNA_TIMER_JIFFY)
       {
-        log (PANIC_LEVEL, "low quantum (%d), alarm (%d:%d) from thread %d",
+        log (PANIC_LEVEL, "low quantum (%d), alarm (%d:%d) from thread 0x%x",
             (int32_t) quantum, next_alarm -> id . s . value,
             next_alarm -> id . s . index, next_alarm -> thread_id);
       }
