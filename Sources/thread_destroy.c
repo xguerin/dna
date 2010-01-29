@@ -39,24 +39,11 @@ status_t thread_destroy (thread_t thread)
  */
 
 {
-  interrupt_status_t it_status = 0;
-
   watch (status_t)
   {
     ensure (thread != NULL, DNA_BAD_ARGUMENT);
 
-    it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& scheduler . lock);
-
-    scheduler . thread[thread -> info . id] = NULL;
-
-    lock_release (& scheduler . lock);
-    cpu_trap_restore(it_status);
-
-    kernel_free (thread -> stack . base);
-    kernel_free (thread);
-
-    return DNA_OK;
+    return DNA_NOT_IMPLEMENTED;
   }
 }
 

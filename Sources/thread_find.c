@@ -40,51 +40,53 @@ status_t thread_find (char * name, int32_t * tid)
  */
 
 {
-  thread_t thread = NULL;
+  thread_t thread = NULL, self = NULL;
+  int32_t current_cpuid, index;
+  status_t status = DNA_OK;
   interrupt_status_t it_status = 0;
 
   watch (status_t)
   {
     ensure (tid != NULL, DNA_BAD_ARGUMENT);
 
+    /*
+     * Gather information about the current execution.
+     */
+
+    it_status = cpu_trap_mask_and_backup();
+    current_cpuid = cpu_mp_id ();
+    self = cpu_pool . cpu[current_cpuid] . current_thread;
+
+    /*
+     * Find the requested thread. It can be either self,
+     * or a thread in self's group.
+     */
+
     if (name == NULL)
     {
-      *tid = cpu_pool . cpu[cpu_mp_id()] . current_thread -> info . id;
-      return DNA_OK;
+      *tid = self -> id . raw;
     }
     else
     {
-      it_status = cpu_trap_mask_and_backup();
-      lock_acquire (& scheduler . lock);
+      lock_acquire (& thread_pool . lock);
 
-      /*
-       * Find the thread with name corresponding to name
-       */
-
-      for (int i = 0; i < DNA_MAX_THREAD; i += 1)
+      for (index = 0; index < DNA_MAX_THREAD; index += 1)
       {
-        if (scheduler . thread[i] != NULL)
+        thread = thread_pool . thread[self -> id . s . group][index];
+
+        if (thread != NULL && dna_strcmp (name, thread -> info . name) == 0)
         {
-          if (dna_strcmp (name, scheduler . thread[i] -> info . name) == 0)
-          {
-            thread = scheduler . thread[i];
-            break;
-          }
+          *tid = thread -> id . raw;
+          break;
         }
       }
 
-      lock_release (& scheduler . lock);
-      cpu_trap_restore (it_status);
-
-      ensure (thread != NULL, DNA_UNKNOWN_THREAD);
-
-      /*
-       * Return the ID of the thread
-       */
-
-      *tid = thread -> info . id;
-      return DNA_OK;
+      lock_release (& thread_pool . lock);
+      ensure (index != DNA_MAX_THREAD, DNA_UNKNOWN_THREAD);
     }
+
+    cpu_trap_restore (it_status);
+    return status;
   }
 }
 

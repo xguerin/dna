@@ -27,6 +27,18 @@
 #include <Core/Alarm.h>
 #include <DnaTools/DnaTools.h>
 
+/****d* thread/DNA_KERNEL_GROUP
+ * SUMMARY
+ * Thread kernel group constant.
+ *
+ * SOURCE
+ */
+
+#define DNA_KERNEL_GROUP  0xFFFFFFFF
+
+/*
+ ****/
+
 /****d* thread/DNA_NO_AFFINITY
  * SUMMARY
  * Thread no-affinity constant.
@@ -121,7 +133,7 @@ thread_info_t;
  ****/
 
 extern status_t thread_create (thread_handler_t handler,
-    void * arguments, char * name, int32_t affinity,
+    void * arguments, char * name, int32_t group, int32_t affinity,
     void * stack_base, int32_t stack_size, int32_t * tid);
 
 extern status_t thread_resume (int32_t id);

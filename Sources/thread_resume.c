@@ -39,16 +39,34 @@ status_t thread_resume (int32_t id)
  */
 
 {
-  thread_t thread = scheduler . thread[id];
+  thread_t thread;
+  thread_id_t tid = { .raw = id };
   interrupt_status_t it_status = 0;
 
   watch (status_t)
   {
-    check (bad_thread, thread != NULL, DNA_UNKNOWN_THREAD);
+    ensure (tid . s . group >= 0, DNA_BAD_ARGUMENT);
+    ensure (tid . s . group < DNA_MAX_GROUP, DNA_BAD_ARGUMENT);
+    ensure (tid . s . index >= 0, DNA_BAD_ARGUMENT);
+    ensure (tid . s . index < DNA_MAX_THREAD, DNA_BAD_ARGUMENT);
+
+    /*
+     * Get the thread corresponding to the current id.
+     */
 
     it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& thread -> lock);
+    lock_acquire (& thread_pool . lock);
 
+    thread = thread_pool . thread[tid . s . group][tid . s . index];
+    check (bad_id, thread != NULL, DNA_INVALID_THREAD_ID);
+
+    lock_acquire (& thread -> lock);
+    lock_release (& thread_pool . lock);
+
+    /*
+     * Check the thread's status.
+     */
+ 
     check (bad_status,
         thread -> info . status == DNA_THREAD_SUSPENDED,
         DNA_ERROR);
@@ -78,9 +96,10 @@ status_t thread_resume (int32_t id)
     lock_release (& thread -> lock);
   }
 
-  rescue (bad_thread)
+  rescue (bad_id)
   {
     cpu_trap_restore (it_status);
+    lock_release (& thread_pool . lock);
     leave;
   }
 }

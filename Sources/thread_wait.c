@@ -45,25 +45,35 @@ status_t thread_wait (int32_t id, int32_t * value)
   uint32_t current_cpuid = 0;
   thread_t self = NULL;
   thread_t thread = NULL, target = NULL;
+  thread_id_t tid = { .raw = id };
   interrupt_status_t it_status = 0;
 
   watch (status_t)
   {
+    ensure (tid . s . group >= 0, DNA_BAD_ARGUMENT);
+    ensure (tid . s . group < DNA_MAX_GROUP, DNA_BAD_ARGUMENT);
+    ensure (tid . s . index >= 0, DNA_BAD_ARGUMENT);
+    ensure (tid . s . index < DNA_MAX_THREAD, DNA_BAD_ARGUMENT);
+
     /*
-     * Get the thread corresponding to ID
+     * Get information about the current execution.
      */
 
     it_status = cpu_trap_mask_and_backup();
     current_cpuid = cpu_mp_id ();
     self = cpu_pool . cpu[current_cpuid] . current_thread;
 
-    lock_acquire (& scheduler . lock);
+    /*
+     * Get the thread corresponding to ID.
+     */
 
-    thread = scheduler . thread[id];
+    lock_acquire (& thread_pool . lock);
+
+    thread = thread_pool . thread[tid . s . group][tid . s . index];
     check (invalid_thread, thread != NULL, DNA_INVALID_THREAD_ID);
 
     lock_acquire (& thread -> lock);
-    lock_release (& scheduler . lock);
+    lock_release (& thread_pool . lock);
 
     /*
      * If the thread is already dead, it is not necessary to
@@ -100,13 +110,17 @@ status_t thread_wait (int32_t id, int32_t * value)
      * We get the return value of the thread and return
      */
 
-    if (value != NULL) *value = thread -> signature . return_value;
+    if (value != NULL)
+    {
+      *value = thread -> signature . return_value;
+    }
+
     return DNA_OK;
   }
 
   rescue (invalid_thread)
   {
-    lock_release (& scheduler . lock);
+    lock_release (& thread_pool . lock);
     cpu_trap_restore(it_status);
     leave;
   }

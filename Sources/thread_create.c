@@ -69,6 +69,14 @@ status_t thread_create (thread_handler_t handler, void * arguments,
     ensure (thread != NULL, DNA_OUT_OF_MEM);
 
     /*
+     * Deal with the thread group. In the future, only the kernel
+     * and the application server will be able to create thread for
+     * a different group than self.
+     */
+
+    thread -> id . s . group = group;
+
+    /*
      * Allocate its stack.
      */
 
@@ -85,10 +93,9 @@ status_t thread_create (thread_handler_t handler, void * arguments,
     thread -> stack . size = stack_size;
 
     /*
-     * Fill in the information
+     * Fill in the information.
      */
 
-    thread -> info . id . group = group;
     dna_strcpy (thread -> info . name, name);
     thread -> info . cpu_id = 0;
 
@@ -125,28 +132,32 @@ status_t thread_create (thread_handler_t handler, void * arguments,
      */
 
     it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& scheduler . lock);
+    lock_acquire (& thread_pool . lock);
 
     for (index = 0; index < DNA_MAX_THREAD; index += 1)
     {
-      if (scheduler . thread[index] == NULL)
+      if (thread_pool . thread[index] == NULL)
       {
-        scheduler . thread[index] = thread;
-        thread -> info . id = index;
+        thread -> id . s . value = thread_pool . counter;
+        thread -> id . s . index = index;
+
+        thread_pool . thread[group][index] = thread;
+        thread_pool . counter += 1;
+
         break;
       }
     }
 
-    lock_release (& scheduler . lock);
+    lock_release (& thread_pool . lock);
     cpu_trap_restore(it_status);
 
-    check (error, index != DNA_NO_MORE_THREAD, DNA_ERROR);
+    check (error, index != DNA_MAX_THREAD, DNA_NO_MORE_THREAD);
 
     /*
      * Return the thread ID and success
      */
 
-    *tid = thread -> info . id;
+    *tid = thread -> id . raw;
     return DNA_OK;
   }
 

@@ -37,6 +37,18 @@ component_t core_component =
 /*
  ****/
 
+/****v* Core/thread_pool
+ * SUMMARY
+ * The thread pool instance.
+ *
+ * SOURCE
+ */
+
+thread_pool_t thread_pool;
+
+/*
+ ****/
+
 /****v* Core/scheduler
  * SUMMARY
  * The scheduler manager instance.
@@ -75,7 +87,7 @@ alarm_manager_t alarm_manager;
 
 /****v* Core/semaphore_pool
  * SUMMARY
- * The semaphore manager instance.
+ * The semaphore pool instance.
  *
  * SOURCE
  */

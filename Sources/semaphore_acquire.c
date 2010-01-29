@@ -260,7 +260,7 @@ status_t semaphore_acquire (int32_t sid, int32_t tokens,
     
     if (status == DNA_OK)
     {
-      sem -> info . latest_holder = self -> info . id;
+      sem -> info . latest_holder = self -> id . raw;
     }
 
     lock_release (& sem -> lock);

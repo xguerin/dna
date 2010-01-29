@@ -43,8 +43,9 @@ status_t core_create (void)
 {
   status_t status;
   cpu_t * cpu = NULL;
-  int32_t thread_id = -1;
   void * area = NULL;
+  thread_t thread;
+  thread_id_t tid;
 
   watch (status_t)
   {
@@ -121,12 +122,13 @@ status_t core_create (void)
        * Create the Idle thread
        */
 
-      status = thread_create (thread_idle, NULL,
-          "IdleThread", cpu_i, cpu -> stack,
-          DNA_IDLE_STACK_SIZE, & thread_id);
+      status = thread_create (thread_idle, NULL, "IdleThread",
+          DNA_KERNEL_GROUP, cpu_i, cpu -> stack,
+          DNA_IDLE_STACK_SIZE, & tid . raw);
       check (create_threads, status == DNA_OK, DNA_ERROR);
 
-      scheduler . thread[thread_id] -> info . status = DNA_THREAD_READY;
+      thread = thread_pool . thread[tid . s . group][tid . s . index];
+      thread -> info . status = DNA_THREAD_READY;
 
       /*
        * Deal with the new thread
@@ -134,20 +136,22 @@ status_t core_create (void)
 
       cpu -> id = cpu_i;
       cpu -> status = DNA_CPU_DISABLED;
-      cpu -> idle_thread = scheduler . thread[thread_id];
-      cpu -> current_thread = scheduler . thread[thread_id];
+      cpu -> idle_thread = thread;
+      cpu -> current_thread = thread;
     }
 
     /*
-     * Create the main application thread
+     * Create the main application thread. For now,
+     * the application resides in the kernel.
      */
 
-    status = thread_create (APP_ENTRY_POINT, NULL,
-        "ApplicationMain", DNA_NO_AFFINITY, NULL,
-        DNA_THREAD_STACK_SIZE, & thread_id);
+    status = thread_create (APP_ENTRY_POINT, NULL, "ApplicationMain",
+        DNA_KERNEL_GROUP, DNA_NO_AFFINITY, NULL,
+        DNA_THREAD_STACK_SIZE, & tid . raw);
     check (create_threads, status == DNA_OK, DNA_ERROR);
 
-    cpu_pool . cpu[0] . current_thread = scheduler . thread[thread_id];
+    thread = thread_pool . thread[tid . s . group][tid . s . index];
+    cpu_pool . cpu[0] . current_thread = thread;
 
     return DNA_OK;
   }

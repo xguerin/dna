@@ -42,12 +42,16 @@ status_t thread_get_info (int32_t id, thread_info_t * info)
 
 {
   thread_t thread = NULL;
+  thread_id_t tid = { .raw = id };
   bigtime_t current_time = 0;
   interrupt_status_t it_status = 0;
 
   watch (status_t)
   {
-    ensure (id >= 0 && id < DNA_MAX_THREAD, DNA_BAD_ARGUMENT);
+    ensure (tid . s . group >= 0, DNA_BAD_ARGUMENT);
+    ensure (tid . s . group < DNA_MAX_GROUP, DNA_BAD_ARGUMENT);
+    ensure (tid . s . index >= 0, DNA_BAD_ARGUMENT);
+    ensure (tid . s . index < DNA_MAX_THREAD, DNA_BAD_ARGUMENT);
     ensure (info != NULL, DNA_BAD_ARGUMENT);
 
     /*
@@ -55,13 +59,13 @@ status_t thread_get_info (int32_t id, thread_info_t * info)
      */
 
     it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& scheduler . lock);
+    lock_acquire (& thread_pool . lock);
 
-    thread = scheduler . thread[id];
-    ensure (thread != NULL, DNA_INVALID_THREAD_ID);
+    thread = thread_pool . thread[tid . s . group][tid . s . index];
+    check (bad_id, thread != NULL, DNA_INVALID_THREAD_ID);
 
     lock_acquire (& thread -> lock);
-    lock_release (& scheduler . lock);
+    lock_release (& thread_pool . lock);
 
     /*
      * Copy the thread information
@@ -75,7 +79,7 @@ status_t thread_get_info (int32_t id, thread_info_t * info)
 
     if (thread -> info . status == DNA_THREAD_RUNNING)
     {
-      cpu_timer_get (thread -> info .  cpu_id, & current_time);
+      cpu_timer_get (thread -> info . cpu_id, & current_time);
       info -> kernel_time = current_time;
       info -> kernel_time -= cpu_pool . cpu[thread -> info
         .  cpu_id] . lap_date;
@@ -85,6 +89,13 @@ status_t thread_get_info (int32_t id, thread_info_t * info)
     cpu_trap_restore (it_status);
 
     return DNA_OK;
+  }
+
+  rescue (bad_id)
+  {
+    cpu_trap_restore (it_status);
+    lock_release (& thread_pool . lock);
+    leave;
   }
 }
 

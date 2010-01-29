@@ -43,15 +43,21 @@ status_t thread_suspend (int32_t id)
   status_t status, result;
   thread_t target = NULL;
   uint32_t current_cpuid = 0, next_cpuid = 0;
-  thread_t thread = scheduler . thread[id];
+  thread_t thread;
+  thread_id_t tid = { .raw = id };
   interrupt_status_t it_status = 0;
 
   watch (status_t)
   {
-    ensure (thread != NULL, DNA_BAD_ARGUMENT);
+    ensure (tid . s . group >= 0, DNA_BAD_ARGUMENT);
+    ensure (tid . s . group < DNA_MAX_GROUP, DNA_BAD_ARGUMENT);
+    ensure (tid . s . index >= 0, DNA_BAD_ARGUMENT);
+    ensure (tid . s . index < DNA_MAX_THREAD, DNA_BAD_ARGUMENT);
 
     it_status = cpu_trap_mask_and_backup ();
     current_cpuid = cpu_mp_id ();
+    thread = thread_pool . thread[tid . s . group][tid . s . index];
+    check (bad_thread, thread != NULL, DNA_BAD_ARGUMENT);
 
     /*
      * Apply banker's algorithm to lock the thread and the scheduler
@@ -62,7 +68,11 @@ status_t thread_suspend (int32_t id)
       lock_acquire (& thread -> lock);
       result = lock_try
         (& scheduler . queue[thread -> info . affinity] . lock, true);
-      if (result == DNA_ERROR) lock_release (& thread -> lock);
+
+      if (result == DNA_ERROR)
+      {
+        lock_release (& thread -> lock);
+      }
     }
     while (result == DNA_ERROR);
 
@@ -107,13 +117,13 @@ status_t thread_suspend (int32_t id)
           else
           {
             log (VERBOSE_LEVEL, "Remote suspend %d on %d.",
-                thread -> info . id, thread -> info . cpu_id);
+                thread -> id, thread -> info . cpu_id);
 
             next_cpuid = thread -> info . cpu_id;
             lock_release (& thread -> lock);
 
             cpu_mp_send_ipi (next_cpuid, DNA_IPI_SUSPEND,
-                (void *) thread -> info . id);
+                (void *) thread -> id . raw);
           }
 
           break;
@@ -165,11 +175,13 @@ status_t thread_suspend (int32_t id)
 
   rescue (bad_status)
   {
-    log (PANIC_LEVEL, "Oups! bad status");
-
     lock_release (& thread -> lock);
     lock_release (& scheduler . queue[thread -> info . affinity] . lock);
+  }
 
+  rescue (bad_thread)
+  {
+    cpu_trap_restore (it_status);
     leave;
   }
 }
