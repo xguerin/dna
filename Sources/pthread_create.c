@@ -68,7 +68,7 @@ int pthread_create (pthread_t *thread, pthread_attr_t *attr,
   }
 
   thread_create ((thread_handler_t)start, (void *) arg,
-      new -> attributs -> name, new -> attributs -> procid,
+      new -> attributs -> name, DNA_KERNEL_GROUP, new -> attributs -> procid,
       new -> attributs -> stackaddr, new -> attributs -> stacksize, & t_new);
 
   new -> tid = t_new;
