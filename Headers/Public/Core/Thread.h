@@ -34,7 +34,7 @@
  * SOURCE
  */
 
-#define DNA_KERNEL_GROUP  0xFFFFFFFF
+#define DNA_KERNEL_GROUP  0
 
 /*
  ****/

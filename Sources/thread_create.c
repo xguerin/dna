@@ -60,6 +60,7 @@ status_t thread_create (thread_handler_t handler, void * arguments,
     ensure (handler != NULL && name != NULL && tid != NULL, DNA_BAD_ARGUMENT);
     ensure (affinity == DNA_NO_AFFINITY || (affinity >= 0
           && affinity < cpu_mp_count ()), DNA_BAD_ARGUMENT);
+    ensure (group >= 0 && group < DNA_MAX_GROUP, DNA_BAD_ARGUMENT);
 
     /*
      * Allocate the new thread structure.
@@ -136,7 +137,7 @@ status_t thread_create (thread_handler_t handler, void * arguments,
 
     for (index = 0; index < DNA_MAX_THREAD; index += 1)
     {
-      if (thread_pool . thread[index] == NULL)
+      if (thread_pool . thread[group][index] == NULL)
       {
         thread -> id . s . value = thread_pool . counter;
         thread -> id . s . index = index;
