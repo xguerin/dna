@@ -21,9 +21,9 @@
 #ifndef DNA_CORE_SEMAPHORE_PUBLIC_H
 #define DNA_CORE_SEMAPHORE_PUBLIC_H
 
-#define DNA_NO_RESCHEDULE     0x00000001
-#define DNA_RELATIVE_TIMER    0x00000002
-#define DNA_ABSOLUTE_TIMER    0x00000004
+#define DNA_NO_RESCHEDULE       0x00000001
+#define DNA_RELATIVE_TIMEOUT    0x00000002
+#define DNA_ABSOLUTE_TIMEOUT    0x00000004
 
 #include <Core/Alarm.h>
 #include <DnaTools/DnaTools.h>
@@ -36,14 +36,14 @@ typedef struct _semaphore_info
 }
 semaphore_info_t;
 
-extern status_t semaphore_create (char * name, int32_t tokens, int32_t * sid);
-extern status_t semaphore_destroy (int32_t sid);
+extern status_t semaphore_create (char * name, int32_t tokens, int32_t * id);
+extern status_t semaphore_destroy (int32_t id);
 
-extern status_t semaphore_acquire (int32_t sid, int32_t tokens,
+extern status_t semaphore_acquire (int32_t id, int32_t tokens,
     int32_t flags, bigtime_t timeout);
-extern status_t semaphore_release (int32_t sid, int32_t tokens, int32_t flags);
+extern status_t semaphore_release (int32_t id, int32_t tokens, int32_t flags);
 
-extern status_t semaphore_get_info (int32_t sid, semaphore_info_t * info);
+extern status_t semaphore_get_info (int32_t id, semaphore_info_t * info);
 
 #endif
 

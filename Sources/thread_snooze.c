@@ -61,7 +61,7 @@ status_t thread_snooze (bigtime_t value)
      * Create the snooze alarm
      */
 
-    status = alarm_create (value, DNA_RELATIVE_ALARM | DNA_ONE_SHOT_ALARM,
+    status = alarm_create (value, DNA_ONE_SHOT_RELATIVE_ALARM,
         thread_alarm, self, & alarm_id);
     check (alarm_error, status == DNA_OK, status);
 

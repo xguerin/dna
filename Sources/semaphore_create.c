@@ -27,7 +27,7 @@
  * SYNOPSIS
  */
 
-status_t semaphore_create (char * name, int32_t tokens, int32_t * sid)
+status_t semaphore_create (char * name, int32_t tokens, int32_t * id)
 
 /*
  * ARGUMENTS
@@ -35,7 +35,7 @@ status_t semaphore_create (char * name, int32_t tokens, int32_t * sid)
  * * tokens : the number of tokens of the semaphore.
  *
  * RESULT
- * * DNA_OK and a valid sid in case of success.
+ * * DNA_OK and a valid id in case of success.
  * * DNA_NO_MORE_SEM if no more semaphore are available.
  * * DNA_OUT_OF_MEM if the system ran out of memory.
  *
@@ -49,7 +49,7 @@ status_t semaphore_create (char * name, int32_t tokens, int32_t * sid)
 
   watch (status_t)
   {
-    ensure (name != NULL && sid != NULL, DNA_BAD_ARGUMENT);
+    ensure (name != NULL && id != NULL, DNA_BAD_ARGUMENT);
 
     /*
      * Create the semaphore and fill in its information
@@ -95,7 +95,7 @@ status_t semaphore_create (char * name, int32_t tokens, int32_t * sid)
         semaphore -> id . s . value, semaphore -> id . s . index,
         semaphore -> info . tokens);
 
-    *sid = semaphore -> id . raw;
+    *id = semaphore -> id . raw;
     return DNA_OK;
   }
 

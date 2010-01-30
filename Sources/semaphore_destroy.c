@@ -27,11 +27,11 @@
  * SYNOPSIS
  */
 
-status_t semaphore_destroy (int32_t sid)
+status_t semaphore_destroy (int32_t id)
 
 /*
  * ARGUMENTS
- * * sid : the semaphore id.
+ * * id : the semaphore id.
  *
  * RESULT
  * Not implemented.
@@ -42,27 +42,27 @@ status_t semaphore_destroy (int32_t sid)
 {
   thread_t thread = NULL;
   semaphore_t sem = NULL;
-  semaphore_id_t sem_id = { .raw = sid };
+  semaphore_id_t sid = { .raw = id };
   interrupt_status_t it_status = 0;
   bool smart_to_reschedule = false;
 
   watch (status_t)
   {
-    ensure (sem_id . s . index < DNA_MAX_SEM, DNA_BAD_SEM_ID);
+    ensure (sid . s . index < DNA_MAX_SEM, DNA_BAD_SEM_ID);
 
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& semaphore_pool . lock);
 
     /*
-     * Look for the semaphore with ID sid. If found,
+     * Look for the semaphore with ID id. If found,
      * remove its entry from the pool.
      */
 
-    sem = semaphore_pool . semaphore[sem_id . s . index];
+    sem = semaphore_pool . semaphore[sid . s . index];
     check (invalid_semaphore, sem != NULL, DNA_BAD_SEM_ID);
-    check (invalid_semaphore, sem -> id . raw == sem_id . raw, DNA_BAD_SEM_ID);
+    check (invalid_semaphore, sem -> id . raw == sid . raw, DNA_BAD_SEM_ID);
 
-    semaphore_pool . semaphore[sem_id . s . index] = NULL;
+    semaphore_pool . semaphore[sid . s . index] = NULL;
 
     lock_acquire (& sem -> lock);
     lock_release (& semaphore_pool . lock);

@@ -54,6 +54,10 @@ status_t thread_suspend (int32_t id)
     ensure (tid . s . index >= 0, DNA_BAD_ARGUMENT);
     ensure (tid . s . index < DNA_MAX_THREAD, DNA_BAD_ARGUMENT);
 
+    /*
+     * Get some information about the execution.
+     */
+
     it_status = cpu_trap_mask_and_backup ();
     current_cpuid = cpu_mp_id ();
     thread = thread_pool . thread[tid . s . group][tid . s . index];

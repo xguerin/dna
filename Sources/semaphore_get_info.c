@@ -26,15 +26,15 @@
  * SYNOPSIS
  */
 
-status_t semaphore_get_info (int32_t sid, semaphore_info_t * info)
+status_t semaphore_get_info (int32_t id, semaphore_info_t * info)
 
 /*
  * ARGUMENTS
- * * sid : the ID of the semaphore to get_info.
+ * * id : the ID of the semaphore to get_info.
  * * sem_info : a pointer to a sem_info structure.
  *
  * RESULT
- * * DNA_BAD_SEM_ID if the sid parameter is invalid.
+ * * DNA_BAD_SEM_ID if the id parameter is invalid.
  * * DNA_OK if the operation succeded.
  * * DNA_ERROR if the sem_info pointer is NULL.
  *
@@ -43,25 +43,25 @@ status_t semaphore_get_info (int32_t sid, semaphore_info_t * info)
 
 {
   semaphore_t sem = NULL;
-  semaphore_id_t sem_id = { .raw = sid };
+  semaphore_id_t sid = { .raw = id };
   interrupt_status_t it_status = 0;
   status_t status = DNA_OK;
 
   watch (status_t)
   {
     ensure (info != NULL, DNA_BAD_ARGUMENT);
-    ensure (sem_id . s . index < DNA_MAX_SEM, DNA_BAD_SEM_ID);
+    ensure (sid . s . index < DNA_MAX_SEM, DNA_BAD_SEM_ID);
 
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& semaphore_pool . lock);
 
     /*
-     * Look for the semaphore with ID sid
+     * Look for the semaphore with ID id
      */
 
-    sem = semaphore_pool . semaphore[sem_id . s . index];
+    sem = semaphore_pool . semaphore[sid . s . index];
     check (invalid_semaphore, sem != NULL, DNA_BAD_SEM_ID);
-    check (invalid_semaphore, sem -> id . raw == sem_id . raw, DNA_BAD_SEM_ID);
+    check (invalid_semaphore, sem -> id . raw == sid . raw, DNA_BAD_SEM_ID);
 
     lock_acquire (& sem -> lock);
     lock_release (& semaphore_pool . lock);

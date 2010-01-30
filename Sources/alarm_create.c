@@ -15,8 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdint.h>
-#include <stdbool.h>
 #include <Private/Core.h>
 #include <MemoryManager/MemoryManager.h>
 #include <DnaTools/DnaTools.h>
@@ -29,7 +27,7 @@
  * SYNOPSIS
  */
 
-status_t alarm_create (bigtime_t quantum, int32_t mode,
+status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
     alarm_callback_t callback, void * data, int32_t * aid)
 
 /*
@@ -50,15 +48,11 @@ status_t alarm_create (bigtime_t quantum, int32_t mode,
   bigtime_t current_time = 0;
   int32_t current_cpuid = 0, index = 0;
   interrupt_status_t it_status;
-  bool is_mode_valid = false;
   alarm_t new_alarm = NULL, old_alarm = NULL;
   
   watch (status_t)
   {
     ensure (quantum != 0, DNA_BAD_ARGUMENT);
-
-    is_mode_valid = (mode & DNA_ABSOLUTE_ALARM) ^ (mode & DNA_RELATIVE_ALARM);
-    ensure ((mode & DNA_ABSOLUTE_ALARM) ^ (mode & DNA_ABSOLUTE_ALARM), DNA_NOT_IMPLEMENTED);
 
     /*
      * Allocate the new alarm.
@@ -92,9 +86,26 @@ status_t alarm_create (bigtime_t quantum, int32_t mode,
 
     cpu_timer_get (current_cpuid, & current_time);
 
+    switch (mode)
+    {
+      case DNA_ONE_SHOT_RELATIVE_ALARM :
+        {
+          new_alarm -> quantum = quantum;
+          new_alarm -> deadline = quantum + current_time;
+          break;
+        }
 
-    new_alarm -> quantum = quantum;
-    new_alarm -> deadline = quantum + current_time;
+      case DNA_ONE_SHOT_ABSOLUTE_ALARM :
+        {
+          check (error, quantum > current_time, DNA_BAD_ARGUMENT);
+
+          new_alarm -> quantum = current_time - quantum;
+          new_alarm -> deadline = quantum;
+          break;
+        }
+
+      default: break;
+    }
 
     /*
      * Find an empty slot to store the alarm

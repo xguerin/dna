@@ -26,10 +26,23 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-#define DNA_PERIODIC_ALARM    0x1
-#define DNA_ONE_SHOT_ALARM    0x2
-#define DNA_RELATIVE_ALARM    0x4
-#define DNA_ABSOLUTE_ALARM    0x8
+/****t* time/alarm_mode_t
+ * SUMMARY
+ * Alarm mode type.
+ *
+ * SOURCE
+ */
+
+typedef enum _alarm_mode
+{
+  DNA_PERIODIC_ALARM          = 0x1,
+  DNA_ONE_SHOT_RELATIVE_ALARM = 0x2,
+  DNA_ONE_SHOT_ABSOLUTE_ALARM = 0x4
+}
+alarm_mode_t;
+
+/*
+ ****/
 
 /****t* time/alarm_callback_t
  * SUMMARY
@@ -43,7 +56,7 @@ typedef status_t (* alarm_callback_t) (void * data);
 /*
  ****/
 
-extern status_t alarm_create (bigtime_t quantum, int32_t mode,
+extern status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
     alarm_callback_t callback, void * data, int32_t * aid);
 
 extern status_t alarm_destroy (int32_t aid);

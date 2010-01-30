@@ -38,7 +38,7 @@ status_t semaphore_alarm (void * data)
   status_t status = DNA_OK;
   thread_t thread = data;
   semaphore_t semaphore;
-  semaphore_id_t sem_id;
+  semaphore_id_t sid;
 
   watch (status_t)
   {
@@ -52,14 +52,14 @@ status_t semaphore_alarm (void * data)
 
     lock_acquire (& semaphore_pool . lock);
 
-    sem_id . raw = thread -> info . resource_id;
-    check (invalid_semaphore, sem_id . s . index < DNA_MAX_SEM, DNA_ERROR);
+    sid . raw = thread -> info . resource_id;
+    check (invalid_semaphore, sid . s . index < DNA_MAX_SEM, DNA_ERROR);
 
-    log (VERBOSE_LEVEL, "ID(%d:%d)", sem_id . s . value, sem_id . s . index);
+    log (VERBOSE_LEVEL, "ID(%d:%d)", sid . s . value, sid . s . index);
 
-    semaphore = semaphore_pool . semaphore[sem_id . s . index];
+    semaphore = semaphore_pool . semaphore[sid . s . index];
     check (invalid_semaphore, semaphore != NULL, DNA_ERROR);
-    check (invalid_semaphore, semaphore -> id . raw == sem_id . raw, DNA_ERROR);
+    check (invalid_semaphore, semaphore -> id . raw == sid . raw, DNA_ERROR);
 
     lock_acquire (& semaphore -> waiting_queue . lock);
     lock_release (& semaphore_pool . lock);
