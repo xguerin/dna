@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdint.h>
+#include <stdbool.h>
 #include <Private/Core.h>
 #include <MemoryManager/MemoryManager.h>
 #include <DnaTools/DnaTools.h>
@@ -48,22 +50,25 @@ status_t alarm_create (bigtime_t quantum, int32_t mode,
   bigtime_t current_time = 0;
   int32_t current_cpuid = 0, index = 0;
   interrupt_status_t it_status;
+  bool is_mode_valid = false;
   alarm_t new_alarm = NULL, old_alarm = NULL;
   
   watch (status_t)
   {
     ensure (quantum != 0, DNA_BAD_ARGUMENT);
-    ensure (! (mode & DNA_ABSOLUTE_ALARM), DNA_NOT_IMPLEMENTED);
+
+    is_mode_valid = (mode & DNA_ABSOLUTE_ALARM) ^ (mode & DNA_RELATIVE_ALARM);
+    ensure ((mode & DNA_ABSOLUTE_ALARM) ^ (mode & DNA_ABSOLUTE_ALARM), DNA_NOT_IMPLEMENTED);
 
     /*
-     * Allocate the new alarm
+     * Allocate the new alarm.
      */
 
     new_alarm = kernel_malloc (sizeof (struct _alarm), true);
     ensure (new_alarm != NULL, DNA_OUT_OF_MEM);
 
     /*
-     * Deactivate interrupts and get current information
+     * Deactivate interrupts and get current information.
      */
 
     it_status = cpu_trap_mask_and_backup();
@@ -71,18 +76,25 @@ status_t alarm_create (bigtime_t quantum, int32_t mode,
     cpu = & cpu_pool . cpu[current_cpuid];
 
     /*
-     * Set its parameters
+     * Set various information.
      */
 
     new_alarm -> mode = mode;
     new_alarm -> thread_id = cpu -> current_thread -> id . raw;
     new_alarm -> cpu_id = current_cpuid;
-
-    cpu_timer_get (current_cpuid, & current_time);
-    new_alarm -> quantum = quantum;
-    new_alarm -> deadline = quantum + current_time;
     new_alarm -> callback = callback;
     new_alarm -> data = data;
+
+    /*
+     * Check and compute the deadline according to the
+     * alarm mode passed as parameter.
+     */
+
+    cpu_timer_get (current_cpuid, & current_time);
+
+
+    new_alarm -> quantum = quantum;
+    new_alarm -> deadline = quantum + current_time;
 
     /*
      * Find an empty slot to store the alarm
