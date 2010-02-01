@@ -78,48 +78,42 @@ status_t semaphore_release (int32_t id, int32_t tokens, int32_t flags)
      */
 
     lock_acquire (& sem -> waiting_queue . lock);
+    thread = queue_rem (& sem -> waiting_queue);
 
-    while (tokens != 0)
+    while (tokens != 0 && thread != NULL)
     {
-      thread = queue_rem (& sem -> waiting_queue);
+      lock_acquire (& thread -> lock);
 
-      if (thread == NULL)
+      if (thread -> info . sem_tokens <= tokens)
       {
-        break;
+        tokens -= thread -> info . sem_tokens;
+
+        thread -> info . sem_tokens = 0;
+        thread -> info . resource = DNA_NO_RESOURCE;
+        thread -> info . resource_id = -1;
+
+        if (thread -> info . status == DNA_THREAD_WAITING)
+        {
+          thread -> info . status = DNA_THREAD_READY;
+          thread -> info . previous_status = DNA_THREAD_WAITING;
+
+          if (scheduler_dispatch (thread) == DNA_INVOKE_SCHEDULER)
+          {
+            smart_to_reschedule = true;
+          }
+        }
+        else lock_release (& thread -> lock);
       }
       else
       {
-        lock_acquire (& thread -> lock);
+        thread -> info . sem_tokens -= tokens;
+        lock_release (& thread -> lock);
 
-        if (thread -> info . sem_tokens <= tokens)
-        {
-          tokens -= thread -> info . sem_tokens;
-
-          thread -> info . sem_tokens = 0;
-          thread -> info . resource = DNA_NO_RESOURCE;
-          thread -> info . resource_id = -1;
-
-          if (thread -> info . status == DNA_THREAD_WAITING)
-          {
-            thread -> info . status = DNA_THREAD_READY;
-            thread -> info . previous_status = DNA_THREAD_WAITING;
-
-            if (scheduler_dispatch (thread) == DNA_INVOKE_SCHEDULER)
-            {
-              smart_to_reschedule = true;
-            }
-          }
-          else lock_release (& thread -> lock);
-        }
-        else
-        {
-          thread -> info . sem_tokens -= tokens;
-          lock_release (& thread -> lock);
-
-          tokens = 0;
-          queue_pushback (& sem -> waiting_queue, thread);
-        }
+        tokens = 0;
+        queue_pushback (& sem -> waiting_queue, thread);
       }
+
+      thread = queue_rem (& sem -> waiting_queue);
     }
 
     lock_release (& sem -> waiting_queue . lock);
