@@ -42,6 +42,7 @@ status_t semaphore_acquire (int32_t id, int32_t tokens,
  * * DNA_BAD_SEM_ID if the sid parameter is invalid.
  * * DNA_WOULD_BLOCK if the semaphore is already locked and the timeout is 0.
  * * DNA_SEM_DESTROYED if the semaphore has been deleted during a wait.
+ * * DNA_INTERRUPTED if the acquisition has been interrupted.
  * * DNA_OK if the operation succeded.
  *
  * SOURCE
@@ -123,110 +124,94 @@ status_t semaphore_acquire (int32_t id, int32_t tokens,
     }
     else
     {
+      check (quick_abort, (! has_alarm) ||
+          (has_alarm && timeout != 0), DNA_WOULD_BLOCK);
+
       /*
        * Not enough tokens. Set the sem -> tokens to 0.
+       * Create the alarm if necessary.
        */
 
       sem -> info . tokens = 0;
 
+      if (has_alarm)
+      {
+        status = alarm_create (timeout, alarm_mode,
+            semaphore_alarm, self, & alarm);
+        check (quick_abort, status == DNA_OK, status);
+      }
+
       /*
-       * Take the action corresponding to the timeout.
+       * Update self information.
        */
 
-      if (has_alarm && timeout == 0)
+      lock_acquire (& self -> lock);
+
+      self -> resource_queue = & sem -> waiting_queue;
+      self -> info . sem_tokens = -1 * rem_tokens;
+      self -> info . status = DNA_THREAD_WAITING;
+      self -> info . resource = DNA_RESOURCE_SEMAPHORE;
+      self -> info . resource_id = sem -> id . raw;
+
+      /*
+       * Reschedule self.
+       */
+
+      lock_acquire (& sem -> waiting_queue . lock);
+      lock_release (& sem -> lock);
+
+      status = scheduler_elect (& thread, true);
+      ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
+
+      status = scheduler_switch (thread, & sem -> waiting_queue);
+      ensure (status == DNA_OK, status);
+
+      /*
+       * Check if the semaphore still exist.
+       */
+
+      lock_acquire (& semaphore_pool . lock);
+
+      sem = semaphore_pool . semaphore[sid . s . index];
+      check (bad_semid, sem != NULL, DNA_SEM_DESTROYED);
+      check (bad_semid, sem -> id . raw == sid . raw, DNA_SEM_DESTROYED);
+
+      lock_acquire (& sem -> lock);
+      lock_release (& semaphore_pool . lock);
+
+      /*
+       * If there is an alarm programmed, cancel it.
+       */
+
+      if (has_alarm)
       {
-        sem -> info . tokens = rem_tokens + tokens;
-        status = DNA_WOULD_BLOCK;
+        alarm_status = alarm_destroy (alarm);
+        check (quick_abort, status != DNA_NO_TIMER, status);
+        check (quick_abort, status != DNA_BAD_ARGUMENT, status);
       }
-      else
+
+      /*
+       * Check if we have not been interrupted with a
+       * thread_suspend/thread_resume combination.
+       */
+
+      check (acquire_interrupted,
+          self -> info . resource == DNA_NO_RESOURCE, DNA_INTERRUPTED);
+
+      /*
+       * Although a status equal to DNA_UNKNOWN_ALARM means that the alarm
+       * has already been fired, the semaphore could perfectly have been
+       * V()-ed in the meantime. Hence, we need to recheck the sem tokens.
+       */
+
+      if (has_alarm && alarm_status == DNA_UNKNOWN_ALARM)
       {
-        /*
-         * Create the alarm if necessary.
-         */
-
-        if (has_alarm)
-        {
-          status = alarm_create (timeout, alarm_mode,
-              semaphore_alarm, self, & alarm);
-          check (invalid_alarm, status == DNA_OK, status);
-        }
-
-        /*
-         * Update self information.
-         */
-
-        lock_acquire (& self -> lock);
-
-        self -> resource_queue = & sem -> waiting_queue;
-        self -> info . sem_tokens = -1 * rem_tokens;
-        self -> info . status = DNA_THREAD_WAITING;
-        self -> info . resource = DNA_RESOURCE_SEMAPHORE;
-        self -> info . resource_id = sem -> id . raw;
-
-        /*
-         * Reschedule self.
-         */
-
-        lock_acquire (& sem -> waiting_queue . lock);
-        lock_release (& sem -> lock);
-
-        status = scheduler_elect (& thread, true);
-        ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
-
-        status = scheduler_switch (thread, & sem -> waiting_queue);
-        ensure (status == DNA_OK, status);
-
-        /*
-         * Check if the semaphore still exist.
-         */
-
-        lock_acquire (& semaphore_pool . lock);
-
-        sem = semaphore_pool . semaphore[sid . s . index];
-        check (bad_semid, sem != NULL, DNA_SEM_DESTROYED);
-        check (bad_semid, sem -> id . raw == sid . raw, DNA_SEM_DESTROYED);
-
-        lock_acquire (& sem -> lock);
-        lock_release (& semaphore_pool . lock);
-
-        /*
-         * If there is an alarm programmed, cancel it.
-         */
-
-        if (has_alarm)
-        {
-          alarm_status = alarm_destroy (alarm);
-          check (invalid_alarm, status != DNA_NO_TIMER, status);
-          check (invalid_alarm, status != DNA_BAD_ARGUMENT, status);
-        }
-
-        /*
-         * Check if we have not been interrupted with a
-         * thread_suspend/thread_resume combination.
-         */
-
-        lock_acquire (& self -> lock);
-
-        check (acquire_interrupted,
-            self -> info . resource == DNA_NO_RESOURCE, DNA_INTERRUPTED);
-
-        lock_release (& self -> lock);
-
-        /*
-         * Although a status equal to DNA_UNKNOWN_ALARM means that the alarm
-         * has already been fired, the semaphore could perfectly have been
-         * V()-ed in the meantime. Hence, we need to recheck the sem tokens.
-         */
-
-        if (has_alarm && alarm_status == DNA_UNKNOWN_ALARM)
-        {
-          check (acquire_timed_out,
-              sem -> info . tokens >= tokens, DNA_TIMED_OUT);
-          sem -> info . tokens -= tokens;
-        }
-
-        status = DNA_OK;
+        check (acquire_timed_out,
+            sem -> info . tokens >= tokens, DNA_TIMED_OUT);
+        sem -> info . tokens -= tokens;
       }
+
+      status = DNA_OK;
     }
 
     /*
@@ -243,19 +228,6 @@ status_t semaphore_acquire (int32_t id, int32_t tokens,
     return status;
   }
 
-  rescue (acquire_timed_out)
-  {
-    queue_extract (& sem -> waiting_queue, self);
-    sem -> info . tokens = rem_tokens + tokens;
-  }
-
-  rescue (invalid_alarm)
-  {
-    lock_release (& sem -> lock);
-    cpu_trap_restore(it_status);
-    leave;
-  }
-
   rescue (bad_semid)
   {
     lock_release (& semaphore_pool . lock);
@@ -263,14 +235,32 @@ status_t semaphore_acquire (int32_t id, int32_t tokens,
     leave;
   }
 
+  rescue (quick_abort)
+  {
+    lock_release (& sem -> lock);
+    cpu_trap_restore(it_status);
+    leave;
+  }
+
   rescue (acquire_interrupted)
   {
+    lock_acquire (& self -> lock);
     self -> resource_queue = NULL;
     self -> info . sem_tokens = 0;
     self -> info . resource = DNA_NO_RESOURCE;
     self -> info . resource_id = -1;
+    lock_release (& self -> lock);
 
     lock_release (& self -> lock);
+    cpu_trap_restore(it_status);
+    leave;
+  }
+
+  rescue (acquire_timed_out)
+  {
+    queue_extract (& sem -> waiting_queue, self);
+    sem -> info . tokens = rem_tokens + tokens;
+    lock_release (& sem -> lock);
     cpu_trap_restore(it_status);
     leave;
   }

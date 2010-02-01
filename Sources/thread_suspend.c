@@ -63,12 +63,6 @@ status_t thread_suspend (int32_t id)
     it_status = cpu_trap_mask_and_backup ();
     current_cpuid = cpu_mp_id ();
 
-    lock_acquire (& thread_pool . lock);
-    thread = thread_pool . thread[tid . s . group][tid . s . index];
-
-    check (bad_thread, thread != NULL &&
-        thread -> id . raw == tid . raw , DNA_INVALID_THREAD_ID);
-
     /*
      * Stabilization loop: depending on the current status of
      * the thread, we will have to apply the banker algorithm
@@ -77,11 +71,18 @@ status_t thread_suspend (int32_t id)
 
     do
     {
+      lock_acquire (& thread_pool . lock);
+      thread = thread_pool . thread[tid . s . group][tid . s . index];
+
+      check (bad_thread, thread != NULL &&
+          thread -> id . raw == tid . raw , DNA_INVALID_THREAD_ID);
+
       /*
        * Lock the thread and check its status.
        */
 
       lock_acquire (& thread -> lock);
+      lock_release (& thread_pool . lock);
 
       check (thread_error,
           thread -> info . status != DNA_THREAD_ENDED &&
