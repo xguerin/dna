@@ -251,7 +251,7 @@ status_t semaphore_acquire (int32_t id, int32_t tokens,
     self -> info . resource_id = -1;
     lock_release (& self -> lock);
 
-    lock_release (& self -> lock);
+    lock_release (& sem -> lock);
     cpu_trap_restore(it_status);
     leave;
   }

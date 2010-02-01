@@ -39,6 +39,7 @@ status_t thread_resume (int32_t id)
  */
 
 {
+  status_t status = DNA_OK;
   thread_t thread;
   thread_id_t tid = { .raw = id };
   interrupt_status_t it_status = 0;
@@ -75,9 +76,18 @@ status_t thread_resume (int32_t id)
      */
 
     thread -> info . status = DNA_THREAD_READY;
-    scheduler_dispatch (thread);
-
+    status = scheduler_dispatch (thread);
     cpu_trap_restore (it_status);
+
+    /*
+     * Deal with the reschedule.
+     */
+
+    if (status == DNA_INVOKE_SCHEDULER)
+    {
+      thread_yield ();
+    }
+
     return DNA_OK;
   }
 

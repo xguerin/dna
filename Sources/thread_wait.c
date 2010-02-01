@@ -54,7 +54,6 @@ status_t thread_wait (int32_t id, int32_t * value)
     ensure (tid . s . group < DNA_MAX_GROUP, DNA_BAD_ARGUMENT);
     ensure (tid . s . index >= 0, DNA_BAD_ARGUMENT);
     ensure (tid . s . index < DNA_MAX_THREAD, DNA_BAD_ARGUMENT);
-    ensure (value != NULL, DNA_BAD_ARGUMENT);
 
     /*
      * Get information about the current execution.
@@ -129,9 +128,12 @@ status_t thread_wait (int32_t id, int32_t * value)
           thread -> info . status == DNA_THREAD_ENDED, DNA_INTERRUPTED);
     }
     
-    *value = thread -> signature . return_value;
-    lock_release (& thread -> lock);
+    if (value != NULL)
+    {
+      *value = thread -> signature . return_value;
+    }
 
+    lock_release (& thread -> lock);
     cpu_trap_restore(it_status);
     return status;
   }

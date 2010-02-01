@@ -144,7 +144,7 @@ status_t semaphore_release (int32_t id, int32_t tokens, int32_t flags)
       thread_yield ();
     }
 
-    return status;
+    return DNA_OK;
   }
 
   rescue (invalid_thread_status)
