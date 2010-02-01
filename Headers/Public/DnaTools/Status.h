@@ -53,6 +53,7 @@ typedef enum _status
   DNA_BAD_ARGUMENT                    = 0xFFFC,
   DNA_ACCES_DENIED                    = 0xFFFB,
   DNA_NAME_TOO_LONG                   = 0xFFFA,
+  DNA_INTERRUPTED                     = 0xFFF9,
 
   /*
    * VFS error codes
