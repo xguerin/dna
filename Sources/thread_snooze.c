@@ -58,7 +58,7 @@ status_t thread_snooze (bigtime_t value)
     self = cpu_pool . cpu[current_cpuid] . current_thread;
 
     /*
-     * Create the snooze alarm
+     * Create the snooze alarm and elect a new thread.
      */
 
     status = alarm_create (value, DNA_ONE_SHOT_RELATIVE_ALARM,
@@ -68,11 +68,23 @@ status_t thread_snooze (bigtime_t value)
     status = scheduler_elect (& target, true);
     ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
 
+    /*
+     * Update self information and switch context.
+     */
+
     lock_acquire (& self -> lock);
     self -> info . status = DNA_THREAD_SLEEPING;
 
     status = scheduler_switch (target, NULL);
     ensure (status == DNA_OK, status);
+
+    /*
+     * Cancel the alarm, just in case we came back from
+     * sleeping after a thread_suspend/thread_resume combination.
+     */
+
+    status = alarm_destroy (alarm_id);
+    ensure (status != DNA_NO_TIMER && status != DNA_BAD_ARGUMENT, status);
 
     cpu_trap_restore (it_status);
     return DNA_OK;

@@ -82,10 +82,18 @@ status_t semaphore_release (int32_t id, int32_t tokens, int32_t flags)
 
     while (tokens != 0 && thread != NULL)
     {
+      /*
+       * Lock the thread and check its status.
+       */
+
       lock_acquire (& thread -> lock);
 
+      check (invalid_thread_status,
+          thread -> info . status == DNA_THREAD_WAITING,
+          DNA_ERROR);
+
       /*
-       * TODO check the status of the thread.
+       * Check the number of tokens it requests.
        */
 
       if (thread -> info . sem_tokens <= tokens)
@@ -137,6 +145,16 @@ status_t semaphore_release (int32_t id, int32_t tokens, int32_t flags)
     }
 
     return status;
+  }
+
+  rescue (invalid_thread_status)
+  {
+    lock_release (& thread -> lock);
+    lock_release (& sem -> waiting_queue . lock);
+    lock_release (& sem -> lock);
+
+    cpu_trap_restore(it_status);
+    leave;
   }
 
   rescue (invalid_semaphore)

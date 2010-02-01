@@ -79,7 +79,7 @@ status_t thread_suspend (int32_t id)
 
       lock_acquire (& thread -> lock);
 
-      check (bad_status,
+      check (thread_error,
           thread -> info . status != DNA_THREAD_ZOMBIE &&
           thread -> info . status != DNA_THREAD_SUSPENDED,
           DNA_ERROR);
@@ -99,11 +99,10 @@ status_t thread_suspend (int32_t id)
               thread -> info . status = DNA_THREAD_SUSPENDED;
 
               status = scheduler_elect (& target, true);
-              ensure (status != DNA_ERROR, status);
-              ensure (status != DNA_BAD_ARGUMENT, status);
+              check (thread_error, status != DNA_BAD_ARGUMENT, status);
 
               status = scheduler_switch (target, NULL);
-              ensure (status == DNA_OK, status);
+              check (thread_error, status == DNA_OK, status);
             }
             else
             {
@@ -168,9 +167,9 @@ status_t thread_suspend (int32_t id)
             /*
              * Apply the banker's algorithm to lock both the thread
              * and the resource queue.
-             * TODO add a check on the resource queue.
              */
 
+            check (thread_error, thread -> resource_queue != NULL, DNA_ERROR);
             result = lock_try (& thread -> resource_queue -> lock, true);
 
             if (result != DNA_ERROR)
@@ -201,10 +200,9 @@ status_t thread_suspend (int32_t id)
     return DNA_OK;
   }
 
-  rescue (bad_status)
+  rescue (thread_error)
   {
     lock_release (& thread -> lock);
-    lock_release (& scheduler . queue[thread -> info . affinity] . lock);
   }
 
   rescue (bad_thread)
