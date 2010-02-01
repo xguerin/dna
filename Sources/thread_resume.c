@@ -59,7 +59,9 @@ status_t thread_resume (int32_t id)
     lock_acquire (& thread_pool . lock);
 
     thread = thread_pool . thread[tid . s . group][tid . s . index];
-    check (bad_id, thread != NULL, DNA_INVALID_THREAD_ID);
+
+    check (bad_thread, thread != NULL &&
+        thread -> id . raw == tid . raw , DNA_INVALID_THREAD_ID);
 
     lock_acquire (& thread -> lock);
     lock_release (& thread_pool . lock);
@@ -84,7 +86,7 @@ status_t thread_resume (int32_t id)
     lock_release (& thread -> lock);
   }
 
-  rescue (bad_id)
+  rescue (bad_thread)
   {
     cpu_trap_restore (it_status);
     lock_release (& thread_pool . lock);

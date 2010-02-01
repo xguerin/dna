@@ -56,13 +56,16 @@ status_t thread_get_info (int32_t id, thread_info_t * info)
 
     /*
      * Get the thread corresponding to the current id
+     * and check if it is valid.
      */
 
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& thread_pool . lock);
 
     thread = thread_pool . thread[tid . s . group][tid . s . index];
-    check (bad_id, thread != NULL, DNA_INVALID_THREAD_ID);
+
+    check (bad_thread, thread != NULL &&
+        thread -> id . raw == tid . raw , DNA_INVALID_THREAD_ID);
 
     lock_acquire (& thread -> lock);
     lock_release (& thread_pool . lock);
@@ -91,7 +94,7 @@ status_t thread_get_info (int32_t id, thread_info_t * info)
     return DNA_OK;
   }
 
-  rescue (bad_id)
+  rescue (bad_thread)
   {
     cpu_trap_restore (it_status);
     lock_release (& thread_pool . lock);

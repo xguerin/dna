@@ -62,8 +62,12 @@ status_t thread_suspend (int32_t id)
 
     it_status = cpu_trap_mask_and_backup ();
     current_cpuid = cpu_mp_id ();
+
+    lock_acquire (& thread_pool . lock);
     thread = thread_pool . thread[tid . s . group][tid . s . index];
-    check (bad_thread, thread != NULL, DNA_BAD_ARGUMENT);
+
+    check (bad_thread, thread != NULL &&
+        thread -> id . raw == tid . raw , DNA_INVALID_THREAD_ID);
 
     /*
      * Stabilization loop: depending on the current status of
@@ -207,6 +211,7 @@ status_t thread_suspend (int32_t id)
 
   rescue (bad_thread)
   {
+    lock_release (& thread_pool . lock);
     cpu_trap_restore (it_status);
     leave;
   }

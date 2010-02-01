@@ -41,7 +41,7 @@ status_t thread_wait (int32_t id, int32_t * value)
  */
 
 {
-  status_t status;
+  status_t status = DNA_OK;
   uint32_t current_cpuid = 0;
   thread_t self = NULL;
   thread_t thread = NULL, target = NULL;
@@ -54,6 +54,7 @@ status_t thread_wait (int32_t id, int32_t * value)
     ensure (tid . s . group < DNA_MAX_GROUP, DNA_BAD_ARGUMENT);
     ensure (tid . s . index >= 0, DNA_BAD_ARGUMENT);
     ensure (tid . s . index < DNA_MAX_THREAD, DNA_BAD_ARGUMENT);
+    ensure (value != NULL, DNA_BAD_ARGUMENT);
 
     /*
      * Get information about the current execution.
@@ -68,9 +69,10 @@ status_t thread_wait (int32_t id, int32_t * value)
      */
 
     lock_acquire (& thread_pool . lock);
-
     thread = thread_pool . thread[tid . s . group][tid . s . index];
-    check (invalid_thread, thread != NULL, DNA_INVALID_THREAD_ID);
+
+    check (bad_thread, thread != NULL &&
+        thread -> id . raw == tid . raw, DNA_INVALID_THREAD_ID);
 
     lock_acquire (& thread -> lock);
     lock_release (& thread_pool . lock);
@@ -90,10 +92,14 @@ status_t thread_wait (int32_t id, int32_t * value)
        */
 
       lock_acquire (& self -> lock);
+
+      self -> resource_queue = & thread -> wait;
       self -> info . status = DNA_THREAD_WAITING;
+      self -> info . resource = DNA_RESOURCE_THREAD;
+      self -> info . resource_id = tid . raw;
 
       /*
-       * Elect a the next thread and run it
+       * Elect the next thread and run it
        */
 
       status = scheduler_elect (& target, true);
@@ -102,23 +108,34 @@ status_t thread_wait (int32_t id, int32_t * value)
       status = scheduler_switch (target, & thread -> wait);
       ensure (status == DNA_OK, status);
 
-      cpu_trap_restore(it_status);
+      /*
+       * TODO check if the thread has not been destroyed.
+       */
+
+      lock_acquire (& thread_pool . lock);
+      thread = thread_pool . thread[tid . s . group][tid . s . index];
+
+      check (bad_thread, thread != NULL &&
+        thread -> id . raw == tid . raw , DNA_THREAD_DESTROYED);
+
+      lock_acquire (& thread -> lock);
+      lock_release (& thread_pool . lock);
+
+      *value = thread -> signature . return_value;
     }
-    else lock_release (& thread -> lock);
-
-    /*
-     * We get the return value of the thread and return
-     */
-
-    if (value != NULL)
+    
+    if (status == DNA_OK)
     {
       *value = thread -> signature . return_value;
     }
 
-    return DNA_OK;
+    lock_release (& thread -> lock);
+    cpu_trap_restore(it_status);
+
+    return status;
   }
 
-  rescue (invalid_thread)
+  rescue (bad_thread)
   {
     lock_release (& thread_pool . lock);
     cpu_trap_restore(it_status);

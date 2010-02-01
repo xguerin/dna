@@ -49,12 +49,12 @@ void thread_exit (int32_t value)
   it_status = cpu_trap_mask_and_backup();
   current_cpuid = cpu_mp_id();
   self = cpu_pool . cpu[current_cpuid] . current_thread;
-  lock_acquire (& self -> lock);
 
   /*
    * And we place the return value in our structure
    */
 
+  lock_acquire (& self -> lock);
   self -> signature . return_value = value;
 
   /*
@@ -73,7 +73,11 @@ void thread_exit (int32_t value)
   while ((p = queue_rem (& self -> wait)) != NULL)
   {
     lock_acquire (& p -> lock);
+
+    self -> resource_queue = NULL;
     p -> info . status = DNA_THREAD_READY;
+    self -> info . resource = DNA_NO_RESOURCE;
+    self -> info . resource_id = -1;
 
     lock_acquire (& scheduler . queue[p -> info . affinity] . lock);
     lock_release (& p -> lock);

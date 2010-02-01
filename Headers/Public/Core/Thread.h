@@ -83,7 +83,8 @@ thread_status_t;
 typedef enum
 {
   DNA_NO_RESOURCE,
-  DNA_RESOURCE_SEMAPHORE
+  DNA_RESOURCE_SEMAPHORE,
+  DNA_RESOURCE_THREAD
 }
 thread_resource_t;
 
