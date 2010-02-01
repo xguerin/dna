@@ -89,6 +89,7 @@ typedef enum _status
   DNA_INVALID_THREAD_ID               = 0xFCFE,
   DNA_NO_AVAILABLE_THREAD             = 0xFCFD,
   DNA_NO_MORE_THREAD                  = 0xFCFC,
+  DNA_THREAD_DESTROYED                = 0xFCFB,
 
   /*
    * Timer error code
