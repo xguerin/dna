@@ -52,8 +52,6 @@ status_t thread_yield (void)
     if (status != DNA_NO_AVAILABLE_THREAD)
     {
       lock_acquire (& self -> lock);
-
-      self -> info . previous_status = self -> info . status;
       self -> info . status = DNA_THREAD_READY;
 
       if (self != cpu_pool . cpu[cpu_mp_id()] . idle_thread)

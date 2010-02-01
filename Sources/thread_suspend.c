@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdbool.h>
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
@@ -44,6 +45,7 @@ status_t thread_suspend (int32_t id)
   thread_t target = NULL;
   uint32_t current_cpuid = 0, next_cpuid = 0;
   thread_t thread;
+  bool restart_stabilization_loop = true;
   thread_id_t tid = { .raw = id };
   interrupt_status_t it_status = 0;
 
@@ -64,114 +66,136 @@ status_t thread_suspend (int32_t id)
     check (bad_thread, thread != NULL, DNA_BAD_ARGUMENT);
 
     /*
-     * Apply banker's algorithm to lock the thread and the scheduler
+     * Stabilization loop: depending on the current status of
+     * the thread, we will have to apply the banker algorithm
+     * in several different ways.
      */
 
     do
     {
+      /*
+       * Lock the thread and check its status.
+       */
+
       lock_acquire (& thread -> lock);
-      result = lock_try
-        (& scheduler . queue[thread -> info . affinity] . lock, true);
 
-      if (result == DNA_ERROR)
+      check (bad_status,
+          thread -> info . status != DNA_THREAD_ZOMBIE &&
+          thread -> info . status != DNA_THREAD_SUSPENDED,
+          DNA_ERROR);
+
+      /*
+       * Discriminate in function of its status.
+       */
+
+      switch (thread -> info . status)
       {
-        lock_release (& thread -> lock);
-      }
-    }
-    while (result == DNA_ERROR);
-
-    /*
-     * Check the thread status
-     */
-
-    check (bad_status,
-        thread -> info . status != DNA_THREAD_ZOMBIE &&
-        thread -> info . status != DNA_THREAD_SUSPENDED,
-        DNA_ERROR);
-
-    /*
-     * We need to extract the thread right away,
-     * even if the thread is not present in the queue
-     */
-
-    queue_extract (& scheduler . queue[thread -> info . affinity], thread);
-    lock_release (& scheduler . queue[thread -> info . affinity] . lock);
-
-    /*
-     * And now we deal with the thread according to its status
-     */
-
-    switch (thread -> info . status)
-    {
-      case DNA_THREAD_RUNNING :
-        {
-          if (thread -> info . cpu_id == current_cpuid)
+        case DNA_THREAD_RUNNING :
           {
-            thread -> info . status = DNA_THREAD_SUSPENDED;
-            thread -> info . previous_status = DNA_THREAD_READY;
+            if (thread -> info . cpu_id == current_cpuid)
+            {
+              log (VERBOSE_LEVEL, "Local RUN suspend 0x%x.", thread -> id);
 
-            log (VERBOSE_LEVEL, "Local RUN suspend %d.", thread -> info . id)
+              thread -> info . status = DNA_THREAD_SUSPENDED;
 
-            status = scheduler_elect (& target, true);
-            ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
+              status = scheduler_elect (& target, true);
+              ensure (status != DNA_ERROR, status);
+              ensure (status != DNA_BAD_ARGUMENT, status);
 
-            status = scheduler_switch (target, NULL);
-            ensure (status == DNA_OK, status);
+              status = scheduler_switch (target, NULL);
+              ensure (status == DNA_OK, status);
+            }
+            else
+            {
+              log (VERBOSE_LEVEL, "Remote suspend %d on %d.",
+                  thread -> id, thread -> info . cpu_id);
+
+              next_cpuid = thread -> info . cpu_id;
+              lock_release (& thread -> lock);
+
+              cpu_mp_send_ipi (next_cpuid, DNA_IPI_SUSPEND,
+                  (void *) thread -> id . raw);
+            }
+
+            restart_stabilization_loop = false;
+            break;
           }
-          else
-          {
-            log (VERBOSE_LEVEL, "Remote suspend %d on %d.",
-                thread -> id, thread -> info . cpu_id);
 
-            next_cpuid = thread -> info . cpu_id;
+        case DNA_THREAD_READY :
+          {
+            /*
+             * Apply the banker's algorithm to lock both the thread
+             * and the ready queue.
+             */
+
+            result = lock_try
+              (& scheduler . queue[thread -> info . affinity] . lock, true);
+
+            if (result != DNA_ERROR)
+            {
+              log (VERBOSE_LEVEL, "Local READY suspend 0x%x.", thread -> id);
+
+              queue_extract
+                (& scheduler . queue[thread -> info . affinity], thread);
+              lock_release
+                (& scheduler . queue[thread -> info . affinity] . lock);
+
+              thread -> info . status = DNA_THREAD_SUSPENDED;
+              restart_stabilization_loop = false;
+            }
+
+            lock_release (& thread -> lock);
+            break;
+          }
+
+        case DNA_THREAD_SLEEPING :
+          {
+            log (VERBOSE_LEVEL, "Local SLEEP suspend %d.", thread -> id);
+
+            /*
+             * TODO : should we cancel the alarm ?
+             */
+
+            thread -> info . status = DNA_THREAD_SUSPENDED;
             lock_release (& thread -> lock);
 
-            cpu_mp_send_ipi (next_cpuid, DNA_IPI_SUSPEND,
-                (void *) thread -> id . raw);
+            restart_stabilization_loop = false;
+            break;
           }
 
-          break;
-        }
+        case DNA_THREAD_WAITING :
+          {
+            /*
+             * Apply the banker's algorithm to lock both the thread
+             * and the resource queue.
+             * TODO add a check on the resource queue.
+             */
 
-      case DNA_THREAD_READY :
-        {
-          log (VERBOSE_LEVEL, "Local READY suspend %d.", thread -> info . id)
+            result = lock_try (& thread -> resource_queue -> lock, true);
 
-          thread -> info . status = DNA_THREAD_SUSPENDED;
-          thread -> info . previous_status = DNA_THREAD_READY;
+            if (result != DNA_ERROR)
+            {
+              log (VERBOSE_LEVEL, "Local WAIT suspend %d.", thread -> id);
 
-          lock_release (& thread -> lock);
-          break;
-        }
+              queue_extract (thread -> resource_queue, thread);
+              lock_release (& thread -> resource_queue -> lock);
 
-      case DNA_THREAD_SLEEPING :
-        {
-          log (VERBOSE_LEVEL, "Local SLEEP suspend %d.", thread -> info . id)
+              thread -> info . status = DNA_THREAD_SUSPENDED;
+              restart_stabilization_loop = false;
+            }
 
-          thread -> info . status = DNA_THREAD_SUSPENDED;
-          thread -> info . previous_status = DNA_THREAD_SLEEPING;
+            lock_release (& thread -> lock);
+            break;
+          }
 
-          lock_release (& thread -> lock);
-          break;
-        }
-
-      case DNA_THREAD_WAITING :
-        {
-          log (VERBOSE_LEVEL, "Local WAIT suspend %d.", thread -> info . id)
-
-          thread -> info . status = DNA_THREAD_SUSPENDED;
-          thread -> info . previous_status = DNA_THREAD_WAITING;
-
-          lock_release (& thread -> lock);
-          break;
-        }
-
-      default :
-        {
-          log (PANIC_LEVEL, "unknown thread status.");
-          break;
-        }
+        default :
+          {
+            log (PANIC_LEVEL, "unknown thread status.");
+            break;
+          }
+      }
     }
+    while (restart_stabilization_loop);
 
     cpu_trap_restore (it_status);
     return DNA_OK;

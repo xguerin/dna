@@ -45,6 +45,7 @@ status_t semaphore_destroy (int32_t id)
   semaphore_id_t sid = { .raw = id };
   interrupt_status_t it_status = 0;
   bool smart_to_reschedule = false;
+  status_t status;
 
   watch (status_t)
   {
@@ -85,12 +86,10 @@ status_t semaphore_destroy (int32_t id)
       if (thread -> info . status == DNA_THREAD_WAITING)
       {
         thread -> info . status = DNA_THREAD_READY;
-        thread -> info . previous_status = DNA_THREAD_WAITING;
+        status = scheduler_dispatch (thread);
 
-        if (scheduler_dispatch (thread) == DNA_INVOKE_SCHEDULER)
-        {
-          smart_to_reschedule = true;
-        }
+        smart_to_reschedule = smart_to_reschedule ||
+          (status == DNA_INVOKE_SCHEDULER);
       }
 
       lock_release (& thread -> lock);

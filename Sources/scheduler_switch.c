@@ -56,7 +56,6 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
    * Update the status of the target thread
    */
 
-  thread -> info . previous_status = thread -> info . status;
   thread -> info . status = DNA_THREAD_RUNNING;
   thread -> info . cpu_id = current_cpuid;
   lock_release (& thread -> lock);

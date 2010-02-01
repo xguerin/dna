@@ -80,34 +80,6 @@ status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
     new_alarm -> data = data;
 
     /*
-     * Check and compute the deadline according to the
-     * alarm mode passed as parameter.
-     */
-
-    cpu_timer_get (current_cpuid, & current_time);
-
-    switch (mode)
-    {
-      case DNA_ONE_SHOT_RELATIVE_ALARM :
-        {
-          new_alarm -> quantum = quantum;
-          new_alarm -> deadline = quantum + current_time;
-          break;
-        }
-
-      case DNA_ONE_SHOT_ABSOLUTE_ALARM :
-        {
-          check (error, quantum > current_time, DNA_BAD_ARGUMENT);
-
-          new_alarm -> quantum = current_time - quantum;
-          new_alarm -> deadline = quantum;
-          break;
-        }
-
-      default: break;
-    }
-
-    /*
      * Find an empty slot to store the alarm
      */
 
@@ -129,6 +101,33 @@ status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
 
     lock_release (& alarm_manager . lock);
     check (error, index != DNA_MAX_ALARM, DNA_ERROR);
+
+    /*
+     * Check and compute the deadline according to the
+     * alarm mode passed as parameter.
+     */
+
+    cpu_timer_get (current_cpuid, & current_time);
+
+    switch (mode)
+    {
+      case DNA_PERIODIC_ALARM :
+      case DNA_ONE_SHOT_RELATIVE_ALARM :
+        {
+          new_alarm -> quantum = quantum;
+          new_alarm -> deadline = quantum + current_time;
+          break;
+        }
+
+      case DNA_ONE_SHOT_ABSOLUTE_ALARM :
+        {
+          check (error, quantum > current_time, DNA_BAD_ARGUMENT);
+
+          new_alarm -> quantum = current_time - quantum;
+          new_alarm -> deadline = quantum;
+          break;
+        }
+    }
 
     /*
      * Deal with the new alarm

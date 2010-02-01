@@ -104,6 +104,8 @@ typedef struct _thread
   queue_t wait;
   spinlock_t lock;
 
+  queue_t * resource_queue;
+
   thread_id_t id;
   thread_info_t info;
   thread_signature_t signature;

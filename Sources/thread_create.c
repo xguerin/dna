@@ -110,7 +110,6 @@ status_t thread_create (thread_handler_t handler, void * arguments,
     }
 
     thread -> info . status = DNA_THREAD_SUSPENDED;
-    thread -> info . previous_status = DNA_THREAD_READY;
     thread -> info . resource = DNA_NO_RESOURCE;
     thread -> info . resource_id = -1;
 

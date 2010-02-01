@@ -84,25 +84,24 @@ status_t semaphore_release (int32_t id, int32_t tokens, int32_t flags)
     {
       lock_acquire (& thread -> lock);
 
+      /*
+       * TODO check the status of the thread.
+       */
+
       if (thread -> info . sem_tokens <= tokens)
       {
         tokens -= thread -> info . sem_tokens;
 
+        thread -> resource_queue = NULL;
         thread -> info . sem_tokens = 0;
         thread -> info . resource = DNA_NO_RESOURCE;
         thread -> info . resource_id = -1;
 
-        if (thread -> info . status == DNA_THREAD_WAITING)
-        {
-          thread -> info . status = DNA_THREAD_READY;
-          thread -> info . previous_status = DNA_THREAD_WAITING;
+        thread -> info . status = DNA_THREAD_READY;
+        status = scheduler_dispatch (thread);
 
-          if (scheduler_dispatch (thread) == DNA_INVOKE_SCHEDULER)
-          {
-            smart_to_reschedule = true;
-          }
-        }
-        else lock_release (& thread -> lock);
+        smart_to_reschedule = smart_to_reschedule ||
+          (status == DNA_INVOKE_SCHEDULER);
       }
       else
       {

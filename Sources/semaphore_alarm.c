@@ -35,41 +35,24 @@ status_t semaphore_alarm (void * data)
  */
 
 {
-  status_t status = DNA_OK;
   thread_t thread = data;
-  semaphore_t semaphore;
-  semaphore_id_t sid;
+  status_t status = DNA_OK;
 
   watch (status_t)
   {
     ensure (thread != NULL, DNA_ERROR);
+    ensure (thread -> resource_queue != NULL, DNA_ERROR);
     ensure (thread -> info . status == DNA_THREAD_WAITING, DNA_ERROR);
     ensure (thread -> info . resource == DNA_RESOURCE_SEMAPHORE, DNA_ERROR);
 
     /*
-     * Get the corresponding semaphore
-     */
-
-    lock_acquire (& semaphore_pool . lock);
-
-    sid . raw = thread -> info . resource_id;
-    check (invalid_semaphore, sid . s . index < DNA_MAX_SEM, DNA_ERROR);
-
-    log (VERBOSE_LEVEL, "ID(%d:%d)", sid . s . value, sid . s . index);
-
-    semaphore = semaphore_pool . semaphore[sid . s . index];
-    check (invalid_semaphore, semaphore != NULL, DNA_ERROR);
-    check (invalid_semaphore, semaphore -> id . raw == sid . raw, DNA_ERROR);
-
-    lock_acquire (& semaphore -> waiting_queue . lock);
-    lock_release (& semaphore_pool . lock);
-
-    /*
+     * Lock the thread's resource queue.
      * Extract the thread from the waiting list
      */
 
-    status = queue_extract (& semaphore -> waiting_queue, thread);
-    lock_release (& semaphore -> waiting_queue . lock);
+    lock_acquire (& thread -> resource_queue -> lock);
+    status = queue_extract (thread -> resource_queue, thread);
+    lock_release (& thread -> resource_queue -> lock);
 
     /*
      * If the thread was waiting, we can dispatch it
@@ -78,20 +61,11 @@ status_t semaphore_alarm (void * data)
     if (status == DNA_OK)
     {
       lock_acquire (& thread -> lock);
-
       thread -> info . status = DNA_THREAD_READY;
-      thread -> info . previous_status = DNA_THREAD_WAITING;
-
       status = scheduler_dispatch (thread);
     }
 
     return status;
-  }
-
-  rescue (invalid_semaphore)
-  {
-    lock_release (& semaphore_pool . lock);
-    leave;
   }
 }
 

@@ -51,9 +51,7 @@ status_t thread_alarm (void * data)
           log (VERBOSE_LEVEL, "thread %d supended, leave it this way",
               thread -> info . id);
           
-          thread -> info . previous_status = DNA_THREAD_READY;
           lock_release (& thread -> lock);
-
           break;
         }
 
@@ -63,9 +61,8 @@ status_t thread_alarm (void * data)
               thread -> info . id);
  
           thread -> info . status = DNA_THREAD_READY;
-          thread -> info . previous_status = DNA_THREAD_SLEEPING;
-
           status = scheduler_dispatch (thread);
+
           break;
         }
 

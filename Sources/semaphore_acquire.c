@@ -156,11 +156,10 @@ status_t semaphore_acquire (int32_t id, int32_t tokens,
          */
 
         lock_acquire (& self -> lock);
+
+        self -> resource_queue = & sem -> waiting_queue;
         self -> info . sem_tokens = -1 * rem_tokens;
-
         self -> info . status = DNA_THREAD_WAITING;
-        self -> info . previous_status = DNA_THREAD_RUNNING;
-
         self -> info . resource = DNA_RESOURCE_SEMAPHORE;
         self -> info . resource_id = sem -> id . raw;
 

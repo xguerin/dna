@@ -70,7 +70,6 @@ status_t thread_snooze (bigtime_t value)
 
     lock_acquire (& self -> lock);
     self -> info . status = DNA_THREAD_SLEEPING;
-    self -> info . previous_status = DNA_THREAD_RUNNING;
 
     status = scheduler_switch (target, NULL);
     ensure (status == DNA_OK, status);

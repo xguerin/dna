@@ -51,7 +51,8 @@ status_t thread_resume (int32_t id)
     ensure (tid . s . index < DNA_MAX_THREAD, DNA_BAD_ARGUMENT);
 
     /*
-     * Get the thread corresponding to the current id.
+     * Get the thread corresponding to the current id
+     * and check the thread's status.
      */
 
     it_status = cpu_trap_mask_and_backup();
@@ -63,29 +64,16 @@ status_t thread_resume (int32_t id)
     lock_acquire (& thread -> lock);
     lock_release (& thread_pool . lock);
 
-    /*
-     * Check the thread's status.
-     */
- 
     check (bad_status,
         thread -> info . status == DNA_THREAD_SUSPENDED,
         DNA_ERROR);
 
-    thread -> info . status = thread -> info . previous_status;
+    /*
+     * Update the thread information and resume it.
+     */
 
-    if (thread -> info . status == DNA_THREAD_SLEEPING ||
-        thread -> info . status == DNA_THREAD_WAITING)
-    {
-      thread -> info . previous_status = DNA_THREAD_RUNNING;
-    }
-    else thread -> info . previous_status = DNA_THREAD_NOSTATUS;
-
-    if (thread -> info . status == DNA_THREAD_READY)
-    {
-      thread -> info . status = DNA_THREAD_READY;
-      scheduler_dispatch (thread);
-    }
-    else lock_release (& thread -> lock);
+    thread -> info . status = DNA_THREAD_READY;
+    scheduler_dispatch (thread);
 
     cpu_trap_restore (it_status);
     return DNA_OK;

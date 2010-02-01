@@ -73,9 +73,7 @@ void thread_exit (int32_t value)
   while ((p = queue_rem (& self -> wait)) != NULL)
   {
     lock_acquire (& p -> lock);
-
     p -> info . status = DNA_THREAD_READY;
-    p -> info . previous_status = DNA_THREAD_WAITING;
 
     lock_acquire (& scheduler . queue[p -> info . affinity] . lock);
     lock_release (& p -> lock);
