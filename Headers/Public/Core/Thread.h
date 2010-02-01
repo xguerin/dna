@@ -65,7 +65,7 @@ typedef enum _thread_status
   DNA_THREAD_SLEEPING   = 0xBEDD,
   DNA_THREAD_SUSPENDED  = 0xD15A,
   DNA_THREAD_WAITING    = 0xB10C,
-  DNA_THREAD_ZOMBIE     = 0xDEAD,
+  DNA_THREAD_ENDED     = 0xDEAD,
   DNA_THREAD_NOSTATUS   = 0xEEEE,
 }
 thread_status_t;

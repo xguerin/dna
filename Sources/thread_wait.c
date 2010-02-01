@@ -82,7 +82,7 @@ status_t thread_wait (int32_t id, int32_t * value)
      * go through all the rescheduling pain
      */
 
-    if (thread -> info . status != DNA_THREAD_ZOMBIE)
+    if (thread -> info . status != DNA_THREAD_ENDED)
     {
       lock_acquire (& thread -> wait . lock);
       lock_release (& thread -> lock);
@@ -109,7 +109,7 @@ status_t thread_wait (int32_t id, int32_t * value)
       ensure (status == DNA_OK, status);
 
       /*
-       * TODO check if the thread has not been destroyed.
+       * Check if the thread has not been destroyed.
        */
 
       lock_acquire (& thread_pool . lock);
@@ -121,18 +121,26 @@ status_t thread_wait (int32_t id, int32_t * value)
       lock_acquire (& thread -> lock);
       lock_release (& thread_pool . lock);
 
-      *value = thread -> signature . return_value;
+      /*
+       * Check if we are here as a result of thread_suspend/thread_resume.
+       */
+
+      check (bad_status,
+          thread -> info . status == DNA_THREAD_ENDED, DNA_INTERRUPTED);
     }
     
-    if (status == DNA_OK)
-    {
-      *value = thread -> signature . return_value;
-    }
+    *value = thread -> signature . return_value;
+    lock_release (& thread -> lock);
 
+    cpu_trap_restore(it_status);
+    return status;
+  }
+
+  rescue (bad_status)
+  {
     lock_release (& thread -> lock);
     cpu_trap_restore(it_status);
-
-    return status;
+    leave;
   }
 
   rescue (bad_thread)

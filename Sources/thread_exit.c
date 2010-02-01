@@ -61,7 +61,7 @@ void thread_exit (int32_t value)
    * Mark self as zombie
    */
 
-  self -> info . status = DNA_THREAD_ZOMBIE;
+  self -> info . status = DNA_THREAD_ENDED;
 
   lock_acquire (& self -> wait . lock);
   lock_release (& self -> lock);

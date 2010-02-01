@@ -84,7 +84,7 @@ status_t thread_suspend (int32_t id)
       lock_acquire (& thread -> lock);
 
       check (thread_error,
-          thread -> info . status != DNA_THREAD_ZOMBIE &&
+          thread -> info . status != DNA_THREAD_ENDED &&
           thread -> info . status != DNA_THREAD_SUSPENDED,
           DNA_ERROR);
 

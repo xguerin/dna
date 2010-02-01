@@ -87,7 +87,7 @@ status_t thread_snooze (bigtime_t value)
     ensure (status != DNA_NO_TIMER && status != DNA_BAD_ARGUMENT, status);
 
     cpu_trap_restore (it_status);
-    return DNA_OK;
+    return (status == DNA_OK) ? DNA_INTERRUPTED : DNA_OK;
   }
 
   rescue (alarm_error)

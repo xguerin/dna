@@ -47,7 +47,7 @@ status_t semaphore_alarm (void * data)
 
     /*
      * Lock the thread's resource queue.
-     * Extract the thread from the waiting list
+     * Extract the thread from the waiting list.
      */
 
     lock_acquire (& thread -> resource_queue -> lock);
@@ -61,6 +61,12 @@ status_t semaphore_alarm (void * data)
     if (status == DNA_OK)
     {
       lock_acquire (& thread -> lock);
+
+      thread -> resource_queue = NULL;
+      thread -> info . sem_tokens = 0;
+      thread -> info . resource = DNA_NO_RESOURCE;
+      thread -> info . resource_id = -1;
+
       thread -> info . status = DNA_THREAD_READY;
       status = scheduler_dispatch (thread);
     }
