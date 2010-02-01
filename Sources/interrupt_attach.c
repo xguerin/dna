@@ -75,7 +75,10 @@ status_t interrupt_attach (int32_t cpuid, interrupt_id_t id,
     {
       cpu_trap_attach_isr (cpuid, id, mode, interrupt_demultiplexer);
 
-      if (cpuid == cpu_mp_id ()) cpu_trap_enable (id);
+      if (cpuid == cpu_mp_id ())
+      {
+        cpu_trap_enable (id);
+      }
       else
       {
         cpu_mp_send_ipi (cpuid, DNA_IPI_TRAP_ENABLE, (void *) id);

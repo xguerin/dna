@@ -22,6 +22,7 @@
 #define DNA_CORE_INTERRUPT_PRIVATE_H
 
 #include <stdint.h>
+#include <stdbool.h>
 #include <Core/Core.h>
 #include <Processor/Processor.h>
 #include <DnaTools/DnaTools.h>
@@ -29,6 +30,7 @@
 #define DNA_IPI_YIELD         0xFFFF
 #define DNA_IPI_SUSPEND       0xFFFE
 #define DNA_IPI_TRAP_ENABLE   0xFFFD
+#define DNA_IPI_TRAP_DISABLE  0xFFFC
 
 /****t* interrupt/isr_t
  * SUMMARY
@@ -48,6 +50,8 @@ typedef struct _isr
  ****/
 
 extern int32_t interrupt_demultiplexer (int32_t itn);
+extern bool interrupt_handler_inspector (void * isr,
+    void * handler, void * dummy);
 
 #endif
 

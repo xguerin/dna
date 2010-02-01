@@ -17,75 +17,41 @@
 
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
-#include <Processor/Processor.h>
 
-/****f* Core/ipi_callback
+/****f* core/interrupt_handler_inspector
  * SUMMARY
- * Handler for inter-processor interrupts.
+ * Compare an handler with an ISR handler.
  *
  * SYNOPSIS
  */
 
-void ipi_callback (int32_t command, void * cookie)
+bool interrupt_handler_inspector (void * isr, void * handler, void * dummy)
 
 /*
  * ARGUMENTS
- * * command : the command of the ipi
- * * cookie : the data of the ipi
+ * * isr : an ISR element.
+ * * handler : an interrupt handler.
+ *
+ * FUNCTION
+ * Compare handler and isr -> handler.
  *
  * RESULT
- * DNA_OK.
+ * Return TRUE if they match, FALSE otherwise.
  *
  * SOURCE
  */
 
 {
-  switch (command)
+  isr_t service = isr;
+
+  watch (bool)
   {
-    case DNA_IPI_YIELD :
-      {
-        log (VERBOSE_LEVEL, "%d YIELD", cpu_mp_id ());
+    ensure (isr != NULL, false);
+    ensure (handler != NULL, false);
 
-        thread_yield ();
-        break;
-      }
-
-    case DNA_IPI_SUSPEND :
-      {
-        int32_t thread_id = (int32_t) cookie;
-
-        log (VERBOSE_LEVEL, "%d SUSPEND %d", cpu_mp_id (), thread_id);
-
-        thread_suspend (thread_id);
-        break;
-      }
-
-    case DNA_IPI_TRAP_ENABLE :
-      {
-        int32_t id = (int32_t) cookie;
-
-        log (VERBOSE_LEVEL, "%d ENABLE %d", cpu_mp_id (), id);
-
-        cpu_trap_enable (id);
-        break;
-      }
-
-    case DNA_IPI_TRAP_DISABLE :
-      {
-        int32_t id = (int32_t) cookie;
-
-        log (VERBOSE_LEVEL, "%d DISABLE %d", cpu_mp_id (), id);
-
-        cpu_trap_disable (id);
-        break;
-      }
-
-    default :
-      log (PANIC_LEVEL, "Unknown command: %d", command);
-      break;
+    return service -> handler == (interrupt_handler_t)handler;
   }
 }
 
 /*
  ****/
-
