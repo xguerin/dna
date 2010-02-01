@@ -17,6 +17,7 @@
 
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
+#include <MemoryManager/MemoryManager.h>
 #include <Processor/Processor.h>
 
 /****f* Core/interrupt_detach
@@ -63,6 +64,11 @@ status_t interrupt_detach (int32_t cpuid, interrupt_id_t id,
 
     queue_extract (queue, isr);
 
+    /*
+     * If there is no more handler for the specified
+     * interrupt, disable it.
+     */
+
     if (queue -> status == 0)
     {
       if (cpuid == cpu_mp_id ())
@@ -78,6 +84,7 @@ status_t interrupt_detach (int32_t cpuid, interrupt_id_t id,
     lock_release (& queue -> lock);
     cpu_trap_restore(it_status);
 
+    kernel_free (isr);
     return DNA_OK;
   }
 
