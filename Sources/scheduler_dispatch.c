@@ -82,6 +82,9 @@ status_t scheduler_dispatch (thread_t thread)
 
     if (cpu != NULL && cpu -> id != cpu_mp_id ())
     {
+      log (INFO_LEVEL, "dispatch 0x%x to CPU(%d)",
+          thread -> id . raw, cpu -> id);
+
       cpu_mp_send_ipi (cpu -> id, DNA_IPI_YIELD, NULL);
     }
     else
@@ -90,7 +93,7 @@ status_t scheduler_dispatch (thread_t thread)
 
       /*
        * Explanation of what follows: in the first part of the test,
-       * we check whether a distant, compatible CPU is available. If
+       * we checked whether a distant, compatible CPU is available. If
        * not, if the thread is compatible with the current processor,
        * and whether this processor is available or not, we return
        * that it is necessary to invoke the scheduler. It will be the
@@ -99,6 +102,9 @@ status_t scheduler_dispatch (thread_t thread)
 
       if (affinity == cpu_mp_count () || affinity == cpu_mp_id ())
       {
+        log (INFO_LEVEL, "invoke scheduler for 0x%x on queue(%d)",
+            thread -> id . raw, affinity);
+
         status = DNA_INVOKE_SCHEDULER;
       }
     }

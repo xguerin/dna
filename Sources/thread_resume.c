@@ -77,17 +77,12 @@ status_t thread_resume (int32_t id)
 
     thread -> info . status = DNA_THREAD_READY;
     status = scheduler_dispatch (thread);
-    cpu_trap_restore (it_status);
 
     /*
-     * Deal with the reschedule.
+     * FIXME we do not deal with the scheduler.
      */
 
-    if (status == DNA_INVOKE_SCHEDULER)
-    {
-      thread_yield ();
-    }
-
+    cpu_trap_restore (it_status);
     return DNA_OK;
   }
 
