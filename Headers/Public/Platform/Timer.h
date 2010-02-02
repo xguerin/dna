@@ -20,6 +20,8 @@
 
 #include <stdint.h>
 
+#define PLATFORM_TIMER_RES 10
+
 typedef struct _soclib_timer_port
 {
   uint32_t value;
@@ -29,20 +31,7 @@ typedef struct _soclib_timer_port
 }
 * soclib_timer_port_t;
 
-typedef struct _soclib_timer_config
-{
-  uint32_t irq;
-  soclib_timer_port_t port;
-}
-soclib_timer_config_t;
-
-typedef struct _soclib_timer
-{
-  char * name;
-  uint32_t irq;
-  soclib_timer_port_t port;
-}
-soclib_timer_t;
+extern soclib_timer_port_t PLATFORM_TIMER_BASE;
 
 #endif
 

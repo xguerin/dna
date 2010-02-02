@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#ifndef SOCLIB_IPI_H
-#define SOCLIB_IPI_H
+#ifndef PLATFORM_IPI_H
+#define PLATFORM_IPI_H
 
 #include <stdint.h>
 
@@ -28,6 +28,8 @@ typedef struct _soclib_ipi_port
   volatile uint32_t reset;
 }
 * soclib_ipi_port_t;
+
+extern soclib_ipi_port_t PLATFORM_IPI_BASE;
 
 #endif
 
