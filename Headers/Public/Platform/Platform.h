@@ -3,6 +3,7 @@
 
 #include <Platform/Debug.h>
 #include <Platform/Endian.h>
-#include <Platform/Mp.h>
+#include <Platform/Ipi.h>
+#include <Platform/Timer.h>
 
 #endif
