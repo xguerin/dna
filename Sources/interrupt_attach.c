@@ -51,6 +51,7 @@ status_t interrupt_attach (int32_t cpuid, interrupt_id_t id,
   watch (status_t)
   {
     ensure (id < cpu_trap_count (), DNA_BAD_ARGUMENT);
+    ensure (cpuid < cpu_mp_count (), DNA_BAD_ARGUMENT);
 
     /*
      * Create the new ISR
@@ -66,7 +67,7 @@ status_t interrupt_attach (int32_t cpuid, interrupt_id_t id,
      */
 
     it_status = cpu_trap_mask_and_backup();
-    queue = & cpu_pool . cpu[cpu_mp_id ()] . isr_list[id];
+    queue = & cpu_pool . cpu[cpuid] . isr_list[id];
 
     lock_acquire (& queue -> lock);
     queue_add (queue, isr);

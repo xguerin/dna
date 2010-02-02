@@ -19,14 +19,14 @@
 #include <MemoryManager/MemoryManager.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* Core/time_callback
+/****f* Core/alarm_handler
  * SUMMARY
- * Time callback used for alarms.
+ * Time manager used for alarms.
  *
  * SYNOPSIS
  */
 
-void timer_callback (void)
+status_t alarm_handler (void)
 
 /*
  * SOURCE
@@ -100,7 +100,7 @@ void timer_callback (void)
 
       if (quantum <= DNA_TIMER_JIFFY)
       {
-        log (PANIC_LEVEL, "low quantum (%d), alarm (%d:%d) from thread 0x%x",
+        log (INFO_LEVEL, "low quantum (%d), alarm (%d:%d) from thread 0x%x",
             (int32_t) quantum, next_alarm -> id . s . value,
             next_alarm -> id . s . index, next_alarm -> thread_id);
       }
@@ -142,14 +142,7 @@ void timer_callback (void)
     }
   }
 
-  /*
-   * Reschedule of necessary
-   */
-
-  if (reschedule)
-  {
-    thread_yield ();
-  }
+  return reschedule ? DNA_INVOKE_SCHEDULER : DNA_OK;
 }
 
 /*

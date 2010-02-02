@@ -31,5 +31,7 @@ extern status_t interrupt_attach (int32_t cpuid, interrupt_id_t id,
 extern status_t interrupt_detach (int32_t cpuid, interrupt_id_t id,
     interrupt_handler_t handler);
 
+extern status_t ipi_handler (int32_t command, void * cookie);
+
 #endif
 

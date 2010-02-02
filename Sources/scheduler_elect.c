@@ -87,13 +87,21 @@ status_t scheduler_elect (thread_t * p_thread, bool with_idle)
 
     if (with_idle)
     {
+#if 1
+      lock_acquire (& cpu_pool . cpu[current_cpuid] . lock);
+      lock_release (& scheduler . queue[cpu_mp_count ()] . lock);
+
+      log (VERBOSE_LEVEL, "Set CPU %d @ READY", current_cpuid);
       cpu_pool . cpu[current_cpuid] . status = DNA_CPU_READY;
 
       lock_acquire (& cpu_pool . queue . lock);
-      lock_release (& scheduler . queue[cpu_mp_count ()] . lock);
+      lock_release (& cpu_pool . cpu[current_cpuid] . lock);
 
       queue_add (& cpu_pool . queue, & cpu_pool . cpu[current_cpuid]);
       lock_release (& cpu_pool . queue . lock);
+#else
+      lock_release (& scheduler . queue[cpu_mp_count ()] . lock);
+#endif
 
       thread = cpu_pool . cpu[current_cpuid] . idle_thread;
       lock_acquire (& thread -> lock);

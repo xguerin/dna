@@ -19,14 +19,14 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* Core/ipi_callback
+/****f* Core/ipi_handler
  * SUMMARY
  * Handler for inter-processor interrupts.
  *
  * SYNOPSIS
  */
 
-void ipi_callback (int32_t command, void * cookie)
+status_t ipi_handler (int32_t command, void * cookie)
 
 /*
  * ARGUMENTS
@@ -40,13 +40,15 @@ void ipi_callback (int32_t command, void * cookie)
  */
 
 {
+  status_t status = DNA_OK;
+
   switch (command)
   {
     case DNA_IPI_YIELD :
       {
         log (VERBOSE_LEVEL, "%d YIELD", cpu_mp_id ());
 
-        thread_yield ();
+        status = DNA_INVOKE_SCHEDULER;
         break;
       }
 
@@ -82,8 +84,11 @@ void ipi_callback (int32_t command, void * cookie)
 
     default :
       log (PANIC_LEVEL, "Unknown command: %d", command);
+      status = DNA_ERROR;
       break;
   }
+
+  return status;
 }
 
 /*

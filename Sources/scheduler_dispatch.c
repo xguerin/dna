@@ -82,7 +82,7 @@ status_t scheduler_dispatch (thread_t thread)
 
     if (cpu != NULL && cpu -> id != cpu_mp_id ())
     {
-      log (INFO_LEVEL, "dispatch 0x%x to CPU(%d)",
+      log (VERBOSE_LEVEL, "dispatch 0x%x to CPU(%d)",
           thread -> id . raw, cpu -> id);
 
       cpu_mp_send_ipi (cpu -> id, DNA_IPI_YIELD, NULL);
@@ -102,7 +102,7 @@ status_t scheduler_dispatch (thread_t thread)
 
       if (affinity == cpu_mp_count () || affinity == cpu_mp_id ())
       {
-        log (INFO_LEVEL, "invoke scheduler for 0x%x on queue(%d)",
+        log (VERBOSE_LEVEL, "invoke scheduler for 0x%x on queue(%d)",
             thread -> id . raw, affinity);
 
         status = DNA_INVOKE_SCHEDULER;

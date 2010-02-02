@@ -60,6 +60,7 @@ extern status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
     alarm_callback_t callback, void * data, int32_t * aid);
 
 extern status_t alarm_destroy (int32_t aid);
+extern status_t alarm_handler (void);
 
 #endif
 

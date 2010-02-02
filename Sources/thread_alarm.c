@@ -48,8 +48,7 @@ status_t thread_alarm (void * data)
     {
       case DNA_THREAD_SUSPENDED :
         {
-          log (VERBOSE_LEVEL, "thread %d supended, leave it this way",
-              thread -> info . id);
+          log (VERBOSE_LEVEL, "thread 0x%x already supended", thread -> id);
           
           lock_release (& thread -> lock);
           break;
@@ -57,8 +56,7 @@ status_t thread_alarm (void * data)
 
       case DNA_THREAD_SLEEPING :
         {
-          log (VERBOSE_LEVEL, "thread %d sleeping, resuming...",
-              thread -> info . id);
+          log (VERBOSE_LEVEL, "thread 0x%x sleeping, resuming...", thread -> id);
  
           thread -> info . status = DNA_THREAD_READY;
           status = scheduler_dispatch (thread);
@@ -72,6 +70,7 @@ status_t thread_alarm (void * data)
               thread -> info . status);
 
           lock_release (& thread -> lock);
+          status = DNA_ERROR;
           break;
         }
     }

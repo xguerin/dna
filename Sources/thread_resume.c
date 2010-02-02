@@ -79,11 +79,15 @@ status_t thread_resume (int32_t id)
     status = scheduler_dispatch (thread);
 
     /*
-     * FIXME we do not deal with the scheduler.
+     * Note for later: we DO NOT call thread yield here.
+     * Reason: it would only favorize the FIFO scheduling method.
+     * Latency should NOT appear on RR or RT scheduling methods.
+     * We return the dispatch status anyway, so the user can adapt
+     * its code accordingly, and call thread_yield himself.
      */
 
     cpu_trap_restore (it_status);
-    return DNA_OK;
+    return status;
   }
 
   rescue (bad_status)

@@ -59,19 +59,9 @@ status_t thread_yield (void)
         queue = & scheduler . queue[self -> info . affinity];
         lock_acquire (& queue -> lock);
       }
-      else
-      {
-        cpu_pool . cpu[cpu_mp_id ()] . status = DNA_CPU_RUNNING;
-      }
 
       status = scheduler_switch (thread, queue);
       ensure (status == DNA_OK, status);
-    }
-    else if (self == cpu_pool . cpu[cpu_mp_id()] . idle_thread)
-    {
-      lock_acquire (& cpu_pool . queue . lock);
-      queue_add (& cpu_pool . queue, & cpu_pool . cpu[cpu_mp_id ()]);
-      lock_release (& cpu_pool . queue . lock);
     }
 
     cpu_trap_restore(it_status);
