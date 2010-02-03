@@ -58,7 +58,7 @@ void thread_exit (int32_t value)
   self -> signature . return_value = value;
 
   /*
-   * Mark self as zombie
+   * Mark self as ended.
    */
 
   self -> info . status = DNA_THREAD_ENDED;
