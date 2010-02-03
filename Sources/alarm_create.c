@@ -123,7 +123,7 @@ status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
         {
           check (error, quantum > current_time, DNA_BAD_ARGUMENT);
 
-          new_alarm -> quantum = current_time - quantum;
+          new_alarm -> quantum = quantum - current_time;
           new_alarm -> deadline = quantum;
           break;
         }
@@ -141,7 +141,7 @@ status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
           new_alarm -> id . s . index);
 
       cpu -> current_alarm = new_alarm;
-      cpu_timer_set (current_cpuid, quantum);
+      cpu_timer_set (current_cpuid, new_alarm -> quantum);
     }
     else
     {
@@ -157,7 +157,7 @@ status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
         cpu_timer_cancel (current_cpuid);
         cpu -> current_alarm = new_alarm;
         queue_insert (& cpu -> alarm_queue, alarm_comparator, old_alarm);
-        cpu_timer_set (current_cpuid, quantum);
+        cpu_timer_set (current_cpuid, new_alarm -> quantum);
       }
       else
       {
