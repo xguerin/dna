@@ -100,7 +100,7 @@ status_t alarm_handler (void)
 
       if (quantum <= DNA_TIMER_JIFFY)
       {
-        log (INFO_LEVEL, "low quantum (%d), alarm (%d:%d) from thread 0x%x",
+        log (VERBOSE_LEVEL, "low quantum (%d), alarm (%d:%d) from thread 0x%x",
             (int32_t) quantum, next_alarm -> id . s . value,
             next_alarm -> id . s . index, next_alarm -> thread_id);
       }
