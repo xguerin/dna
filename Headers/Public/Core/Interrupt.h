@@ -22,11 +22,12 @@
 #define DNA_CORE_INTERRUPT_PUBLIC_H
 
 #include <stdint.h>
+#include <stdbool.h>
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
 extern status_t interrupt_attach (int32_t cpuid, interrupt_id_t id,
-    int32_t mode, interrupt_handler_t handler);
+    int32_t mode, interrupt_handler_t handler, bool bypass_demux);
 
 extern status_t interrupt_detach (int32_t cpuid, interrupt_id_t id,
     interrupt_handler_t handler);

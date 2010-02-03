@@ -28,13 +28,14 @@
  */
 
 status_t interrupt_attach (int32_t cpuid, interrupt_id_t id,
-    int32_t mode, interrupt_handler_t handler)
+    int32_t mode, interrupt_handler_t handler, bool bypass_demux)
 
 /*
  * ARGUMENTS
  * * id : the ID of the interrupt to attach
  * * mode : the mode of the attach
  * * handler : handler of the interrupt
+ * * bypass_demux : handler has to be installed directly
  *
  * RESULT
  * * DNA_OUT_OF_MEM if no more memory is available
@@ -72,9 +73,19 @@ status_t interrupt_attach (int32_t cpuid, interrupt_id_t id,
     lock_acquire (& queue -> lock);
     queue_add (queue, isr);
 
+    check (not_alone, ! bypass_demux ||
+        (bypass_demux && queue -> status == 1), DNA_ERROR);
+
     if (queue -> status == 1)
     {
-      cpu_trap_attach_isr (cpuid, id, mode, interrupt_demultiplexer);
+      if (bypass_demux)
+      {
+        cpu_trap_attach_isr (cpuid, id, mode, handler);
+      }
+      else
+      {
+        cpu_trap_attach_isr (cpuid, id, mode, interrupt_demultiplexer);
+      }
 
       if (cpuid == cpu_mp_id ())
       {
@@ -90,6 +101,16 @@ status_t interrupt_attach (int32_t cpuid, interrupt_id_t id,
     cpu_trap_restore(it_status);
 
     return DNA_OK;
+  }
+
+  rescue (not_alone)
+  {
+    queue_extract (queue, isr);
+    lock_release (& queue -> lock);
+    cpu_trap_restore(it_status);
+
+    kernel_free (isr);
+    leave;
   }
 }
 
