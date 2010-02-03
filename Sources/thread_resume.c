@@ -33,7 +33,8 @@ status_t thread_resume (int32_t id)
  *
  * RESULT
  * * DNA_ERROR if the argument thread is NULL.
- * * DNA_OK if the operation succeeded.
+ * * DNA_OK if the operation succeeded and the thread has been rescheduled.
+ * * DNA_NO_ERROR if the operation succeeded and the thread has been enqueued.
  *
  * SOURCE
  */
@@ -87,7 +88,7 @@ status_t thread_resume (int32_t id)
      */
 
     cpu_trap_restore (it_status);
-    return status;
+    return status == DNA_INVOKE_SCHEDULER ? DNA_NO_ERROR : DNA_OK;
   }
 
   rescue (bad_status)
