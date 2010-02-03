@@ -37,10 +37,11 @@ typedef enum _status
    * given positive numbers
    */
 
-  DNA_HANDLED_INTERRUPT               = 0x0004,
-  DNA_UNHANDLED_INTERRUPT             = 0x0003,
-  DNA_INVOKE_SCHEDULER                = 0x0002,
-  DNA_ALREADY_AT_ROOT                 = 0x0001,
+  DNA_HANDLED_INTERRUPT               = 0x0005,
+  DNA_UNHANDLED_INTERRUPT             = 0x0004,
+  DNA_INVOKE_SCHEDULER                = 0x0003,
+  DNA_ALREADY_AT_ROOT                 = 0x0002,
+  DNA_NO_ERROR                        = 0x0001,
   DNA_OK                              = 0x0000,
 
   /*
