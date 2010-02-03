@@ -45,7 +45,7 @@ int32_t interrupt_demultiplexer (int32_t itn)
   status_t status;
   int32_t current_cpuid = cpu_mp_id ();
   cpu_t * cpu = & cpu_pool . cpu[current_cpuid];
-  queue_t * queue = & cpu -> isr_list[itn];
+  queue_t * queue = & cpu -> isr[itn];
 
   watch (int32_t)
   {

@@ -56,7 +56,7 @@ status_t interrupt_detach (int32_t cpuid, interrupt_id_t id,
      */
 
     it_status = cpu_trap_mask_and_backup();
-    queue = & cpu_pool . cpu[cpuid] . isr_list[id];
+    queue = & cpu_pool . cpu[cpuid] . isr[id];
     lock_acquire (& queue -> lock);
 
     isr = queue_lookup (queue, interrupt_handler_inspector, handler, NULL);

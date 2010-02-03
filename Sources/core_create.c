@@ -109,7 +109,7 @@ status_t core_create (void)
        * Create the ISR lists
        */
 
-      cpu -> isr_list = kernel_malloc (sizeof (queue_t) *
+      cpu -> isr = kernel_malloc (sizeof (queue_t) *
           cpu_trap_count (), true);
 
       /*
