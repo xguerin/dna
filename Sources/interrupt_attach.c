@@ -115,5 +115,11 @@ status_t interrupt_attach (int32_t cpuid, interrupt_id_t id,
 }
 
 /*
+ * NOTE
+ * The demux bypass flag should only be used with care. The handler should be
+ * the only one on the line, and it no result can be expected by returning
+ * DNA_INVOKE_SCHEDULER, since this is handle by the demuxer. Last but not
+ * least, the CPU status is not updated if the demuxer is bypassed, meaning that
+ * the CPU is still eligble for dispatch.
  ****/
 
