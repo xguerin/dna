@@ -19,6 +19,7 @@
       <argument name="id" type="interrupt_id_t" direction="in"/>
       <argument name="mode" type="uint32_t" direction="in"/>
       <argument name="handler" type="interrupt_handler_t" direction="in"/>
+      <argument name="bypass_demux" type="boolean" direction="in"/>
     </method>
 
     <method name="interrupt_detach" return_type="status_t">
@@ -90,6 +91,7 @@
       <argument name="handler" type="thread_handler_t" direction="in"/>
       <argument name="arguments" type="void" direction="in"/>
       <argument name="name" type="string" direction="in"/>
+      <argument name="group" type="int32_t" direction="in"/>
       <argument name="affinity" type="int32_t" direction="in"/>
       <argument name="stack_base" type="access" direction="in"/>
       <argument name="stack_size" type="int32_t" direction="in"/>
