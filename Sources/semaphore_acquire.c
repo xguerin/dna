@@ -49,7 +49,7 @@ status_t semaphore_acquire (int32_t id, int32_t tokens,
  */
 
 {
-  bool has_alarm = false;
+  bool has_alarm = false, can_interrupt = false;
   thread_t self = NULL, thread = NULL;
   semaphore_t sem = NULL;
   semaphore_id_t sid = { .raw = id };
@@ -80,6 +80,12 @@ status_t semaphore_acquire (int32_t id, int32_t tokens,
     }
 
     ensure (! has_alarm || (has_alarm && timeout >= 0), DNA_BAD_ARGUMENT);
+
+    /*
+     * Check the flags to discover if the semaphore can be interrupted.
+     */
+
+    can_interrupt = ((flags & DNA_CAN_INTERRUPT) != 0);
 
     /*
      * Disable the interrupts, and get the current
@@ -147,7 +153,15 @@ status_t semaphore_acquire (int32_t id, int32_t tokens,
 
       lock_acquire (& self -> lock);
 
-      self -> resource_queue = & sem -> waiting_queue;
+      if (can_interrupt || has_alarm)
+      {
+        self -> resource_queue = & sem -> waiting_queue;
+      }
+      else
+      {
+        self -> resource_queue = NULL;
+      }
+
       self -> info . sem_tokens = -1 * rem_tokens;
       self -> info . status = DNA_THREAD_WAITING;
       self -> info . resource = DNA_RESOURCE_SEMAPHORE;

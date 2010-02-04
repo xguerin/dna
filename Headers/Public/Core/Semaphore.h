@@ -24,6 +24,7 @@
 #define DNA_NO_RESCHEDULE       0x00000001
 #define DNA_RELATIVE_TIMEOUT    0x00000002
 #define DNA_ABSOLUTE_TIMEOUT    0x00000004
+#define DNA_CAN_INTERRUPT       0x00000008
 
 #include <Core/Alarm.h>
 #include <DnaTools/DnaTools.h>
