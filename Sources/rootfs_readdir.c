@@ -41,7 +41,7 @@ status_t rootfs_readdir (void * ns, void * node, void * data,
     {
       pos = *offset;
       entry = queue_lookup (& inode -> entry_list,
-          rootfs_entry_index_inspector, (void *) & pos, NULL);
+          rootfs_entry_index_inspector, & pos);
 
       if (entry == NULL)
       {

@@ -18,11 +18,10 @@
 #include <Private/RootFileSystem.h>
 #include <DnaTools/DnaTools.h>
 
-bool rootfs_entry_name_inspector (void * entry,
-    void * entry_name, void * dummy)
+bool rootfs_entry_name_inspector (void * entry, va_list list)
 {
   rootfs_entry_t e = entry;
-  char * name = entry_name;
+  char * name = va_arg (list, char *);
 
   watch (bool)
   {

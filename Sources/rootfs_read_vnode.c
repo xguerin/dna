@@ -23,8 +23,7 @@ status_t rootfs_read_vnode (void * ns, int64_t vnid, void ** data)
   rootfs_t rootfs = ns;
   rootfs_inode_t inode = NULL;
 
-  inode = queue_lookup (& rootfs -> inode_list,
-      rootfs_inode_inspector, (void *) & vnid, NULL);
+  inode = queue_lookup (& rootfs -> inode_list, rootfs_inode_inspector,vnid);
 
   *data = inode;
   return DNA_OK;

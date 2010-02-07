@@ -31,7 +31,7 @@ status_t rootfs_walk (void * ns, void * base, char * restrict path,
     ensure (ns != NULL && base != NULL, DNA_ERROR);
 
     entry = queue_lookup (& base_inode -> entry_list,
-        rootfs_entry_name_inspector, (void *) path, NULL);
+        rootfs_entry_name_inspector, path);
     ensure (entry != NULL, DNA_NO_ENTRY);
 
     vnid = entry -> id;
