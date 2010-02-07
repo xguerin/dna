@@ -36,7 +36,7 @@
  * SOURCE
  */
 
-typedef bool (* queue_inspector_t)(void * item, void * a0, void * a1); 
+typedef bool (* queue_inspector_t)(void * item, va_list list); 
 
 /*
  ****/
@@ -95,10 +95,10 @@ extern status_t queue_extract (queue_t * queue, void * data);
 extern status_t queue_pushback (queue_t * queue, void * data);
 
 extern void * queue_lookup (queue_t * queue,
-    queue_inspector_t inspector, void * a0, void * a1);
+    queue_inspector_t inspector, ...);
 
 extern void queue_walk (queue_t * queue,
-    queue_inspector_t inspector, void * a0, void * a1);
+    queue_inspector_t inspector, ...);
 
 extern void queue_insert (queue_t * queue,
     queue_comparator_t comparator, void * data);

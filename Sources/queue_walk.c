@@ -15,17 +15,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdbool.h>
 #include <DnaTools/DnaTools.h>
 
-void queue_walk (queue_t * queue, queue_inspector_t inspector,
-    void * a0, void * a1)
+void queue_walk (queue_t * queue, queue_inspector_t inspector, ...)
 {
+  bool result;
+  va_list list, list_copy;
   queue_link_t * item = NULL, * old_item = NULL;
 
-  if (queue -> status != 0) {
+  va_start (list, inspector);
+
+  if (queue -> status != 0)
+  {
     item = queue -> head;
-    while (item != NULL) {
-      if (inspector (item, a0, a1)) {
+    while (item != NULL)
+    {
+      result = false;
+
+      va_copy (list_copy, list);
+      result = inspector (item, list_copy);
+      va_end (list_copy);
+
+      if (result)
+      {
         old_item = item;
         item = item -> next;
         queue_extract (queue, old_item);
@@ -33,4 +46,6 @@ void queue_walk (queue_t * queue, queue_inspector_t inspector,
       else item = item -> next;
     }
   }
+
+  va_end (list);
 }
