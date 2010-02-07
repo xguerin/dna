@@ -34,7 +34,9 @@ status_t thread_suspend (int32_t id)
  * * id : a thread id.
  *
  * RESULT
- * * DNA_ERROR if the argument lock is invalid.
+ * * DNA_BAD_ARGUMENT if id is not a valid ID.
+ * * DNA_INVALID_THREAD_ID if id does not point to a valid thread.
+ * * DNA_ERROR if the thread's status is ne valid.
  * * DNA_OK if the operation succeeded.
  *
  * SOURCE
@@ -157,7 +159,8 @@ status_t thread_suspend (int32_t id)
             log (VERBOSE_LEVEL, "Local SLEEP suspend %d.", thread -> id);
 
             /*
-             * TODO : should we cancel the alarm ?
+             * We don't cancel the alarm here, thread_snooze uses
+             * alarm_destroy to check wether the alarm has fired or not.
              */
 
             thread -> info . status = DNA_THREAD_SUSPENDED;
