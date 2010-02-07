@@ -33,7 +33,7 @@ status_t devfs_walk (void * ns, void * base, char * restrict path,
     log (VERBOSE_LEVEL, "path = %s", path);
 
     entry = queue_lookup (& base_inode -> entry_list,
-        devfs_entry_name_inspector, (void *) path, NULL);
+        devfs_entry_name_inspector, path);
     ensure (entry != NULL, DNA_NO_ENTRY);
 
     log (VERBOSE_LEVEL, "inode found");

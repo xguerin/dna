@@ -18,17 +18,15 @@
 #include <Private/DeviceFileSystem.h>
 #include <DnaTools/DnaTools.h>
 
-bool devfs_inode_inspector (void * inode, void * iid, void * dummy)
+bool devfs_inode_inspector (void * inode, va_list list)
 {
   devfs_inode_t i = inode;
-  int64_t  * id = iid;
+  int64_t id = va_arg (list, int64_t);
 
   watch (bool)
   {
     ensure (i != NULL, false);
-    ensure (iid != NULL, false);
-
-    return i -> id == *id;
+    return i -> id == id;
   }
 }
 

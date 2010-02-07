@@ -18,9 +18,10 @@
 #include <Private/DeviceFileSystem.h>
 #include <DnaTools/DnaTools.h>
 
-bool devfs_entry_index_inspector (void * entry, void * entry_index, void * dummy) {
+bool devfs_entry_index_inspector (void * entry, va_list list)
+{
   devfs_entry_t e = entry;
-  int64_t * index = entry_index;
+  int64_t * index = va_arg (list, int64_t *);
 
   watch (bool)
   {

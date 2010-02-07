@@ -18,6 +18,7 @@
 #ifndef DEVFS_H
 #define DEVFS_H
 
+#include <stdarg.h>
 #include <DnaTools/DnaTools.h>
 #include <VirtualFileSystem/VirtualFileSystem.h>
 
@@ -100,9 +101,9 @@ extern status_t devfs_insert_path (devfs_t fs, devfs_inode_t inode,
  * Inspectors.
  */
 
-extern bool devfs_entry_name_inspector (void * entry, void * entry_name, void * dummy);
-extern bool devfs_entry_index_inspector (void * entry, void * entry_index, void * dummy);
-extern bool devfs_inode_inspector (void * inode, void * iid, void * dummy);
+extern bool devfs_entry_name_inspector (void * entry, va_list list);
+extern bool devfs_entry_index_inspector (void * entry, va_list list);
+extern bool devfs_inode_inspector (void * inode, va_list list);
 
 #endif
 

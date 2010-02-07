@@ -24,8 +24,7 @@ status_t devfs_read_vnode (void * ns, int64_t vnid, void ** data) {
 
   watch (status_t)
   {
-    inode = queue_lookup (& devfs -> inode_list,
-        devfs_inode_inspector, (void *) & vnid, NULL);
+    inode = queue_lookup (& devfs -> inode_list, devfs_inode_inspector, vnid);
     ensure (inode != NULL, DNA_NO_VNODE);
 
     *data = inode;

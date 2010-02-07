@@ -37,7 +37,7 @@ status_t devfs_insert_path (devfs_t fs, devfs_inode_t inode,
         token, path, inode -> name);
 
     entry = queue_lookup (& inode -> entry_list,
-        devfs_entry_name_inspector, (void *) token, NULL);
+        devfs_entry_name_inspector, token);
 
     if (entry == NULL)
     {

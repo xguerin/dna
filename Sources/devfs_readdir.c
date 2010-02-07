@@ -42,7 +42,7 @@ status_t devfs_readdir (void * ns, void * node, void * data,
     {
       pos = * offset;
       entry = queue_lookup (& inode -> entry_list,
-          devfs_entry_index_inspector, (void *) & pos, NULL);
+          devfs_entry_index_inspector, & pos);
 
       if (entry == NULL)
       {
