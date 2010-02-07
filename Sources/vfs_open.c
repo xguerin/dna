@@ -142,7 +142,7 @@ status_t vfs_open (char * restrict path, int32_t mode,
     lock_acquire (& vnode_manager . lock);
 
     vnode = queue_lookup (& vnode_manager . vnode_list,
-        vnode_id_inspector, (void *) & vnid, (void *) & volume -> id);
+        vnode_id_inspector, vnid, volume -> id);
 
     lock_release (& vnode_manager . lock);
     cpu_trap_restore (it_status);

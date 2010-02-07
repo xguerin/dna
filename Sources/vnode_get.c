@@ -58,7 +58,7 @@ status_t vnode_get (int32_t vid, int64_t vnid, void ** data)
     lock_acquire (& vnode_manager . vnode_list . lock);
 
     vnode = queue_lookup (& vnode_manager . vnode_list,
-        vnode_id_inspector, (void *) & vnid, (void *) & vid);
+        vnode_id_inspector, vnid, vid);
 
     lock_release (& vnode_manager . vnode_list . lock);
     cpu_trap_restore(it_status);
@@ -69,7 +69,7 @@ status_t vnode_get (int32_t vid, int64_t vnid, void ** data)
       lock_acquire (& volume_manager . volume_list . lock);
 
       volume = queue_lookup (& volume_manager . volume_list,
-          volume_id_inspector, (void *) & vid, NULL);
+          volume_id_inspector, vid);
 
       lock_release (& volume_manager . volume_list . lock);
       cpu_trap_restore(it_status);

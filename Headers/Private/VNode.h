@@ -21,6 +21,7 @@
 #ifndef DNA_VFS_VNODE_H
 #define DNA_VFS_VNODE_H
 
+#include <stdarg.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <Private/Volume.h>
@@ -78,7 +79,7 @@ extern status_t vnode_walk (char * restrict path, volume_t * p_volume,
 extern status_t vnode_get (int32_t nsid, int64_t vnid, void ** data);
 extern status_t vnode_put (int32_t nsid, int64_t vnid);
 
-extern bool vnode_id_inspector (void * node, void * p_vid, void * p_vnid);
-extern bool vnode_volume_inspector (void * node, void * p_vid, void * p_vnid);
+extern bool vnode_id_inspector (void * node, va_list list);
+extern bool vnode_volume_inspector (void * node, va_list list);
 
 #endif

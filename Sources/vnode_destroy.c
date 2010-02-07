@@ -54,7 +54,7 @@ status_t vnode_destroy (int32_t vid, int64_t vnid)
     lock_acquire (& vnode_manager . vnode_list . lock);
 
     vnode = queue_lookup (& vnode_manager . vnode_list,
-        vnode_id_inspector, (void *) & vnid, (void *) & vid);
+        vnode_id_inspector, vnid, vid);
     check (invalid_vnode, vnode != NULL, DNA_NO_VNODE);
 
     vnode -> usage_counter -= 1;

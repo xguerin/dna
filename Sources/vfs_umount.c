@@ -62,7 +62,7 @@ status_t vfs_umount (char * restrict target)
     lock_acquire (& volume_manager . volume_list . lock);
 
     volume = queue_lookup (& volume_manager . volume_list,
-        volume_host_inspector, (void *) host_volume, (void *) & host_vnid);
+        volume_host_inspector, host_volume, host_vnid);
 
     lock_release (& volume_manager . volume_list . lock);
     cpu_trap_restore (it_status);
@@ -77,7 +77,7 @@ status_t vfs_umount (char * restrict target)
     lock_acquire (& vnode_manager . vnode_list . lock);
 
     vnode = queue_lookup (& vnode_manager . vnode_list,
-        vnode_volume_inspector, (void *) volume, NULL);
+        vnode_volume_inspector, volume);
 
     lock_release (& vnode_manager . vnode_list . lock);
     cpu_trap_restore (it_status);

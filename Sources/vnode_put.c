@@ -58,8 +58,8 @@ status_t vnode_put (int32_t vid, int64_t vnid)
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& vnode_manager . vnode_list . lock);
 
-    vnode = queue_lookup (& vnode_manager . vnode_list, vnode_id_inspector,
-        (void *) & vnid, (void *) & vid);
+    vnode = queue_lookup (& vnode_manager . vnode_list,
+        vnode_id_inspector, vnid, vid);
 
     check (invalid_vnode, vnode != NULL, DNA_NO_VNODE);
 

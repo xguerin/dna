@@ -82,7 +82,7 @@ status_t vfs_mount (char * restrict source, char * restrict target,
     lock_acquire (& volume_manager . volume_list . lock);
 
     volume = queue_lookup (& volume_manager . volume_list,
-        volume_host_inspector, (void *) host_volume, (void *) & host_vnid);
+        volume_host_inspector, host_volume, host_vnid);
 
     lock_release (& volume_manager . volume_list . lock);
     cpu_trap_restore (it_status);

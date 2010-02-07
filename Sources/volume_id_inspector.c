@@ -25,7 +25,7 @@
  * SYNOPSIS
  */
 
-bool volume_id_inspector (void * ns, void * p_id, void * dummy)
+bool volume_id_inspector (void * ns, va_list list)
 
 /*
  * ARGUMENTS
@@ -36,21 +36,19 @@ bool volume_id_inspector (void * ns, void * p_id, void * dummy)
  * Compare id and ns -> name.
  *
  * RESULT
- * Return TRUE if the strings match, FALSE otherwise.
+ * Return TRUE if the ID match, FALSE otherwise.
  *
  * SOURCE
  */
 
 {
   volume_t nspace = ns;
-  int32_t * nid = p_id;
+  int32_t nid = va_arg (list, int32_t);
 
   watch (bool)
   {
     ensure (nspace != NULL, false);
-    ensure (nid != NULL, false);
-
-    return nspace -> id == *nid;
+    return nspace -> id == nid;
   }
 }
 

@@ -68,7 +68,7 @@ status_t vnode_walk (char * restrict path, volume_t * p_volume,
     lock_acquire (& volume_manager . volume_list . lock);
 
     new_volume = queue_lookup (& volume_manager . volume_list,
-        volume_host_inspector, (void *) volume, (void *) & vnid);
+        volume_host_inspector, volume, vnid);
 
     lock_release (& volume_manager . volume_list . lock);
     cpu_trap_restore (it_status);
@@ -128,7 +128,7 @@ status_t vnode_walk (char * restrict path, volume_t * p_volume,
         lock_acquire (& volume_manager . volume_list . lock);
 
         new_volume = queue_lookup (& volume_manager . volume_list,
-            volume_host_inspector, (void *) volume, (void *) & vnid);
+            volume_host_inspector, volume, vnid);
 
         lock_release (& volume_manager . volume_list . lock);
         cpu_trap_restore (it_status);

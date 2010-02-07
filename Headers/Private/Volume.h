@@ -21,6 +21,7 @@
 #ifndef DNA_VFS_VOLUME_H
 #define DNA_VFS_VOLUME_H
 
+#include <stdarg.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <Core/Core.h>
@@ -76,8 +77,8 @@ extern status_t volume_create (volume_t host_volume, int64_t host_vnid,
     filesystem_cmd_t * cmd, volume_t * p_volume);
 extern status_t volume_destroy (volume_t volume);
 
-extern bool volume_id_inspector (void * item, void * p_vid, void * dummy);
-extern bool volume_host_inspector (void * item, void * p_vid, void * p_vnid);
+extern bool volume_id_inspector (void * item, va_list list);
+extern bool volume_host_inspector (void * item, va_list list);
 
 #endif
 

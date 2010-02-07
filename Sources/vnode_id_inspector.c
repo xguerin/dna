@@ -25,7 +25,7 @@
  * SYNOPSIS
  */
 
-bool vnode_id_inspector (void * node, void * p_vnid, void * p_vid)
+bool vnode_id_inspector (void * node, va_list list)
 
 /*
  * ARGUMENTS
@@ -43,16 +43,13 @@ bool vnode_id_inspector (void * node, void * p_vnid, void * p_vid)
 
 {
   vnode_t vnode = node;
-  int64_t * vnid = p_vnid;
-  int32_t * vid = p_vid;
+  int64_t vnid = va_arg (list, int64_t);
+  int32_t vid = va_arg (list, int32_t);
 
   watch (bool)
   {
     ensure (vnode != NULL, false);
-    ensure (vnid != NULL, false);
-    ensure (vid != NULL, false);
-
-    return vnode -> id == *vnid && vnode -> volume -> id == *vid;
+    return vnode -> id == vnid && vnode -> volume -> id == vid;
   }
 }
 

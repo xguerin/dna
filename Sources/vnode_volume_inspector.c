@@ -25,7 +25,7 @@
  * SYNOPSIS
  */
 
-bool vnode_volume_inspector (void * node, void * p_volume, void * dummy)
+bool vnode_volume_inspector (void * node, va_list list)
 
 /*
  * ARGUMENTS
@@ -36,14 +36,14 @@ bool vnode_volume_inspector (void * node, void * p_volume, void * dummy)
  * Compare *p_volume and vnode -> volume.
  *
  * RESULT
- * Return TRUE if the strings match, FALSE otherwise.
+ * Return TRUE if the volumes match, FALSE otherwise.
  *
  * SOURCE
  */
 
 {
   vnode_t vnode = node;
-  volume_t volume = p_volume;
+  volume_t volume = va_arg (list, volume_t);
 
   watch (bool)
   {

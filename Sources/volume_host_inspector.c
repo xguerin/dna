@@ -25,7 +25,7 @@
  * SYNOPSIS
  */
 
-bool volume_host_inspector (void * item, void * p_host, void * p_vnid) 
+bool volume_host_inspector (void * item, va_list list) 
 
 /*
  * ARGUMENTS
@@ -37,15 +37,13 @@ bool volume_host_inspector (void * item, void * p_host, void * p_vnid)
 
 {
   volume_t volume = item;
-  volume_t host = p_host;
-  int64_t * vnid = p_vnid; 
+  volume_t host = va_arg (list, volume_t);
+  int64_t vnid = va_arg (list, int64_t); 
 
   watch (bool)
   {
     ensure (volume != NULL, false);
-    ensure (p_vnid != NULL, false);
-
-    return volume -> host_volume == host && volume -> host_vnid == *vnid;
+    return volume -> host_volume == host && volume -> host_vnid == vnid;
   }
 }
 
