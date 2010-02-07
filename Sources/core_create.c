@@ -170,7 +170,7 @@ status_t core_create (void)
 
       if (idle_thread != NULL)
       {
-        thread_destroy (idle_thread);
+        thread_destroy (idle_thread -> id . raw);
 
         cpu_pool . cpu[cpu_i] . idle_thread = NULL;
         cpu_pool . cpu[cpu_i] . current_thread = NULL;
