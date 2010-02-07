@@ -21,6 +21,7 @@
 #ifndef DNA_CORE_INTERRUPT_PRIVATE_H
 #define DNA_CORE_INTERRUPT_PRIVATE_H
 
+#include <stdarg.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <Core/Core.h>
@@ -50,8 +51,7 @@ typedef struct _isr
  ****/
 
 extern int32_t interrupt_demultiplexer (int32_t itn);
-extern bool interrupt_handler_inspector (void * isr,
-    void * handler, void * dummy);
+extern bool interrupt_handler_inspector (void * isr, va_list list);
 
 #endif
 

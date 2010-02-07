@@ -25,7 +25,7 @@
  * SYNOPSIS
  */
 
-bool interrupt_handler_inspector (void * isr, void * handler, void * dummy)
+bool interrupt_handler_inspector (void * isr, va_list list)
 
 /*
  * ARGUMENTS
@@ -43,6 +43,7 @@ bool interrupt_handler_inspector (void * isr, void * handler, void * dummy)
 
 {
   isr_t service = isr;
+  interrupt_handler_t handler = va_arg (list, interrupt_handler_t);
 
   watch (bool)
   {
