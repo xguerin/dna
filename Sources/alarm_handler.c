@@ -60,7 +60,7 @@ status_t alarm_handler (void)
      * Check if this is not a false alarm
      */
 
-    if (current_alarm -> deadline > current_time + DNA_TIMER_JIFFY)
+    if (current_alarm -> deadline > current_time + DNA_TIMER_DELAY)
     {
       quantum = current_alarm -> deadline - current_time;
       cpu_timer_set (cpu -> id, quantum);
@@ -98,7 +98,7 @@ status_t alarm_handler (void)
     {
       quantum = next_alarm -> deadline - current_time;
 
-      if (quantum <= DNA_TIMER_JIFFY)
+      if (quantum <= DNA_TIMER_DELAY)
       {
         log (VERBOSE_LEVEL, "low quantum (%d), alarm (%d:%d) from thread 0x%x",
             (int32_t) quantum, next_alarm -> id . s . value,

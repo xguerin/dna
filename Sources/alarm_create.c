@@ -45,21 +45,14 @@ status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
 
 {
   cpu_t * cpu = NULL;
-  bigtime_t current_time = 0;
   int32_t current_cpuid = 0, index = 0;
   interrupt_status_t it_status;
   alarm_t new_alarm = NULL, old_alarm = NULL;
+  bigtime_t start_time = 0, updated_time = 0, updated_quantum = 0;
   
   watch (status_t)
   {
     ensure (quantum != 0, DNA_BAD_ARGUMENT);
-
-    /*
-     * Allocate the new alarm.
-     */
-
-    new_alarm = kernel_malloc (sizeof (struct _alarm), true);
-    ensure (new_alarm != NULL, DNA_OUT_OF_MEM);
 
     /*
      * Deactivate interrupts and get current information.
@@ -68,6 +61,16 @@ status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
     it_status = cpu_trap_mask_and_backup();
     current_cpuid = cpu_mp_id ();
     cpu = & cpu_pool . cpu[current_cpuid];
+    cpu_timer_get (current_cpuid, & start_time);
+
+    /*
+     * Allocate the new alarm. We do this after deactivating the
+     * interrupts in order to get as close as possible to the
+     * the moment alarm_create was called.
+     */
+
+    new_alarm = kernel_malloc (sizeof (struct _alarm), true);
+    ensure (new_alarm != NULL, DNA_OUT_OF_MEM);
 
     /*
      * Set various information.
@@ -107,23 +110,21 @@ status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
      * alarm mode passed as parameter.
      */
 
-    cpu_timer_get (current_cpuid, & current_time);
-
     switch (mode)
     {
       case DNA_PERIODIC_ALARM :
       case DNA_ONE_SHOT_RELATIVE_ALARM :
         {
           new_alarm -> quantum = quantum;
-          new_alarm -> deadline = quantum + current_time;
+          new_alarm -> deadline = quantum + start_time;
           break;
         }
 
       case DNA_ONE_SHOT_ABSOLUTE_ALARM :
         {
-          check (error, quantum > current_time, DNA_BAD_ARGUMENT);
+          check (error, quantum > start_time, DNA_BAD_ARGUMENT);
 
-          new_alarm -> quantum = quantum - current_time;
+          new_alarm -> quantum = quantum - start_time;
           new_alarm -> deadline = quantum;
           break;
         }
@@ -134,45 +135,64 @@ status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
      */
 
     lock_acquire (& cpu -> lock);
+    old_alarm = cpu -> current_alarm;
 
-    if (cpu -> current_alarm == NULL)
+    if (cpu -> current_alarm == NULL ||
+        old_alarm -> deadline > (new_alarm -> deadline + DNA_TIMER_DELAY))
     {
       log (VERBOSE_LEVEL, "Set alarm (%d:%d)", new_alarm -> id . s . value,
           new_alarm -> id . s . index);
 
+      /*
+       * Check if we are still in the game, although
+       * we spent time preparing the alarm. It should fail
+       * on a 100Mhz RISC processos for an alarm < 20 usec.
+       */
+
+      cpu_timer_get (current_cpuid, & updated_time);
+      updated_quantum = new_alarm -> quantum - (updated_time - start_time);
+      check (short_quantum, updated_quantum <= 0, DNA_ERROR);
+
+      log (INFO_LEVEL, "%lld", updated_time - start_time);
+
+      /*
+       * Everything looks OK, prepare the alarm.
+       */
+
       cpu -> current_alarm = new_alarm;
-      cpu_timer_set (current_cpuid, new_alarm -> quantum);
+      cpu_timer_set (current_cpuid, updated_quantum);
+
+      /*
+       * Re-insert the old alarm if needed.
+       */
+
+      if (old_alarm != NULL)
+      {
+        queue_insert (& cpu -> alarm_queue, alarm_comparator, old_alarm);
+      }
     }
     else
     {
-      old_alarm = cpu -> current_alarm;
+      log (VERBOSE_LEVEL, "Enqueue alarm (%d:%d)",
+          new_alarm -> id . s . value, new_alarm -> id . s . index);
 
-      if (old_alarm -> deadline > new_alarm -> deadline)
-      {
-        log (VERBOSE_LEVEL, "Reset alarm (%d:%d) and set (%d:%d)",
-            cpu -> current_alarm -> id . s . value,
-            cpu -> current_alarm -> id . s . index,
-            new_alarm -> id . s . value, new_alarm -> id . s . index);
-
-        cpu_timer_cancel (current_cpuid);
-        cpu -> current_alarm = new_alarm;
-        queue_insert (& cpu -> alarm_queue, alarm_comparator, old_alarm);
-        cpu_timer_set (current_cpuid, new_alarm -> quantum);
-      }
-      else
-      {
-        log (VERBOSE_LEVEL, "Enqueue alarm (%d:%d)",
-            new_alarm -> id . s . value, new_alarm -> id . s . index);
-
-        queue_insert (& cpu -> alarm_queue, alarm_comparator, new_alarm);
-      }
+      queue_insert (& cpu -> alarm_queue, alarm_comparator, new_alarm);
     }
+
+    /*
+     * Unlock everything and return the alarm.
+     */
 
     lock_release (& cpu -> lock);
     cpu_trap_restore(it_status);
 
     *aid = new_alarm -> id . raw;
     return DNA_OK;
+  }
+
+  rescue (short_quantum)
+  {
+    lock_release (& cpu -> lock);
   }
 
   rescue (error)

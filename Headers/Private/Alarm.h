@@ -26,7 +26,17 @@
 #include <DnaTools/DnaTools.h>
 #include <Core/Core.h>
 
-#define DNA_TIMER_JIFFY   1000
+/****d* time/DNA_TIMER_DELAY
+ * SUMMARY
+ * Arbitrary alarm processing delay. Expressed in nanoseconds.
+ *
+ * SOURCE
+ */
+
+#define DNA_TIMER_DELAY 10000
+
+/*
+ ****/
 
 /****t* time/alarm_callback_t
  * SUMMARY
