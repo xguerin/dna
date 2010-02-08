@@ -151,7 +151,7 @@ status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
 
       cpu_timer_get (current_cpuid, & updated_time);
       updated_quantum = new_alarm -> quantum - (updated_time - start_time);
-      check (short_quantum, updated_quantum <= 0, DNA_ERROR);
+      check (short_quantum, updated_quantum > 0, DNA_ERROR);
 
       log (INFO_LEVEL, "%lld", updated_time - start_time);
 

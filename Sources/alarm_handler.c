@@ -36,7 +36,7 @@ status_t alarm_handler (void)
   alarm_t current_alarm = NULL, next_alarm = NULL;
   status_t status = DNA_OK;
   int32_t current_cpuid = cpu_mp_id ();
-  bigtime_t current_time = 0, quantum = 0;
+  bigtime_t start_time = 0, quantum = 0, updated_time;
   bool reschedule = false;
   bool process_next_alarm = true, delete_alarm = false;
   cpu_t * cpu = & cpu_pool . cpu[current_cpuid];
@@ -54,15 +54,16 @@ status_t alarm_handler (void)
      * Get the present time
      */
 
-    cpu_timer_get (cpu -> id, & current_time);
+    cpu_timer_get (cpu -> id, & start_time);
+    log (INFO_LEVEL, "start = %lld", start_time);
 
     /*
      * Check if this is not a false alarm
      */
 
-    if (current_alarm -> deadline > current_time + DNA_TIMER_DELAY)
+    if (current_alarm -> deadline > start_time + DNA_TIMER_DELAY)
     {
-      quantum = current_alarm -> deadline - current_time;
+      quantum = current_alarm -> deadline - start_time;
       cpu_timer_set (cpu -> id, quantum);
       
       lock_release (& cpu -> lock);
@@ -79,7 +80,7 @@ status_t alarm_handler (void)
 
     if ((current_alarm -> mode & DNA_PERIODIC_ALARM) != 0)
     {
-      current_alarm -> deadline = current_alarm -> quantum +  current_time;
+      current_alarm -> deadline = current_alarm -> quantum + start_time;
       queue_insert (& cpu -> alarm_queue, alarm_comparator, current_alarm);
     }
     else
@@ -96,7 +97,8 @@ status_t alarm_handler (void)
 
     if (next_alarm != NULL)
     {
-      quantum = next_alarm -> deadline - current_time;
+      cpu_timer_get (cpu -> id, & updated_time);
+      quantum = next_alarm -> deadline - updated_time;
 
       if (quantum <= DNA_TIMER_DELAY)
       {
