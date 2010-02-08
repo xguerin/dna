@@ -55,7 +55,6 @@ status_t alarm_handler (void)
      */
 
     cpu_timer_get (cpu -> id, & start_time);
-    log (INFO_LEVEL, "start = %lld", start_time);
 
     /*
      * Check if this is not a false alarm
