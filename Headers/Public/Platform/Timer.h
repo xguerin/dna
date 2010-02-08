@@ -31,6 +31,7 @@ typedef struct _soclib_timer_port
 }
 * soclib_timer_port_t;
 
+extern int32_t PLATFORM_TIMER_INTN;
 extern soclib_timer_port_t PLATFORM_TIMER_BASE;
 
 #endif
