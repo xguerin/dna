@@ -16,12 +16,14 @@ typedef uint32_t interrupt_status_t;
 typedef int32_t (* exception_handler_t) (void);
 typedef int32_t (* interrupt_handler_t) (int32_t itn);
 
-#define cpu_n_it 2
+extern interrupt_handler_t * cpu_handler_table[8];
 
-extern interrupt_handler_t handler_table[cpu_n_it];
+extern int32_t cpu_trap_count (void);
 
-extern void cpu_trap_attach_esr (exception_id_t id, exception_handler_t isr);
-extern void cpu_trap_attach_isr (interrupt_id_t id, uint32_t mode, interrupt_handler_t isr);
+extern void cpu_trap_attach_esr (int32_t cpuid, exception_id_t id,
+    exception_handler_t isr);
+extern void cpu_trap_attach_isr (int32_t cpuid, interrupt_id_t id,
+    uint32_t mode, interrupt_handler_t isr);
 
 extern interrupt_status_t cpu_trap_mask_and_backup (void);
 extern void cpu_trap_restore (interrupt_status_t backup);

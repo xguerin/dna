@@ -15,18 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <Private/Timer.h>
 #include <Processor/Processor.h>
 
 extern void system_kickstart (void);
 
 void cpu_start (void)
 {
-  soclib_timer_port_t timer;
-
-  timer = & SOCLIB_TIMER_DEVICES[0] . port[cpu_mp_id ()];
-  cpu_write(UINT32, & (timer -> mode), 1); 
-
   system_kickstart ();
 }
 

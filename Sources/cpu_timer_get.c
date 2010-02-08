@@ -15,23 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#include <Private/Timer.h>
 #include <Processor/Processor.h>
+#include <Platform/Platform.h>
 
-int32_t timer_handler (int32_t itn)
+void cpu_timer_get (int32_t id, bigtime_t * value)
 {
-  int32_t is_irq = 0, current_cpuid = cpu_mp_id ();
-  soclib_timer_port_t timer = & SOCLIB_TIMER_DEVICES[0] . port[current_cpuid];
+  uint32_t local_value = 0;
+  soclib_timer_port_t timer = & PLATFORM_TIMER_BASE[id];
 
-  cpu_read (UINT32, & (timer -> irq_ack), is_irq);
-
-  if (is_irq != 0)
-  {
-    cpu_write(UINT32, & (timer -> irq_ack), 0);
-    cpu_write(UINT32, & (timer -> mode), 1);
-    timer_callback ();
-  }
-
-  return 0;
+  cpu_read (UINT32, & (timer -> value), local_value);
+  *value = (bigtime_t)local_value * PLATFORM_TIMER_RES;
 }
 

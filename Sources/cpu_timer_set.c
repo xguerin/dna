@@ -15,42 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#ifndef CPU_TIMER__PRIVATE_H
-#define CPU_TIMER__PRIVATE_H
+#include <Processor/Processor.h>
+#include <Platform/Platform.h>
 
-#include <stdint.h>
-
-#define SOCLIB_TIMER_RES 10
-
-typedef struct _soclib_timer_port
+void cpu_timer_set (int32_t id, bigtime_t deadline)
 {
-  uint32_t value;
-  uint32_t mode;
-  uint32_t period;
-  uint32_t irq_ack;
+  bigtime_t local_deadline = 0;
+  soclib_timer_port_t timer = & PLATFORM_TIMER_BASE[id];
+
+  local_deadline = deadline / PLATFORM_TIMER_RES;
+
+  cpu_write(UINT32, & (timer -> period), (uint32_t)local_deadline);
+  cpu_write(UINT32, & (timer -> mode), 3);
 }
-* soclib_timer_port_t;
-
-typedef struct _soclib_timer_config
-{
-  uint32_t irq;
-  soclib_timer_port_t port;
-}
-soclib_timer_config_t;
-
-typedef struct _soclib_timer
-{
-  char * name;
-  uint32_t irq;
-  soclib_timer_port_t port;
-}
-soclib_timer_t;
-
-extern uint32_t SOCLIB_TIMER_NDEV;
-extern soclib_timer_config_t SOCLIB_TIMER_DEVICES[];
-
-extern void timer_callback (void);
-extern int32_t timer_handler (int32_t itn);
-
-#endif
 

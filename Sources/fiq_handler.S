@@ -1,6 +1,7 @@
 .section .excep,#alloc,#execinstr
 	.align 4
 	.global fiq_handler
+  .extern cpu_handler_table
 
 fiq_registers:
   .word 0x0 @ R1
@@ -28,10 +29,12 @@ fiq_handler:
   push {r1, r2, r3}
 
 	@ Branch to IRQ handler
-  ldr r2, =handler_table
+  mrc p15,0,r3,c0,c0,5
+  ldr r2, =cpu_handler_table
   ldr r1, [r2, #4]
-  mov r0, #0
-	blx r1
+  ldr r2, [r1, r3]
+  mov r0, #1
+	blx r2
 
 	@ Restore the context
   ldr r0, =fiq_registers

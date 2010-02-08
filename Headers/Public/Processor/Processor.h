@@ -8,6 +8,7 @@
 #include <Processor/Mp.h>
 #include <Processor/Synchronization.h>
 #include <Processor/Trap.h>
+#include <Processor/Timer.h>
 
 #endif
 

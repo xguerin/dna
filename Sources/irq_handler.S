@@ -1,7 +1,7 @@
 .section .excep,#alloc,#execinstr
 	.align 4
 	.global irq_handler
-  .extern handler_table
+  .extern cpu_handler_table
 
 irq_registers:
   .word 0x0 @ R1
@@ -29,10 +29,12 @@ irq_handler:
   push {r1, r2, r3}
 
 	@ Branch to IRQ handler
-  ldr r2, =handler_table
+  mrc p15,0,r3,c0,c0,5
+  ldr r2, =cpu_handler_table
   ldr r1, [r2]
+  ldr r2, [r1, r3]
   mov r0, #0
-	blx r1
+	blx r2
 
 	@ Restore the context
   ldr r0, =irq_registers

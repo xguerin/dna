@@ -4,9 +4,9 @@
 void cpu_cache_invalidate (cpu_cache_t cache_type,
     void * address, int32_t words)
 {
+#if 0 
   register int32_t count = 0;
 
-#if 0 
   switch (cache_type) 
   {
     case CPU_CACHE_INSTRUCTION :

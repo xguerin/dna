@@ -15,33 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#ifndef SOCLIB_IPI_H
-#define SOCLIB_IPI_H
-
-#include <stdint.h>
 #include <Processor/Processor.h>
+#include <Platform/Platform.h>
 
-typedef struct _soclib_ipi_port
+void cpu_timer_cancel (int32_t id)
 {
-  volatile uint32_t command;
-  volatile uint32_t data;
-  volatile uint32_t reserved;
-  volatile uint32_t reset;
+  soclib_timer_port_t timer = & PLATFORM_TIMER_BASE[id];
+  cpu_write(UINT32, & (timer -> mode), 1);
 }
-* soclib_ipi_port_t;
-
-typedef struct _soclib_ipi_config
-{
-  uint32_t irq;
-  soclib_ipi_port_t port;
-}
-soclib_ipi_config_t;
-
-extern uint32_t SOCLIB_IPI_NDEV;
-extern soclib_ipi_config_t SOCLIB_IPI_DEVICES[];
-
-extern int32_t ipi_callback (int32_t command, void * data);
-extern int32_t ipi_handler (int32_t itn);
-
-#endif
 

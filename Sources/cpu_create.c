@@ -15,14 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <Private/Ipi.h>
-#include <Private/Timer.h>
 #include <Processor/Processor.h>
 
 void cpu_create (void)
 {
-  int32_t current_cpuid = cpu_mp_id ();
-  cpu_handler_table[2][current_cpuid] = timer_handler;
-  cpu_handler_table[7][current_cpuid] = ipi_handler;
+
 }
 
