@@ -153,7 +153,7 @@ status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
       updated_quantum = new_alarm -> quantum - (updated_time - start_time);
       check (short_quantum, updated_quantum > 0, DNA_ERROR);
 
-      log (INFO_LEVEL, "%lld", updated_time - start_time);
+      log (VERBOSE_LEVEL, "%lld", updated_time - start_time);
 
       /*
        * Everything looks OK, prepare the alarm.
