@@ -110,6 +110,8 @@ status_t semaphore_release (int32_t id, int32_t tokens, int32_t flags)
 
         smart_to_reschedule = smart_to_reschedule ||
           (status == DNA_INVOKE_SCHEDULER);
+
+        thread = queue_rem (& sem -> waiting_queue);
       }
       else
       {
@@ -118,9 +120,9 @@ status_t semaphore_release (int32_t id, int32_t tokens, int32_t flags)
 
         tokens = 0;
         queue_pushback (& sem -> waiting_queue, thread);
-      }
 
-      thread = queue_rem (& sem -> waiting_queue);
+        break;
+      }
     }
 
     lock_release (& sem -> waiting_queue . lock);
