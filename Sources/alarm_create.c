@@ -151,7 +151,7 @@ status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
 
       cpu_timer_get (current_cpuid, & updated_time);
       updated_quantum = new_alarm -> deadline - updated_time;
-      check (short_quantum, updated_quantum > DNA_TIMER_DELAY, DNA_ERROR);
+      check (short_quantum, updated_quantum > 0, DNA_ERROR);
 
       /*
        * Cancel the old alarm, set the new one, and enqueue the old
