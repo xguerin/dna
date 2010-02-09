@@ -143,6 +143,11 @@ status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
       log (VERBOSE_LEVEL, "Set alarm (%d:%d)", new_alarm -> id . s . value,
           new_alarm -> id . s . index);
 
+      if (old_alarm != NULL)
+      {
+        cpu_timer_cancel (current_cpuid);
+      }
+
       /*
        * Check if we are still in the game, although
        * we spent time preparing the alarm. It should fail
@@ -150,21 +155,11 @@ status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
        */
 
       cpu_timer_get (current_cpuid, & updated_time);
-      updated_quantum = new_alarm -> quantum - (updated_time - start_time);
-      check (short_quantum, updated_quantum > 0, DNA_ERROR);
-
-      log (VERBOSE_LEVEL, "%lld", updated_time - start_time);
-
-      /*
-       * Everything looks OK, prepare the alarm.
-       */
+      updated_quantum = new_alarm -> deadline - updated_time;
+      check (short_quantum, updated_quantum > DNA_TIMER_DELAY, DNA_ERROR);
 
       cpu -> current_alarm = new_alarm;
       cpu_timer_set (current_cpuid, updated_quantum);
-
-      /*
-       * Re-insert the old alarm if needed.
-       */
 
       if (old_alarm != NULL)
       {

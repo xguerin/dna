@@ -79,7 +79,7 @@ status_t alarm_handler (void)
 
     if ((current_alarm -> mode & DNA_PERIODIC_ALARM) != 0)
     {
-      current_alarm -> deadline = current_alarm -> quantum + start_time;
+      current_alarm -> deadline += current_alarm -> quantum;
       queue_insert (& cpu -> alarm_queue, alarm_comparator, current_alarm);
     }
     else
@@ -96,6 +96,14 @@ status_t alarm_handler (void)
 
     if (next_alarm != NULL)
     {
+      /*
+       * We get the new current time in order to adjust the alarm.
+       * We should also substract the time spent in the processor
+       * handler. TODO add a function cpu_trap_latency (). We might
+       * be off by approx. 500 cycles anyway, due to the interrupt
+       * demultiplexer and the platform driver's timer ISR.
+       */
+
       cpu_timer_get (cpu -> id, & updated_time);
       quantum = next_alarm -> deadline - updated_time;
 

@@ -33,7 +33,7 @@
  * SOURCE
  */
 
-#define DNA_TIMER_DELAY 10000
+#define DNA_TIMER_DELAY 1000
 
 /*
  ****/
