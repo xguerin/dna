@@ -4,7 +4,6 @@
 void cpu_cache_invalidate (cpu_cache_t cache_type,
     void * address, int32_t words)
 {
-#if 0 
   register int32_t count = 0;
 
   switch (cache_type) 
@@ -13,9 +12,7 @@ void cpu_cache_invalidate (cpu_cache_t cache_type,
       {
         if (words == CPU_CACHE_ALL)
         {
-          /*
-           * TODO: Not yet supported
-           */
+          __asm__ volatile ("mcr p15, 0, %0, c7, c5, 0" : : "r"(count))
         }
         else
         {
@@ -30,7 +27,7 @@ void cpu_cache_invalidate (cpu_cache_t cache_type,
           for (register int32_t i = 0; i < count; i += 1)
           {
             address += i << CPU_DCACHE_SIZE_LOG2;
-            __asm__ volatile ("cache 0x10, 0(%0)" : : "r"(address));
+            __asm__ volatile ("mcr p15, 0, %0, c7, c5, 1" : : "r"(count))
           }
         }
 
@@ -41,9 +38,7 @@ void cpu_cache_invalidate (cpu_cache_t cache_type,
       {
         if (words == CPU_CACHE_ALL)
         {
-          /*
-           * TODO: Not yet supported
-           */
+          __asm__ volatile ("mcr p15, 0, %0, c7, c6, 0" : : "r"(count))
         }
         else
         {
@@ -58,12 +53,11 @@ void cpu_cache_invalidate (cpu_cache_t cache_type,
           for (register int32_t i = 0; i < count; i += 1)
           {
             address += i << CPU_DCACHE_SIZE_LOG2;
-            __asm__ volatile ("cache 0x11, 0(%0)" : : "r"(address));
+            __asm__ volatile ("mcr p15, 0, %0, c7, c6, 1" : : "r"(address))
           }
         }
 
         break;
       }
   }
-#endif  
 }

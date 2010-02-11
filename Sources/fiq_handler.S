@@ -32,7 +32,7 @@ fiq_handler:
   mrc p15,0,r3,c0,c0,5
   ldr r2, =cpu_handler_table
   ldr r1, [r2, #4]
-  ldr r2, [r1, r3]
+  ldr r2, [r1, r3, lsl #2]
   mov r0, #1
 	blx r2
 
