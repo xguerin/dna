@@ -46,10 +46,12 @@ int32_t interrupt_demultiplexer (int32_t itn)
   int32_t current_cpuid = cpu_mp_id ();
   cpu_t * cpu = & cpu_pool . cpu[current_cpuid];
   queue_t * queue = & cpu -> isr[itn];
+  bigtime_t time;
 
   watch (int32_t)
   {
     ensure (itn < cpu_trap_count (), DNA_BAD_ARGUMENT);
+    cpu_timer_get (current_cpuid, & time);
 
     /*
      * Extract the processor from the cpu list.
