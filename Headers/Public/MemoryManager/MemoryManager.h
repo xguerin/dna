@@ -21,8 +21,7 @@
 #ifndef DNA_MEMORY_PUBLIC_H
 #define DNA_MEMORY_PUBLIC_H
 
-#include <MemoryManager/Kernel.h>
-#include <MemoryManager/User.h>
+#include <MemoryManager/Allocator.h>
 #include <DnaTools/DnaTools.h>
 
 extern component_t memory_component;

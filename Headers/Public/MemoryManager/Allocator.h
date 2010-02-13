@@ -1,4 +1,4 @@
-/****h* memory/kernel
+/****h* memory/allocator
  * SUMMARY
  * Base functions for the kernel allocator.
  ****

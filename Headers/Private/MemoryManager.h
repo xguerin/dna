@@ -22,8 +22,7 @@
 #define DNA_MEMORY_PRIVATE_H
 
 #include <Private/Framework.h>
-#include <Private/Kernel.h>
-#include <Private/User.h>
+#include <Private/Allocator.h>
 #include <MemoryManager/MemoryManager.h>
 
 #endif
