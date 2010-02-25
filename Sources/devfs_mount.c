@@ -26,7 +26,6 @@ status_t devfs_mount (int32_t vid, const char * dev_path, uint32_t flags,
   devfs_inode_t root_inode = NULL;
   devfs_entry_t entry = NULL;
   device_cmd_t * commands = NULL;
-  status_t status_hw, status_sw;
   char ** devices = NULL, * path = NULL;
 
   watch (status_t)
@@ -88,10 +87,8 @@ status_t devfs_mount (int32_t vid, const char * dev_path, uint32_t flags,
 
     for (int32_t i = 0; i < OS_N_DRIVERS; i ++)
     {
-      status_hw = OS_DRIVERS_LIST[i] -> init_hardware ();
-      status_sw = OS_DRIVERS_LIST[i] -> init_driver ();
-
-      if (status_hw == DNA_OK && status_sw == DNA_OK)
+      if (OS_DRIVERS_LIST[i] -> init_hardware () == DNA_OK &&
+          OS_DRIVERS_LIST[i] -> init_driver () == DNA_OK)
       {
         devices = (char **) OS_DRIVERS_LIST[i] -> publish_devices ();
 
