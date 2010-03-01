@@ -19,7 +19,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* Core/scheduler_dispatch
+/****f* core_private/scheduler_dispatch
  * SUMMARY
  * Dispatch a thread.
  *

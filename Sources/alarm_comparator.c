@@ -18,7 +18,7 @@
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* Core/alarm_comparator
+/****f* core_private/alarm_comparator
  * SUMMARY
  * Compare (<) two alarms.
  *

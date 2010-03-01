@@ -1,4 +1,4 @@
-/****h* dna/core
+/****h* dna/core_private
  * SUMMARY
  * The DNA core component.
  ****
@@ -28,8 +28,5 @@
 #include <Private/Scheduler.h>
 #include <Private/Semaphore.h>
 #include <Private/Thread.h>
-
-#include <DnaTools/DnaTools.h>
-#include <Core/Core.h>
 
 #endif

@@ -1,4 +1,4 @@
-/****h* core/interrupt
+/****h* core_private/interrupt_private
  * SUMMARY
  * Interrupt management.
  ****
@@ -28,12 +28,54 @@
 #include <Processor/Processor.h>
 #include <DnaTools/DnaTools.h>
 
+/****d* interrupt_private/DNA_IPI_YIELD
+ * SUMMARY
+ * DNA_IPI_YIELD command constant.
+ *
+ * SOURCE
+ */
+
 #define DNA_IPI_YIELD         0xFFFF
+
+/*
+ ****/
+
+/****d* interrupt_private/DNA_IPI_SUSPEND
+ * SUMMARY
+ * DNA_IPI_SUSPEND command constant.
+ *
+ * SOURCE
+ */
+
 #define DNA_IPI_SUSPEND       0xFFFE
+/*
+ ****/
+
+/****d* interrupt_private/DNA_IPI_TRAP_ENABLE
+ * SUMMARY
+ * DNA_IPI_TRAP_ENABLE command constant.
+ *
+ * SOURCE
+ */
+
 #define DNA_IPI_TRAP_ENABLE   0xFFFD
+
+/*
+ ****/
+
+/****d* interrupt_private/DNA_IPI_TRAP_DISABLE
+ * SUMMARY
+ * DNA_IPI_TRAP_DISABLE command constant.
+ *
+ * SOURCE
+ */
+
 #define DNA_IPI_TRAP_DISABLE  0xFFFC
 
-/****t* interrupt/isr_t
+/*
+ ****/
+
+/****t* interrupt_private/isr_t
  * SUMMARY
  * Describes an interrupt service routine element.
  *

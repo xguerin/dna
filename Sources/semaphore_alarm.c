@@ -18,7 +18,7 @@
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* Core/semaphore_alarm
+/****f* core_private/semaphore_alarm
  * SUMMARY
  * Semaqphore acquire alarm.
  *

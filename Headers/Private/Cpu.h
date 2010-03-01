@@ -1,6 +1,6 @@
-/****h* core/cpu
+/****h* core_private/cpu_private
  * SUMMARY
- * CPU management.
+ * Alarm management.
  ****
  * Copyright (C) 2007 TIMA Laboratory
  *
@@ -18,19 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DNA_CORE_CPU_PRIVATE_H
-#define DNA_CORE_CPU_PRIVATE_H
-
-#include <stdbool.h>
-
-#include <Private/Alarm.h>
-#include <Private/Interrupt.h>
-#include <Private/Thread.h>
-
-#include <Core/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****t* cpu/cpu_status_t
+/****t* cpu_private/cpu_status_t
  * SUMMARY
  * CPU status type.
  *
@@ -48,10 +38,9 @@ cpu_status_t;
 /*
  ****/
 
-/****t* cpu/cpu_t
+/****t* cpu_private/cpu_t
  * SUMMARY
- * CPU type. Contains various information concerning
- * a CPU execution context.
+ * CPU type.
  *
  * SOURCE
  */
@@ -81,7 +70,7 @@ cpu_t;
 /*
  ****/
 
-/****t* cpu/cpu_pool_t
+/****t* cpu_private/cpu_pool_t
  * SUMMARY
  * CPU pool type.
  *

@@ -19,7 +19,7 @@
 #include <stdint.h>
 #include <Private/Core.h>
 
-/****f* CoreManager/thread_idle
+/****f* core_private/thread_idle
  * SUMMARY
  * The idle thread.
  *

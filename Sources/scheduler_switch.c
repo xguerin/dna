@@ -19,7 +19,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* Core/scheduler_switch
+/****f* core_private/scheduler_switch
  * SUMMARY
  * Switches contexts between a thread and the current running thread.
  *
