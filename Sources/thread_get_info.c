@@ -18,7 +18,7 @@
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* Core/thread_get_info
+/****f* thread/thread_get_info
  * SUMMARY
  * Gathers information about a thread.
  *
@@ -33,9 +33,9 @@ status_t thread_get_info (int32_t id, thread_info_t * info)
  * * info : a pointer to a thread_info_t structure.
  *
  * RESULT
- * * DNA_OK if the operation succeeded.
- * * DNA_ERROR if the info argument is NULL.
- * * DNA_INVALID_THREAD_ID if the argument id is invalid.
+ * * DNA_BAD_ARGUMENT: on of the arguments is incorrect
+ * * DNA_INVALID_THREAD_ID: if the argument id is not a valid thread ID
+ * * DNA_OK: the operation succeeded
  *
  * SOURCE
  */

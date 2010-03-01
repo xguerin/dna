@@ -19,7 +19,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* Core/ipi_handler
+/****f* interrupt/ipi_handler
  * SUMMARY
  * Handler for inter-processor interrupts.
  *
@@ -34,7 +34,9 @@ status_t ipi_handler (int32_t command, void * cookie)
  * * cookie : the data of the ipi
  *
  * RESULT
- * DNA_OK.
+ * * DNA_INVOKE_SCHEDULER: success, invoke the scheduler on return
+ * * DNA_ERROR: the command is not supported
+ * * DNA_OK: the operation succeeded
  *
  * SOURCE
  */

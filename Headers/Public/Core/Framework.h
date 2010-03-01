@@ -1,6 +1,6 @@
-/****h* dna/core_private
+/****h* core/framework
  * SUMMARY
- * Private section of the DNA core component.
+ * Core component framework.
  ****
  * Copyright (C) 2007 TIMA Laboratory
  *
@@ -18,15 +18,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DNA_CORE_PRIVATE_H
-#define DNA_CORE_PRIVATE_H
+#ifndef DNA_CORE_FRAMEWORK_PUBLIC_H
+#define DNA_CORE_FRAMEWORK_PUBLIC_H
 
-#include <Private/Alarm.h>
-#include <Private/Cpu.h>
-#include <Private/Framework.h>
-#include <Private/Interrupt.h>
-#include <Private/Scheduler.h>
-#include <Private/Semaphore.h>
-#include <Private/Thread.h>
+#include <DnaTools/DnaTools.h>
+
+extern component_t core_component;
 
 #endif
+

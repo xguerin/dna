@@ -20,7 +20,7 @@
 #include <MemoryManager/MemoryManager.h>
 #include <Processor/Processor.h>
 
-/****f* Core/interrupt_attach
+/****f* interrupt/interrupt_attach
  * SUMMARY
  * Attach a interrupt to an ID.
  *
@@ -32,14 +32,17 @@ status_t interrupt_attach (int32_t cpuid, interrupt_id_t id,
 
 /*
  * ARGUMENTS
+ * * cpuid : the ID of the target processor
  * * id : the ID of the interrupt to attach
  * * mode : the mode of the attach
  * * handler : handler of the interrupt
  * * bypass_demux : handler has to be installed directly
  *
  * RESULT
- * * DNA_OUT_OF_MEM if no more memory is available
- * * DNA_OK if everything went well
+ * * DNA_BAD_ARGUMENT: on of the arguments is not correct
+ * * DNA_OUT_OF_MEM: cannot allocate the necessary memory to create the ISR
+ * * DNA_ERROR: there are more than one ISR and bypass_demux is set
+ * * DNA_OK: the operation succeeded
  *
  * SOURCE
  */
@@ -115,7 +118,7 @@ status_t interrupt_attach (int32_t cpuid, interrupt_id_t id,
 }
 
 /*
- * NOTE
+ * NOTES
  * The demux bypass flag should only be used with care. The handler should be
  * the only one on the line, and it no result can be expected by returning
  * DNA_INVOKE_SCHEDULER, since this is handle by the demuxer. Last but not

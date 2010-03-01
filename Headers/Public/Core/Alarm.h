@@ -1,4 +1,4 @@
-/****h* core/time
+/****h* core/alarm
  * SUMMARY
  * Alarm management.
  ****
@@ -26,7 +26,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****t* time/alarm_mode_t
+/****t* alarm/alarm_mode_t
  * SUMMARY
  * Alarm mode type.
  *
@@ -44,7 +44,7 @@ alarm_mode_t;
 /*
  ****/
 
-/****t* time/alarm_callback_t
+/****t* alarm/alarm_callback_t
  * SUMMARY
  * Alarm callback type.
  *

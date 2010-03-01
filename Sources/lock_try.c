@@ -20,7 +20,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* Core/lock_try
+/****f* lock/lock_try
  * SUMMARY
  * Try to acquire a spinlock
  *
@@ -36,6 +36,10 @@ status_t lock_try (spinlock_t * lock, bool acquire)
  *
  * FUNCTION
  * Try to lock a spin lock using the cpu_test_and_set function from the HAL.
+ *
+ * RETURN
+ * * DNA_WOULD_BLOCK: the lock is locked and acquire is false
+ * * DNA_OK: the lock has been taken
  *
  * SOURCE
  */

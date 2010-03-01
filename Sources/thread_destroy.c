@@ -20,7 +20,7 @@
 #include <MemoryManager/MemoryManager.h>
 #include <Processor/Processor.h>
 
-/****f* Core/thread_destroy
+/****f* thread/thread_destroy
  * SUMMARY
  * Destroy a thread.
  *
@@ -34,6 +34,9 @@ status_t thread_destroy (int32_t id)
  * * id : a thread id.
  *
  * RESULT
+ * * DNA_BAD_ARGUMENT: the id argument is invalid
+ * * DNA_ERROR: the thread is neither suspended nor ended
+ * * DNA_OK: the operation succeeded
  *
  * SOURCE
  */

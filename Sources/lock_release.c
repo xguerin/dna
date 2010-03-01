@@ -19,7 +19,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* Core/lock_release
+/****f* lock/lock_release
  * SUMMARY
  * Unlock a spin lock.
  *

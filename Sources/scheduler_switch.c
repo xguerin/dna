@@ -19,7 +19,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* core_private/scheduler_switch
+/****f* scheduler_private/scheduler_switch
  * SUMMARY
  * Switches contexts between a thread and the current running thread.
  *
@@ -33,6 +33,10 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
  * * thread : a valid ready thread
  * * queue : the waiting queue where the current thread has to be stored
  *
+ * RETURN
+ * * DNA_BAD_ARGUMENT: thread is not valid
+ * * DNA_OK: the operation succeeded
+ *
  * SOURCE
  */
 
@@ -43,59 +47,63 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
   cpu_t * cpu = & cpu_pool . cpu[current_cpuid];
   thread_t self = cpu -> current_thread;
 
-  /*
-   * Compute the correct times if necessary
-   */
-
-  cpu_timer_get (current_cpuid, & current_time);
-  self -> info . kernel_time = current_time;
-  self -> info . kernel_time -= cpu -> lap_date;
-  lock_release (& self -> lock);
-
-  /*
-   * Update the status of the target thread
-   */
-
-  thread -> info . status = DNA_THREAD_RUNNING;
-  thread -> info . cpu_id = current_cpuid;
-  lock_release (& thread -> lock);
-
-  /*
-   * Update the processor's status
-   */
-
-  cpu -> lap_date = current_time;
-  cpu -> current_thread = thread;
-
-  /*
-   * Save the current context
-   */
-
-  cpu_context_save (& self -> context, & __scheduler_switch_end);
-
-  /*
-   * If queue is not NULL, then add the current thread to this queue
-   */
-
-  if (queue != NULL)
+  watch (status_t)
   {
-    queue_add (queue, self);
-    lock_release (& queue -> lock);
+    ensure (thread != NULL, DNA_BAD_ARGUMENT);
+
+    /*
+     * Compute the correct times if necessary
+     */
+
+    cpu_timer_get (current_cpuid, & current_time);
+    self -> info . kernel_time = current_time;
+    self -> info . kernel_time -= cpu -> lap_date;
+    lock_release (& self -> lock);
+
+    /*
+     * Update the status of the target thread
+     */
+
+    thread -> info . status = DNA_THREAD_RUNNING;
+    thread -> info . cpu_id = current_cpuid;
+    lock_release (& thread -> lock);
+
+    /*
+     * Update the processor's status
+     */
+
+    cpu -> lap_date = current_time;
+    cpu -> current_thread = thread;
+
+    /*
+     * Save the current context
+     */
+
+    cpu_context_save (& self -> context, & __scheduler_switch_end);
+
+    /*
+     * If queue is not NULL, then add the current thread to this queue
+     */
+
+    if (queue != NULL)
+    {
+      queue_add (queue, self);
+      lock_release (& queue -> lock);
+    }
+
+    /*
+     * Load the target context
+     */
+
+    cpu_context_load (& thread -> context);
+
+    /*
+     * FIXME: Find a better idea for what follows 
+     */
+
+    __asm__ volatile ("__scheduler_switch_end:");
+    return DNA_OK;
   }
-
-  /*
-   * Load the target context
-   */
-
-  cpu_context_load (& thread -> context);
-
-  /*
-   * FIXME: Find a better idea for what follows 
-   */
-
-  __asm__ volatile ("__scheduler_switch_end:");
-
-  return DNA_OK;
 }
 
 /*

@@ -19,7 +19,7 @@
 #include <MemoryManager/MemoryManager.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* Core/alarm_handler
+/****f* alarm/alarm_handler
  * SUMMARY
  * Time manager used for alarms.
  *
@@ -29,6 +29,11 @@
 status_t alarm_handler (void)
 
 /*
+ * RESULT
+ * * DNA_ERROR: their is no alarm to execute, or it is a false alarm
+ * * DNA_INVOKE_SCHEDULER: success, the scheduler has to be invoked
+ * * DNA_OK: the operation succeeded
+ *
  * SOURCE
  */
 

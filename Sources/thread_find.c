@@ -18,7 +18,7 @@
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* Core/thread_find
+/****f* thread/thread_find
  * SUMMARY
  * Finds a thread by its name.
  *
@@ -33,8 +33,8 @@ status_t thread_find (char * name, int32_t * tid)
  * * tid : a placeholder for the thread's ID
  *
  * RESULT
- * * DNA_OK and a valid thread ID if the operation succeeded
- * * DNA_UNKNOWN_THREAD if no thread correspond to name
+ * * DNA_UNKNOWN_THREAD: no thread correspond to the given name
+ * * DNA_OK: the operation succeeded
  *
  * SOURCE
  */

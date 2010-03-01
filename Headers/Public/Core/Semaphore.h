@@ -1,4 +1,4 @@
-/****h* semaphore/operation
+/****h* core/semaphore
  * SUMMARY
  * Semaphore management.
  ****
@@ -21,13 +21,63 @@
 #ifndef DNA_CORE_SEMAPHORE_PUBLIC_H
 #define DNA_CORE_SEMAPHORE_PUBLIC_H
 
-#define DNA_NO_RESCHEDULE       0x00000001
-#define DNA_RELATIVE_TIMEOUT    0x00000002
-#define DNA_ABSOLUTE_TIMEOUT    0x00000004
-#define DNA_CAN_INTERRUPT       0x00000008
-
 #include <Core/Alarm.h>
 #include <DnaTools/DnaTools.h>
+
+/****t* semaphore/DNA_NO_RESCHEDULE
+ * SUMMARY
+ * DNA_NO_RESCHEDULE mode value.
+ *
+ * SOURCE
+ */
+
+#define DNA_NO_RESCHEDULE       0x00000001
+
+/*
+ ****/
+
+/****t* semaphore/DNA_RELATIVE_TIMEOUT
+ * SUMMARY
+ * DNA_RELATIVE_TIMEOUT mode value.
+ *
+ * SOURCE
+ */
+
+#define DNA_RELATIVE_TIMEOUT    0x00000002
+
+/*
+ ****/
+
+/****t* semaphore/DNA_ABSOLUTE_TIMEOUT
+ * SUMMARY
+ * DNA_ABSOLUTE_TIMEOUT mode value.
+ *
+ * SOURCE
+ */
+
+#define DNA_ABSOLUTE_TIMEOUT    0x00000004
+
+/*
+ ****/
+
+/****t* semaphore/DNA_CAN_INTERRUPT
+ * SUMMARY
+ * DNA_CAN_INTERRUPT mode value.
+ *
+ * SOURCE
+ */
+
+#define DNA_CAN_INTERRUPT       0x00000008
+
+/*
+ ****/
+
+/****t* semaphore/semaphore_info_t
+ * SUMMARY
+ * Semaphore information type.
+ *
+ * SOURCE
+ */
 
 typedef struct _semaphore_info
 {
@@ -36,6 +86,9 @@ typedef struct _semaphore_info
   int32_t latest_holder;
 }
 semaphore_info_t;
+
+/*
+ ****/
 
 extern status_t semaphore_create (char * name, int32_t tokens, int32_t * id);
 extern status_t semaphore_destroy (int32_t id);

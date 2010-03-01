@@ -19,7 +19,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* core_private/scheduler_elect
+/****f* scheduler_private/scheduler_elect
  * SUMMARY
  * Elects a thread.
  *
@@ -33,8 +33,9 @@ status_t scheduler_elect (thread_t * p_thread, bool with_idle)
  * * p_thread : a pointer to a valid thread_t variable
  *
  * RESULT
- * * DNA_OK if a valid thread has been elected
- * * DNA_ERROR othrerwise
+ * * DNA_BAD_ARGUMENT: one of the arguments is invalid
+ * * DNA_NO_AVAILABLE_THREAD: the available thread and with_idle is false
+ * * DNA_OK: the operation succeeded
  *
  * SOURCE
  */
@@ -87,7 +88,6 @@ status_t scheduler_elect (thread_t * p_thread, bool with_idle)
 
     if (with_idle)
     {
-#if 1
       lock_acquire (& cpu_pool . cpu[current_cpuid] . lock);
       lock_release (& scheduler . queue[cpu_mp_count ()] . lock);
 
@@ -99,9 +99,6 @@ status_t scheduler_elect (thread_t * p_thread, bool with_idle)
 
       queue_add (& cpu_pool . queue, & cpu_pool . cpu[current_cpuid]);
       lock_release (& cpu_pool . queue . lock);
-#else
-      lock_release (& scheduler . queue[cpu_mp_count ()] . lock);
-#endif
 
       thread = cpu_pool . cpu[current_cpuid] . idle_thread;
       lock_acquire (& thread -> lock);

@@ -20,7 +20,7 @@
 #include <MemoryManager/MemoryManager.h>
 #include <Processor/Processor.h>
 
-/****f* Core/core_initialize
+/****f* framework_private/core_initialize
  * SUMMARY
  * Initializes the core component.
  *
@@ -32,6 +32,10 @@ status_t core_start (void)
 /*
  * FUNCTION
  * Start the core component.
+ *
+ * RETURN
+ * * DNA_ERROR: no current thread on one of the CPU
+ * * DNA_OK: the operation succeeded
  *
  * SOURCE
  */

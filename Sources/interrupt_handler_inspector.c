@@ -18,7 +18,7 @@
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* core_private/interrupt_handler_inspector
+/****f* interrupt_private/interrupt_handler_inspector
  * SUMMARY
  * Compare an handler with an ISR handler.
  *
@@ -29,8 +29,8 @@ bool interrupt_handler_inspector (void * isr, va_list list)
 
 /*
  * ARGUMENTS
- * * isr : an ISR element.
- * * handler : an interrupt handler.
+ * * isr : an ISR element
+ * * list : a list of variable arguments
  *
  * FUNCTION
  * Compare handler and isr -> handler.

@@ -18,7 +18,7 @@
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* core_private/thread_alarm
+/****f* thread_private/thread_alarm
  * SUMMARY
  * Thread snooze alarm.
  *
@@ -31,6 +31,11 @@ status_t thread_alarm (void * data)
  * ARGUMENTS
  * * data : a thread_t element.
  *
+ * RETURN
+ * * DNA_BAD_ARGUMENT: the argument is invalid
+ * * DNA_ERROR: the status of the thread is invalid
+ * * DNA_OK: the operation succeeded
+ *
  * SOURCE
  */
 
@@ -40,7 +45,7 @@ status_t thread_alarm (void * data)
 
   watch (status_t)
   {
-    ensure (thread != NULL, DNA_ERROR);
+    ensure (thread != NULL, DNA_BAD_ARGUMENT);
 
     lock_acquire (& thread -> lock);
 

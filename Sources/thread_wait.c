@@ -19,7 +19,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* Core/thread_wait
+/****f* thread/thread_wait
  * SUMMARY
  * Waits for a thread to complete.
  *
@@ -34,8 +34,9 @@ status_t thread_wait (int32_t id, int32_t * value)
  * * value : a pointer to the return variable.
  *
  * RESULT
- * * DNA_OK in case of success.
- * * DNA_INVALID_THREAD_ID if the argument id is invalid.
+ * * DNA_BAD_ARGUMENT: on the arguments is invalid
+ * * DNA_INVALID_THREAD_ID: the ID argument is not a valid thread ID
+ * * DNA_OK: the operation succeeded
  *
  * SOURCE
  */

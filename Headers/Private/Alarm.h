@@ -99,7 +99,7 @@ typedef struct _alarm_manager
 {
   spinlock_t lock;
   uint16_t counter;
-  alarm_t alarm[DNA_MAX_ALARM];
+  alarm_t * alarm;
 }
 alarm_manager_t;
 

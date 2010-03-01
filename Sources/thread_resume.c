@@ -18,7 +18,7 @@
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****t* Core/thread_resume
+/****t* thread/thread_resume
  * SUMMARY
  * Resume a thread.
  *
@@ -32,9 +32,10 @@ status_t thread_resume (int32_t id)
  * * id : a thread id.
  *
  * RESULT
- * * DNA_ERROR if the argument thread is NULL.
- * * DNA_OK if the operation succeeded and the thread has been rescheduled.
- * * DNA_NO_ERROR if the operation succeeded and the thread has been enqueued.
+ * * DNA_BAD_ARGUMENT: the argument ID is invalid
+ * * DNA_INVALID_THREAD_ID: the argument ID is not a valid thread ID
+ * * DNA_NO_ERROR: success, the thread has been enqueued
+ * * DNA_OK: success, the thread has been rescheduled
  *
  * SOURCE
  */

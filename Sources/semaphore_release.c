@@ -19,7 +19,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* Core/semaphore_release
+/****f* semaphore/semaphore_release
  * SUMMARY
  * Release a semaphore.
  *
@@ -35,8 +35,8 @@ status_t semaphore_release (int32_t id, int32_t tokens, int32_t flags)
  * * flags : the flags of the operation
  *
  * RESULT
- * * DNA_BAD_SEM_ID if the argument id is invalid
- * * DNA_OK in case of success
+ * * DNA_BAD_SEM_ID: the argument id is invalid
+ * * DNA_OK: the operation succeeded
  *
  * SOURCE
  */

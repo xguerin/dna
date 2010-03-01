@@ -19,9 +19,9 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* Core/lock_destroy
+/****f* lock/lock_destroy
  * SUMMARY
- * Create a spin lock.
+ * Destroy a spin lock.
  *
  * SYNOPSIS
  */

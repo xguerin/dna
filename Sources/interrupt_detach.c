@@ -20,7 +20,7 @@
 #include <MemoryManager/MemoryManager.h>
 #include <Processor/Processor.h>
 
-/****f* Core/interrupt_detach
+/****f* interrupt/interrupt_detach
  * SUMMARY
  * Detach an interrupt.
  *
@@ -32,11 +32,13 @@ status_t interrupt_detach (int32_t cpuid, interrupt_id_t id,
 
 /*
  * ARGUMENTS
- * * id : a interrupt ID.
- * * handler : handler of the interrupt.
+ * * cpuid : id of the target CPU
+ * * id : an interrupt ID
+ * * handler : handler of the interrupt
  *
  * RESULT
- * DNA_OK.
+ * * DNA_BAD_ARGUMENT: one of the arguments is incorrect
+ * * DNA_OK: the operation is successful
  *
  * SOURCE
  */

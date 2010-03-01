@@ -18,7 +18,7 @@
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* core_private/semaphore_alarm
+/****f* semaphore_private/semaphore_alarm
  * SUMMARY
  * Semaqphore acquire alarm.
  *
@@ -31,6 +31,11 @@ status_t semaphore_alarm (void * data)
  * ARGUMENTS
  * * data : a thread_t element.
  *
+ * RETURN
+ * * DNA_BAD_ARGUMENT: the thread parameter is not valid
+ * * DNA_ERROR: the thread is not a valid thread
+ * * DNA_OK: the operation succeeded
+ *
  * SOURCE
  */
 
@@ -40,7 +45,7 @@ status_t semaphore_alarm (void * data)
 
   watch (status_t)
   {
-    ensure (thread != NULL, DNA_ERROR);
+    ensure (thread != NULL, DNA_BAD_ARGUMENT);
     ensure (thread -> resource_queue != NULL, DNA_ERROR);
     ensure (thread -> info . status == DNA_THREAD_WAITING, DNA_ERROR);
     ensure (thread -> info . resource == DNA_RESOURCE_SEMAPHORE, DNA_ERROR);

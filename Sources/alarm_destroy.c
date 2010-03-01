@@ -30,11 +30,11 @@ status_t alarm_destroy (int32_t aid)
 
 /*
  * ARGUMENTS
- * * alarm : the alarm to cancel
+ * * aid : the alarm's id to cancel.
  *
  * RESULT
- * * DNA_UNKNOWN_ALARM if the alarm doesn't exist
- * * DNA_OK if the operation succeeded
+ * * DNA_UNKNOWN_ALARM: the alarm doesn't exist
+ * * DNA_OK: the operation succeeded
  *
  * SOURCE
  */

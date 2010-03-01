@@ -20,7 +20,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* Core/core_create
+/****f* framework_private/core_create
  * SUMMARY
  * Create the core component.
  *
@@ -31,11 +31,16 @@ status_t core_create (void)
 
 /*
  * FUNCTION
+ * * Initialize the thread pool
  * * Initialize the scheduler manager
- * * Initialize the it multiplexer
- * * Initialize the time manager
+ * * Initialize the cpu pool
+ * * Initialize the alarm manager
  * * Initialize the semaphore pool
  * * Initialize the IDLE threads
+ *
+ * RETURN
+ * * DNA_OK: the operation succeeded
+ * * !DNA_OK: error creating a
  *
  * SOURCE
  */
@@ -62,6 +67,7 @@ status_t core_create (void)
     {
       area = kernel_malloc (DNA_MAX_THREAD * sizeof (thread_t), true);
       thread_pool . thread[i] = area;
+      check (thread_no_mem, area != NULL, DNA_OUT_OF_MEM);
     }
 
     /*
@@ -72,21 +78,25 @@ status_t core_create (void)
 
     area = kernel_malloc ((DNA_MAX_CPU + 1) * sizeof (queue_t), true);
     scheduler . queue = area;
+    check (sched_no_mem, area != NULL, DNA_OUT_OF_MEM);
 
     /*
      * Initialize the CPU pool
      */
 
     dna_memset (& cpu_pool, 0, sizeof (cpu_pool_t));
-
     area = kernel_malloc (DNA_MAX_CPU * sizeof (cpu_t), true);
     cpu_pool . cpu = area;
+    check (cpu_no_mem, area != NULL, DNA_OUT_OF_MEM);
 
     /*
      * Initialize the alarm manager
      */
 
     dna_memset (& alarm_manager, 0, sizeof (alarm_manager_t));
+    area = kernel_malloc (DNA_MAX_CPU * sizeof (cpu_t), true);
+    alarm_manager . alarm = area;
+    check (alarm_no_mem, area != NULL, DNA_OUT_OF_MEM);
 
     /*
      * Initialize the semaphore pool
@@ -96,6 +106,7 @@ status_t core_create (void)
 
     area = kernel_malloc (DNA_MAX_SEM * sizeof (semaphore_t), true);
     semaphore_pool . semaphore = area;
+    check (sem_no_mem, area != NULL, DNA_OUT_OF_MEM);
 
     /*
      * Initialize the CPUs
@@ -111,12 +122,14 @@ status_t core_create (void)
 
       cpu -> isr = kernel_malloc (sizeof (queue_t) *
           cpu_trap_count (), true);
+      check (cpu_initialize, area != NULL, DNA_OUT_OF_MEM);
 
       /*
        * Create the Idle stack
        */
 
       cpu -> stack = kernel_malloc (DNA_IDLE_STACK_SIZE, true);
+      check (cpu_initialize, area != NULL, DNA_OUT_OF_MEM);
 
       /*
        * Create the Idle thread
@@ -125,7 +138,7 @@ status_t core_create (void)
       status = thread_create (thread_idle, NULL, "IdleThread",
           DNA_KERNEL_GROUP, cpu_i, cpu -> stack,
           DNA_IDLE_STACK_SIZE, & tid . raw);
-      check (create_threads, status == DNA_OK, DNA_ERROR);
+      check (cpu_initialize, status == DNA_OK, DNA_ERROR);
 
       thread = thread_pool . thread[tid . s . group][tid . s . index];
       thread -> info . status = DNA_THREAD_READY;
@@ -148,7 +161,7 @@ status_t core_create (void)
     status = thread_create (APP_ENTRY_POINT, NULL, "ApplicationMain",
         DNA_KERNEL_GROUP, DNA_NO_AFFINITY, NULL,
         DNA_THREAD_STACK_SIZE, & tid . raw);
-    check (create_threads, status == DNA_OK, DNA_ERROR);
+    check (cpu_initialize, status == DNA_OK, DNA_ERROR);
 
     thread = thread_pool . thread[tid . s . group][tid . s . index];
     cpu_pool . cpu[0] . current_thread = thread;
@@ -156,13 +169,9 @@ status_t core_create (void)
     return DNA_OK;
   }
 
-  rescue(create_threads)
+  rescue(cpu_initialize)
   {
     thread_t idle_thread = NULL;
-
-    /*
-     * We free each allocated thread and its stack
-     */
 
     for (int32_t cpu_i = 0; cpu_i < cpu_mp_count (); cpu_i++)
     {
@@ -175,6 +184,49 @@ status_t core_create (void)
         cpu_pool . cpu[cpu_i] . idle_thread = NULL;
         cpu_pool . cpu[cpu_i] . current_thread = NULL;
       }
+
+      if (cpu[i] . stack != NULL)
+      {
+        kernel_free (cpu[i] . stack);
+      }
+
+      if (cpu[i] . isr != NULL)
+      {
+        kernel_free (cpu[i] . isr);
+      }
+    }
+
+    kernel_free (semaphore_pool . semaphore);
+  }
+
+  rescue (sem_no_mem)
+  {
+    kernel_free (alarm_manager . alarm);
+  }
+
+  rescue (alarm_no_mem)
+  {
+    kernel_free (cpu_pool . cpu);
+  }
+
+  rescue (cpu_no_mem)
+  {
+    kernel_free (scheduler . queue);
+  }
+
+  rescue (thread_no_mem)
+  {
+    for (int32_t i = 0; i < DNA_MAX_GROUP; i += 1)
+    {
+      if (thread_pool . thread[i] != NULL)
+      {
+        kernel_free (thread_pool . thread[i]);
+      }
+    }
+
+    if (thread_pool . thread != NULL)
+    {
+      kernel_free (thread_pool . thread);
     }
 
     leave;

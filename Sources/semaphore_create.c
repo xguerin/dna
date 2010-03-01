@@ -20,7 +20,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* Core/semaphore_create
+/****f* semaphore/semaphore_create
  * SUMMARY
  * Create a new semaphore_t.
  *
@@ -35,9 +35,9 @@ status_t semaphore_create (char * name, int32_t tokens, int32_t * id)
  * * tokens : the number of tokens of the semaphore.
  *
  * RESULT
- * * DNA_OK and a valid id in case of success.
- * * DNA_NO_MORE_SEM if no more semaphore are available.
- * * DNA_OUT_OF_MEM if the system ran out of memory.
+ * * DNA_NO_MORE_SEM: no more semaphore available
+ * * DNA_OUT_OF_MEM: cannot allocate memory to create a semaphore
+ * * DNA_OK: the operation succeeded
  *
  * SOURCE
  */

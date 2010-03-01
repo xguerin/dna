@@ -19,7 +19,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* Core/lock_create
+/****f* lock/lock_create
  * SUMMARY
  * Create a spin lock.
  *
@@ -34,6 +34,9 @@ status_t lock_create (spinlock_t * lock)
  *
  * FUNCTION
  * Create a spin lock.
+ *
+ * RETURN
+ * * DNA_OK: the operation succeeded
  *
  * SOURCE
  */

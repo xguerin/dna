@@ -20,7 +20,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* Core/semaphore_acquire
+/****f* semaphore/semaphore_acquire
  * SUMMARY
  * Acquire a semaphore.
  *
@@ -32,7 +32,7 @@ status_t semaphore_acquire (int32_t id, int32_t tokens,
 
 /*
  * ARGUMENTS
- * * sid : the ID of the semaphore to acquire.
+ * * id : the ID of the semaphore to acquire.
  * * tokens : the number of tokens to acquire
  * * flags : flags of the operation.
  * * timeout : time, in nanosecond, when the acquire process must abort.

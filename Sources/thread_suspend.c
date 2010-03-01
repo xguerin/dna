@@ -20,7 +20,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* Core/thread_suspend
+/****f* thread/thread_suspend
  * SUMMARY
  * Suspend a thread.
  *
@@ -34,10 +34,10 @@ status_t thread_suspend (int32_t id)
  * * id : a thread id.
  *
  * RESULT
- * * DNA_BAD_ARGUMENT if id is not a valid ID.
- * * DNA_INVALID_THREAD_ID if id does not point to a valid thread.
- * * DNA_ERROR if the thread's status is ne valid.
- * * DNA_OK if the operation succeeded.
+ * * DNA_BAD_ARGUMENT: the ID argument is invalid
+ * * DNA_INVALID_THREAD_ID: the ID argument is not a valid thread ID
+ * * DNA_ERROR: the thread status is not valid
+ * * DNA_OK: the operation succeeded.
  *
  * SOURCE
  */

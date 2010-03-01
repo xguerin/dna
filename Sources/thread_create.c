@@ -43,9 +43,9 @@ status_t thread_create (thread_handler_t handler, void * arguments,
  * * tid : the placeholder of the created thread's ID
  *
  * RESULT
- * * DNA_OUT_OF_MEM if the system ran out of memory
- * * DNA_ERROR if one of the arguments is invalid
- * * DNA_OK if everything went fine
+ * * DNA_OUT_OF_MEM: cannot allocate memory to create a thread
+ * * DNA_BAD_ARGUMENT: one of the arguments is invalid
+ * * DNA_OK: the operation succeeded
  *
  * SOURCE
  */

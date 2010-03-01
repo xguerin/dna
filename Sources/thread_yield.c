@@ -18,7 +18,7 @@
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****t* Core/thread_yield
+/****t* thread/thread_yield
  * SUMMARY
  * Yield some CPU time to someone else.
  *
@@ -29,8 +29,7 @@ status_t thread_yield (void)
 
 /*
  * RESULT
- * * DNA_ERROR or DNA_BAD_ARGUMENT if something wrong happens with sched_elect
- * * DNA_OK otherwise
+ * * DNA_OK: the operation succeeded
  *
  * SOURCE
  */

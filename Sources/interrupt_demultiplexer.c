@@ -20,7 +20,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* core_private/interrupt_demultiplexer
+/****f* interrupt_private/interrupt_demultiplexer
  * SUMMARY
  * Handler for mulitplexed interrupts.
  *
@@ -34,7 +34,8 @@ int32_t interrupt_demultiplexer (int32_t itn)
  * * data : the ID of the interrupt
  *
  * RESULT
- * DNA_OK.
+ * * DNA_BAD_ARGUMENT: itn is not a valid interrupt ID
+ * * DNA_OK: the operation is successfull
  *
  * SOURCE
  */

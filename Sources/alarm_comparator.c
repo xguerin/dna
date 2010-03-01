@@ -18,7 +18,7 @@
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* core_private/alarm_comparator
+/****f* alarm_private/alarm_comparator
  * SUMMARY
  * Compare (<) two alarms.
  *
@@ -30,7 +30,7 @@ bool alarm_comparator (void * item1, void * item2)
 /*
  * ARGUMENTS
  * * item1 : a pointer to an alarm_t
- * * item1 : a pointer to an alarm_t
+ * * item2 : a pointer to an alarm_t
  *
  * RESULT
  * item2 < item1.

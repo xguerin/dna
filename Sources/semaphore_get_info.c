@@ -19,7 +19,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* Core/semaphore_get_info
+/****f* semaphore/semaphore_get_info
  * SUMMARY
  * Get info from a semaphore.
  *
@@ -34,9 +34,9 @@ status_t semaphore_get_info (int32_t id, semaphore_info_t * info)
  * * sem_info : a pointer to a sem_info structure.
  *
  * RESULT
- * * DNA_BAD_SEM_ID if the id parameter is invalid.
- * * DNA_OK if the operation succeded.
- * * DNA_ERROR if the sem_info pointer is NULL.
+ * * DNA_BAD_SEM_ID: the id parameter is invalid
+ * * DNA_BAD_ARGUMENT: the sem_info pointer is invalid
+ * * DNA_OK: the operation succeeded
  *
  * SOURCE
  */

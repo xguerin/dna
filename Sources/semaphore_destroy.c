@@ -20,7 +20,7 @@
 #include <MemoryManager/MemoryManager.h>
 #include <Processor/Processor.h>
 
-/****f* Core/semaphore_destroy
+/****f* semaphore/semaphore_destroy
  * SUMMARY
  * Destroy a semaphore_t.
  *
@@ -34,7 +34,8 @@ status_t semaphore_destroy (int32_t id)
  * * id : the semaphore id.
  *
  * RESULT
- * Not implemented.
+ * * DNA_BAD_SEM_ID: the id parameter is invalid
+ * * DNA_OK: the operation succeeded
  *
  * SOURCE
  */

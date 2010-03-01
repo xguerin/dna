@@ -32,13 +32,17 @@ status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
 
 /*
  * ARGUMENTS
- * * deadline : the alarm's deadline
+ * * quantum : time quantum of the alarm
  * * mode : the alarm's mode
  * * callback : the function to call when the alarm goes off
  * * data : the data associated to the function
  * * aid : the recipient of the new alarm's id
  *
  * RESULT
+ * * DNA_BAD_ARGUMENT: one of the arguments is invalid
+ * * DNA_OUT_OF_MEM: cannot allocate memory for the alarm
+ * * DNA_ERROR: no more alarm slot or quantum too short
+ * * DNA_OK: alarm created
  *
  * SOURCE
  */

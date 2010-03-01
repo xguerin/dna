@@ -19,7 +19,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* Core/thread_snooze
+/****f* thread/thread_snooze
  * SUMMARY
  * Snooze the current thread for a specified amount of time (ns).
  *
@@ -33,7 +33,8 @@ status_t thread_snooze (bigtime_t value)
  * * value : the number of microseconds to wait for
  *
  * RESULT
- * * DNA_OK in case of success.
+ * * DNA_ERROR: no more alarm slot or quantum too short
+ * * DNA_OK: the operation succeeded
  *
  * SOURCE
  */

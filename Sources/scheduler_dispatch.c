@@ -19,7 +19,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* core_private/scheduler_dispatch
+/****f* scheduler_private/scheduler_dispatch
  * SUMMARY
  * Dispatch a thread.
  *
@@ -31,6 +31,11 @@ status_t scheduler_dispatch (thread_t thread)
 /*
  * ARGUMENTS
  * * A valid thread_t 
+ *
+ * RETURN:
+ * * DNA_BAD_ARGUMENT: thread is not valid
+ * * DNA_INVOKE_SCHEDULER: success, invoke the scheduler on return
+ * * DNA_OK: the operation succeeded
  *
  * SOURCE
  */
