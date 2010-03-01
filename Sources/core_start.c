@@ -20,7 +20,7 @@
 #include <MemoryManager/MemoryManager.h>
 #include <Processor/Processor.h>
 
-/****f* framework_private/core_initialize
+/****f* FrameworkPrivate/core_initialize
  * SUMMARY
  * Initializes the core component.
  *

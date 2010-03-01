@@ -1,4 +1,4 @@
-/****h* core_private/thread_private
+/****h* CorePrivate/ThreadPrivate
  * SUMMARY
  * Thread management.
  ****
@@ -32,7 +32,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****t* thread_private/thread_id_t
+/****t* ThreadPrivate/thread_id_t
  * SUMMARY
  * Thread ID type.
  *
@@ -56,7 +56,7 @@ thread_id_t;
 /*
  ****/
 
-/****t* thread_private/thread_stack_t
+/****t* ThreadPrivate/thread_stack_t
  * SUMMARY
  * Thread stack type.
  *
@@ -73,7 +73,7 @@ thread_stack_t;
 /*
  ****/
 
-/****t* thread_private/thread_signature_t
+/****t* ThreadPrivate/thread_signature_t
  * SUMMARY
  * Thread signature.
  */
@@ -89,7 +89,7 @@ thread_signature_t;
 /*
  ****/
 
-/****t* thread_private/thread_t
+/****t* ThreadPrivate/thread_t
  * SUMMARY
  * Thread type.
  *
@@ -117,7 +117,7 @@ typedef struct _thread
 /*
  ****/
 
-/****t* thread_private/thread_pool_t
+/****t* ThreadPrivate/thread_pool_t
  * SUMMARY
  * Thread pool type.
  *

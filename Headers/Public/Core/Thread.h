@@ -1,4 +1,4 @@
-/****h* core/thread
+/****h* Core/Thread
  * SUMMARY
  * Thread management.
  ****
@@ -27,7 +27,7 @@
 #include <Core/Alarm.h>
 #include <DnaTools/DnaTools.h>
 
-/****d* thread/DNA_KERNEL_GROUP
+/****d* Thread/DNA_KERNEL_GROUP
  * SUMMARY
  * Thread kernel group constant.
  *
@@ -39,7 +39,7 @@
 /*
  ****/
 
-/****d* thread/DNA_NO_AFFINITY
+/****d* Thread/DNA_NO_AFFINITY
  * SUMMARY
  * Thread no-affinity constant.
  *
@@ -51,7 +51,7 @@
 /*
  ****/
 
-/****v* thread/thread_status_t
+/****t* Thread/thread_status_t
  * SUMMARY
  * Available thread status.
  *
@@ -73,7 +73,7 @@ thread_status_t;
 /*
  ****/
 
-/****t* thread/thread_resource_t
+/****t* Thread/thread_resource_t
  * SUMMARY
  * Type of the resource for which a thread can wait.
  *
@@ -91,7 +91,7 @@ thread_resource_t;
 /*
  ****/
 
-/****t* thread/thread_handler_t
+/****t* Thread/thread_handler_t
  * SUMMARY
  * Thread handler type.
  *
@@ -103,7 +103,7 @@ typedef int32_t (* thread_handler_t) (void * args);
 /*
  ****/
 
-/****t* thread/thread_info_t
+/****t* Thread/thread_info_t
  * SUMMARY
  * Thread information type.
  *

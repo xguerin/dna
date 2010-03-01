@@ -19,7 +19,7 @@
 #include <DnaTools/DnaTools.h>
 #include <MemoryManager/MemoryManager.h>
 
-/****f* alarm/alarm_destroy
+/****f* Alarm/alarm_destroy
  * SUMMARY
  * Destroy an existing alarm.
  *

@@ -20,7 +20,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* semaphore/semaphore_acquire
+/****f* Semaphore/semaphore_acquire
  * SUMMARY
  * Acquire a semaphore.
  *

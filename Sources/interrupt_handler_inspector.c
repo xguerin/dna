@@ -18,7 +18,7 @@
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* interrupt_private/interrupt_handler_inspector
+/****f* InterruptPrivate/interrupt_handler_inspector
  * SUMMARY
  * Compare an handler with an ISR handler.
  *

@@ -1,4 +1,4 @@
-/****h* dna/core
+/****h* DNA/Core
  * SUMMARY
  * The DNA core component.
  ****

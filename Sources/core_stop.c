@@ -18,7 +18,7 @@
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* framework_private/core_stop
+/****f* FrameworkPrivate/core_stop
  * SUMMARY
  * Stop the core component.
  *

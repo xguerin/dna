@@ -1,4 +1,4 @@
-/****h* core/semaphore
+/****h* Core/Semaphore
  * SUMMARY
  * Semaphore management.
  ****
@@ -24,7 +24,7 @@
 #include <Core/Alarm.h>
 #include <DnaTools/DnaTools.h>
 
-/****t* semaphore/DNA_NO_RESCHEDULE
+/****t* Semaphore/DNA_NO_RESCHEDULE
  * SUMMARY
  * DNA_NO_RESCHEDULE mode value.
  *
@@ -36,7 +36,7 @@
 /*
  ****/
 
-/****t* semaphore/DNA_RELATIVE_TIMEOUT
+/****t* Semaphore/DNA_RELATIVE_TIMEOUT
  * SUMMARY
  * DNA_RELATIVE_TIMEOUT mode value.
  *
@@ -48,7 +48,7 @@
 /*
  ****/
 
-/****t* semaphore/DNA_ABSOLUTE_TIMEOUT
+/****t* Semaphore/DNA_ABSOLUTE_TIMEOUT
  * SUMMARY
  * DNA_ABSOLUTE_TIMEOUT mode value.
  *
@@ -60,7 +60,7 @@
 /*
  ****/
 
-/****t* semaphore/DNA_CAN_INTERRUPT
+/****t* Semaphore/DNA_CAN_INTERRUPT
  * SUMMARY
  * DNA_CAN_INTERRUPT mode value.
  *
@@ -72,7 +72,7 @@
 /*
  ****/
 
-/****t* semaphore/semaphore_info_t
+/****t* Semaphore/semaphore_info_t
  * SUMMARY
  * Semaphore information type.
  *

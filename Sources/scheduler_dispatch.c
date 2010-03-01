@@ -19,7 +19,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* scheduler_private/scheduler_dispatch
+/****f* SchedulerPrivate/scheduler_dispatch
  * SUMMARY
  * Dispatch a thread.
  *
@@ -119,7 +119,7 @@ status_t scheduler_dispatch (thread_t thread)
 }
 
 /*
- * NOTE
+ * NOTES
  * Interrupts must be disabled.
  ****/
 

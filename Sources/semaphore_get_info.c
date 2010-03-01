@@ -19,7 +19,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* semaphore/semaphore_get_info
+/****f* Semaphore/semaphore_get_info
  * SUMMARY
  * Get info from a semaphore.
  *

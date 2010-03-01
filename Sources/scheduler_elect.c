@@ -19,7 +19,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* scheduler_private/scheduler_elect
+/****f* SchedulerPrivate/scheduler_elect
  * SUMMARY
  * Elects a thread.
  *

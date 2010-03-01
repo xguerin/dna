@@ -1,4 +1,4 @@
-/****h* core_private/semaphore_private
+/****h* CorePrivate/SemaphorePrivate
  * SUMMARY
  * Semaphore management.
  ****
@@ -26,7 +26,7 @@
 #include <Core/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****t* semaphore_private/semaphore_id_t
+/****t* SemaphorePrivate/semaphore_id_t
  * SUMMARY
  * Semaphore ID type.
  *
@@ -49,7 +49,7 @@ semaphore_id_t;
 /*
  ****/
 
-/****t* semaphore_private/semaphore_t
+/****t* SemaphorePrivate/semaphore_t
  * SUMMARY
  * Semaphore type.
  *
@@ -69,7 +69,7 @@ typedef struct _semaphore
 /*
  ****/
 
-/****t* semaphore_private/semaphore_pool_t
+/****t* SemaphorePrivate/semaphore_pool_t
  * SUMMARY
  * Semaphore manager type.
  *

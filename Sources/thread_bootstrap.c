@@ -17,7 +17,7 @@
 
 #include <Private/Core.h>
 
-/****f* thread_private/thread_bootstrap
+/****f* ThreadPrivate/thread_bootstrap
  * SUMMARY
  * The code required to boostrap a thead.
  *

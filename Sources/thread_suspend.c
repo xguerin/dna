@@ -20,7 +20,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* thread/thread_suspend
+/****f* Thread/thread_suspend
  * SUMMARY
  * Suspend a thread.
  *

@@ -20,7 +20,7 @@
 #include <MemoryManager/MemoryManager.h>
 #include <Processor/Processor.h>
 
-/****f* thread/thread_destroy
+/****f* Thread/thread_destroy
  * SUMMARY
  * Destroy a thread.
  *

@@ -1,4 +1,4 @@
-/****h* core_private/framework_private
+/****h* CorePrivate/FrameworkPrivate
  * SUMMARY
  * Core component framework.
  ****

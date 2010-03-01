@@ -18,7 +18,7 @@
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* thread_private/thread_alarm
+/****f* ThreadPrivate/thread_alarm
  * SUMMARY
  * Thread snooze alarm.
  *

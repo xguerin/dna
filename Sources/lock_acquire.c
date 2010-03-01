@@ -19,7 +19,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* lock/lock_acquire
+/****f* Lock/lock_acquire
  * SUMMARY
  * Acquire a spin lock.
  *

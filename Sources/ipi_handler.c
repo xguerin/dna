@@ -19,7 +19,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* interrupt/ipi_handler
+/****f* Interrupt/ipi_handler
  * SUMMARY
  * Handler for inter-processor interrupts.
  *

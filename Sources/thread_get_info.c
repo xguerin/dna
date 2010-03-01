@@ -18,7 +18,7 @@
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* thread/thread_get_info
+/****f* Thread/thread_get_info
  * SUMMARY
  * Gathers information about a thread.
  *

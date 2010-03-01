@@ -1,4 +1,4 @@
-/****h* core_private/scheduler_private
+/****h* CorePrivate/SchedulerPrivate
  * SUMMARY
  * Scheduler management.
  ****
@@ -27,7 +27,7 @@
 #include <Core/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****t* scheduler_private/scheduler_t
+/****t* SchedulerPrivate/scheduler_t
  * SUMMARY
  * Scheduler manager type.
  *

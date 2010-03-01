@@ -20,7 +20,7 @@
 #include <MemoryManager/MemoryManager.h>
 #include <Processor/Processor.h>
 
-/****f* interrupt/interrupt_detach
+/****f* Interrupt/interrupt_detach
  * SUMMARY
  * Detach an interrupt.
  *

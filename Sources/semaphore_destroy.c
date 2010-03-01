@@ -20,7 +20,7 @@
 #include <MemoryManager/MemoryManager.h>
 #include <Processor/Processor.h>
 
-/****f* semaphore/semaphore_destroy
+/****f* Semaphore/semaphore_destroy
  * SUMMARY
  * Destroy a semaphore_t.
  *

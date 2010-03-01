@@ -20,7 +20,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* semaphore/semaphore_create
+/****f* Semaphore/semaphore_create
  * SUMMARY
  * Create a new semaphore_t.
  *

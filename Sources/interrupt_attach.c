@@ -20,7 +20,7 @@
 #include <MemoryManager/MemoryManager.h>
 #include <Processor/Processor.h>
 
-/****f* interrupt/interrupt_attach
+/****f* Interrupt/interrupt_attach
  * SUMMARY
  * Attach a interrupt to an ID.
  *

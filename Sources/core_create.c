@@ -20,7 +20,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* framework_private/core_create
+/****f* FrameworkPrivate/core_create
  * SUMMARY
  * Create the core component.
  *
@@ -78,7 +78,7 @@ status_t core_create (void)
 
     area = kernel_malloc ((DNA_MAX_CPU + 1) * sizeof (queue_t), true);
     scheduler . queue = area;
-    check (sched_no_mem, area != NULL, DNA_OUT_OF_MEM);
+    check (thread_no_mem, area != NULL, DNA_OUT_OF_MEM);
 
     /*
      * Initialize the CPU pool
@@ -185,14 +185,14 @@ status_t core_create (void)
         cpu_pool . cpu[cpu_i] . current_thread = NULL;
       }
 
-      if (cpu[i] . stack != NULL)
+      if (cpu[cpu_i] . stack != NULL)
       {
-        kernel_free (cpu[i] . stack);
+        kernel_free (cpu[cpu_i] . stack);
       }
 
-      if (cpu[i] . isr != NULL)
+      if (cpu[cpu_i] . isr != NULL)
       {
-        kernel_free (cpu[i] . isr);
+        kernel_free (cpu[cpu_i] . isr);
       }
     }
 

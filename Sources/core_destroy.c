@@ -18,7 +18,7 @@
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* framework_private/core_destroy
+/****f* FrameworkPrivate/core_destroy
  * SUMMARY
  * Destroy component.
  *

@@ -20,7 +20,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* alarm/alarm_create
+/****f* Alarm/alarm_create
  * SUMMARY
  * Create an alarm.
  *

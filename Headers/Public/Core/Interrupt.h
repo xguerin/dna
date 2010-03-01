@@ -1,4 +1,4 @@
-/****h* core/interrupt
+/****h* Core/Interrupt
  * SUMMARY
  * Interrupt management.
  ****

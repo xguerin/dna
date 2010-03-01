@@ -19,7 +19,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* semaphore/semaphore_release
+/****f* Semaphore/semaphore_release
  * SUMMARY
  * Release a semaphore.
  *

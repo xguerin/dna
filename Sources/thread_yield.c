@@ -18,7 +18,7 @@
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****t* thread/thread_yield
+/****t* Thread/thread_yield
  * SUMMARY
  * Yield some CPU time to someone else.
  *

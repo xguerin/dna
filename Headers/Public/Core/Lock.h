@@ -1,4 +1,4 @@
-/****h* core/lock
+/****h* Core/Lock
  * SUMMARY
  * Lock management.
  ****
@@ -23,7 +23,7 @@
 
 #include <stdint.h>
 
-/****t* lock/spinlock_t
+/****t* Lock/spinlock_t
  * SUMMARY
  * Spin lock type.
  *

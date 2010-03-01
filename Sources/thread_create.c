@@ -20,7 +20,7 @@
 #include <MemoryManager/MemoryManager.h>
 #include <Processor/Processor.h>
 
-/****f* thread/thread_create
+/****f* Thread/thread_create
  * SUMMARY
  * create a new thread_t element.
  *

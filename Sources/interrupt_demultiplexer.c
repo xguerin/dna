@@ -20,7 +20,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* interrupt_private/interrupt_demultiplexer
+/****f* InterruptPrivate/interrupt_demultiplexer
  * SUMMARY
  * Handler for mulitplexed interrupts.
  *

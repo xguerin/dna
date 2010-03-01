@@ -1,4 +1,4 @@
-/****h* core_private/cpu_private
+/****h* CorePrivate/CpuPrivate
  * SUMMARY
  * Alarm management.
  ****
@@ -18,9 +18,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <DnaTools/DnaTools.h>
+#ifndef DNA_CORE_CPU_PRIVATE_H
+#define DNA_CORE_CPU_PRIVATE_H
 
-/****t* cpu_private/cpu_status_t
+#include <DnaTools/DnaTools.h>
+#include <Private/Thread.h>
+
+/****t* CpuPrivate/cpu_status_t
  * SUMMARY
  * CPU status type.
  *
@@ -38,7 +42,7 @@ cpu_status_t;
 /*
  ****/
 
-/****t* cpu_private/cpu_t
+/****t* CpuPrivate/cpu_t
  * SUMMARY
  * CPU type.
  *
@@ -70,7 +74,7 @@ cpu_t;
 /*
  ****/
 
-/****t* cpu_private/cpu_pool_t
+/****t* CpuPrivate/cpu_pool_t
  * SUMMARY
  * CPU pool type.
  *

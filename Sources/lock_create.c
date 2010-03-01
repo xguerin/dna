@@ -19,7 +19,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* lock/lock_create
+/****f* Lock/lock_create
  * SUMMARY
  * Create a spin lock.
  *

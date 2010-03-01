@@ -18,7 +18,7 @@
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****v* framework/core_component
+/****v* Framework/core_component
  * SUMMARY
  * The core component instance.
  *
@@ -37,7 +37,7 @@ component_t core_component =
 /*
  ****/
 
-/****v* thread_private/thread_pool
+/****v* ThreadPrivate/thread_pool
  * SUMMARY
  * The thread pool instance.
  *
@@ -49,7 +49,7 @@ thread_pool_t thread_pool;
 /*
  ****/
 
-/****v* scheduler_private/scheduler
+/****v* SchedulerPrivate/scheduler
  * SUMMARY
  * The scheduler manager instance.
  *
@@ -61,7 +61,7 @@ scheduler_t scheduler;
 /*
  ****/
 
-/****v* cpu_private/cpu_pool
+/****v* CpuPrivate/cpu_pool
  * SUMMARY
  * The CPU pool instance.
  *
@@ -73,7 +73,7 @@ cpu_pool_t cpu_pool;
 /*
  ****/
 
-/****v* alarm_private/alarm_manager
+/****v* AlarmPrivate/alarm_manager
  * SUMMARY
  * The time manager instance.
  *
@@ -85,7 +85,7 @@ alarm_manager_t alarm_manager;
 /*
  ****/
 
-/****v* semaphore_private/semaphore_pool
+/****v* SemaphorePrivate/semaphore_pool
  * SUMMARY
  * The semaphore pool instance.
  *

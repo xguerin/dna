@@ -19,7 +19,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* lock/lock_destroy
+/****f* Lock/lock_destroy
  * SUMMARY
  * Destroy a spin lock.
  *

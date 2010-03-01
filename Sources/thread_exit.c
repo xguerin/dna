@@ -20,7 +20,7 @@
 #include <MemoryManager/MemoryManager.h>
 #include <Processor/Processor.h>
 
-/****f* thread/thread_exit
+/****f* Thread/thread_exit
  * SUMMARY
  * Exit from a thread.
  *

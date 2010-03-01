@@ -19,7 +19,7 @@
 #include <MemoryManager/MemoryManager.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* alarm/alarm_handler
+/****f* Alarm/alarm_handler
  * SUMMARY
  * Time manager used for alarms.
  *

@@ -20,7 +20,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* lock/lock_try
+/****f* Lock/lock_try
  * SUMMARY
  * Try to acquire a spinlock
  *

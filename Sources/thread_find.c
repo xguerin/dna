@@ -18,7 +18,7 @@
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* thread/thread_find
+/****f* Thread/thread_find
  * SUMMARY
  * Finds a thread by its name.
  *

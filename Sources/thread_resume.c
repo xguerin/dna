@@ -18,7 +18,7 @@
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****t* thread/thread_resume
+/****t* Thread/thread_resume
  * SUMMARY
  * Resume a thread.
  *

@@ -1,4 +1,4 @@
-/****h* core_private/alarm_private
+/****h* CorePrivate/AlarmPrivate
  * SUMMARY
  * Alarm management.
  ****
@@ -26,7 +26,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Core/Core.h>
 
-/****d* alarm_private/DNA_TIMER_DELAY
+/****d* AlarmPrivate/DNA_TIMER_DELAY
  * SUMMARY
  * Arbitrary alarm processing delay. Expressed in nanoseconds.
  *
@@ -38,7 +38,7 @@
 /*
  ****/
 
-/****t* alarm_private/alarm_callback_t
+/****t* AlarmPrivate/alarm_callback_t
  * SUMMARY
  * Alarm callback type.
  *
@@ -61,7 +61,7 @@ alarm_id_t;
 /*
  ****/
 
-/****t* alarm_private/alarm_t
+/****t* AlarmPrivate/alarm_t
  * SUMMARY
  * Alarm type.
  *
@@ -88,7 +88,7 @@ typedef struct _alarm
 /*
  ****/
 
-/****t* alarm_private/alarm_manager_t
+/****t* AlarmPrivate/alarm_manager_t
  * SUMMARY
  * The time manager type.
  *

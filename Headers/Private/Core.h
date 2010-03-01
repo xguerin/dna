@@ -1,4 +1,4 @@
-/****h* dna/core_private
+/****h* DNA/CorePrivate
  * SUMMARY
  * Private section of the DNA core component.
  ****

@@ -19,7 +19,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* thread/thread_wait
+/****f* Thread/thread_wait
  * SUMMARY
  * Waits for a thread to complete.
  *

@@ -19,7 +19,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* thread/thread_snooze
+/****f* Thread/thread_snooze
  * SUMMARY
  * Snooze the current thread for a specified amount of time (ns).
  *
