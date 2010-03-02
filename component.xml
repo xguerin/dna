@@ -28,9 +28,8 @@
     
     <!-- Endianness management -->
 
-    <type name="cpu_context_t"/>
-
-    <definition name="CPU_CONTEXT_SIZE"/>
+    <type name="cpu_endianness_t"/>
+    <definition name="CPU_ENDIANNESS"/>
 
     <method name="cpu_endian_is_big" return_type="">
       <argument name="width" type="int32_t" direction="in"/>
@@ -57,6 +56,9 @@
     </method>
 
     <!-- Execution context management -->
+
+    <type name="cpu_context_t"/>
+    <definition name="CPU_CONTEXT_SIZE"/>
 
     <method name="cpu_context_init" return_type="">
       <argument name="context" type="cpu_context_t" direction="out"/>
