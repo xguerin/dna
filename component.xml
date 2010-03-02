@@ -5,6 +5,7 @@
   <id name="SoclibPlatform" short_name="SoCLib" version="1.0"/>
 
   <provide>
+    <definition name="platform_endianness_t"/>
     <definition name="PLATFORM_ENDIANNESS"/>
 
     <method name="platform_debug_puts" return_type="">
