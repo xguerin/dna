@@ -92,6 +92,8 @@ status_t vfs_open (char * restrict path, int32_t mode,
 
     if ((mode & DNA_CREATE) != 0)
     {
+      check (mode_error, volume -> cmd -> create != NULL, DNA_ERROR);
+
       /*
        * Spilt the path into base + token
        */
@@ -119,6 +121,8 @@ status_t vfs_open (char * restrict path, int32_t mode,
     }
     else
     {
+      check (mode_error, volume -> cmd -> open != NULL, DNA_ERROR);
+
       /*
        * Get the vnode corresponding to the base directory
        */

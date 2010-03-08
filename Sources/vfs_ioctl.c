@@ -68,6 +68,7 @@ status_t vfs_ioctl (int16_t fd, int32_t function,
     cpu_trap_restore(it_status);
 
     ensure (file != NULL && file != (file_t) -1, DNA_INVALID_FD);
+    ensure (file -> vnode -> volume -> cmd -> ioctl != NULL, DNA_ERROR);
 
     status = file -> vnode -> volume -> cmd -> ioctl
       (file -> vnode -> volume -> data, file -> vnode -> data, file -> data,

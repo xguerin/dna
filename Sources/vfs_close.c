@@ -66,6 +66,7 @@ status_t vfs_close (int16_t fd)
     cpu_trap_restore(it_status);
 
     ensure (file != NULL && file != (file_t) -1, DNA_INVALID_FD);
+    ensure (file -> vnode -> volume -> cmd -> close != NULL, DNA_ERROR);
 
     /*
      * Close the file

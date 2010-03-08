@@ -68,6 +68,7 @@ status_t vfs_write (int16_t fd, void * data, int32_t count, int32_t * p_ret)
     cpu_trap_restore(it_status);
 
     ensure (file != NULL && file != (file_t) -1, DNA_INVALID_FD);
+    ensure (file -> vnode -> volume -> cmd -> write != NULL, DNA_ERROR);
 
     status = file -> vnode -> volume -> cmd -> write
       (file -> vnode -> volume -> data, file -> vnode -> data, file -> data,
