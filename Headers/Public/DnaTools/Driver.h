@@ -70,10 +70,8 @@ enum _device_type
 typedef struct _device_info
 {
   int32_t type;
-  uint32_t bytes_per_sector;
-  uint32_t sectors_per_track;
-  uint32_t cylinder_count;
-  uint32_t head_count;
+  uint32_t block_size;
+  uint32_t block_count;
   bool removable;
   bool read_only;
   bool write_once;
