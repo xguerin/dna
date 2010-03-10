@@ -1,6 +1,6 @@
-/****h* support/types
+/****h* dnatools/types
  * SUMMARY
- * Support types.
+ * DNA tools driver definitions.
  ****
  * Copyright (C) 2007 TIMA Laboratory                                    
  *                                                                       
@@ -18,15 +18,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#ifndef DNA_SUPPORT_DRIVER_H
-#define DNA_SUPPORT_DRIVER_H
+#ifndef DNA_TOOLS_DRIVER_H
+#define DNA_TOOLS_DRIVER_H
 
 #include <stdint.h>
 #include <stdbool.h>
 
 #include <DnaTools/Status.h>
 
-/****v* support/device_control_code
+/****v* dnatools/device_control_code
  * SUMMARY
  * Device control codes.
  */
@@ -40,13 +40,19 @@ enum _device_control_codes
   DNA_GET_READ_STATUS,
   DNA_GET_WRITE_STATUS,
   DNA_GET_INFO,
+  DNA_GET_DRIVER_FOR_DEVICE,
+  DNA_GET_PARTITION_INFO,
+  DNA_SET_PARTITION,
+  DNA_FORMAT_DEVICE,
+  DNA_EJECT_DEVICE,
+  DNA_FLUSH_DRIVE_CACHE,
   DNA_CONTROL_CODES_END = 0x0FFF
 };
 
 /*
  ****/
 
-/****v* support/device_type
+/****v* dnatools/device_type
  * SUMMARY
  * Device types.
  */
@@ -54,13 +60,34 @@ enum _device_control_codes
 enum _device_type
 {
   DNA_CHARACTER_DEVICE,
-  DNA_BLOCK_DEVICE
+  DNA_BLOCK_DEVICE,
+  DNA_NETWORK_DEVICE
 };
 
 /*
  ****/
 
-/****t* support/device_info_t
+/****t* dnatools/partition_info_t
+ * SUMMARY
+ * Partition information type.
+ *
+ * SOURCE
+ */
+
+typedef struct _partition_info
+{
+  int64_t offset;
+  int64_t byte_count;
+  int32_t logical_block_size;
+  int32_t session;
+  int32_t partition;
+}
+partition_info_t;
+
+/*
+ ****/
+
+/****t* dnatools/device_info_t
  * SUMMARY
  * Device information.
  *
@@ -81,7 +108,7 @@ device_info_t;
 /*
  ****/
 
-/****t* support/device_cmd_t
+/****t* dnatools/device_cmd_t
  * SUMMARY
  * Device commands type.
  *
@@ -102,7 +129,7 @@ device_cmd_t;
 /*
  ****/
 
-/****t* support/driver_t
+/****t* dnatools/driver_t
  * SUMMARY
  * Driver type.
  *
