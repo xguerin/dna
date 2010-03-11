@@ -5,10 +5,11 @@
   <id name="MultiMediaCardModule" short_name="MMC" version="1.0"/>
 
   <provide>
+    <type name="mmc_module_t" />
   </provide>
 
   <require>
-
+    <type name="status_t" />
   </require>
 
 </component>

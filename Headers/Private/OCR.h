@@ -20,6 +20,34 @@
 
 #include <stdint.h>
 
+#define MMC_VDD_16_17          (1 << 4)
+#define MMC_VDD_17_18          (1 << 5)
+#define MMC_VDD_18_19          (1 << 6)
+#define MMC_VDD_19_20          (1 << 7)
+#define MMC_VDD_20_21          (1 << 8)
+#define MMC_VDD_21_22          (1 << 9)
+#define MMC_VDD_22_23          (1 << 10)
+#define MMC_VDD_23_24          (1 << 11)
+#define MMC_VDD_24_25          (1 << 12)
+#define MMC_VDD_25_26          (1 << 13)
+#define MMC_VDD_26_27          (1 << 14)
+#define MMC_VDD_27_28          (1 << 15)
+#define MMC_VDD_28_29          (1 << 16)
+#define MMC_VDD_29_30          (1 << 17)
+#define MMC_VDD_30_31          (1 << 18)
+#define MMC_VDD_31_32          (1 << 19)
+#define MMC_VDD_32_33          (1 << 20)
+#define MMC_VDD_33_34          (1 << 21)
+#define MMC_VDD_34_35          (1 << 22)
+#define MMC_VDD_35_36          (1 << 23)
+#define MMC_CARD_POWER_UP_BUSY (1 << 31)
+#define MMC_MMC_OCR_BIT2930    (3 << 29)
+#define MMC_SD_HCS             (1 << 30)
+
+#define MMC_VOLTAGE_RANGE                         \
+  MMC_VDD_27_28 | MMC_VDD_28_29 | MMC_VDD_29_30 | \
+  MMC_VDD_30_31 | MMC_VDD_31_32 | MMC_VDD_32_33
+
 typedef union _mmc_ocr
 {
   uint32_t raw;

@@ -15,25 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#ifndef MULTIMEDIACARD_MODULE_PRIVATE_H
-#define MULTIMEDIACARD_MODULE_PRIVATE_H
+#include <Private/MultiMediaCard.h>
+#include <MultiMediaCard/MultiMediaCard.h>
 
-#include <stdint.h>
-#include <MultiMediaCard/Card.h>
-#include <MultiMediaCard/Operation.h>
-#include <DnaTools/DnaTools.h>
-
-typedef struct _mmc_module
+mmc_module_t mmc_module = 
 {
-  module_t module;
-  status_t (* create) (mmc_card_t * card, mmc_callbacks_t callbacks);
-  status_t (* destroy) (mmc_card_t card);
-  status_t (* execute) (mmc_card_t card, mmc_operation_t operation,
-    void * buffer, int64_t block_start, int32_t block_count);
-}
-mmc_module_t;
-
-extern mmc_module_t mmc_module;
-
-#endif
+  { "mmc", 0 },
+  mmc_card_create,
+  mmc_card_destroy,
+  mmc_execute
+};
 

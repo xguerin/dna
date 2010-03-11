@@ -24,6 +24,7 @@
 #include <Private/Command.h>
 #include <Private/CSD.h>
 #include <Private/OCR.h>
+#include <Private/Operation.h>
 #include <Private/RCA.h>
 #include <Private/SCR.h>
 

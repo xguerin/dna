@@ -19,7 +19,6 @@
 #define MULTIMEDIACARD_CID_PRIVATE_H
 
 #include <stdint.h>
-#include <MultiMediaCard/CID.h>
 
 #define MANUFACTURER_ID(x)    (x & (0xFFUL     << 24)) >> 24
 #define OEM_ID(x)             (x & (0xFFFFUL   <<  8)) >>  8

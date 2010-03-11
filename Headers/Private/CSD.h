@@ -111,7 +111,7 @@ typedef struct _mmc_csd
 }                                  
 mmc_csd_t;                         
                                    
-extern void d940_mmc_build_csd (uint32_t response[4], mmc_csd_t * csd);
+extern void mmc_build_csd (uint32_t response[4], mmc_csd_t * csd);
 extern void mmc_show_csd (mmc_csd_t csd);
 
 #endif                             

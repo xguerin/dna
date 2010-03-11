@@ -20,7 +20,6 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include <MultiMediaCard/SCR.h>
 
 #define SCR_STRUCTURE(x)           (x & (0xFFUL << 24)) >> 28
 #define SD_SPECIFICATION(x)        (x & (0x0FUL << 24)) >> 24

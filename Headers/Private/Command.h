@@ -19,8 +19,6 @@
 #define MULTIMEDIACARD_COMMAND_PRIVATE_H
 
 #include <stdint.h>
-#include <Private/Status.h>
-#include <Platform/MCI.h>
 
 #define RSPTYPE_NORSP 0UL
 #define RSPTYPE_R1    (1UL << 6)
@@ -54,33 +52,6 @@
 #define IOCMD_NOCMD   0UL
 #define IOCMD_SUSPEND (1UL << 24)
 #define IOCMD_RESUME  (2UL << 24)
-
-/*
- * MMC command type.
- */
-
-typedef union _mmc_command
-{
-  uint32_t raw;
-  
-  struct _mmc_command_bits
-  {
-    uint32_t number               : 6;
-    uint32_t response_type        : 2;
-    uint32_t special_command      : 3;
-    uint32_t open_drain           : 1;
-    uint32_t maximum_latency      : 1;
-    uint32_t pad_0                : 3;
-    uint32_t transfer_command     : 2;
-    uint32_t transfer_direction   : 1;
-    uint32_t transfer_type        : 3;
-    uint32_t pad_1                : 2;
-    uint32_t sdio_special_command : 2;
-    uint32_t pad_2                : 6;
-  }
-  bits;
-}
-mmc_command_t;
 
 /*
  * Command definition.

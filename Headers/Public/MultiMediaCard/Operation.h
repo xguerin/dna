@@ -18,18 +18,11 @@
 #ifndef MULTIMEDIACARD_OPERATION_H
 #define MULTIMEDIACARD_OPERATION_H
 
-#include <stdint.h>
-#include <stdbool.h>
-#include <DnaTools/DnaTools.h>
-
 typedef enum _mmc_operation
 {
   MMC_READ,
   MMC_WRITE
 }
 mmc_operation_t;
-
-extern status_t mmc_execute (mmc_card_t card, mmc_operation_t operation,
-    void * buffer, int64_t block_start, int32_t block_count);
 
 #endif

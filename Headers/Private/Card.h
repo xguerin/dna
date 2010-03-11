@@ -19,9 +19,10 @@
 #define MULTIMEDIACARD_CARD_PRIVATE_H
 
 #include <stdint.h>
+#include <Private/CID.h>
+#include <Private/CSD.h>
+#include <Private/RCA.h>
 #include <MultiMediaCard/Card.h>
-
-#include <Core/Core.h>
 #include <DnaTools/DnaTools.h>
 
 enum mmc_card_state
@@ -77,16 +78,17 @@ mmc_card_status_t;
 
 typedef struct _mmc_card_private
 {
-  struct _mmc_card card_info;
+  struct _mmc_card card;
+  mmc_callbacks_t callbacks;
 
   mmc_cid_t cid;
   mmc_csd_t csd;
   mmc_rca_t rca;
-
-  spinlock_t lock;
 }
 * mmc_card_private_t;
 
+extern status_t mmc_card_create (mmc_card_t * card, mmc_callbacks_t callbacks);
+extern status_t mmc_card_destroy (mmc_card_t card);
 extern void mmc_show_card_status (mmc_card_status_t status);
   
 #endif
