@@ -15,17 +15,42 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#ifndef MULTIMEDIACARD_PRIVATE_H
-#define MULTIMEDIACARD_PRIVATE_H
-
-#include <Private/Card.h>
-#include <Private/CIC.h>
-#include <Private/CID.h>
-#include <Private/Command.h>
-#include <Private/CSD.h>
-#include <Private/OCR.h>
 #include <Private/RCA.h>
-#include <Private/SCR.h>
+#include <DnaTools/DnaTools.h>
 
-#endif
+static char * rca_string[] = 
+{
+  "application command", "ready for data",
+  "error", "illegal command",
+  "com CRC error", NULL
+};
+
+static uint32_t rca_code[] =
+{
+  (1UL << 5), (1UL << 8),
+  (1UL << 19), (1UL << 22),
+  (1UL << 23),
+};
+
+static char * state_string[] = 
+{
+  "idle", "ready", "ident", "stdby", "tran",
+  "data", "rcv", "prog", "dis", "rsv", "rsv",
+  "rsv", "rsv", "rsv", "rsv", "rsvio"
+};
+
+void mmc_show_rca (mmc_rca_t rca)
+{
+  log (INFO_LEVEL, "Raw RCA = 0x%x", rca . raw);
+  log (INFO_LEVEL, "Card state = %s", state_string[rca . bits . current_state]);
+  log (INFO_LEVEL, "RCA = 0x%x", rca . bits . rca);
+
+  for (int32_t index = 0; rca_string[index] != NULL; index += 1)
+  {
+    if ((rca . raw & rca_code[index]) != 0)
+    {
+      log (INFO_LEVEL, "%s", rca_string[index]);
+    }
+  }
+}
 

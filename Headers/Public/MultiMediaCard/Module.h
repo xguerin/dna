@@ -26,8 +26,8 @@
 typedef struct _mmc_module
 {
   module_t module;
-  status_t (* card_create) (mmc_card_t * card);
-  status_t (* card_destroy) (mmc_card_t * card);
+  status_t (* create) (mmc_card_t * card);
+  status_t (* destroy) (mmc_card_t * card);
   status_t (* execute) (mmc_card_t card, mmc_operation_t operation,
     void * buffer, int64_t block_start, int32_t block_count);
 };

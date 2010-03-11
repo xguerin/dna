@@ -15,17 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#ifndef MULTIMEDIACARD_PRIVATE_H
-#define MULTIMEDIACARD_PRIVATE_H
-
-#include <Private/Card.h>
-#include <Private/CIC.h>
 #include <Private/CID.h>
-#include <Private/Command.h>
-#include <Private/CSD.h>
-#include <Private/OCR.h>
-#include <Private/RCA.h>
-#include <Private/SCR.h>
+#include <DnaTools/DnaTools.h>
 
-#endif
+void mmc_show_cid (mmc_cid_t cid)
+{
+  log (INFO_LEVEL, "Manufacturer ID: 0x%x", cid . manufacturer_id);
+  log (INFO_LEVEL, "OEM ID: 0x%x", cid . oem_id);
+  log (INFO_LEVEL, "Product name : %s", cid . name);
+  log (INFO_LEVEL, "Revision: 0x%x", cid . revision);
+  log (INFO_LEVEL, "S/N: 0x%x", cid . serial_number);
+  log (INFO_LEVEL, "Date: 0x%x", cid . manufacturing_date);
+}
 

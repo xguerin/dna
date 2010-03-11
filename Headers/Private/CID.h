@@ -33,7 +33,19 @@
                               (y & (0xFFUL     << 24)) >> 24
 #define MANUFACTURING_DATE(x) (x & (0xFFFUL    <<  8)) >>  8
 
+typedef struct _mmc_cid
+{
+  char name[6];
+  uint8_t manufacturer_id;
+  uint16_t oem_id;
+  uint8_t revision;
+  uint32_t serial_number;
+  uint16_t manufacturing_date;
+}
+mmc_cid_t;
+
 extern void mmc_build_cid (uint32_t response[4], mmc_cid_t * cid);
+extern void mmc_show_cid (mmc_cid_t cid);
 
 #endif
 

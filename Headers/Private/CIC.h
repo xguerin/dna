@@ -15,23 +15,26 @@
  * along with this program.If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#ifndef MULTIMEDIACARD_CID_H
-#define MULTIMEDIACARD_CID_H
+#ifndef MULTIMEDIACARD_CIC_PRIVATE_H
+#define MULTIMEDIACARD_CIC_PRIVATE_H
 
 #include <stdint.h>
 
-typedef struct _mmc_cid
+typedef union _mmc_cic
 {
-  char name[6];
-  uint8_t manufacturer_id;
-  uint16_t oem_id;
-  uint8_t revision;
-  uint32_t serial_number;
-  uint16_t manufacturing_date;
-}
-mmc_cid_t;
+  uint32_t raw;
 
-extern void mmc_show_cid (mmc_cid_t cid);
+  struct _mmc_cic_bits
+  {
+    uint32_t check_pattern    :8;
+    uint32_t voltage_accepted :4;
+    uint32_t reserved         :20;
+  }
+  bits;
+}
+mmc_cic_t;
+
+extern void mmc_show_cic (mmc_cic_t cic);
 
 #endif
 

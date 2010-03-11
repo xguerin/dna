@@ -19,10 +19,8 @@
 #define MULTIMEDIACARD_H
 
 #include <MultiMediaCard/Card.h>
-#include <MultiMediaCard/CID.h>
-#include <MultiMediaCard/CSD.h>
 #include <MultiMediaCard/Module.h>
-#include <MultiMediaCard/RCA.h>
+#include <MultiMediaCard/Operation.h>
 
 #endif
 

@@ -15,35 +15,36 @@
  * along with this program.If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#ifndef MULTIMEDIACARD_RCA_H
-#define MULTIMEDIACARD_RCA_H
+#ifndef MULTIMEDIACARD_OCR_PRIVATE_H
+#define MULTIMEDIACARD_OCR_PRIVATE_H
 
 #include <stdint.h>
 
-typedef union _mmc_rca
+typedef union _mmc_ocr
 {
   uint32_t raw;
 
-  struct _mmc_rca_bits
+  struct _mmc_ocr_bits
   {
-    uint32_t test_mode            :2;
-    uint32_t app_specific_command :2;
-    uint32_t reserved_0           :1;
-    uint32_t application_command  :1;
-    uint32_t reserved_1           :1;
-    uint32_t switch_error         :1;
-    uint32_t ready_for_data       :1;
-    uint32_t current_state        :4;
-    uint32_t error                :1;
-    uint32_t illegal_command      :1;
-    uint32_t com_crc_error        :1;
-    uint32_t rca                  :16;
+    uint32_t reserved_0      :15;
+    uint32_t voltage_27_28   :1;
+    uint32_t voltage_28_29   :1;
+    uint32_t voltage_29_30   :1;
+    uint32_t voltage_30_31   :1;
+    uint32_t voltage_31_32   :1;
+    uint32_t voltage_32_33   :1;
+    uint32_t voltage_33_34   :1;
+    uint32_t voltage_34_35   :1;
+    uint32_t voltage_35_36   :1;
+    uint32_t reserved_1      :6;
+    uint32_t capacity_status :1;
+    uint32_t not_busy        :1;
   }
   bits;
 }
-mmc_rca_t;
+mmc_ocr_t;
 
-extern void d940_mmc_show_rca (mmc_rca_t rca);
+extern void mmc_show_ocr (mmc_ocr_t ocr);
 
 #endif
 

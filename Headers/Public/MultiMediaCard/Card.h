@@ -19,10 +19,6 @@
 #define MULTIMEDIACARD_CARD_H
 
 #include <stdint.h>
-#include <MultiMediaCard/CID.h>
-#include <MultiMediaCard/CSD.h>
-#include <MultiMediaCard/RCA.h>
-
 #include <Core/Core.h>
 #include <DnaTools/DnaTools.h>
 
@@ -34,79 +30,21 @@ typedef enum _mmc_card_type
 }
 mmc_card_type_t;
 
-enum mmc_card_state
+typedef struct _mmc_callbacks
 {
-  MMC_CARD_IDLE = 0,
-  MMC_CARD_READY,
-  MMC_CARD_IDENT,
-  MMC_CARD_STDBY,
-  MMC_CARD_TRAN,
-  MMC_CARD_DATA,
-  MMC_CARD_RCV,
-  MMC_CARD_PRG,
-  MMC_CARD_DIS
-};
-
-typedef union _mmc_card_status
-{
-  uint32_t raw;
-
-  struct _mmc_card_status_bits
-  {
-    uint32_t test_mode            :2;
-    uint32_t app_specific_command :2;
-    uint32_t reserved_0           :1;
-    uint32_t application_command  :1;
-    uint32_t reserved_1           :1;
-    uint32_t switch_error         :1;
-    uint32_t ready_for_data       :1;
-    uint32_t current_state        :4;
-    uint32_t erase_reset          :1;
-    uint32_t reserved_2           :1;
-    uint32_t wp_erase_skip        :1;
-    uint32_t cid_csd_overwrite    :1;
-    uint32_t overrun              :1;
-    uint32_t underrun             :1;
-    uint32_t error                :1;
-    uint32_t cc_error             :1;
-    uint32_t card_ecc_failed      :1;
-    uint32_t illegal_command      :1;
-    uint32_t com_crc_error        :1;
-    uint32_t lock_unlock_failed   :1;
-    uint32_t card_is_locked       :1;
-    uint32_t wp_violation         :1;
-    uint32_t erase_param          :1;
-    uint32_t erase_seq_error      :1;
-    uint32_t block_len_error      :1;
-    uint32_t address_misaligned   :1;
-    uint32_t address_out_of_range :1;
-  }
-  bits;
-}
-mmc_card_status_t;
-
-typedef struct _mmc_command_t
-{
-  status_t (* send_command) (mmc_command_t command, uint32_t response[4]);
+  status_t (* send_command) (uint32_t, uint32_t response[4]);
   bool (* is_connected) (void);
 }
-mmc_command_t;
+mmc_callbacks_t;
 
 typedef struct _mmc_card
 {
-  spinlock_t lock;
-
-  mmc_cid_t cid;
-  mmc_csd_t csd;
-  mmc_rca_t rca;
-
-  mmc_card_type_t type;
-  mmc_command_t cmd;
+  mmc_card_type_t;
+  device_info_t info;
 }
 * mmc_card_t;
 
-extern status_t mmc_card_create (mmc_card_t * card, mmc_command_t cmd);
+extern status_t mmc_card_create (mmc_card_t * card, mmc_callbacks_t callbacks);
 extern status_t mmc_card_destroy (mmc_card_t card);
-extern void mmc_show_card_status (mmc_card_status_t status);
   
 #endif

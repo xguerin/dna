@@ -15,8 +15,8 @@
  * along with this program.If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#ifndef D940_MMC_RCA_H
-#define D940_MMC_RCA_H
+#ifndef MULTIMEDIACARD_RCA_PRIVATE_H
+#define MULTIMEDIACARD_RCA_PRIVATE_H
 
 #include <stdint.h>
 
@@ -43,7 +43,7 @@ typedef union _mmc_rca
 }
 mmc_rca_t;
 
-extern void d940_mmc_show_rca (mmc_rca_t rca);
+extern void mmc_show_rca (mmc_rca_t rca);
 
 #endif
 

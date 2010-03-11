@@ -15,17 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#ifndef MULTIMEDIACARD_PRIVATE_H
-#define MULTIMEDIACARD_PRIVATE_H
-
-#include <Private/Card.h>
 #include <Private/CIC.h>
-#include <Private/CID.h>
-#include <Private/Command.h>
-#include <Private/CSD.h>
-#include <Private/OCR.h>
-#include <Private/RCA.h>
-#include <Private/SCR.h>
+#include <DnaTools/DnaTools.h>
 
-#endif
+void mmc_show_cic (mmc_cic_t cic)
+{
+  log (INFO_LEVEL, "Check pattern = 0x%x", cic . bits . check_pattern);
+  log (INFO_LEVEL, "Voltage accepted = 0x%x", cic . bits . voltage_accepted);
+}
 

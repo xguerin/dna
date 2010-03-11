@@ -60,6 +60,58 @@
 #define CRC(x)                   (x & (0xFEUL  <<  0)) >>  0
 #define ALWAYS_ONE(x)            (x & (0x01UL  <<  0)) >>  0
 
+typedef enum _mmc_csd_structure
+{
+  CSD_V1_STRUCTURE = 0,
+  CSD_V2_STRUCTURE = 1
+}
+mmc_csd_structure_t;
+
+typedef struct _mmc_csd
+{
+  mmc_csd_structure_t csd_structure;
+
+  uint8_t read_access_time;
+  uint8_t read_access_cycles;
+  uint8_t data_transfer_rate;
+  uint16_t command_classes;
+
+  uint32_t device_size;
+  uint8_t size_multiplier;
+  uint8_t file_format;
+
+  uint8_t read_block_length;
+  bool read_block_partial;
+  bool read_block_misalign;
+
+  uint8_t write_block_length;
+  uint8_t write_speed_factor;
+  bool write_block_partial;
+  bool write_block_misalign;
+
+  uint8_t read_vdd_min;
+  uint8_t read_vdd_max;
+  uint8_t write_vdd_min;
+  uint8_t write_vdd_max;
+
+  bool erase_block_enable;
+  uint8_t erase_sector_size;
+
+  bool wp_group_enable;
+  uint8_t wp_group_size;
+
+  bool dsr_implemented;
+  bool file_format_group;
+  bool copy;
+  bool permanent_write_protect;
+  bool temporary_write_protect;
+
+  uint8_t crc;
+  bool always_one;
+}                                  
+mmc_csd_t;                         
+                                   
 extern void d940_mmc_build_csd (uint32_t response[4], mmc_csd_t * csd);
+extern void mmc_show_csd (mmc_csd_t csd);
 
 #endif                             
