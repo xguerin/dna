@@ -17,25 +17,25 @@
 
 #include <DnaTools/DnaTools.h>
 
-/****f* filesystem/filesystem_load
+/****f* module/module_load
  * SUMMARY
- * Load a filesystem.
+ * Load a module.
  *
  * SYNOPSIS
  */
 
-status_t filesystem_load (char * name, filesystem_t ** fs)
+status_t module_load (char * name, module_t ** module)
 
 /*
  * SOURCE
  */
 
 {
-  for (int32_t i = 0; i < OS_N_FILESYSTEMS; i++)
+  for (int32_t i = 0; i < OS_N_MODULES; i++)
   {
-    if (dna_strcmp (OS_FILESYSTEMS_LIST[i] -> name, name) == 0)
+    if (dna_strcmp (OS_MODULES_LIST[i] -> name, name) == 0)
     {
-      *fs = OS_FILESYSTEMS_LIST[i];
+      *fs = OS_MODULES_LIST[i];
       return DNA_OK;
     }
   }

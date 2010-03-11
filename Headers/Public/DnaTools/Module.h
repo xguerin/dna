@@ -1,4 +1,7 @@
-/*
+/****h* dnatools/module
+ * SUMMARY
+ * DNA tools module definitions.
+ ****
  * Copyright (C) 2007 TIMA Laboratory                                    
  *                                                                       
  * This program is free software: you can redistribute it and/or modify  
@@ -15,33 +18,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#include <DnaTools/DnaTools.h>
+#ifndef DNA_TOOLS_MODULE_H
+#define DNA_TOOLS_MODULE_H
 
-/****f* filesystem/filesystem_load
+#include <stdint.h>
+#include <stdbool.h>
+
+#include <DnaTools/Status.h>
+
+/****t* module/module_t
  * SUMMARY
- * Load a filesystem.
+ * Module type.
  *
- * SYNOPSIS
- */
-
-status_t filesystem_load (char * name, filesystem_t ** fs)
-
-/*
  * SOURCE
  */
 
+typedef struct _module
 {
-  for (int32_t i = 0; i < OS_N_FILESYSTEMS; i++)
-  {
-    if (dna_strcmp (OS_FILESYSTEMS_LIST[i] -> name, name) == 0)
-    {
-      *fs = OS_FILESYSTEMS_LIST[i];
-      return DNA_OK;
-    }
-  }
-
-  return DNA_ERROR;
+  char * name;
+  int32_t flags;
 }
+module_t;
 
 /*
  ****/
+
+extern int32_t OS_N_MODULES;
+extern module_t * OS_MODULES_LIST [];
+
+extern status_t module_load (char * name, module_t ** module);
+
+#endif
+
