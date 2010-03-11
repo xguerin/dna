@@ -35,7 +35,7 @@ status_t module_load (char * name, module_t ** module)
   {
     if (dna_strcmp (OS_MODULES_LIST[i] -> name, name) == 0)
     {
-      *fs = OS_MODULES_LIST[i];
+      *module = OS_MODULES_LIST[i];
       return DNA_OK;
     }
   }
