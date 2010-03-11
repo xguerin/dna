@@ -15,14 +15,24 @@
  * along with this program.If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#ifndef D940_MMC_CARD_H
-#define D940_MMC_CARD_H
+#ifndef MULTIMEDIACARD_CARD_H
+#define MULTIMEDIACARD_CARD_H
 
 #include <stdint.h>
-#include <Private/CID.h>
-#include <Private/CSD.h>
-#include <Private/RCA.h>
+#include <MultiMediaCard/CID.h>
+#include <MultiMediaCard/CSD.h>
+#include <MultiMediaCard/RCA.h>
+
+#include <Core/Core.h>
 #include <DnaTools/DnaTools.h>
+
+typedef enum _mmc_card_type
+{
+  MMC_SD_CARD,
+  MMC_SDHC_CARD,
+  MMC_MMC_CARD
+}
+mmc_card_type_t;
 
 enum mmc_card_state
 {
@@ -75,36 +85,28 @@ typedef union _mmc_card_status
 }
 mmc_card_status_t;
 
-typedef enum _mmc_card_type
+typedef struct _mmc_command_t
 {
-  MMC_SD_CARD,
-  MMC_SDHC_CARD
+  status_t (* send_command) (mmc_command_t command, uint32_t response[4]);
+  bool (* is_connected) (void);
 }
-mmc_card_type_t;
-
-typedef struct _mmc_drive
-{
-  bool locked;
-  bool exclusive;
-  int32_t partition;
-}
-mmc_drive_t;
+mmc_command_t;
 
 typedef struct _mmc_card
 {
-  mmc_card_type_t type;
+  spinlock_t lock;
+
   mmc_cid_t cid;
   mmc_csd_t csd;
   mmc_rca_t rca;
 
-  device_info_t info;
-  int32_t partition_count;
-  partition_info_t * partition;
-  mmc_drive_t * drive;
+  mmc_card_type_t type;
+  mmc_command_t cmd;
 }
 * mmc_card_t;
 
-extern status_t d940_mmc_card_initialize (mmc_card_t * card);
-extern void d940_mmc_show_card_status (mmc_card_status_t status);
+extern status_t mmc_card_create (mmc_card_t * card, mmc_command_t cmd);
+extern status_t mmc_card_destroy (mmc_card_t card);
+extern void mmc_show_card_status (mmc_card_status_t status);
   
 #endif

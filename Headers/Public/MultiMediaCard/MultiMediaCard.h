@@ -15,18 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#ifndef MULTIMEDIACARD_MODULE_PRIVATE_H
-#define MULTIMEDIACARD_MODULE_PRIVATE_H
+#ifndef MULTIMEDIACARD_H
+#define MULTIMEDIACARD_H
 
-#include <stdint.h>
-#include <DnaTools/DnaTools.h>
-
-typedef struct _mmc_module
-{
-  module_t module;
-
-
-};
+#include <MultiMediaCard/Card.h>
+#include <MultiMediaCard/CID.h>
+#include <MultiMediaCard/CSD.h>
+#include <MultiMediaCard/Module.h>
+#include <MultiMediaCard/RCA.h>
 
 #endif
 
