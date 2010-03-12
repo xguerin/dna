@@ -38,13 +38,13 @@ static uint32_t ocr_code[] =
 
 void mmc_show_ocr (mmc_ocr_t ocr)
 {
-  log (VERBOSE_LEVEL, "Raw OCR = 0x%x", ocr . raw);
+  log (INFO_LEVEL, "Raw OCR = 0x%x", ocr . raw);
 
   for (int32_t index = 0; ocr_string[index] != NULL; index += 1)
   {
     if ((ocr . raw & ocr_code[index]) != 0)
     {
-      log (VERBOSE_LEVEL, "%s", ocr_string[index]);
+      log (INFO_LEVEL, "%s", ocr_string[index]);
     }
   }
 }

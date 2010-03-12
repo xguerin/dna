@@ -20,11 +20,11 @@
 
 void mmc_show_cid (mmc_cid_t cid)
 {
-  log (VERBOSE_LEVEL, "Manufacturer ID: 0x%x", cid . manufacturer_id);
-  log (VERBOSE_LEVEL, "OEM ID: 0x%x", cid . oem_id);
-  log (VERBOSE_LEVEL, "Product name : %s", cid . name);
-  log (VERBOSE_LEVEL, "Revision: 0x%x", cid . revision);
-  log (VERBOSE_LEVEL, "S/N: 0x%x", cid . serial_number);
-  log (VERBOSE_LEVEL, "Date: 0x%x", cid . manufacturing_date);
+  log (INFO_LEVEL, "Manufacturer ID: 0x%x", cid . manufacturer_id);
+  log (INFO_LEVEL, "OEM ID: 0x%x", cid . oem_id);
+  log (INFO_LEVEL, "Product name : %s", cid . name);
+  log (INFO_LEVEL, "Revision: 0x%x", cid . revision);
+  log (INFO_LEVEL, "S/N: 0x%x", cid . serial_number);
+  log (INFO_LEVEL, "Date: 0x%x", cid . manufacturing_date);
 }
 
