@@ -18,9 +18,11 @@
 #include <stdint.h>
 #include <Private/MasterBootRecord.h>
 #include <DnaTools/DnaTools.h>
+#include <Processor/Processor.h>
 
 status_t mbr_load (uint8_t sector[512], mbr_partition_t partition[4])
 {
+  uint16_t signature;
   mbr_t * mbr = (mbr_t *)sector;
 
   watch (status_t)
@@ -28,15 +30,13 @@ status_t mbr_load (uint8_t sector[512], mbr_partition_t partition[4])
     ensure (sector != NULL, DNA_BAD_ARGUMENT);
     ensure (partition != NULL, DNA_BAD_ARGUMENT);
     
-#if CPU_ENDIANNESS == CPU_LITTLE_ENDIAN
-    ensure (mbr . fields . signature == 0xAA55, DNA_ERROR);
-#else
-    ensure (mbr . fields . signature == 0x55AA, DNA_ERROR);
-#endif
+    signature = mbr -> fields . signature;
+    cpu_data_is_big_endian (16, signature);
+    ensure (signature == 0x55AA, DNA_ERROR);
 
     for (int32_t i = 0; i < 4; i += 1)
     {
-      partition[i] = mbr . fields . partition[i];
+      partition[i] = mbr -> fields . partition[i];
     }
 
     return DNA_OK;

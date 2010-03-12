@@ -30,7 +30,7 @@ typedef union _mbr
     uint8_t code[440];
     uint32_t disk_signature;
     uint16_t zero;
-    partition_table_t partition[4];
+    mbr_partition_t partition[4];
     uint16_t signature;
   }
   __attribute__ ((packed)) fields;
