@@ -37,7 +37,7 @@ status_t mmc_execute (mmc_card_t a_card, mmc_operation_t operation,
     {
       case SELECT_DESELECT_CARD :
         {
-          log (INFO_LEVEL, "[SELECT_DESELECT_CARD]");
+          log (VERBOSE_LEVEL, "[SELECT_DESELECT_CARD]");
 
           argument = card_selected ? 0 : card -> rca . raw;
           status = card -> callbacks . send_command (command,
@@ -59,7 +59,7 @@ status_t mmc_execute (mmc_card_t a_card, mmc_operation_t operation,
 
       case SD_SET_BUS_WIDTH :
         {
-          log (INFO_LEVEL, "[SD_SET_BUS_WIDTH]");
+          log (VERBOSE_LEVEL, "[SD_SET_BUS_WIDTH]");
 
           command = APP_CMD;
           status = card -> callbacks . send_command (command,
@@ -76,7 +76,7 @@ status_t mmc_execute (mmc_card_t a_card, mmc_operation_t operation,
 
       case SET_BLOCK_LENGTH :
         {
-          log (INFO_LEVEL, "[SET_BLOCK_LENGTH]");
+          log (VERBOSE_LEVEL, "[SET_BLOCK_LENGTH]");
 
           status = card -> callbacks . send_command (command, 512, response);
           check (error, status == DNA_OK, status);
@@ -87,12 +87,12 @@ status_t mmc_execute (mmc_card_t a_card, mmc_operation_t operation,
 
       case READ_SINGLE_BLOCK :
         {
-          log (INFO_LEVEL, "[READ_SINGLE_BLOCK]");
-          log (INFO_LEVEL, "Offset : %d", block_offset);
+          log (VERBOSE_LEVEL, "[READ_SINGLE_BLOCK]");
+          log (VERBOSE_LEVEL, "Offset : %d", block_offset);
 
           multiplier = (card -> card . type == MMC_SD_CARD) ? 9 : 0;
           block_offset = block_start << multiplier;
-          log (INFO_LEVEL, "Offset : %d", block_offset);
+          log (VERBOSE_LEVEL, "Offset : %d", block_offset);
 
           status = card -> callbacks . send_command (command,
               block_offset, response);
