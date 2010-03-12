@@ -50,7 +50,7 @@ status_t mmc_card_create (mmc_card_t * p_card, mmc_callbacks_t callbacks)
     {
       case GO_IDLE_STATE :
         {
-          log (VERBOSE_LEVEL, "[GO_IDLE_STATE]");
+          log (INFO_LEVEL, "[GO_IDLE_STATE]");
           status = callbacks . send_command (command, 0, response);
           check (error, status == DNA_OK, status);
 
@@ -60,7 +60,7 @@ status_t mmc_card_create (mmc_card_t * p_card, mmc_callbacks_t callbacks)
 
       case SEND_IF_COND :
         {
-          log (VERBOSE_LEVEL, "[SEND_IF_COND]");
+          log (INFO_LEVEL, "[SEND_IF_COND]");
 
           status = callbacks . send_command (command, 0x1AA, response);
           check (error, status == DNA_OK, status);
@@ -73,7 +73,7 @@ status_t mmc_card_create (mmc_card_t * p_card, mmc_callbacks_t callbacks)
 
       case SD_CMD_APP_SEND_OP_COND :
         {
-          log (VERBOSE_LEVEL, "[SD_CMD_APP_SEND_OP_COND]");
+          log (INFO_LEVEL, "[SD_CMD_APP_SEND_OP_COND]");
 
           command = APP_CMD;
           status = callbacks . send_command (command, 0, response);
@@ -104,7 +104,7 @@ status_t mmc_card_create (mmc_card_t * p_card, mmc_callbacks_t callbacks)
 
       case ALL_SEND_CID :
         {
-          log (VERBOSE_LEVEL, "[ALL_SEND_CID]");
+          log (INFO_LEVEL, "[ALL_SEND_CID]");
 
           status = callbacks . send_command (command, 0, response);
           check (error, status == DNA_OK, status);
@@ -117,7 +117,7 @@ status_t mmc_card_create (mmc_card_t * p_card, mmc_callbacks_t callbacks)
 
       case SEND_RELATIVE_ADDR :
         {
-          log (VERBOSE_LEVEL, "[SEND_RELATIVE_ADDR]");
+          log (INFO_LEVEL, "[SEND_RELATIVE_ADDR]");
 
           status = callbacks . send_command (command, 0, response);
           check (error, status == DNA_OK, status);
@@ -130,7 +130,7 @@ status_t mmc_card_create (mmc_card_t * p_card, mmc_callbacks_t callbacks)
 
       case SEND_CSD :
         {
-          log (VERBOSE_LEVEL, "[SEND_CSD]");
+          log (INFO_LEVEL, "[SEND_CSD]");
 
           status = callbacks . send_command (command,
               card -> rca . raw, response);
