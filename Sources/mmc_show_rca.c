@@ -41,15 +41,15 @@ static char * state_string[] =
 
 void mmc_show_rca (mmc_rca_t rca)
 {
-  log (INFO_LEVEL, "Raw RCA = 0x%x", rca . raw);
-  log (INFO_LEVEL, "Card state = %s", state_string[rca . bits . current_state]);
-  log (INFO_LEVEL, "RCA = 0x%x", rca . bits . rca);
+  log (VERBOSE_LEVEL, "Raw RCA = 0x%x", rca . raw);
+  log (VERBOSE_LEVEL, "Card state = %s", state_string[rca . bits . current_state]);
+  log (VERBOSE_LEVEL, "RCA = 0x%x", rca . bits . rca);
 
   for (int32_t index = 0; rca_string[index] != NULL; index += 1)
   {
     if ((rca . raw & rca_code[index]) != 0)
     {
-      log (INFO_LEVEL, "%s", rca_string[index]);
+      log (VERBOSE_LEVEL, "%s", rca_string[index]);
     }
   }
 }

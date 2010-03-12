@@ -22,14 +22,14 @@ void mmc_show_csd (mmc_csd_t csd)
 {
   uint32_t memory_size = 0, blk_len, mult, blk_nr;
 
-  log (INFO_LEVEL, "CSD structure = %d", csd . csd_structure);
-  log (INFO_LEVEL, "Read block length = 0x%x", csd . read_block_length);
-  log (INFO_LEVEL, "Device size = 0x%x", csd . device_size);
+  log (VERBOSE_LEVEL, "CSD structure = %d", csd . csd_structure);
+  log (VERBOSE_LEVEL, "Read block length = 0x%x", csd . read_block_length);
+  log (VERBOSE_LEVEL, "Device size = 0x%x", csd . device_size);
 
   switch (csd . csd_structure)
   {
     case CSD_V1_STRUCTURE :
-      log (INFO_LEVEL, "Size mult = 0x%x", csd . size_multiplier);
+      log (VERBOSE_LEVEL, "Size mult = 0x%x", csd . size_multiplier);
 
       mult = 1 << (csd . size_multiplier + 2);
       blk_len = 1 << csd . read_block_length;
@@ -43,7 +43,7 @@ void mmc_show_csd (mmc_csd_t csd)
       break;
   }
 
-  log (INFO_LEVEL, "Memory size = %d bytes (%d MB)",
+  log (VERBOSE_LEVEL, "Memory size = %d bytes (%d MB)",
       memory_size, memory_size / (1024 * 1024));
 
 #if 0

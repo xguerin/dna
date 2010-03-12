@@ -63,7 +63,6 @@ status_t mmc_card_create (mmc_card_t * p_card, mmc_callbacks_t callbacks)
           log (VERBOSE_LEVEL, "[SEND_IF_COND]");
 
           status = callbacks . send_command (command, 0x1AA, response);
-          check (error, status == DNA_OK, status);
 
           is_sdhc = (response[0] == 0x1AA) ? true : false;
           command = is_sdhc ? SD_CMD_APP_SEND_OP_COND : GO_IDLE_STATE;

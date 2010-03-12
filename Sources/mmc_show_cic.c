@@ -20,7 +20,7 @@
 
 void mmc_show_cic (mmc_cic_t cic)
 {
-  log (INFO_LEVEL, "Check pattern = 0x%x", cic . bits . check_pattern);
-  log (INFO_LEVEL, "Voltage accepted = 0x%x", cic . bits . voltage_accepted);
+  log (VERBOSE_LEVEL, "Check pattern = 0x%x", cic . bits . check_pattern);
+  log (VERBOSE_LEVEL, "Voltage accepted = 0x%x", cic . bits . voltage_accepted);
 }
 

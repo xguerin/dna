@@ -23,12 +23,12 @@ void mmc_build_cid (uint32_t response[4], mmc_cid_t * cid)
 #if 0
   for (int32_t i = 0; i < 4; i += 1)
   {
-    log (INFO_LEVEL, "CID[%d] 0x%x", i, response[i]);
+    log (VERBOSE_LEVEL, "CID[%d] 0x%x", i, response[i]);
   }
 
   for (int32_t i = 0; i < 4; i += 1)
   {
-    log (INFO_LEVEL, "CID[%d] 0x%x 0x%x 0x%x 0x%x", i,
+    log (VERBOSE_LEVEL, "CID[%d] 0x%x 0x%x 0x%x 0x%x", i,
         ((char *)response)[i * 4 + 0],
         ((char *)response)[i * 4 + 1],
         ((char *)response)[i * 4 + 2],
