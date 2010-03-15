@@ -12,14 +12,20 @@ typedef enum _cpu_endianness
 }
 cpu_endianness_t;
 
+#define SWITCH_ENDIAN_64(x)                                                \
+  x =  ((x & 0x00000000000000ff) << 56) | ((x & 0x000000000000ff00) << 40) \
+     | ((x & 0x0000000000ff0000) << 24) | ((x & 0x00000000ff000000) <<  8) \
+     | ((x & 0xff00000000000000) >> 56) | ((x & 0x00ff000000000000) >> 40) \
+     | ((x & 0x0000ff0000000000) >> 24) | ((x & 0x000000ff00000000) >>  8)
+
 #define SWITCH_ENDIAN_32(x)                                       \
   x =  ((x & 0x000000ff) << 24) | ((x & 0x0000ff00) << 8)  |      \
   ((x & 0x00ff0000) >> 8)  | ((x & 0xff000000) >> 24)       
 
 #define SWITCH_ENDIAN_16(x) x = ((x & 0x00ff) << 8) |  ((x & 0xff00) >> 8)
 
-#define cpu_data_is_bigendian(type,data) SWITCH_ENDIAN_##type(data)
-#define cpu_data_is_littleendian(type,data)
+#define cpu_data_is_big_endian(type,data) SWITCH_ENDIAN_##type(data)
+#define cpu_data_is_little_endian(type,data)
 
 #ifndef PLATFORM_ENDIANNESS
   #error "PLATFORM_ENDIANNESS not defined."
