@@ -22,11 +22,13 @@
 status_t devfs_mount (int32_t vid, const char * dev_path, uint32_t flags,
     void * params, void ** data, int64_t * vnid)
 {
+  status_t status = DNA_OK;
   devfs_t devfs = NULL;
   devfs_inode_t root_inode = NULL;
   devfs_entry_t entry = NULL;
   device_cmd_t * commands = NULL;
   char ** devices = NULL, * path = NULL;
+  int32_t driver_index = 0;
 
   watch (status_t)
   {
@@ -80,29 +82,33 @@ status_t devfs_mount (int32_t vid, const char * dev_path, uint32_t flags,
     queue_add (& root_inode -> entry_list, entry);
 
     /*
-     * Load the drivers and register them as files
+     * First, load the driver and check if they are consistent.
+     */
+
+    for (driver_index = 0; driver_index < OS_N_DRIVERS; driver_index ++)
+    {
+      status = OS_DRIVERS_LIST[driver_index] -> init_hardware ();
+      check (bad_driver, status == DNA_OK, status);
+
+      status = OS_DRIVERS_LIST[driver_index] -> init_driver ();
+      check (bad_driver, status == DNA_OK, status);
+    }
+
+    /*
+     * Then, parse their published devices and add them to the tree.
      */
 
     path = kernel_malloc (DNA_PATH_LENGTH, false);
 
-    for (int32_t i = 0; i < OS_N_DRIVERS; i ++)
+    for (driver_index = 0; driver_index < OS_N_DRIVERS; driver_index ++)
     {
-      if (OS_DRIVERS_LIST[i] -> init_hardware () == DNA_OK &&
-          OS_DRIVERS_LIST[i] -> init_driver () == DNA_OK)
+      devices = (char **) OS_DRIVERS_LIST[driver_index] -> publish_devices ();
+
+      for (int32_t j = 0; devices[j] != NULL; j ++)
       {
-        devices = (char **) OS_DRIVERS_LIST[i] -> publish_devices ();
-
-        for (int32_t j = 0; devices[j] != NULL; j ++)
-        {
-          dna_strcpy (path, devices[j]);
-          commands = OS_DRIVERS_LIST[i] -> find_device (path);
-
-          /*
-           * TODO: we need to check if the insertion went correctly.
-           */
-
-          devfs_insert_path (devfs, root_inode, path, commands);
-        }
+        dna_strcpy (path, devices[j]);
+        commands = OS_DRIVERS_LIST[driver_index] -> find_device (path);
+        devfs_insert_path (devfs, root_inode, path, commands);
       }
     }
 
@@ -116,6 +122,17 @@ status_t devfs_mount (int32_t vid, const char * dev_path, uint32_t flags,
     *vnid = root_inode -> id;
 
     return vnode_create (root_inode -> id, devfs -> vid, (void *) root_inode);
+  }
+
+  rescue (bad_driver)
+  {
+    for (int32_t i = 0; i < driver_index; i += 1)
+    {
+      OS_DRIVERS_LIST[i] -> uninit_driver ();
+    }
+
+    devfs_entry_t entry = queue_rem (& root_inode -> entry_list);
+    kernel_free (entry);
   }
 
   rescue (dotdot_malloc)
