@@ -22,7 +22,7 @@
 #include <MasterBootRecord/Partition.h>
 #include <DnaTools/DnaTools.h>
 
-typedef struct _mmc_module
+typedef struct _mbr_module
 {
   module_t module;
   status_t (* load) (uint8_t sector[512], mbr_partition_t partition[4]);
