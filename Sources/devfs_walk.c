@@ -15,35 +15,85 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
+#include <stdbool.h>
 #include <Private/DeviceFileSystem.h>
 #include <DnaTools/DnaTools.h>
+#include <MemoryManager/MemoryManager.h>
 
 status_t devfs_walk (void * ns, void * base, char * restrict path,
     char ** new_path, int64_t * p_vnid)
 {
+  bool destroy_dummy = false;
   devfs_t devfs = ns;
-  devfs_inode_t base_inode = base;
+  devfs_inode_t inode = base, dummy_inode = NULL;
   devfs_entry_t entry = NULL;
-  int64_t vnid = -1;
+  device_cmd_t * commands = NULL;
+  char ** devices = NULL, * a_path = NULL;
+  int32_t driver_index = 0;
 
   watch (status_t)
   {
     ensure (ns != NULL, DNA_ERROR);
+    ensure (dna_strcmp (path, "..") != 0, DNA_ALREADY_AT_ROOT);
 
-    log (VERBOSE_LEVEL, "path = %s", path);
+    if (inode -> id == devfs -> root_vnid)
+    {
+      log (INFO_LEVEL, "Path = %s, Size = %d",
+          path, devfs -> inode_list . status);
 
-    entry = queue_lookup (& base_inode -> entry_list,
+      dummy_inode = kernel_malloc (sizeof (struct devfs_inode), true);
+      ensure (dummy_inode != NULL, DNA_OUT_OF_MEM);
+
+     /*
+      * Parse the publish_devices.
+      */
+
+      a_path = kernel_malloc (DNA_PATH_LENGTH, false);
+      check (path_error, a_path != NULL, DNA_OUT_OF_MEM);
+
+      for (driver_index = 0; driver_index < OS_N_DRIVERS; driver_index ++)
+      {
+        devices = (char **) OS_DRIVERS_LIST[driver_index] -> publish_devices ();
+
+        for (int32_t j = 0; devices[j] != NULL; j ++)
+        {
+          if (dna_memcmp (path, devices[j], dna_strlen(path)) == 0)
+          {
+            dna_strcpy (a_path, devices[j]);
+            commands = OS_DRIVERS_LIST[driver_index] -> find_device (a_path);
+            devfs_insert_path (devfs, dummy_inode, a_path, commands);
+          }
+        }
+      }
+
+      kernel_free (a_path);
+      inode = dummy_inode;
+      destroy_dummy = true;
+    }
+
+    /*
+     * Check whether the dummy inode is empty or not.
+     * If everything is fine, get the path vnid.
+     */
+
+    entry = queue_lookup (& inode -> entry_list,
         devfs_entry_name_inspector, path);
     ensure (entry != NULL, DNA_NO_ENTRY);
 
-    log (VERBOSE_LEVEL, "inode found");
+    *p_vnid = entry -> id;
+    ensure (entry -> id != devfs -> root_vnid, DNA_ALREADY_AT_ROOT);
 
-    vnid = entry -> id;
-    ensure (vnid != devfs -> root_vnid, DNA_ALREADY_AT_ROOT);
-    ensure (dna_strcmp (path, "..") != 0, DNA_ALREADY_AT_ROOT);
+    /*
+     * Destroy the dummy inode and its entries if necessary.
+     */
 
-    *p_vnid = vnid;
-    return DNA_OK;
+    return destroy_dummy ? devfs_destroy_inode (dummy_inode) : DNA_OK;
+  }
+
+  rescue (path_error)
+  {
+    kernel_free (dummy_inode);
+    leave;
   }
 }
 

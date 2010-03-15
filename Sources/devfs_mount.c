@@ -26,8 +26,6 @@ status_t devfs_mount (int32_t vid, const char * dev_path, uint32_t flags,
   devfs_t devfs = NULL;
   devfs_inode_t root_inode = NULL;
   devfs_entry_t entry = NULL;
-  device_cmd_t * commands = NULL;
-  char ** devices = NULL, * path = NULL;
   int32_t driver_index = 0;
 
   watch (status_t)
@@ -82,7 +80,7 @@ status_t devfs_mount (int32_t vid, const char * dev_path, uint32_t flags,
     queue_add (& root_inode -> entry_list, entry);
 
     /*
-     * First, load the driver and check if they are consistent.
+     * Load the in-kernel drivers and check if they are consistent.
      */
 
     for (driver_index = 0; driver_index < OS_N_DRIVERS; driver_index ++)
@@ -93,26 +91,6 @@ status_t devfs_mount (int32_t vid, const char * dev_path, uint32_t flags,
       status = OS_DRIVERS_LIST[driver_index] -> init_driver ();
       check (bad_driver, status == DNA_OK, status);
     }
-
-    /*
-     * Then, parse their published devices and add them to the tree.
-     */
-
-    path = kernel_malloc (DNA_PATH_LENGTH, false);
-
-    for (driver_index = 0; driver_index < OS_N_DRIVERS; driver_index ++)
-    {
-      devices = (char **) OS_DRIVERS_LIST[driver_index] -> publish_devices ();
-
-      for (int32_t j = 0; devices[j] != NULL; j ++)
-      {
-        dna_strcpy (path, devices[j]);
-        commands = OS_DRIVERS_LIST[driver_index] -> find_device (path);
-        devfs_insert_path (devfs, root_inode, path, commands);
-      }
-    }
-
-    kernel_free (path);
 
     /*
      * Add the root vnode to the system

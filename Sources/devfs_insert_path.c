@@ -93,13 +93,11 @@ status_t devfs_insert_path (devfs_t fs, devfs_inode_t inode,
       ensure (dna_strlen (path) != 0, DNA_INODE_EXISTS);
 
       /*
-       * Load the corresponding inode. TODO: Check if we can use directly
-       * the devfs_read_vnode hook since we are in a pseudo file system.
+       * Load the corresponding inode.
        */
 
-      log (VERBOSE_LEVEL, "read vnode");
-
-      devfs_read_vnode ((void *)fs, entry -> id, (void **) & next_inode);
+      next_inode = queue_lookup (& fs -> inode_list,
+          devfs_inode_inspector, entry -> id);
       ensure (next_inode != NULL, DNA_NO_VNODE);
       ensure (next_inode -> class == DNA_DEVFS_DIRECTORY, DNA_BAD_INODE_TYPE);
 

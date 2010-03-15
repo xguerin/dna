@@ -17,9 +17,22 @@
 
 #include <Private/DeviceFileSystem.h>
 #include <DnaTools/DnaTools.h>
+#include <MemoryManager/MemoryManager.h>
 
 status_t devfs_write_vnode (void * ns, void * node)
 {
-  return DNA_OK;
-}
+  status_t status = DNA_OK;
+  devfs_t devfs = ns;
+  devfs_inode_t inode = node;
 
+  watch (status_t)
+  {
+    log (VERBOSE_LEVEL, "Write and destroy inode [%s].", inode -> name);
+
+    inode -> loaded = false;
+    status = devfs_remove_path (devfs, inode);
+    ensure (status == DNA_OK, status);
+
+    return DNA_OK;
+  }
+}

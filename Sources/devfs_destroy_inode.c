@@ -17,22 +17,24 @@
 
 #include <Private/DeviceFileSystem.h>
 #include <DnaTools/DnaTools.h>
+#include <MemoryManager/MemoryManager.h>
 
-status_t devfs_read_vnode (void * ns, int64_t vnid, void ** data) {
-  devfs_t devfs = ns;
-  devfs_inode_t inode = NULL;
+status_t devfs_destroy_inode (devfs_inode_t inode)
+{
+  devfs_entry_t entry;
 
   watch (status_t)
   {
-    inode = queue_lookup (& devfs -> inode_list, devfs_inode_inspector, vnid);
-    ensure (inode != NULL, DNA_NO_VNODE);
+    ensure (inode != NULL, DNA_BAD_ARGUMENT);
 
-    log (INFO_LEVEL, "Read inode [%s].", inode -> name);
+    entry = queue_rem (& inode -> entry_list);
+    while (entry != NULL)
+    {
+      kernel_free (entry);
+      entry = queue_rem (& inode -> entry_list);
+    }
 
-    inode -> loaded = true;
-    *data = inode;
-
+    kernel_free (inode);
     return DNA_OK;
   }
 }
-

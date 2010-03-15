@@ -18,21 +18,22 @@
 #include <Private/DeviceFileSystem.h>
 #include <DnaTools/DnaTools.h>
 
-status_t devfs_read_vnode (void * ns, int64_t vnid, void ** data) {
-  devfs_t devfs = ns;
-  devfs_inode_t inode = NULL;
-
-  watch (status_t)
+bool devfs_remove_path_inspector (void * entry, va_list list)
+{
+  devfs_entry_t e = entry;
+  devfs_t devfs = va_arg (list, devfs_t);
+  devfs_inode_t next_inode = NULL;
+  
+  watch (bool)
   {
-    inode = queue_lookup (& devfs -> inode_list, devfs_inode_inspector, vnid);
-    ensure (inode != NULL, DNA_NO_VNODE);
+    ensure (e != NULL, false);
+    ensure (devfs != NULL, false);
 
-    log (INFO_LEVEL, "Read inode [%s].", inode -> name);
+    next_inode = queue_lookup (& devfs -> inode_list,
+        devfs_inode_inspector, e -> id);
+    devfs_remove_path (devfs, next_inode);
 
-    inode -> loaded = true;
-    *data = inode;
-
-    return DNA_OK;
+    return false;
   }
 }
 

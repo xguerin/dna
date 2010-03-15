@@ -19,6 +19,7 @@
 #define DEVFS_H
 
 #include <stdarg.h>
+#include <stdbool.h>
 #include <DnaTools/DnaTools.h>
 #include <VirtualFileSystem/VirtualFileSystem.h>
 
@@ -45,6 +46,7 @@ typedef struct devfs_inode
   queue_link_t link;
 
   int64_t id;
+  bool loaded;
   char name[DEVFS_NAME_LENGTH];
   devfs_inode_class_t class;
   int64_t size;
@@ -94,13 +96,16 @@ extern status_t devfs_ioctl (void * ns, void * node, void * data,
  * Private operations.
  */
 
+extern status_t devfs_destroy_inode (devfs_inode_t inode);
 extern status_t devfs_insert_path (devfs_t fs, devfs_inode_t inode,
     char * path, device_cmd_t * commands);
+extern status_t devfs_remove_path (devfs_t fs, devfs_inode_t inode);
 
 /*
  * Inspectors.
  */
 
+extern bool devfs_remove_path_inspector (void * entry, va_list list);
 extern bool devfs_entry_name_inspector (void * entry, va_list list);
 extern bool devfs_entry_index_inspector (void * entry, va_list list);
 extern bool devfs_inode_inspector (void * inode, va_list list);
