@@ -25,9 +25,9 @@ status_t mmc_card_create (mmc_card_t * p_card, mmc_callbacks_t callbacks)
 {
   status_t status = DNA_OK;
   bool is_sdhc = is_sdhc, has_ccs = false, loop = true;
-  uint32_t argument = 0, block_size = 0, block_count = 0, multiplier;
+  uint32_t block_size = 0, block_count = 0, multiplier;
   uint32_t response[4];
-  uint32_t command = GO_IDLE_STATE;
+  mmc_state_t state = MMC_IDLE_STATE;
   mmc_card_private_t card = NULL;
   mmc_ocr_t ocr = { .raw = 0 };
 
@@ -46,92 +46,84 @@ status_t mmc_card_create (mmc_card_t * p_card, mmc_callbacks_t callbacks)
      * Execute the initialization state machine.
      */
 
-    while (loop) switch (command)
+    while (loop) switch (state)
     {
-      case GO_IDLE_STATE :
+      case MMC_IDLE_STATE :
         {
-          log (VERBOSE_LEVEL, "[GO_IDLE_STATE]");
-          status = callbacks . send_command (command, 0, response);
+          log (VERBOSE_LEVEL, "[MMC_IDLE_STATE]");
+          status = callbacks . send_command (GO_IDLE_STATE, 0, response);
           check (error, status == DNA_OK, status);
 
-          command = is_sdhc ? SEND_IF_COND : SD_CMD_APP_SEND_OP_COND;
+          state = is_sdhc ? MMC_SDHC_DISCOVER : MMC_SD_DISCOVER;
           break;
         }
 
-      case SEND_IF_COND :
+      case MMC_SDHC_DISCOVER :
         {
-          log (VERBOSE_LEVEL, "[SEND_IF_COND]");
-
-          status = callbacks . send_command (command, 0x1AA, response);
+          log (VERBOSE_LEVEL, "[MMC_SDHC_DISCOVER]");
+          status = callbacks . send_command (SEND_IF_COND, 0x1AA, response);
 
           is_sdhc = (response[0] == 0x1AA) ? true : false;
-          command = is_sdhc ? SD_CMD_APP_SEND_OP_COND : GO_IDLE_STATE;
+          state = is_sdhc ? MMC_SD_DISCOVER : MMC_IDLE_STATE;
 
           break;
         }
 
-      case SD_CMD_APP_SEND_OP_COND :
+      case MMC_SD_DISCOVER :
         {
-          log (VERBOSE_LEVEL, "[SD_CMD_APP_SEND_OP_COND]");
+          log (VERBOSE_LEVEL, "[MMC_SD_DISCOVER]");
 
-          command = APP_CMD;
-          status = callbacks . send_command (command, 0, response);
+          status = callbacks . send_command (APP_CMD, 0, response);
           check (error, status == DNA_OK, status);
 
-          command = SD_CMD_APP_SEND_OP_COND;
-          argument = MMC_VOLTAGE_RANGE | (is_sdhc ? MMC_SD_HCS : 0);
-
-          status = callbacks . send_command (command, argument, response);
+          status = callbacks . send_command (SD_CMD_APP_SEND_OP_COND,
+              MMC_VOLTAGE_RANGE | (is_sdhc ? MMC_SD_HCS : 0), response);
           check (error, status == DNA_OK, status);
 
           ocr . raw = response[0];
 
-          if (ocr . bits . not_busy != 1)
-          {
-            command = SD_CMD_APP_SEND_OP_COND;
-          }
-          else
+          if (ocr . bits . not_busy == 1)
           {
             has_ccs = (ocr . bits . capacity_status == 1);
             card -> card . type = is_sdhc && has_ccs ?
               MMC_SDHC_CARD : MMC_SD_CARD;
-            command = ALL_SEND_CID;
+            state = MMC_GET_IDENTIFIER;
           }
 
           break;
         }
 
-      case ALL_SEND_CID :
+      case MMC_GET_IDENTIFIER :
         {
-          log (VERBOSE_LEVEL, "[ALL_SEND_CID]");
+          log (VERBOSE_LEVEL, "[MMC_GET_IDENTIFIER]");
 
-          status = callbacks . send_command (command, 0, response);
+          status = callbacks . send_command (ALL_SEND_CID, 0, response);
           check (error, status == DNA_OK, status);
 
           mmc_build_cid (response, & card -> cid);
-          command = SEND_RELATIVE_ADDR;
+          state = MMC_GET_ADDRESS;
 
           break;
         }
 
-      case SEND_RELATIVE_ADDR :
+      case MMC_GET_ADDRESS :
         {
-          log (VERBOSE_LEVEL, "[SEND_RELATIVE_ADDR]");
+          log (VERBOSE_LEVEL, "[MMC_GET_ADDRESS]");
 
-          status = callbacks . send_command (command, 0, response);
+          status = callbacks . send_command (SEND_RELATIVE_ADDR, 0, response);
           check (error, status == DNA_OK, status);
 
           card -> rca . raw = response[0];
-          command = SEND_CSD;
+          state = MMC_GET_INFORMATION;
 
           break;
         }
 
-      case SEND_CSD :
+      case MMC_GET_INFORMATION :
         {
-          log (VERBOSE_LEVEL, "[SEND_CSD]");
+          log (VERBOSE_LEVEL, "[MMC_GET_INFORMATION]");
 
-          status = callbacks . send_command (command,
+          status = callbacks . send_command (SEND_CSD,
               card -> rca . raw, response);
           check (error, status == DNA_OK, status);
 
@@ -154,13 +146,19 @@ status_t mmc_card_create (mmc_card_t * p_card, mmc_callbacks_t callbacks)
           card -> card . info . block_size = block_size;
           card -> card . info . block_count = block_count;
 
+          state = MMC_END_STATE;
+          break;
+        }
+
+      case MMC_END_STATE :
+        {
           loop = false;
           break;
         }
 
       default :
         {
-          log (PANIC_LEVEL, "Unsupported MMC command.");
+          log (PANIC_LEVEL, "Invalid MMC state.");
           return DNA_ERROR;
         }
     }

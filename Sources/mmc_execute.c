@@ -17,96 +17,92 @@
 
 #include <Private/Card.h>
 #include <Private/Command.h>
-#include <MultiMediaCard/Operation.h>
+#include <Private/Operation.h>
 #include <DnaTools/DnaTools.h>
 
 status_t mmc_execute (mmc_card_t a_card, mmc_operation_t operation,
     void * buffer, int64_t block_start, int32_t block_count)
 {
-  bool loop = true, card_selected = false;
-  uint32_t response[4], argument = 0;
+  status_t status;
+  bool loop = true;
+  uint32_t response[4];
   int32_t block_offset = 0, multiplier = 0, word_count;
+  mmc_state_t state = MMC_CONFIGURE_TRANSFER;
   mmc_card_private_t card = (mmc_card_private_t)a_card;
   mmc_card_status_t card_status;
-  status_t status;
-  uint32_t command = SELECT_DESELECT_CARD;
 
   watch (status_t)
   {
-    while (loop) switch (command)
+    while (loop) switch (state)
     {
-      case SELECT_DESELECT_CARD :
+      case MMC_CONFIGURE_TRANSFER :
         {
-          log (VERBOSE_LEVEL, "[SELECT_DESELECT_CARD]");
+          log (VERBOSE_LEVEL, "[MMC_CONFIGURE_TRANSFER]");
 
-          argument = card_selected ? 0 : card -> rca . raw;
-          status = card -> callbacks . send_command (command,
-              argument, response);
+          status = card -> callbacks . send_command
+            (SELECT_DESELECT_CARD, card -> rca . raw, response);
+          ensure (status == DNA_OK, status);
 
-          if (! card_selected)
-          {
-            card_selected = true;
-            command = SD_SET_BUS_WIDTH;
-          }
-          else
-          {
-            card_selected = false;
-            loop = false;
-          }
+          status = card -> callbacks . send_command
+            (APP_CMD, card -> rca . raw, response);
+          check (error, status == DNA_OK, status);
 
+          status = card -> callbacks . send_command
+            (SD_SET_BUS_WIDTH, 2, response);
+          check (error, status == DNA_OK, status);
+
+          status = card -> callbacks . send_command
+            (SET_BLOCK_LENGTH, 512, response);
+          check (error, status == DNA_OK, status);
+
+          state = block_count == 1 ? MMC_EXECUTE_SINGLE : MMC_EXECUTE_MULTIPLE;
           break;
         }
 
-      case SD_SET_BUS_WIDTH :
-        {
-          log (VERBOSE_LEVEL, "[SD_SET_BUS_WIDTH]");
-
-          command = APP_CMD;
-          status = card -> callbacks . send_command (command,
-              card -> rca . raw, response);
-          check (error, status == DNA_OK, status);
-
-          command = SD_SET_BUS_WIDTH;
-          status = card -> callbacks . send_command (command, 2, response);
-          check (error, status == DNA_OK, status);
-
-          command = SET_BLOCK_LENGTH;
-          break;
-        }
-
-      case SET_BLOCK_LENGTH :
-        {
-          log (VERBOSE_LEVEL, "[SET_BLOCK_LENGTH]");
-
-          status = card -> callbacks . send_command (command, 512, response);
-          check (error, status == DNA_OK, status);
-
-          command = READ_SINGLE_BLOCK;
-          break;
-        }
-
-      case READ_SINGLE_BLOCK :
+      case MMC_EXECUTE_SINGLE :
         {
           log (VERBOSE_LEVEL, "[READ_SINGLE_BLOCK]");
 
           multiplier = (card -> card . type == MMC_SD_CARD) ? 9 : 0;
           block_offset = block_start << multiplier;
 
-          status = card -> callbacks . send_command (command,
-              block_offset, response);
-          check (error, status == DNA_OK, status);
+          switch (operation)
+          {
+            case MMC_READ :
+              {
+                status = card -> callbacks . send_command
+                  (READ_SINGLE_BLOCK, block_offset, response);
+                check (error, status == DNA_OK, status);
 
-          word_count = (block_count * 512) >> 2;
-          status = card -> callbacks . read (buffer, word_count);
-          check (error, status == DNA_OK, status);
+                word_count = (block_count * 512) >> 2;
+                status = card -> callbacks . read (buffer, word_count);
+                check (error, status == DNA_OK, status);
 
-          command = SELECT_DESELECT_CARD;
+                break;
+              }
+
+            case MMC_WRITE :
+              {
+
+                break;
+              }
+          }
+
+          state = MMC_END_STATE;
+          break;
+        }
+
+      case MMC_END_STATE :
+        {
+          card -> callbacks . send_command (SELECT_DESELECT_CARD, 0, response);
+          loop = false;
+
           break;
         }
 
       default :
         {
-          log (PANIC_LEVEL, "Unsupported MMC command.");
+          log (PANIC_LEVEL, "Invalid MMC state.");
           return DNA_ERROR;
         }
     }
