@@ -61,7 +61,7 @@ status_t mmc_execute (mmc_card_t a_card, mmc_operation_t operation,
 
       case MMC_EXECUTE_SINGLE :
         {
-          log (VERBOSE_LEVEL, "[READ_SINGLE_BLOCK]");
+          log (VERBOSE_LEVEL, "[MMC_EXECUTE_SINGLE]");
 
           multiplier = (card -> card . type == MMC_SD_CARD) ? 9 : 0;
           block_offset = block_start << multiplier;
