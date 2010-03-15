@@ -18,18 +18,22 @@
 #include <stdint.h>
 #include <DnaTools/DnaTools.h>
 
-int32_t dna_strcmp (const char *s1, const char *s2)
+int32_t dna_memcmp (const void *s1, const void *s2, size_t n)
 {
-  char *s1_ptr = (char *)s1, *s2_ptr = (char *)s2;
-
-  do
+  for (size_t i = 0; i < n; i += 1)
   {
-    if (*s1_ptr++ != *s2_ptr)
+    if (((uint8_t *)s1)[i] != ((uint8_t *)s2)[i])
     {
-      return -1;
+      if (((uint8_t *)s2)[i] > ((uint8_t *)s1)[i])
+      {
+        return (int32_t)(((uint8_t *)s2)[i] - ((uint8_t *)s1)[i]);
+      }
+      else
+      {
+        return (int32_t)(((uint8_t *)s1)[i] - ((uint8_t *)s2)[i]);
+      }
     }
   }
-  while (*s2_ptr++ != '\0');
   
   return 0;
 }

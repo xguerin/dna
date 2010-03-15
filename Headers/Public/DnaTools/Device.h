@@ -60,7 +60,9 @@ enum _device_control_codes
 enum _device_type
 {
   DNA_CHARACTER_DEVICE,
-  DNA_BLOCK_DEVICE,
+  DNA_DISK_DEVICE,
+  DNA_WORM_DEVICE,
+  DNA_CD_DEVICE,
   DNA_NETWORK_DEVICE
 };
 
@@ -76,11 +78,10 @@ enum _device_type
 
 typedef struct _partition_info
 {
-  int64_t offset;
-  int64_t byte_count;
+  int32_t id;
   int32_t logical_block_size;
-  int32_t session;
-  int32_t partition;
+  int64_t offset;
+  int64_t size;
 }
 partition_info_t;
 
