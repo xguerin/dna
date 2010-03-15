@@ -22,6 +22,7 @@
 
 status_t mbr_load (uint8_t sector[512], mbr_partition_t partition[4])
 {
+  int32_t valid_count = 0;
   uint16_t signature;
   mbr_t * mbr = (mbr_t *)sector;
 
@@ -34,11 +35,22 @@ status_t mbr_load (uint8_t sector[512], mbr_partition_t partition[4])
     cpu_data_is_big_endian (16, signature);
     ensure (signature == 0x55AA, DNA_ERROR);
 
+    dna_memset (partition, 0, 4 * sizeof (mbr_partition_t));
+
     for (int32_t i = 0; i < 4; i += 1)
     {
       partition[i] = mbr -> fields . partition[i];
+      ensure (partition[i] . status == MBR_NORMAL_PARTITION ||
+          partition[i] . status == MBR_BOOTABLE_PARTITION, DNA_ERROR);
+
+      if (mbr -> fields . partition[i] . type != 0)
+      {
+        valid_count += 1;
+        partition[i] = mbr -> fields . partition[i];
+      }
     }
 
+    ensure (valid_count > 0, DNA_ERROR);
     return DNA_OK;
   }
 }

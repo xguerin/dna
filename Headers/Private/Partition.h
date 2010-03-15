@@ -15,13 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#ifndef MASTERBOOTRECORD_PRIVATE_H
-#define MASTERBOOTRECORD_PRIVATE_H
+#ifndef MASTERBOOTRECORD_PARTITION_PRIVATE_H
+#define MASTERBOOTRECORD_PARTITION_PRIVATE_H
 
-#include <Private/MBR.h>
-#include <Private/Module.h>
-#include <Private/Operation.h>
-#include <Private/Partition.h>
+#include <stdint.h>
+#include <MasterBootRecord/Partition.h>
+
+enum _mbr_partition_status
+{
+  MBR_NORMAL_PARTITION = 0x00,
+  MBR_BOOTABLE_PARTITION = 0x80
+};
 
 #endif
-
