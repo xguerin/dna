@@ -15,19 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#ifndef MULTIMEDIACARD_PRIVATE_H
-#define MULTIMEDIACARD_PRIVATE_H
+#ifndef MULTIMEDIACARD_MODULE_PRIVATE_H
+#define MULTIMEDIACARD_MODULE_PRIVATE_H
 
-#include <Private/Card.h>
-#include <Private/CIC.h>
-#include <Private/CID.h>
-#include <Private/Command.h>
-#include <Private/CSD.h>
-#include <Private/Module.h>
-#include <Private/OCR.h>
-#include <Private/Operation.h>
-#include <Private/RCA.h>
-#include <Private/SCR.h>
+#include <stdint.h>
+#include <MultiMediaCard/Module.h>
+#include <DnaTools/DnaTools.h>
+
+extern mmc_module_t mmc_module;
 
 #endif
 

@@ -87,8 +87,6 @@ typedef struct _mmc_card_private
 }
 * mmc_card_private_t;
 
-extern status_t mmc_card_create (mmc_card_t * card, mmc_callbacks_t callbacks);
-extern status_t mmc_card_destroy (mmc_card_t card);
 extern void mmc_show_card_status (mmc_card_status_t status);
   
 #endif

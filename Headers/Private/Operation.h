@@ -23,6 +23,23 @@
 #include <MultiMediaCard/Operation.h>
 #include <DnaTools/DnaTools.h>
 
+typedef enum _mmc_state_t
+{
+  MMC_IDLE_STATE,
+  MMC_SDHC_DISCOVER,
+  MMC_SD_DISCOVER,
+  MMC_GET_IDENTIFIER,
+  MMC_GET_ADDRESS,
+  MMC_GET_INFORMATION,
+  MMC_SD_CONFIGURE_TRANSFER,
+  MMC_SD_EXECUTE_SINGLE,
+  MMC_SD_EXECUTE_MULTIPLE,
+  MMC_END_STATE
+}
+mmc_state_t;
+
+extern status_t mmc_card_create (mmc_card_t * card, mmc_callbacks_t callbacks);
+extern status_t mmc_card_destroy (mmc_card_t card);
 extern status_t mmc_execute (mmc_card_t card, mmc_operation_t operation,
     void * buffer, int64_t block_start, int32_t block_count);
 

@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#ifndef MULTIMEDIACARD_MODULE_PRIVATE_H
-#define MULTIMEDIACARD_MODULE_PRIVATE_H
+#ifndef MULTIMEDIACARD_MODULE_H
+#define MULTIMEDIACARD_MODULE_H
 
 #include <stdint.h>
 #include <MultiMediaCard/Card.h>
@@ -32,8 +32,6 @@ typedef struct _mmc_module
     void * buffer, int64_t block_start, int32_t block_count);
 }
 mmc_module_t;
-
-extern mmc_module_t mmc_module;
 
 #endif
 
