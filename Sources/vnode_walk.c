@@ -119,28 +119,37 @@ status_t vnode_walk (char * restrict path, volume_t * p_volume,
 
       if (vnid != new_vnid)
       {
-        status = vnode_put (volume -> id, vnid);
-        ensure (status == DNA_OK, status);
-
-        vnid = new_vnid;
-
         it_status = cpu_trap_mask_and_backup();
         lock_acquire (& volume_manager . volume_list . lock);
 
         new_volume = queue_lookup (& volume_manager . volume_list,
-            volume_host_inspector, volume, vnid);
+            volume_host_inspector, volume, new_vnid);
 
         lock_release (& volume_manager . volume_list . lock);
         cpu_trap_restore (it_status);
 
         if (new_volume != NULL)
         {
+          new_vnid = new_volume -> root_vnid;
+
+          status = vnode_get (new_volume -> id, new_vnid, & data);
+          ensure (status == DNA_OK, status);
+
+          status = vnode_put (volume -> id, vnid);
+          ensure (status == DNA_OK, status);
+
           volume = new_volume;
-          vnid = new_volume -> root_vnid;
+        }
+        else
+        {
+          status = vnode_get (volume -> id, new_vnid, & data);
+          ensure (status == DNA_OK, status);
+
+          status = vnode_put (volume -> id, vnid);
+          ensure (status == DNA_OK, status);
         }
 
-        status = vnode_get (volume -> id, vnid, & data);
-        ensure (status == DNA_OK, status);
+        vnid = new_vnid;
       }
     }
 
