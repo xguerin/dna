@@ -68,10 +68,11 @@ status_t vfs_readdir (int16_t fd, directory_entry_t * entry_array,
     cpu_trap_restore(it_status);
 
     ensure (file != NULL && file != (file_t) -1, DNA_INVALID_FD);
+    ensure (file -> vnode -> volume -> cmd -> readdir != NULL, DNA_ERROR);
 
     status = file -> vnode -> volume -> cmd -> readdir
-      (file -> vnode -> volume -> data, file -> vnode -> data, file -> data,
-       entry_array, & file -> offset, & n_data);
+      (file -> vnode -> volume -> data, file -> vnode -> data,
+       file -> data, entry_array, & file -> offset, & n_data);
 
     ensure (status == DNA_OK, status);
 
