@@ -15,30 +15,51 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#include <Private/DeviceFileSystem.h>
+#ifndef DEVFS_INODE_H
+#define DEVFS_INODE_H
+
+#include <stdarg.h>
+#include <stdbool.h>
+#include <Private/FileSystem.h>
+#include <Private/Misc.h>
 #include <DnaTools/DnaTools.h>
-#include <MemoryManager/MemoryManager.h>
 
-status_t devfs_remove_path (devfs_t fs, devfs_inode_t inode)
+typedef enum _devfs_inode_class
 {
-  status_t status = DNA_OK;
-
-  watch (status_t)
-  {
-    if (! inode -> loaded)
-    {
-      status = queue_extract (& fs -> inode_list, inode);
-      ensure (status == DNA_OK, status);
-
-      if (inode -> class == DNA_DEVFS_DIRECTORY)
-      {
-        queue_walk (& inode -> entry_list, devfs_remove_path_inspector, fs);
-      }
-
-      devfs_destroy_inode (inode);
-    }
-
-    return DNA_OK;
-  }
+  DNA_DEVFS_FILE,
+  DNA_DEVFS_DIRECTORY,
+  DNA_DEVFS_SYMLINK
 }
+devfs_inode_class_t;
+
+typedef struct _devfs_inode
+{
+  queue_link_t link;
+
+  int64_t id;
+  char name[DEVFS_NAME_LENGTH];
+  devfs_inode_class_t class;
+  struct _devfs_inode * parent;
+
+  int64_t size;
+  int32_t mode;
+  int32_t perms;
+
+  device_cmd_t * dev_cmd;
+  queue_t entry_list;
+}
+* devfs_inode_t;
+
+extern status_t devfs_inode_create (devfs_t fs, devfs_inode_t parent,
+    devfs_inode_class_t class, char * name, int64_t vnid,
+    device_cmd_t * commands, devfs_inode_t * p_inode);
+extern status_t devfs_inode_destroy (devfs_t fs, devfs_inode_t inode);
+
+extern status_t devfs_inode_insert (devfs_t fs, devfs_inode_t inode,
+    char * path, device_cmd_t * commands);
+extern status_t devfs_inode_clean (devfs_t fs, devfs_inode_t inode);
+
+extern bool devfs_inode_id_inspector (void * inode, va_list list);
+
+#endif
 

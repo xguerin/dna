@@ -18,97 +18,10 @@
 #ifndef DEVFS_H
 #define DEVFS_H
 
-#include <stdarg.h>
-#include <stdbool.h>
-#include <DnaTools/DnaTools.h>
-#include <VirtualFileSystem/VirtualFileSystem.h>
-
-#define DEVFS_NAME_LENGTH 256
-
-typedef enum devfs_inode_class
-{
-  DNA_DEVFS_FILE,
-  DNA_DEVFS_DIRECTORY,
-  DNA_DEVFS_SYMLINK
-}
-devfs_inode_class_t;
-
-typedef struct devfs_entry
-{
-  queue_link_t link;
-  int64_t id;
-  char name[DEVFS_NAME_LENGTH];
-}
-* devfs_entry_t;
-
-typedef struct devfs_inode
-{
-  queue_link_t link;
-
-  int64_t id;
-  bool loaded;
-  char name[DEVFS_NAME_LENGTH];
-  devfs_inode_class_t class;
-  int64_t size;
-  int32_t mode;
-  int32_t perms;
-  device_cmd_t * dev_cmd;
-
-  queue_t entry_list;
-}
-* devfs_inode_t;
-
-typedef struct devfs
-{
-  int64_t inode_index;
-  int64_t root_vnid;
-  int32_t vid;
-  queue_t inode_list;
-}
-* devfs_t;
-
-/*
- * VFS operations.
- */
-
-extern status_t devfs_walk (void * ns, void * base,
-    char * restrict path, char ** new_path, int64_t * vnid);
-extern status_t devfs_mount (int32_t vid, const char * dev_path,
-    uint32_t flags, void * params, void ** data, int64_t * p_vnid);
-
-extern status_t devfs_read_vnode (void * ns, int64_t vnid, void ** data);
-extern status_t devfs_write_vnode (void * ns, void * node);
-
-extern status_t devfs_open (void * ns, void * node, int32_t mode, void ** data);
-extern status_t devfs_close (void * ns, void * node, void * data);
-
-extern status_t devfs_read (void * ns, void * node, void * file,
-    void * data, int64_t offset, int32_t * p_count);
-extern status_t devfs_write (void * ns, void * node, void * file,
-    void * data, int64_t offset, int32_t * p_count);
-
-extern status_t devfs_readdir (void * ns, void * node, void * data,
-    void * entry_array, int64_t * offset, int32_t * p_count);
-extern status_t devfs_ioctl (void * ns, void * node, void * data,
-    int32_t function, void * arguments, int32_t * p_ret);
-
-/*
- * Private operations.
- */
-
-extern status_t devfs_destroy_inode (devfs_inode_t inode);
-extern status_t devfs_insert_path (devfs_t fs, devfs_inode_t inode,
-    char * path, device_cmd_t * commands);
-extern status_t devfs_remove_path (devfs_t fs, devfs_inode_t inode);
-
-/*
- * Inspectors.
- */
-
-extern bool devfs_remove_path_inspector (void * entry, va_list list);
-extern bool devfs_entry_name_inspector (void * entry, va_list list);
-extern bool devfs_entry_index_inspector (void * entry, va_list list);
-extern bool devfs_inode_inspector (void * inode, va_list list);
+#include <Private/Entry.h>
+#include <Private/FileSystem.h>
+#include <Private/Misc.h>
+#include <Private/iNode.h>
 
 #endif
 

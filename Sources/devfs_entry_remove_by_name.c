@@ -17,21 +17,26 @@
 
 #include <Private/DeviceFileSystem.h>
 #include <DnaTools/DnaTools.h>
+#include <MemoryManager/MemoryManager.h>
 
-bool devfs_entry_index_inspector (void * entry, va_list list)
+status_t devfs_entry_remove_by_name (devfs_inode_t node, char * name)
 {
-  devfs_entry_t e = entry;
-  int64_t * index = va_arg (list, int64_t *);
+  devfs_entry_t entry;
+  status_t status;
 
-  watch (bool)
+  watch (status_t)
   {
-    ensure (e != NULL, false);
-    ensure (index != NULL, false);
+    ensure (node != NULL, DNA_BAD_ARGUMENT);
+    ensure (name != NULL, DNA_BAD_ARGUMENT);
 
-    if (*index == 0) return true;
+    entry = queue_lookup (& node -> entry_list,
+        devfs_entry_name_inspector, name);
+    ensure (entry != NULL, DNA_NO_ENTRY);
 
-    *index = *index - 1;
-    return false;
+    status = queue_extract (& node -> entry_list, entry);
+    ensure (status == DNA_OK, DNA_NO_ENTRY);
+ 
+    kernel_free (entry);
+    return DNA_OK;
   }
 }
-

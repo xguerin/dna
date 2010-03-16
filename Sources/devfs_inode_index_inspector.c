@@ -17,24 +17,16 @@
 
 #include <Private/DeviceFileSystem.h>
 #include <DnaTools/DnaTools.h>
-#include <MemoryManager/MemoryManager.h>
 
-status_t devfs_destroy_inode (devfs_inode_t inode)
+bool devfs_inode_id_inspector (void * inode, va_list list)
 {
-  devfs_entry_t entry;
+  devfs_inode_t i = inode;
+  int64_t id = va_arg (list, int64_t);
 
-  watch (status_t)
+  watch (bool)
   {
-    ensure (inode != NULL, DNA_BAD_ARGUMENT);
-
-    entry = queue_rem (& inode -> entry_list);
-    while (entry != NULL)
-    {
-      kernel_free (entry);
-      entry = queue_rem (& inode -> entry_list);
-    }
-
-    kernel_free (inode);
-    return DNA_OK;
+    ensure (i != NULL, false);
+    return i -> id == id;
   }
 }
+

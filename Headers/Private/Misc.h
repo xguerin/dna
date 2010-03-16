@@ -15,23 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#include <Private/DeviceFileSystem.h>
-#include <DnaTools/DnaTools.h>
+#ifndef DEVFS_MISC_H
+#define DEVFS_MISC_H
 
-bool devfs_entry_index_inspector (void * entry, va_list list)
-{
-  devfs_entry_t e = entry;
-  int64_t * index = va_arg (list, int64_t *);
+#define DEVFS_NAME_LENGTH 256
 
-  watch (bool)
-  {
-    ensure (e != NULL, false);
-    ensure (index != NULL, false);
-
-    if (*index == 0) return true;
-
-    *index = *index - 1;
-    return false;
-  }
-}
+#endif
 

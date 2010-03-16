@@ -23,9 +23,8 @@
 status_t devfs_walk (void * ns, void * base, char * restrict path,
     char ** new_path, int64_t * p_vnid)
 {
-  bool destroy_dummy = false;
   devfs_t devfs = ns;
-  devfs_inode_t inode = base, dummy_inode = NULL;
+  devfs_inode_t inode = base;
   devfs_entry_t entry = NULL;
   device_cmd_t * commands = NULL;
   char ** devices = NULL, * a_path = NULL;
@@ -41,15 +40,12 @@ status_t devfs_walk (void * ns, void * base, char * restrict path,
       log (INFO_LEVEL, "Path = %s, Size = %d",
           path, devfs -> inode_list . status);
 
-      dummy_inode = kernel_malloc (sizeof (struct devfs_inode), true);
-      ensure (dummy_inode != NULL, DNA_OUT_OF_MEM);
-
      /*
       * Parse the publish_devices.
       */
 
       a_path = kernel_malloc (DNA_PATH_LENGTH, false);
-      check (path_error, a_path != NULL, DNA_OUT_OF_MEM);
+      ensure (a_path != NULL, DNA_OUT_OF_MEM);
 
       for (driver_index = 0; driver_index < OS_N_DRIVERS; driver_index ++)
       {
@@ -61,14 +57,12 @@ status_t devfs_walk (void * ns, void * base, char * restrict path,
           {
             dna_strcpy (a_path, devices[j]);
             commands = OS_DRIVERS_LIST[driver_index] -> find_device (a_path);
-            devfs_insert_path (devfs, dummy_inode, a_path, commands);
+            devfs_inode_insert (devfs, inode, a_path, commands);
           }
         }
       }
 
       kernel_free (a_path);
-      inode = dummy_inode;
-      destroy_dummy = true;
     }
 
     /*
@@ -83,17 +77,7 @@ status_t devfs_walk (void * ns, void * base, char * restrict path,
     *p_vnid = entry -> id;
     ensure (entry -> id != devfs -> root_vnid, DNA_ALREADY_AT_ROOT);
 
-    /*
-     * Destroy the dummy inode and its entries if necessary.
-     */
-
-    return destroy_dummy ? devfs_destroy_inode (dummy_inode) : DNA_OK;
-  }
-
-  rescue (path_error)
-  {
-    kernel_free (dummy_inode);
-    leave;
+    return DNA_OK;
   }
 }
 

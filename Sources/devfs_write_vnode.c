@@ -27,10 +27,9 @@ status_t devfs_write_vnode (void * ns, void * node)
 
   watch (status_t)
   {
-    log (VERBOSE_LEVEL, "Write and destroy inode [%s].", inode -> name);
+    log (INFO_LEVEL, "Write inode [%s].", inode -> name);
 
-    inode -> loaded = false;
-    status = devfs_remove_path (devfs, inode);
+    status = devfs_inode_clean (devfs, inode);
     ensure (status == DNA_OK, status);
 
     return DNA_OK;

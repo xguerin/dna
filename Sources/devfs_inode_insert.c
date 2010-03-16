@@ -19,7 +19,7 @@
 #include <DnaTools/DnaTools.h>
 #include <MemoryManager/MemoryManager.h>
 
-status_t devfs_insert_path (devfs_t fs, devfs_inode_t inode,
+status_t devfs_inode_insert (devfs_t fs, devfs_inode_t inode,
     char * path, device_cmd_t * commands)
 {
   devfs_entry_t entry = NULL;
@@ -32,61 +32,26 @@ status_t devfs_insert_path (devfs_t fs, devfs_inode_t inode,
     ensure (path != NULL, DNA_BAD_ARGUMENT);
 
     path_get_next_entry (& path, token);
-
-    log (VERBOSE_LEVEL, "token = %s, path = %s, inode = %s",
-        token, path, inode -> name);
-
     entry = queue_lookup (& inode -> entry_list,
         devfs_entry_name_inspector, token);
 
     if (entry == NULL)
     {
-      next_inode = kernel_malloc (sizeof (struct devfs_inode), true);
-      ensure (next_inode != NULL, DNA_OUT_OF_MEM);
-
-      /*
-       * Create the new inode.
-       */
-
-      next_inode -> id = fs -> inode_index ++;
-      dna_strcpy (next_inode -> name, token);
-      next_inode -> dev_cmd = commands;
-
-      /*
-       * Create an entry of the corresponding file
-       */
-
-      entry = kernel_malloc (sizeof (struct devfs_entry), true);
-      check (entry_malloc, entry != NULL, DNA_OUT_OF_MEM);
-
-      entry -> id = next_inode -> id;
-      dna_strcpy (entry -> name, token);
-
-      /*
-       * Check if there is more to parse.
-       */
-
       if (dna_strlen (path) != 0)
       {
-        log (VERBOSE_LEVEL, "parsing %s", token);
-        next_inode -> class = DNA_DEVFS_DIRECTORY;
+        devfs_inode_create (fs, inode, DNA_DEVFS_DIRECTORY,
+            token, fs -> inode_index ++, NULL, & next_inode);
 
-        status = devfs_insert_path (fs, next_inode, path, commands);
-        check (general_error, status == DNA_OK, status);
+        devfs_inode_insert (fs, next_inode, path, commands);
       }
       else
       {
-        next_inode -> class = DNA_DEVFS_FILE;
+        devfs_inode_create (fs, inode, DNA_DEVFS_FILE, token,
+            fs -> inode_index ++, commands, & next_inode);
       }
 
-      /*
-       * Add the inode to the fs and the entry to the node.
-       */
-
-      queue_add (& fs -> inode_list, next_inode);
-      queue_add (& inode -> entry_list, entry);
-
-      log (VERBOSE_LEVEL, "file %s created", token);
+      devfs_entry_add (inode, token, next_inode -> id);
+      log (INFO_LEVEL, "inode %s created", token);
     }
     else
     {
@@ -97,7 +62,7 @@ status_t devfs_insert_path (devfs_t fs, devfs_inode_t inode,
        */
 
       next_inode = queue_lookup (& fs -> inode_list,
-          devfs_inode_inspector, entry -> id);
+          devfs_inode_id_inspector, entry -> id);
       ensure (next_inode != NULL, DNA_NO_VNODE);
       ensure (next_inode -> class == DNA_DEVFS_DIRECTORY, DNA_BAD_INODE_TYPE);
 
@@ -105,24 +70,10 @@ status_t devfs_insert_path (devfs_t fs, devfs_inode_t inode,
        * Parse the rest of the path.
        */
 
-      log (VERBOSE_LEVEL, "parsing %s", token);
-      status = devfs_insert_path (fs, next_inode, path, commands);
+      status = devfs_inode_insert (fs, next_inode, path, commands);
     }
 
     return status;
-  }
-
-  rescue (general_error)
-  {
-    queue_extract (& next_inode -> entry_list, entry);
-    kernel_free (entry);
-  }
-
-  rescue (entry_malloc)
-  {
-    queue_extract (& fs -> inode_list, next_inode);
-    kernel_free (next_inode);
-    leave;
   }
 }
 

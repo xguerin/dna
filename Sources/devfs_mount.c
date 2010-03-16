@@ -25,59 +25,34 @@ status_t devfs_mount (int32_t vid, const char * dev_path, uint32_t flags,
   status_t status = DNA_OK;
   devfs_t devfs = NULL;
   devfs_inode_t root_inode = NULL;
-  devfs_entry_t entry = NULL;
   int32_t driver_index = 0;
 
   watch (status_t)
   {
     /*
-     * Allocate the base structures
+     * Initialize the DevFS structure.
      */
 
     devfs = kernel_malloc (sizeof (struct devfs), true);
     ensure (devfs != NULL, DNA_OUT_OF_MEM);
-
-    root_inode = kernel_malloc (sizeof (struct devfs_inode), true);
-    check (root_malloc, root_inode != NULL, DNA_OUT_OF_MEM);
-
-    /*
-     * Initialize the devfs structure
-     */
 
     devfs -> inode_index = 1;
     devfs -> vid = vid;
     devfs -> root_vnid = devfs -> inode_index ++;
 
     /*
-     * Initialize the root inode structure
+     * Initialize the root inode structure.
      */
 
-    root_inode -> id = devfs -> root_vnid;
-    dna_strcpy (root_inode -> name, "");
-    root_inode -> class = DNA_DEVFS_DIRECTORY;
-    queue_add (& devfs -> inode_list, root_inode);
+    status = devfs_inode_create (devfs, NULL, DNA_DEVFS_DIRECTORY,
+        "", devfs -> root_vnid, NULL, & root_inode);
+    check (inode_error, status == DNA_OK, status);
 
-    /*
-     * Add the "." entry
-     */
+    status = devfs_entry_add (root_inode, ".", root_inode -> id);
+    check (entry_error, status == DNA_OK, status);
 
-    entry = kernel_malloc (sizeof (struct devfs_entry), true);
-    check (dot_malloc, entry != NULL, DNA_OUT_OF_MEM);
-
-    entry -> id = root_inode -> id;
-    dna_strcpy (entry -> name, ".");
-    queue_add (& root_inode -> entry_list, entry);
-
-    /*
-     * Add the ".." entry
-     */
-
-    entry = kernel_malloc (sizeof (struct devfs_entry), true);
-    check (dotdot_malloc, entry != NULL, DNA_OUT_OF_MEM);
-
-    entry -> id = root_inode -> id;
-    dna_strcpy (entry -> name, "..");
-    queue_add (& root_inode -> entry_list, entry);
+    status = devfs_entry_add (root_inode, "..", root_inode -> id);
+    check (entry_error, status == DNA_OK, status);
 
     /*
      * Load the in-kernel drivers and check if they are consistent.
@@ -99,6 +74,7 @@ status_t devfs_mount (int32_t vid, const char * dev_path, uint32_t flags,
     *data = devfs;
     *vnid = root_inode -> id;
 
+    log (INFO_LEVEL, "DevFS mount succeeded.");
     return vnode_create (root_inode -> id, devfs -> vid, (void *) root_inode);
   }
 
@@ -113,18 +89,12 @@ status_t devfs_mount (int32_t vid, const char * dev_path, uint32_t flags,
     kernel_free (entry);
   }
 
-  rescue (dotdot_malloc)
+  rescue (entry_error)
   {
-    devfs_entry_t entry = queue_rem (& root_inode -> entry_list);
-    kernel_free (entry);
+    devfs_inode_destroy (devfs, root_inode);
   }
 
-  rescue (dot_malloc)
-  {
-    kernel_free (root_inode);
-  }
-
-  rescue (root_malloc)
+  rescue (inode_error)
   {
     kernel_free (devfs);
     leave;

@@ -17,21 +17,24 @@
 
 #include <Private/DeviceFileSystem.h>
 #include <DnaTools/DnaTools.h>
+#include <MemoryManager/MemoryManager.h>
 
-bool devfs_entry_index_inspector (void * entry, va_list list)
+status_t devfs_entry_add (devfs_inode_t inode, char * name, int64_t vnid)
 {
-  devfs_entry_t e = entry;
-  int64_t * index = va_arg (list, int64_t *);
+  devfs_entry_t entry;
 
-  watch (bool)
+  watch (status_t)
   {
-    ensure (e != NULL, false);
-    ensure (index != NULL, false);
+    ensure (inode != NULL, DNA_BAD_ARGUMENT);
+    ensure (name != NULL, DNA_BAD_ARGUMENT);
 
-    if (*index == 0) return true;
+    entry = kernel_malloc (sizeof (struct devfs_entry), true);
+    ensure (entry != NULL, DNA_OUT_OF_MEM);
 
-    *index = *index - 1;
-    return false;
+    entry -> id = vnid;
+    dna_strcpy (entry -> name, name);
+    queue_add (& inode -> entry_list, entry);
+
+    return DNA_OK;
   }
 }
-

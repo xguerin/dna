@@ -18,20 +18,19 @@
 #include <Private/DeviceFileSystem.h>
 #include <DnaTools/DnaTools.h>
 
-bool devfs_entry_index_inspector (void * entry, va_list list)
+bool devfs_entry_unused_inspector (void * entry, va_list list)
 {
+  bool is_dot, is_dotdot;
   devfs_entry_t e = entry;
-  int64_t * index = va_arg (list, int64_t *);
 
   watch (bool)
   {
     ensure (e != NULL, false);
-    ensure (index != NULL, false);
 
-    if (*index == 0) return true;
+    is_dot = dna_strcmp (e -> name, ".") == 0;
+    is_dotdot = dna_strcmp (e -> name, "..") == 0;
 
-    *index = *index - 1;
-    return false;
+    return  ! is_dot && ! is_dotdot && ! e -> loaded;
   }
 }
 
