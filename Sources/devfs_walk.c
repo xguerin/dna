@@ -37,7 +37,7 @@ status_t devfs_walk (void * ns, void * base, char * restrict path,
 
     if (inode -> id == devfs -> root_vnid)
     {
-      log (INFO_LEVEL, "Path = %s, Size = %d",
+      log (VERBOSE_LEVEL, "Path = %s, Size = %d",
           path, devfs -> inode_list . status);
 
      /*

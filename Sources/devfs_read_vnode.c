@@ -30,7 +30,7 @@ status_t devfs_read_vnode (void * ns, int64_t vnid, void ** data)
         devfs_inode_id_inspector, vnid);
     ensure (inode != NULL, DNA_NO_VNODE);
 
-    log (INFO_LEVEL, "Read inode [%s].", inode -> name);
+    log (VERBOSE_LEVEL, "Read inode [%s].", inode -> name);
 
     if (inode -> parent != NULL)
     {

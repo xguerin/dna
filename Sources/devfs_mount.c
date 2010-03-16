@@ -74,7 +74,7 @@ status_t devfs_mount (int32_t vid, const char * dev_path, uint32_t flags,
     *data = devfs;
     *vnid = root_inode -> id;
 
-    log (INFO_LEVEL, "DevFS mount succeeded.");
+    log (VERBOSE_LEVEL, "DevFS mount succeeded.");
     return vnode_create (root_inode -> id, devfs -> vid, (void *) root_inode);
   }
 

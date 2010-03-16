@@ -51,7 +51,7 @@ status_t devfs_inode_insert (devfs_t fs, devfs_inode_t inode,
       }
 
       devfs_entry_add (inode, token, next_inode -> id);
-      log (INFO_LEVEL, "inode %s created", token);
+      log (VERBOSE_LEVEL, "inode %s created", token);
     }
     else
     {

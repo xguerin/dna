@@ -27,7 +27,7 @@ status_t devfs_write_vnode (void * ns, void * node)
 
   watch (status_t)
   {
-    log (INFO_LEVEL, "Write inode [%s].", inode -> name);
+    log (VERBOSE_LEVEL, "Write inode [%s].", inode -> name);
 
     status = devfs_inode_clean (devfs, inode);
     ensure (status == DNA_OK, status);

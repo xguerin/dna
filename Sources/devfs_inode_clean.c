@@ -27,12 +27,12 @@ status_t devfs_inode_clean (devfs_t fs, devfs_inode_t inode)
 
   watch (status_t)
   {
-    log (INFO_LEVEL, "Clean inode [%s] forward.", inode -> name);
+    log (VERBOSE_LEVEL, "Clean inode [%s] forward.", inode -> name);
 
     entry = queue_lookup (& inode -> entry_list, devfs_entry_unused_inspector);
     while (entry != NULL)
     {
-      log (INFO_LEVEL, "Unused entry [%s].", entry -> name);
+      log (VERBOSE_LEVEL, "Unused entry [%s].", entry -> name);
 
       next_inode = queue_lookup (& fs -> inode_list,
           devfs_inode_id_inspector, entry -> id);
@@ -48,7 +48,7 @@ status_t devfs_inode_clean (devfs_t fs, devfs_inode_t inode)
           devfs_entry_unused_inspector);
     }
 
-    log (INFO_LEVEL, "Clean inode [%s] backward.", inode -> name);
+    log (VERBOSE_LEVEL, "Clean inode [%s] backward.", inode -> name);
 
     if (inode -> entry_list . status == 0 && inode -> parent != NULL)
     {

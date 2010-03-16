@@ -29,7 +29,7 @@ status_t devfs_inode_destroy (devfs_t fs, devfs_inode_t inode)
   {
     ensure (inode != NULL, DNA_BAD_ARGUMENT);
 
-    log (INFO_LEVEL, "Destroy inode [%s].", inode -> name);
+    log (VERBOSE_LEVEL, "Destroy inode [%s].", inode -> name);
 
     queue_extract (& fs -> inode_list, inode);
     ensure (status == DNA_OK, status);
