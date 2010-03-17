@@ -91,6 +91,15 @@ status_t mmc_execute (mmc_card_t a_card, mmc_operation_t operation,
                 status = card -> callbacks . write (buffer, word_count);
                 check (error, status == DNA_OK, status);
 
+                do
+                {
+                  status = card -> callbacks . send_command
+                    (SEND_STATUS, card -> rca . raw, response);
+                  check (error, status == DNA_OK, status);
+                  card_status . raw = response[0];
+                }
+                while (card_status . bits . ready_for_data == 0);
+
                 break;
               }
           }
