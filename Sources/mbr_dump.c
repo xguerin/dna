@@ -21,5 +21,32 @@
 
 status_t mbr_dump (mbr_partition_t partition[4], uint8_t sector[512])
 {
-  return DNA_NOT_IMPLEMENTED;
+  int32_t next_partition = 0;
+  uint16_t signature = 0x55AA;
+  mbr_t * mbr = (mbr_t *)sector;
+
+  watch (status_t)
+  {
+    ensure (sector != NULL, DNA_BAD_ARGUMENT);
+    ensure (partition != NULL, DNA_BAD_ARGUMENT);
+    
+    dna_memset (sector, 0, 512);
+    
+    cpu_data_is_big_endian (16, signature);
+    mbr -> fields . signature = signature;
+
+    for (int32_t i = 0; i < 4; i += 1)
+    {
+      if (partition[i] . type != 0)
+      {
+        ensure (partition[i] . status == MBR_NORMAL_PARTITION ||
+            partition[i] . status == MBR_BOOTABLE_PARTITION, DNA_ERROR);
+
+        mbr -> fields . partition[next_partition] = partition[i];
+        next_partition += 1;
+      }
+    }
+
+    return DNA_OK;
+  }
 }
