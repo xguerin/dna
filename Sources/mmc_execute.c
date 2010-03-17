@@ -83,6 +83,13 @@ status_t mmc_execute (mmc_card_t a_card, mmc_operation_t operation,
 
             case MMC_WRITE :
               {
+                status = card -> callbacks . send_command
+                  (WRITE_SINGLE_BLOCK, block_offset, response);
+                check (error, status == DNA_OK, status);
+
+                word_count = (block_count * 512) >> 2;
+                status = card -> callbacks . write (buffer, word_count);
+                check (error, status == DNA_OK, status);
 
                 break;
               }
