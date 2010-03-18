@@ -42,7 +42,6 @@ status_t thread_find (char * name, int32_t * tid)
 {
   thread_t thread = NULL, self = NULL;
   int32_t current_cpuid, index;
-  status_t status = DNA_OK;
   interrupt_status_t it_status = 0;
 
   watch (status_t)
@@ -86,7 +85,7 @@ status_t thread_find (char * name, int32_t * tid)
     }
 
     cpu_trap_restore (it_status);
-    return status;
+    return DNA_OK;
   }
 }
 
