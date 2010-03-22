@@ -83,9 +83,8 @@ status_t thread_get_info (int32_t id, thread_info_t * info)
     if (thread -> info . status == DNA_THREAD_RUNNING)
     {
       cpu_timer_get (thread -> info . cpu_id, & current_time);
-      info -> kernel_time = current_time;
-      info -> kernel_time -= cpu_pool . cpu[thread -> info
-        .  cpu_id] . lap_date;
+      info -> kernel_time += current_time -
+        cpu_pool . cpu[thread -> info .  cpu_id] . lap_date;
     }
 
     lock_release (& thread -> lock);
