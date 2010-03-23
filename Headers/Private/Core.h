@@ -23,7 +23,7 @@
 
 #include <Private/Alarm.h>
 #include <Private/Cpu.h>
-#include <Private/Framework.h>
+#include <Private/LifeCycle.h>
 #include <Private/Interrupt.h>
 #include <Private/Scheduler.h>
 #include <Private/Semaphore.h>

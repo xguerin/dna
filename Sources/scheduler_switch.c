@@ -56,7 +56,8 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
      */
 
     cpu_timer_get (current_cpuid, & current_time);
-    self -> info . kernel_time += current_time - cpu -> lap_date;
+    self -> info . kernel_time = current_time;
+    self -> info . kernel_time -= cpu -> lap_date;
     lock_release (& self -> lock);
 
     /*

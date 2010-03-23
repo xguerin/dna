@@ -20,7 +20,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* FrameworkPrivate/core_create
+/****f* LifeCyclePrivate/core_create
  * SUMMARY
  * Create the core component.
  *

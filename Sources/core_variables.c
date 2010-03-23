@@ -18,7 +18,7 @@
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****v* Framework/core_component
+/****v* LifeCycle/core_component
  * SUMMARY
  * The core component instance.
  *

@@ -1,6 +1,6 @@
-/****h* CorePrivate/FrameworkPrivate
+/****h* CorePrivate/LifeCyclePrivate
  * SUMMARY
- * Core component framework.
+ * Core component life cycle.
  ****
  * Copyright (C) 2007 TIMA Laboratory
  *
@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DNA_CORE_FRAMEWORK_PRIVATE_H
-#define DNA_CORE_FRAMEWORK_PRIVATE_H
+#ifndef DNA_CORE_LIFECYCLE_PRIVATE_H
+#define DNA_CORE_LIFECYCLE_PRIVATE_H
 
 #include <DnaTools/DnaTools.h>
 

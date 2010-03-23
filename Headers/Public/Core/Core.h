@@ -22,7 +22,7 @@
 #define DNA_CORE_PUBLIC_H
 
 #include <Core/Alarm.h>
-#include <Core/Framework.h>
+#include <Core/LifeCycle.h>
 #include <Core/Interrupt.h>
 #include <Core/Lock.h>
 #include <Core/Semaphore.h>
