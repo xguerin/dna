@@ -42,7 +42,7 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
 
 {
   uint32_t current_cpuid = cpu_mp_id ();
-  bigtime_t current_time = 0;
+  bigtime_t current_time = 0, delta = 0;
   extern uint32_t __scheduler_switch_end;
   cpu_t * cpu = & cpu_pool . cpu[current_cpuid];
   thread_t self = cpu -> current_thread;
@@ -56,8 +56,8 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
      */
 
     cpu_timer_get (current_cpuid, & current_time);
-    self -> info . kernel_time = current_time;
-    self -> info . kernel_time -= cpu -> lap_date;
+    delta = current_time - cpu -> lap_date;
+    self -> info . kernel_time += delta;
     lock_release (& self -> lock);
 
     /*
