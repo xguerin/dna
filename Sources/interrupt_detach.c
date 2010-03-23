@@ -75,7 +75,7 @@ status_t interrupt_detach (int32_t cpuid, interrupt_id_t id,
     {
       if (cpuid == cpu_mp_id ())
       {
-        cpu_trap_enable (id);
+        cpu_trap_disable (id);
       }
       else
       {
