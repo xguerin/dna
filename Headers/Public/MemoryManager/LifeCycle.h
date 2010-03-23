@@ -18,17 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#ifndef DNA_MEMORY_FRAMEWORK_PRIVATE_H
-#define DNA_MEMORY_FRAMEWORK_PRIVATE_H
+#ifndef DNA_MEMORY_LIFECYCLE_PUBLIC_H
+#define DNA_MEMORY_LIFECYCLE_PUBLIC_H
 
 #include <DnaTools/DnaTools.h>
 
-extern uint32_t CPU_BSS_START;
-extern uint32_t CPU_BSS_END;
-
-extern status_t memory_create (void);
-extern status_t memory_destroy (void);
-extern status_t memory_start (void);
-extern status_t memory_stop (void);
+extern component_t memory_component;
 
 #endif

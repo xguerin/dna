@@ -21,7 +21,7 @@
 #ifndef DNA_MEMORY_PRIVATE_H
 #define DNA_MEMORY_PRIVATE_H
 
-#include <Private/Framework.h>
+#include <Private/LifeCycle.h>
 #include <Private/Allocator.h>
 #include <MemoryManager/MemoryManager.h>
 
