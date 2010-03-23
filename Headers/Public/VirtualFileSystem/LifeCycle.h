@@ -1,6 +1,6 @@
-/****h* dna/vfs
+/****h* vfs/framework
  * SUMMARY
- * VFS component.
+ * VFS life cycle.
  ****
  * Copyright (C) 2007 TIMA Laboratory
  *
@@ -18,13 +18,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DNA_VFS_PUBLIC_H
-#define DNA_VFS_PUBLIC_H
+#ifndef DNA_VFS_LIFECYCLE_PUBLIC_H
+#define DNA_VFS_LIFECYCLE_PUBLIC_H
 
-#include <VirtualFileSystem/LifeCycle.h>
-#include <VirtualFileSystem/Operation.h>
-#include <VirtualFileSystem/VNode.h>
 #include <DnaTools/DnaTools.h>
+
+extern component_t vfs_component;
 
 #endif
 

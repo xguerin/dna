@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DNA_VFS_FRAMEWORK_PRIVATE_H
-#define DNA_VFS_FRAMEWORK_PRIVATE_H
+#ifndef DNA_VFS_LIFECYCLE_PRIVATE_H
+#define DNA_VFS_LIFECYCLE_PRIVATE_H
 
 #include <DnaTools/DnaTools.h>
 
