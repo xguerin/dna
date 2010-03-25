@@ -46,13 +46,14 @@ int32_t interrupt_demultiplexer (int32_t itn)
   status_t status;
   int32_t current_cpuid = cpu_mp_id ();
   cpu_t * cpu = & cpu_pool . cpu[current_cpuid];
+  thread_t self = cpu -> current_thread;
   queue_t * queue = & cpu -> isr[itn];
-  bigtime_t time;
+  bigtime_t lap_date, current_time;
 
   watch (int32_t)
   {
     ensure (itn < cpu_trap_count (), DNA_BAD_ARGUMENT);
-    cpu_timer_get (current_cpuid, & time);
+    cpu_timer_get (current_cpuid, & current_time);
 
     /*
      * Extract the processor from the cpu list.
@@ -75,7 +76,18 @@ int32_t interrupt_demultiplexer (int32_t itn)
     }
 
     cpu -> status = DNA_CPU_RUNNING;
+    lap_date = cpu -> lap_date;
+    cpu -> lap_date = current_time;
+
+    /*
+     * Updating thread's user_time.
+     */
+
+    lock_acquire (& self -> lock);
     lock_release (& cpu -> lock);
+
+    self -> info . user_time += current_time - lap_date;
+    lock_release (& self -> lock);
 
     /*
      * Look for the corresponding handler
@@ -95,6 +107,21 @@ int32_t interrupt_demultiplexer (int32_t itn)
     }
 
     lock_release (& queue -> lock);
+
+    /*
+     * Update self's timings.
+     */
+
+    cpu_timer_get (current_cpuid, & current_time);
+    lock_acquire (& cpu -> lock);
+    lap_date = cpu -> lap_date;
+    cpu -> lap_date = current_time;
+
+    lock_acquire (& self -> lock);
+    lock_release (& cpu -> lock);
+
+    self -> info . kernel_time += current_time - lap_date;
+    lock_release (& self -> lock);
 
     /*
      * If necessary, invoke the scheduler.
