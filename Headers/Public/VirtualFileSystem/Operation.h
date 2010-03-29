@@ -21,6 +21,7 @@
 #ifndef DNA_VFS_OPERATION_PUBLIC_H
 #define DNA_VFS_OPERATION_PUBLIC_H
 
+#include <stdarg.h>
 #include <stdint.h>
 #include <DnaTools/DnaTools.h>
 
@@ -81,6 +82,6 @@ extern status_t vfs_lseek (int16_t fd, int64_t offset,
     int32_t whence, int64_t * p_ret);
 
 extern status_t vfs_ioctl (int16_t fd, int32_t function,
-    void * arguments, int32_t * p_ret);
+    va_list arguments, int32_t * p_ret);
 
 #endif

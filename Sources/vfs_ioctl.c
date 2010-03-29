@@ -27,7 +27,7 @@
  */
 
 status_t vfs_ioctl (int16_t fd, int32_t function,
-    void * arguments, int32_t * p_ret)
+    va_list arguments, int32_t * p_ret)
 
 /*
  * ARGUMENTS
