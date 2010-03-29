@@ -21,6 +21,7 @@
 #ifndef DNA_TOOLS_DEVICE_H
 #define DNA_TOOLS_DEVICE_H
 
+#include <stdarg.h>
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -126,7 +127,7 @@ typedef struct _device_cmd
   status_t (* write) (void * handler, void * source,
       int64_t offset, int32_t * p_res);
   status_t (* control) (void * handler, int32_t operation,
-      void * data, int32_t * p_res);
+      va_list arguments, int32_t * p_res);
 }
 device_cmd_t;
 
