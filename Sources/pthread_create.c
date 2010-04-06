@@ -12,6 +12,7 @@ int pthread_create (pthread_t *thread, pthread_attr_t *attr,
   pthread_t new;
   char * default_name = "pthread";
   void * stack_base;
+  thread_info_t thread_info = DNA_THREAD_DEFAULTS;
 
   ASSERT_RETURN( (thread == NULL), EINVAL );
 
@@ -67,9 +68,17 @@ int pthread_create (pthread_t *thread, pthread_attr_t *attr,
     }
   }
 
+  /*
+   * Create the thread.
+   */
+
+  strcpy (thread_info . name, new -> attributs -> name);
+  thread_info . affinity = new -> attributs -> procid;
+  thread_info . stack_base = new -> attributs -> stackaddr;
+  thread_info . stack_size = new -> attributs -> stacksize;
+
   thread_create ((thread_handler_t)start, (void *) arg,
-      new -> attributs -> name, DNA_KERNEL_GROUP, new -> attributs -> procid,
-      new -> attributs -> stackaddr, new -> attributs -> stacksize, & t_new);
+      DNA_KERNEL_GROUP, thread_info, & t_new);
 
   new -> tid = t_new;
   thread_resume (t_new);
