@@ -76,6 +76,11 @@ status_t thread_get_info (int32_t id, thread_info_t * info)
 
     *info = thread -> info;
 
+    if (thread -> info . affinity == cpu_mp_count ())
+    {
+      info -> affinity = DNA_NO_AFFINITY;
+    }
+
     /*
      * Update the time of the running thread
      */

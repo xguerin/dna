@@ -86,7 +86,7 @@ status_t thread_destroy (int32_t id)
     thread_pool . thread[tid . s . group][tid . s . index] = NULL;
     lock_release (& thread_pool . lock);
 
-    kernel_free (thread -> stack . base);
+    kernel_free (thread -> info . stack_base);
     kernel_free (thread);
 
     lock_release (& thread -> lock);

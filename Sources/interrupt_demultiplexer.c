@@ -114,6 +114,7 @@ int32_t interrupt_demultiplexer (int32_t itn)
 
     cpu_timer_get (current_cpuid, & current_time);
     lock_acquire (& cpu -> lock);
+
     lap_date = cpu -> lap_date;
     cpu -> lap_date = current_time;
 

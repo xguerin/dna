@@ -56,23 +56,6 @@ thread_id_t;
 /*
  ****/
 
-/****t* ThreadPrivate/thread_stack_t
- * SUMMARY
- * Thread stack type.
- *
- * SOURCE
- */
-
-typedef struct _thread_stack
-{
-  uint32_t size;
-  void * base;
-}
-thread_stack_t;
-
-/*
- ****/
-
 /****t* ThreadPrivate/thread_signature_t
  * SUMMARY
  * Thread signature.
@@ -107,9 +90,8 @@ typedef struct _thread
 
   thread_id_t id;
   thread_info_t info;
-  thread_signature_t signature;
 
-  thread_stack_t stack;
+  thread_signature_t signature;
   cpu_context_t context;
 }
 * thread_t;

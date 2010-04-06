@@ -28,8 +28,7 @@
  */
 
 status_t thread_create (thread_handler_t handler, void * arguments,
-    char * name, int32_t group, int32_t affinity,
-    void * stack_base, int32_t stack_size, int32_t * tid)
+    char * name, int32_t group, thread_info_t info, int32_t * tid)
 
 /*
  * ARGUMENTS
@@ -37,9 +36,7 @@ status_t thread_create (thread_handler_t handler, void * arguments,
  * * arguments : the handler's arguments
  * * name : the thread's name
  * * group : the thread's group
- * * affinity : the thread's processor affinity
- * * stack_base : the base of the stack
- * * stack_size : the thread's stack size
+ * * info : various thread information
  * * tid : the placeholder of the created thread's ID
  *
  * RESULT
@@ -58,9 +55,9 @@ status_t thread_create (thread_handler_t handler, void * arguments,
   watch (status_t)
   {
     ensure (handler != NULL && name != NULL && tid != NULL, DNA_BAD_ARGUMENT);
-    ensure (affinity == DNA_NO_AFFINITY || (affinity >= 0
-          && affinity < cpu_mp_count ()), DNA_BAD_ARGUMENT);
     ensure (group >= 0 && group < DNA_MAX_GROUP, DNA_BAD_ARGUMENT);
+    ensure (info . affinity == DNA_NO_AFFINITY || (info . affinity >= 0
+          && info . affinity < cpu_mp_count ()), DNA_BAD_ARGUMENT);
 
     /*
      * Allocate the new thread structure.
@@ -81,17 +78,17 @@ status_t thread_create (thread_handler_t handler, void * arguments,
      * Allocate its stack.
      */
 
-    if (stack_base == NULL)
+    if (info . stack_base == NULL)
     {
-      thread -> stack . base = kernel_malloc (stack_size, false);
-      check (error, thread -> stack . base != NULL, DNA_OUT_OF_MEM);
+      thread -> info . stack_base = kernel_malloc (info . stack_size, false);
+      check (error, thread -> info . stack_base != NULL, DNA_OUT_OF_MEM);
     }
     else
     {
-      thread -> stack . base = stack_base;
+      thread -> info . stack_base = info . stack_base;
     }
 
-    thread -> stack . size = stack_size;
+    thread -> info . stack_size = info . stack_size;
 
     /*
      * Fill in the information.
@@ -100,13 +97,13 @@ status_t thread_create (thread_handler_t handler, void * arguments,
     dna_strcpy (thread -> info . name, name);
     thread -> info . cpu_id = 0;
 
-    if (affinity == DNA_NO_AFFINITY)
+    if (info . affinity == DNA_NO_AFFINITY)
     {
-      thread -> info .affinity = cpu_mp_count ();
+      thread -> info . affinity = cpu_mp_count ();
     }
     else 
     {
-      thread -> info . affinity = affinity;
+      thread -> info . affinity = info . affinity;
     }
 
     thread -> info . status = DNA_THREAD_SUSPENDED;
@@ -124,8 +121,8 @@ status_t thread_create (thread_handler_t handler, void * arguments,
      * Initialize the context.
      */
 
-    cpu_context_init (& thread -> context, thread -> stack . base,
-        thread -> stack . size, thread_bootstrap, & thread -> signature);
+    cpu_context_init (& thread -> context, thread -> info . stack_base,
+        thread -> info . stack_size, thread_bootstrap, & thread -> signature);
 
     /*
      * Find a free thread slot
@@ -163,9 +160,9 @@ status_t thread_create (thread_handler_t handler, void * arguments,
 
   rescue (error)
   {
-    if (stack_base == NULL)
+    if (info . stack_base == NULL)
     {
-      kernel_free (thread -> stack . base);
+      kernel_free (thread -> info . stack_base);
     }
 
     kernel_free (thread);
