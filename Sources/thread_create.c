@@ -28,13 +28,12 @@
  */
 
 status_t thread_create (thread_handler_t handler, void * arguments,
-    char * name, int32_t group, thread_info_t info, int32_t * tid)
+    int32_t group, thread_info_t info, int32_t * tid)
 
 /*
  * ARGUMENTS
  * * handler : the thread's handler
  * * arguments : the handler's arguments
- * * name : the thread's name
  * * group : the thread's group
  * * info : various thread information
  * * tid : the placeholder of the created thread's ID
@@ -54,10 +53,18 @@ status_t thread_create (thread_handler_t handler, void * arguments,
 
   watch (status_t)
   {
-    ensure (handler != NULL && name != NULL && tid != NULL, DNA_BAD_ARGUMENT);
+    ensure (handler != NULL && tid != NULL, DNA_BAD_ARGUMENT);
     ensure (group >= 0 && group < DNA_MAX_GROUP, DNA_BAD_ARGUMENT);
+
+    /*
+     * Check the content of the information structure.
+     */
+
     ensure (info . affinity == DNA_NO_AFFINITY || (info . affinity >= 0
           && info . affinity < cpu_mp_count ()), DNA_BAD_ARGUMENT);
+    ensure (thread -> info . status == DNA_THREAD_SUSPENDED, DNA_BAD_ARGUMENT);
+    ensure (thread -> info . resource == DNA_NO_RESOURCE, DNA_BAD_ARGUMENT);
+    ensure (thread -> info . resource_id == -1, DNA_BAD_ARGUMENT);
 
     /*
      * Allocate the new thread structure.
@@ -75,40 +82,21 @@ status_t thread_create (thread_handler_t handler, void * arguments,
     thread -> id . s . group = group;
 
     /*
-     * Allocate its stack.
+     * Copy and adjust the information structure.
      */
+
+    thread -> info = info;
 
     if (info . stack_base == NULL)
     {
       thread -> info . stack_base = kernel_malloc (info . stack_size, false);
       check (error, thread -> info . stack_base != NULL, DNA_OUT_OF_MEM);
     }
-    else
-    {
-      thread -> info . stack_base = info . stack_base;
-    }
-
-    thread -> info . stack_size = info . stack_size;
-
-    /*
-     * Fill in the information.
-     */
-
-    dna_strcpy (thread -> info . name, name);
-    thread -> info . cpu_id = 0;
 
     if (info . affinity == DNA_NO_AFFINITY)
     {
       thread -> info . affinity = cpu_mp_count ();
     }
-    else 
-    {
-      thread -> info . affinity = info . affinity;
-    }
-
-    thread -> info . status = DNA_THREAD_SUSPENDED;
-    thread -> info . resource = DNA_NO_RESOURCE;
-    thread -> info . resource_id = -1;
 
     /*
      * Fill in the signature

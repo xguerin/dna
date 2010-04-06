@@ -51,6 +51,29 @@
 /*
  ****/
 
+/****d* Thread/DNA_THREAD_DEFAULTS
+ * SUMMARY
+ * Default values for the thread_info structure.
+ *
+ * SOURCE
+ */
+
+#define DNA_THREAD_DEFAULTS \
+{                           \
+  "thread",                 \
+  0,                        \
+  DNA_NO_AFFINITY,          \
+  0,                        \
+  0,                        \
+  DNA_THREAD_SUSPENDED,     \
+  DNA_NO_RESOURCE,          \
+  -1,                       \
+  0,                        \
+  0,                        \
+  NULL,                     \
+  0                         \
+};
+
 /****t* Thread/thread_status_t
  * SUMMARY
  * Available thread status.
@@ -126,8 +149,8 @@ typedef struct _thread_info
   bigtime_t kernel_time;
   bigtime_t user_time;
 
-  uint32_t stack_size;
   void * stack_base;
+  uint32_t stack_size;
 }
 thread_info_t;
 
@@ -135,7 +158,7 @@ thread_info_t;
  ****/
 
 extern status_t thread_create (thread_handler_t handler, void * arguments,
-    char * name, int32_t group, thread_info_t info, int32_t * tid);
+    int32_t group, thread_info_t info, int32_t * tid);
 extern status_t thread_destroy (int32_t id);
 
 extern status_t thread_resume (int32_t id);

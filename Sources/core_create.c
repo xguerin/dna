@@ -51,7 +51,7 @@ status_t core_create (void)
   void * area = NULL;
   thread_t thread;
   thread_id_t tid;
-  thread_info_t thread_info;
+  thread_info_t thread_info = DNA_THREAD_DEFAULTS;
 
   watch (status_t)
   {
@@ -136,11 +136,12 @@ status_t core_create (void)
        * Create the Idle thread
        */
 
+      dna_strcpy (thread_info . name, "IdleThread");
       thread_info . affinity = cpu_i;
       thread_info . stack_base = cpu -> stack;
       thread_info . stack_size = DNA_IDLE_STACK_SIZE;
 
-      status = thread_create (thread_idle, NULL, "IdleThread",
+      status = thread_create (thread_idle, NULL,
           DNA_KERNEL_GROUP, thread_info, & tid . raw);
       check (cpu_initialize, status == DNA_OK, DNA_ERROR);
 
@@ -162,11 +163,12 @@ status_t core_create (void)
      * the application resides in the kernel.
      */
 
+    dna_strcpy (thread_info . name, "Main");
     thread_info . affinity = DNA_NO_AFFINITY;
     thread_info . stack_base = NULL;
     thread_info . stack_size = DNA_THREAD_STACK_SIZE;
 
-    status = thread_create (APP_ENTRY_POINT, NULL, "ApplicationMain",
+    status = thread_create (APP_ENTRY_POINT, NULL,
         DNA_KERNEL_GROUP, thread_info, & tid . raw);
     check (cpu_initialize, status == DNA_OK, DNA_ERROR);
 
