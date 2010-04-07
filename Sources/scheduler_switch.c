@@ -87,7 +87,6 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
 
     if (queue != NULL)
     {
-      queue_add (queue, self);
       lock_release (& queue -> lock);
     }
 

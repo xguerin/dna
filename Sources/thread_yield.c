@@ -57,6 +57,7 @@ status_t thread_yield (void)
       {
         queue = & scheduler . queue[self -> info . affinity];
         lock_acquire (& queue -> lock);
+        queue_add (queue, self);
       }
 
       status = scheduler_switch (thread, queue);

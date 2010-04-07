@@ -168,7 +168,7 @@ status_t semaphore_acquire (int32_t id, int32_t tokens,
       self -> info . resource_id = sem -> id . raw;
 
       /*
-       * Reschedule self.
+       * Look for a potential target thread.
        */
 
       lock_acquire (& sem -> waiting_queue . lock);
@@ -176,6 +176,16 @@ status_t semaphore_acquire (int32_t id, int32_t tokens,
 
       status = scheduler_elect (& thread, true);
       ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
+
+      /*
+       * Add self in the ready queue.
+       */
+
+      queue_add (& sem -> waiting_queue, self);
+
+      /*
+       * Reschedule self.
+       */
 
       status = scheduler_switch (thread, & sem -> waiting_queue);
       ensure (status == DNA_OK, status);

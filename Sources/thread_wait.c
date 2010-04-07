@@ -99,11 +99,21 @@ status_t thread_wait (int32_t id, int32_t * value)
       self -> info . resource_id = tid . raw;
 
       /*
-       * Elect the next thread and run it
+       * Elect a potential target thread.
        */
 
       status = scheduler_elect (& target, true);
       ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
+
+      /*
+       * Add self into the ready queue.
+       */
+
+      queue_add (& thread -> wait, self);
+
+      /*
+       * Reschedule self.
+       */
 
       status = scheduler_switch (target, & thread -> wait);
       ensure (status == DNA_OK, status);
