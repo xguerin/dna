@@ -62,6 +62,7 @@ status_t thread_create (thread_handler_t handler, void * arguments,
 
     ensure (info . affinity == DNA_NO_AFFINITY || (info . affinity >= 0
           && info . affinity < cpu_mp_count ()), DNA_BAD_ARGUMENT);
+
     ensure (info . status == DNA_THREAD_SUSPENDED, DNA_BAD_ARGUMENT);
     ensure (info . resource == DNA_NO_RESOURCE, DNA_BAD_ARGUMENT);
     ensure (info . resource_id == -1, DNA_BAD_ARGUMENT);
