@@ -58,7 +58,7 @@ status_t scheduler_elect (thread_t * p_thread, bool with_idle)
     lock_acquire (& queue -> lock);
     thread = queue_rem (queue);
 
-    check (thread_found, thread != NULL, DNA_OK);
+    check (thread_found, thread == NULL, DNA_OK);
     lock_release (& queue -> lock);
 
     /*
@@ -70,7 +70,7 @@ status_t scheduler_elect (thread_t * p_thread, bool with_idle)
     lock_acquire (& queue -> lock);
     thread = queue_rem (queue);
 
-    check (thread_found, thread != NULL, DNA_OK);
+    check (thread_found, thread == NULL, DNA_OK);
     lock_release (& queue -> lock);
 
     /*
@@ -91,7 +91,7 @@ status_t scheduler_elect (thread_t * p_thread, bool with_idle)
     lock_release (& cpu_pool . queue . lock);
 
     thread = cpu_pool . cpu[current_cpuid] . idle_thread;
-    check (thread_found, thread != NULL, DNA_OK);
+    check (thread_found, thread == NULL, DNA_OK);
 
     return DNA_ERROR;
   }
