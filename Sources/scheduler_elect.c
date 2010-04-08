@@ -41,6 +41,7 @@ status_t scheduler_elect (thread_t * p_thread, bool with_idle)
  */
 
 {
+  queue_t * queue = NULL;
   thread_t thread = NULL;
   int32_t current_cpuid = cpu_mp_id();
 
@@ -49,70 +50,59 @@ status_t scheduler_elect (thread_t * p_thread, bool with_idle)
     ensure (p_thread != NULL, DNA_BAD_ARGUMENT);
 
     /*
-     * Check the local queue
+     * Check the local queue.
      */
 
-    lock_acquire (& scheduler . queue[current_cpuid] . lock);
-    thread = queue_rem (& scheduler . queue[current_cpuid]);
+    queue = & scheduler . queue[current_cpuid];
 
-    if (thread != NULL)
-    {
-      lock_acquire (& thread -> lock);
-      lock_release (& scheduler . queue[current_cpuid] . lock);
+    lock_acquire (& queue -> lock);
+    thread = queue_rem (queue);
 
-      *p_thread = thread;
-      return DNA_OK;
-    }
+    check (thread_found, thread != NULL, DNA_OK);
+    lock_release (& queue -> lock);
 
     /*
-     * Check the global queue
+     * Check the global queue.
      */
 
-    lock_acquire (& scheduler . queue[cpu_mp_count ()] . lock);
-    lock_release (& scheduler . queue[current_cpuid] . lock);
+    queue = & scheduler . queue[cpu_mp_count ()];
 
-    thread = queue_rem (& scheduler . queue[cpu_mp_count ()]);
+    lock_acquire (& queue -> lock);
+    thread = queue_rem (queue);
 
-    if (thread != NULL)
-    {
-      lock_acquire (& thread -> lock);
-      lock_release (& scheduler . queue[cpu_mp_count ()] . lock);
-
-      *p_thread = thread;
-      return DNA_OK;
-    }
+    check (thread_found, thread != NULL, DNA_OK);
+    lock_release (& queue -> lock);
 
     /*
-     * Return the IDLE thread
+     * Return the IDLE thread if requested.
      */
 
-    if (with_idle)
-    {
-      lock_acquire (& cpu_pool . cpu[current_cpuid] . lock);
-      lock_release (& scheduler . queue[cpu_mp_count ()] . lock);
+    ensure (with_idle, DNA_NO_AVAILABLE_THREAD);
 
-      log (VERBOSE_LEVEL, "Set CPU %d @ READY", current_cpuid);
-      cpu_pool . cpu[current_cpuid] . status = DNA_CPU_READY;
+    lock_acquire (& cpu_pool . cpu[current_cpuid] . lock);
 
-      lock_acquire (& cpu_pool . queue . lock);
-      lock_release (& cpu_pool . cpu[current_cpuid] . lock);
+    log (VERBOSE_LEVEL, "Set CPU %d @ READY", current_cpuid);
+    cpu_pool . cpu[current_cpuid] . status = DNA_CPU_READY;
 
-      queue_add (& cpu_pool . queue, & cpu_pool . cpu[current_cpuid]);
-      lock_release (& cpu_pool . queue . lock);
+    lock_acquire (& cpu_pool . queue . lock);
+    lock_release (& cpu_pool . cpu[current_cpuid] . lock);
 
-      thread = cpu_pool . cpu[current_cpuid] . idle_thread;
-      lock_acquire (& thread -> lock);
+    queue_add (& cpu_pool . queue, & cpu_pool . cpu[current_cpuid]);
+    lock_release (& cpu_pool . queue . lock);
 
-      *p_thread = thread;
-      return DNA_OK;
-    }
-    else
-    {
-      lock_release (& scheduler . queue[cpu_mp_count ()] . lock);
+    thread = cpu_pool . cpu[current_cpuid] . idle_thread;
+    check (thread_found, thread != NULL, DNA_OK);
 
-      *p_thread = NULL;
-      return DNA_NO_AVAILABLE_THREAD;
-    }
+    return DNA_ERROR;
+  }
+
+  rescue (thread_found)
+  {
+    lock_acquire (& thread -> lock);
+    lock_release (& queue -> lock);
+
+    *p_thread = thread;
+    leave;
   }
 }
 
