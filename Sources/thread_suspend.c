@@ -43,6 +43,7 @@ status_t thread_suspend (int32_t id)
  */
 
 {
+  queue_t * queue = NULL;
   status_t status, result;
   thread_t target = NULL;
   uint32_t current_cpuid = 0, next_cpuid = 0;
@@ -129,22 +130,21 @@ status_t thread_suspend (int32_t id)
 
         case DNA_THREAD_READY :
           {
+            queue = & scheduler . queue[thread -> info . affinity];
+
             /*
              * Apply the banker's algorithm to lock both the thread
              * and the ready queue.
              */
 
-            result = lock_try
-              (& scheduler . queue[thread -> info . affinity] . lock, true);
+            result = lock_try (& queue -> lock, true);
 
             if (result != DNA_ERROR)
             {
               log (VERBOSE_LEVEL, "Local READY suspend 0x%x.", thread -> id);
 
-              queue_extract
-                (& scheduler . queue[thread -> info . affinity], thread);
-              lock_release
-                (& scheduler . queue[thread -> info . affinity] . lock);
+              queue_extract (queue, thread);
+              lock_release (& queue -> lock);
 
               thread -> info . status = DNA_THREAD_SUSPENDED;
               restart_stabilization_loop = false;
@@ -172,20 +172,22 @@ status_t thread_suspend (int32_t id)
 
         case DNA_THREAD_WAITING :
           {
+            queue = thread -> resource_queue;
+
             /*
              * Apply the banker's algorithm to lock both the thread
              * and the resource queue.
              */
 
-            check (thread_error, thread -> resource_queue != NULL, DNA_ERROR);
-            result = lock_try (& thread -> resource_queue -> lock, true);
+            check (thread_error, queue != NULL, DNA_ERROR);
+            result = lock_try (& queue -> lock, true);
 
             if (result != DNA_ERROR)
             {
               log (VERBOSE_LEVEL, "Local WAIT suspend %d.", thread -> id);
 
-              queue_extract (thread -> resource_queue, thread);
-              lock_release (& thread -> resource_queue -> lock);
+              queue_extract (queue, thread);
+              lock_release (& queue -> lock);
 
               thread -> info . status = DNA_THREAD_SUSPENDED;
               restart_stabilization_loop = false;
@@ -197,7 +199,7 @@ status_t thread_suspend (int32_t id)
 
         default :
           {
-            log (PANIC_LEVEL, "unknown thread status.");
+            log (PANIC_LEVEL, "Unknown thread status.");
             break;
           }
       }
