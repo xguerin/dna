@@ -74,16 +74,12 @@ void thread_exit (int32_t value)
   {
     lock_acquire (& p -> lock);
 
-    self -> resource_queue = NULL;
+    p -> resource_queue = NULL;
     p -> info . status = DNA_THREAD_READY;
-    self -> info . resource = DNA_NO_RESOURCE;
-    self -> info . resource_id = -1;
+    p -> info . resource = DNA_NO_RESOURCE;
+    p -> info . resource_id = -1;
 
-    lock_acquire (& scheduler . queue[p -> info . affinity] . lock);
-    lock_release (& p -> lock);
-
-    queue_add (& scheduler . queue[p -> info . affinity], p);
-    lock_release (& scheduler . queue[p -> info . affinity] . lock);
+    scheduler_dispatch (p);
   }
 
   lock_release (& self -> wait . lock);
