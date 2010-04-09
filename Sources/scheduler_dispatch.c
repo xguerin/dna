@@ -82,12 +82,17 @@ status_t scheduler_dispatch (thread_t thread)
     lock_release (& cpu_pool . queue . lock);
 
     /*
-     * Deal with the dispatch.
+     * Explanation of what follows: in the first part of the test,
+     * we check whether a distant, compatible CPU is available. If
+     * not, if the thread is compatible with the current processor,
+     * and whether this processor is available or not, we return
+     * that it is necessary to invoke the scheduler. It will be the
+     * role of the calling function to decide what to do.
      */
 
     if (cpu != NULL && cpu -> id != cpu_mp_id ())
     {
-      log (VERBOSE_LEVEL, "dispatch 0x%x to CPU(%d)",
+      log (VERBOSE_LEVEL, "Dispatch 0x%x to CPU(%d)",
           thread -> id . raw, cpu -> id);
 
       cpu_mp_send_ipi (cpu -> id, DNA_IPI_YIELD, NULL);
@@ -96,18 +101,9 @@ status_t scheduler_dispatch (thread_t thread)
     {
       affinity = thread -> info . affinity;
 
-      /*
-       * Explanation of what follows: in the first part of the test,
-       * we checked whether a distant, compatible CPU is available. If
-       * not, if the thread is compatible with the current processor,
-       * and whether this processor is available or not, we return
-       * that it is necessary to invoke the scheduler. It will be the
-       * role of the calling function to decide what to do.
-       */
-
       if (affinity == cpu_mp_count () || affinity == cpu_mp_id ())
       {
-        log (VERBOSE_LEVEL, "invoke scheduler for 0x%x on queue(%d)",
+        log (VERBOSE_LEVEL, "Schedule 0x%x on queue(%d)",
             thread -> id . raw, affinity);
 
         status = DNA_INVOKE_SCHEDULER;
