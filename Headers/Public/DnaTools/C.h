@@ -30,6 +30,7 @@ extern char * dna_strcat (char *  dest, const char *  src);
 extern int32_t dna_strcmp (const char *s1, const char *s2);
 extern size_t dna_strlen (const char *s);
 
+extern uint32_t dna_log2 (uint32_t value);
 extern int32_t dna_atoi (char * alpha);
 extern int32_t dna_itoa (int32_t integer, char * buffer);
 
