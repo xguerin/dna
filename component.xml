@@ -22,9 +22,6 @@
       <argument name="area" type="access" direction="in"/>
     </method>
 
-    <method name="user_sbrk" return_type="access">
-      <argument name="increment" type="int32_t" direction="in"/>
-    </method>
   </provide>
 
   <require>
