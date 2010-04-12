@@ -98,6 +98,10 @@ extern uint32_t OS_KERNEL_HEAP_SIZE;
 
 extern kernel_allocator_t kernel_allocator;
 
+
+extern void * kernel_malloc (uint32_t size, bool erase);
+extern status_t kernel_free (void * area);
+
 extern status_t kernel_region_create (uint32_t required_nblocks,
     kernel_region_t * p_region);
 
