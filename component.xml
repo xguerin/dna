@@ -2,7 +2,7 @@
 
 <component author="xavier.guerin@imag.fr" unique="true" wrapper="false">
 
-  <id name="DnaMemoryManager" short_name="Mem" version="1.0"/>
+  <id name="DnaMM-WorstFit" short_name="MM" version="1.0"/>
 
   <provide>
 
