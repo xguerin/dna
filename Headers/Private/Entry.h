@@ -21,7 +21,6 @@
 #include <stdarg.h>
 #include <stdbool.h>
 #include <Private/iNode.h>
-#include <Private/Misc.h>
 #include <DnaTools/DnaTools.h>
 
 typedef struct devfs_entry
@@ -29,7 +28,7 @@ typedef struct devfs_entry
   queue_link_t link;
   int64_t id;
   bool loaded;
-  char name[DEVFS_NAME_LENGTH];
+  char name[DNA_FILENAME_LENGTH];
 }
 * devfs_entry_t;
 

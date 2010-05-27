@@ -21,7 +21,6 @@
 #include <stdarg.h>
 #include <stdbool.h>
 #include <Private/FileSystem.h>
-#include <Private/Misc.h>
 #include <DnaTools/DnaTools.h>
 
 typedef enum _devfs_inode_class
@@ -37,9 +36,9 @@ typedef struct _devfs_inode
   queue_link_t link;
 
   int64_t id;
-  char name[DEVFS_NAME_LENGTH];
   devfs_inode_class_t class;
   struct _devfs_inode * parent;
+  char name[DNA_FILENAME_LENGTH];
 
   int64_t size;
   int32_t mode;
@@ -47,6 +46,8 @@ typedef struct _devfs_inode
 
   device_cmd_t * dev_cmd;
   queue_t entry_list;
+
+  char path[1];
 }
 * devfs_inode_t;
 

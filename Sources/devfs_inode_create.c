@@ -23,13 +23,15 @@ status_t devfs_inode_create (devfs_t fs, devfs_inode_t parent,
     devfs_inode_class_t class, char * name, int64_t vnid,
     device_cmd_t * commands, devfs_inode_t * p_inode)
 {
+  int32_t path_length = 0;
   devfs_inode_t inode;
 
   watch (status_t)
   {
     ensure (name != NULL, DNA_BAD_ARGUMENT);
 
-    inode = kernel_malloc (sizeof (struct _devfs_inode), true);
+    path_length = dna_strlen (parent -> path) + dna_strlen (name);
+    inode = kernel_malloc (sizeof (struct _devfs_inode) + path_length, true);
     ensure (inode != NULL, DNA_OUT_OF_MEM);
 
     inode -> id = vnid;
@@ -37,6 +39,14 @@ status_t devfs_inode_create (devfs_t fs, devfs_inode_t parent,
     inode -> parent = parent;
     inode -> dev_cmd = commands;
     dna_strcpy (inode -> name, name);
+    
+    if (parent != NULL && parent -> id != fs -> root_vnid)
+    {
+      dna_strcpy (inode -> path, parent -> path);
+      dna_strcat (inode -> path, "/");
+    }
+
+    dna_strcat (inode -> path, name);
 
     if (fs != NULL)
     {

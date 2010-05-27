@@ -24,7 +24,7 @@ status_t devfs_open (void * ns, void * node, int32_t mode, void ** data)
 
   if (inode -> class == DNA_DEVFS_FILE)
   {
-    return inode -> dev_cmd -> open (inode -> name, mode, data);
+    return inode -> dev_cmd -> open (inode -> path, mode, data);
   }
   else
   {
