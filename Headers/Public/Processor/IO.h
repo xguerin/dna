@@ -17,13 +17,13 @@ extern void cpu_vector_transfer (void * source,
 #define cpu_write(type,addr,value) cpu_write_##type(addr,value)
 
 #define cpu_write_UINT8(addr,value)                                   \
-  *((volatile uint8_t *)(addr)) = (value)
+  *((uint8_t *)(addr)) = (uint8_t)(value)
 
 #define cpu_write_UINT16(addr,value)                                  \
-  *((volatile uint16_t *)(addr)) = (value)
+  *((uint16_t *)(addr)) = (uint16_t)(value)
 
 #define cpu_write_UINT32(addr,value)                                  \
-  *((volatile uint32_t *)(addr)) = (value)
+  *((uint32_t *)(addr)) = (uint32_t)(value)
 
 /*
  * Read operations.
@@ -32,13 +32,13 @@ extern void cpu_vector_transfer (void * source,
 #define cpu_read(type,addr,value) cpu_read_##type(addr,value)
 
 #define cpu_read_UINT8(addr,value)                                    \
-  (value) = *((volatile uint8_t *) (addr))
+  (value) = (__typeof__(value))*((uint8_t *) (addr))
 
 #define cpu_read_UINT16(addr, value)                                  \
-  (value) = *((volatile uint16_t *) (addr))
+  (value) = (__typeof__(value))*((uint16_t *) (addr))
 
 #define cpu_read_UINT32(addr,value)                                   \
-  (value) = *((volatile uint32_t *) (addr))
+  (value) = (__typeof__(value))*((uint32_t *) (addr))
 
 /*
  * Uncached operations.
@@ -88,4 +88,3 @@ extern void cpu_vector_transfer (void * source,
 #define cpu_vector_read(mode,to,from,len) cpu_vector_write_##mode(to,from,len)
 
 #endif
-
