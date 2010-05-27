@@ -32,13 +32,13 @@ extern void cpu_vector_transfer (void * source,
 #define cpu_read(type,addr,value) cpu_read_##type(addr,value)
 
 #define cpu_read_UINT8(addr,value)                                    \
-  (value) = (__typeof__(value))*((uint8_t *) (addr))
+  (value) = (__typeof__(value))*((volatile uint8_t *) (addr))
 
 #define cpu_read_UINT16(addr, value)                                  \
-  (value) = (__typeof__(value))*((uint16_t *) (addr))
+  (value) = (__typeof__(value))*((volatile uint16_t *) (addr))
 
 #define cpu_read_UINT32(addr,value)                                   \
-  (value) = (__typeof__(value))*((uint32_t *) (addr))
+  (value) = (__typeof__(value))*((volatile uint32_t *) (addr))
 
 /*
  * Uncached operations.
