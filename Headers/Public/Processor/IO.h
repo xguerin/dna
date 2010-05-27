@@ -17,13 +17,13 @@ extern void cpu_vector_transfer (void * source,
 #define cpu_write(type,addr,value) cpu_write_##type(addr,value)
 
 #define cpu_write_UINT8(addr,value)                                   \
-  *((uint8_t *)(addr)) = (uint8_t)(value)
+  *((volatile uint8_t *)(addr)) = (uint8_t)(value)
 
 #define cpu_write_UINT16(addr,value)                                  \
-  *((uint16_t *)(addr)) = (uint16_t)(value)
+  *((volatile uint16_t *)(addr)) = (uint16_t)(value)
 
 #define cpu_write_UINT32(addr,value)                                  \
-  *((uint32_t *)(addr)) = (uint32_t)(value)
+  *((volatile uint32_t *)(addr)) = (uint32_t)(value)
 
 /*
  * Read operations.
