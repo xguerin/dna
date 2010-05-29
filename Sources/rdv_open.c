@@ -21,24 +21,18 @@
 
 status_t rdv_open (char * name, int32_t mode, void ** data)
 {
-  int32_t index = 0, id;
+  int32_t id;
 
   watch (status_t)
   {
     ensure (name != NULL, DNA_ERROR);
 
     /*
-     * Find the '.' marker
+     * Get the channel ID from the beginning
+     * of the path.
      */
 
-    while (name[index] != '\0' && name[index++] != '.');
-    ensure (name[index - 1] == '.', DNA_ERROR);
-
-    /*
-     * Get the channel ID
-     */
-
-    id = dna_atoi (& name[index]);
+    id = dna_atoi (& name[19]);
     ensure (id >= 0 && id < CHANNEL_RDV_NDEV, DNA_ERROR);
 
     /*

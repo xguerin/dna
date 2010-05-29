@@ -34,7 +34,7 @@ driver_t rdv_module =
 
 status_t rdv_init_driver (void)
 {
-  char * base = "rdv.", * buffer, ascii[64];
+  char * base = "channel/rendezvous/", * buffer, ascii[64];
   int32_t i = 0;
   status_t status;
 
