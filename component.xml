@@ -4,16 +4,6 @@
 
   <id name="DnaVirtualFileSystem" short_name="VFS" version="1.0"/>
 
-  <manage>
-    <method name="fs_walk" return_type="status_t">
-      <argument name="ns" type="access" direction="in"/>
-      <argument name="base" type="access" direction="in"/>
-      <argument name="path" type="string" direction="in"/>
-      <argument name="new_path" type="string" direction="out"/>
-      <argument name="vnid" type="int64_t" direction="out"/>
-    </method>
-  </manage>
-
   <provide>
 
     <!-- Component hooks -->
