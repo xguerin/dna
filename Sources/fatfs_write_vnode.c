@@ -23,7 +23,7 @@ status_t fatfs_write_vnode (void * ns, void * node)
 {
     fatfs_inode_t inode = node;
 
-	log (INFO_LEVEL, "FATFS write vnode [start]");
+	log (INFO_LEVEL, "FATFS write vnode [start] :: inode id HI 0x%lx LO 0x%lx", (uint32_t)( inode -> id >> 32), (uint32_t)( inode -> id & 0x00000000FFFFFFFF));
 
 	watch (status_t)
 	{
@@ -34,6 +34,8 @@ status_t fatfs_write_vnode (void * ns, void * node)
 			
 		free(inode);
 	}
+	
+	log (INFO_LEVEL, "FATFS write vnode [end]");
 	
   return DNA_OK;
 }

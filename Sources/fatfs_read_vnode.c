@@ -28,31 +28,33 @@ status_t fatfs_read_vnode (void * ns, int64_t vnid, void ** data)
 {
 	fatfs_t fatfs = ns;
     fatfs_inode_t inode = NULL;
-	uint32_t entry_offset = (uint32_t)(vnid && 0x00000000FFFFFFFF);
+	uint32_t entry_offset = (uint32_t)(vnid & 0x00000000FFFFFFFF);
 	uint32_t dirid = (uint32_t)(vnid >> 32);
 	uint32_t sector_offset = 0;
-	unsigned char buffer[FAT_SECTOR_SIZE];
 	
-	log (INFO_LEVEL, "FATFS read_vnode [start]");
+	
+//	unsigned char buffer[FAT_SECTOR_SIZE];
+	
+	log (INFO_LEVEL, "FATFS read_vnode [start] : vnid HI 0x%lx LO 0x%lx", (uint32_t)(vnid >> 32), (uint32_t)(vnid & 0x00000000FFFFFFFF));
 	
 	watch(status_t)
 	{
-		ensure (ns != NULL, DNA_ERROR);
+		ensure (ns != NULL && vnid != -1, DNA_ERROR);
+		
+		/* FIXME erreur si le fichier n'existe pas ! */
 		
 		inode = malloc (sizeof (struct fatfs_inode));
 		ensure (inode != NULL, DNA_OUT_OF_MEM);
-		
+
 		inode -> id = vnid;
 		inode -> cc_dirid = -1;
 		inode -> cluster_chain_directory = NULL;
+		inode -> nb_sector = 0;
 	
 		if (vnid != fatfs -> root_vnid) 
 		{
-			sector_offset = entry_offset*32 / FAT_SECTOR_SIZE;
-			
-			check(source_error, fatfs_sector_reader(fatfs, dirid , sector_offset, buffer), DNA_ERROR)
-			
-			memcpy(&(inode -> entry), buffer + (entry_offset % 16) * 32, sizeof(struct fatfs_entry));
+			check(source_error, fatfs_sector_reader(fatfs, dirid , entry_offset / FAT_SECTOR_SIZE, NULL), DNA_ERROR)
+			memcpy(&(inode -> entry), fatfs->currentsector.sector + (entry_offset % FAT_SECTOR_SIZE), sizeof(struct fatfs_entry));
 		}
 	
 		if(vnid == fatfs -> root_vnid || fatfs_entry_is_dir(&(inode -> entry)))
@@ -61,23 +63,37 @@ status_t fatfs_read_vnode (void * ns, int64_t vnid, void ** data)
 			inode -> cc_dirid = dirid;
 			
 			/* FIXME long file name */
-			sector_offset = 0;	
-			while(fatfs_sector_reader(fatfs, dirid, sector_offset++, NULL));
+			
+			for(sector_offset = 0; fatfs_sector_reader(fatfs, dirid, sector_offset, NULL); sector_offset++);
 		
 			inode -> nb_sector = sector_offset;
-		
+
 			inode -> cluster_chain_directory = malloc (inode -> nb_sector * FAT_SECTOR_SIZE * sizeof(unsigned char));
+
 			check (source_error, inode -> cluster_chain_directory != NULL, DNA_OUT_OF_MEM);
-		
+			
 			sector_offset = 0;
-			while(fatfs_sector_reader(fatfs, dirid, sector_offset, buffer))
-			{
-		   		memcpy(inode -> cluster_chain_directory + sector_offset, buffer, sizeof (buffer));
-		   		sector_offset++;
-			}
+			while(fatfs_sector_reader(fatfs, dirid, sector_offset, 
+					&(inode -> cluster_chain_directory[sector_offset*FAT_SECTOR_SIZE])))
+				sector_offset++;
 		}
 	
 		*data = inode;
+		
+		/* debug */
+		log (INFO_LEVEL, "\tfatfs_inode id HI 0x%lx LO %lx", (uint32_t)( inode -> id >> 32), (uint32_t)( inode -> id & 0x00000000FFFFFFFF));
+		log (INFO_LEVEL, "\tcc_dirid %d", inode -> cc_dirid);
+		log (INFO_LEVEL, "\tnb_sector %d", inode -> nb_sector);
+		if(inode -> cluster_chain_directory != NULL)
+			log (INFO_LEVEL, "\tcluster_chain != NULL %p", inode -> cluster_chain_directory);
+		if(vnid != fatfs -> root_vnid)
+		{
+			log (INFO_LEVEL, "\tentry Name %s", inode -> entry . Name);
+			log (INFO_LEVEL, "\tentry FileSize %d", inode -> entry . FileSize);
+			log (INFO_LEVEL, "\tentry FstClusHI %x", inode -> entry . FstClusHI);
+			log (INFO_LEVEL, "\tentry FstClusLO %x", inode -> entry . FstClusLO);
+		}
+		/* fin debug */
 		
 		log (INFO_LEVEL, "FATFS read_vnode [end]");
 		

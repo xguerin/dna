@@ -32,7 +32,7 @@ status_t fatfs_mount (int32_t vid, const char * dev_path, uint32_t flags, void *
 	
 	status_t status;
 
-	log (INFO_LEVEL, "Mounting FAT32 [start]");
+	log (INFO_LEVEL, "Mounting FAT32 [start] :: dev_path %s", dev_path);
 
 	watch(status_t)
 	{
@@ -42,6 +42,8 @@ status_t fatfs_mount (int32_t vid, const char * dev_path, uint32_t flags, void *
 		ensure (fatfs != NULL, DNA_OUT_OF_MEM);
 	
 		status = (status_t)media_open(dev_path, &(fatfs->fs_fd));
+		
+	/*	log (INFO_LEVEL, "status %d", status); */
 	
 		check(source_error, status == 1, DNA_ERROR);
 	
@@ -50,21 +52,25 @@ status_t fatfs_mount (int32_t vid, const char * dev_path, uint32_t flags, void *
 
 		status = (status_t)fatfs_init(fatfs);
 		
-		check(source_error, status != FAT_INIT_OK, DNA_ERROR);
+/*		log (INFO_LEVEL, "status %d", status);*/
+		
+		check(source_error, status == FAT_INIT_OK, DNA_ERROR); 
 
 		/* debug */	
-		fatfs_show_details(fatfs);
+/*		fatfs_show_details(fatfs);*/
 
 		fatfs -> vid = vid;
-		fatfs -> root_vnid = ((uint64_t)fatfs_get_root_cluster(fatfs) << 32) + 0xFFFFFFFF;
-				
+		fatfs -> root_vnid = (((uint64_t)fatfs_get_root_cluster(fatfs)) << 32) + 0xFFFFFFFF;
+			
 		*data = fatfs;
 		*vnid = fatfs -> root_vnid;
-
-		/* get cluster root vnode */
-		status = fatfs_read_vnode(fatfs, fatfs -> root_vnid, (void **)root_inode);
 		
-		check(source_error, status != 0, DNA_ERROR);
+		/* get cluster root vnode */
+		status = fatfs_read_vnode(fatfs, fatfs -> root_vnid, (void **)& root_inode);
+		
+/*		log (INFO_LEVEL, "status %d", status);*/
+		
+		check(source_error, status == 0, DNA_ERROR);
 	
 		log (INFO_LEVEL, "Mounting FAT32 [end]");
 
