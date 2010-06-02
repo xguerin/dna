@@ -70,7 +70,7 @@ int fatfs_init(struct fatfs *fs)
 	/* NOTE: Some removeable media does not have this. */
 
 	/* Load MBR (LBA 0) into the 512 byte buffer */
-	if (!fs->disk_io.read_sector(1, fs->currentsector.sector, fs->fs_fd))
+	if (!fs->disk_io.read_sector(0, fs->currentsector.sector, fs->fs_fd))
 		return FAT_INIT_MEDIA_ACCESS_ERROR;
 		
 	/* Make Sure 0x55 and 0xAA are at end of sector */

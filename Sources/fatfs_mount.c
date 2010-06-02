@@ -53,6 +53,7 @@ status_t fatfs_mount (int32_t vid, const char * dev_path, uint32_t flags,
 
 		/* initialize the fatfs structure */
 		status = (status_t)fatfs_init(fatfs);
+		log (VERBOSE_LEVEL, "\tfatfs_init status %d", status);
 		check(source_error, status == FAT_INIT_OK, DNA_ERROR); 
 
 		/* set volume id */		

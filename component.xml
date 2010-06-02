@@ -4,11 +4,6 @@
 
   <id name="FATFileSystem" short_name="FATFS" version="1.0"/>
 
- <inject>
-    <id name="SoclibHostAccess" version="1.0"/>
-  </inject>
-
-
   <provide>
     <method name="fs_walk" return_type="status_t">
       <argument name="ns" type="access" direction="in"/>
@@ -40,10 +35,6 @@
       <argument name="data" type="access" direction="in"/>
     </method>
     
-    <!-- Host access hooks -->
-
-    <definition name="fdaccess_requests"/>
-
   </require>
 
 </component>
