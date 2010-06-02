@@ -25,23 +25,18 @@
 
 status_t fatfs_open (void * ns, void * node, int32_t mode, void ** data)
 {
-/*	fatfs_t fatfs = ns; */
     fatfs_inode_t inode = node;
-/*    fatfs_entry_t entry; */
 
-	log (INFO_LEVEL, "FATFS open [start] :: inode id HI 0x%lx LO 0x%lx", (uint32_t)( inode -> id >> 32), (uint32_t)( inode -> id & 0x00000000FFFFFFFF));
+	log (VERBOSE_LEVEL, "FATFS open");
 	
 	watch(status_t)
 	{
 		ensure (ns != NULL && node != NULL, DNA_ERROR);
 		ensure (inode -> cluster_chain_directory == NULL, DNA_ERROR);
-	
-		log (INFO_LEVEL, "\tentry name %s", inode -> entry . Name);
 
+		/* return the inode entry */
 		*data = (void *)&(inode -> entry);
 	}
-	
-	log (INFO_LEVEL, "FATFS open [end]");
 
 	return DNA_OK;
 }

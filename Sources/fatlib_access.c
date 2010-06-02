@@ -245,7 +245,7 @@ int fatfs_sector_reader(struct fatfs *fs, uint32_t Startcluster, uint32_t offset
 		/* Calculate sector address */
 		lba = fatfs_lba_of_cluster(fs, ClusterChain)+SectortoRead;
 	}
-/*	printf("lba== %x\n", lba);*/
+
 	/* User provided target array */
 	if (target)
 		return fs->disk_io.read_sector(lba, target, fs->fs_fd);

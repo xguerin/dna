@@ -25,41 +25,39 @@
 #include <Private/fatlib_access.h>
 
 
-status_t fatfs_mount (int32_t vid, const char * dev_path, uint32_t flags, void * params, void ** data, int64_t * vnid)
+status_t fatfs_mount (int32_t vid, const char * dev_path, uint32_t flags, 
+	void * params, void ** data, int64_t * vnid)
 {
 	fatfs_t fatfs = NULL;
 	fatfs_inode_t root_inode = NULL;
 	
 	status_t status;
 
-	log (INFO_LEVEL, "Mounting FAT32 [start] :: dev_path %s", dev_path);
+	log (VERBOSE_LEVEL, "[start] FATFS mount(dev_path = %s)", dev_path);
 
 	watch(status_t)
 	{
 		ensure (dev_path != NULL, DNA_ERROR);
 
+		/* create the fatfs structure */
 		fatfs = malloc (sizeof (struct fatfs));
 		ensure (fatfs != NULL, DNA_OUT_OF_MEM);
 	
+		/* open and get the file descriptor of the device */
 		status = (status_t)media_open(dev_path, &(fatfs->fs_fd));
-		
-	/*	log (INFO_LEVEL, "status %d", status); */
-	
 		check(source_error, status == 1, DNA_ERROR);
 	
+		/* attach opening/writing functions */
 		fatfs -> disk_io.read_sector = media_read;
 		fatfs -> disk_io.write_sector = media_write;
 
+		/* initialize the fatfs structure */
 		status = (status_t)fatfs_init(fatfs);
-		
-/*		log (INFO_LEVEL, "status %d", status);*/
-		
 		check(source_error, status == FAT_INIT_OK, DNA_ERROR); 
 
-		/* debug */	
-/*		fatfs_show_details(fatfs);*/
-
+		/* set volume id */		
 		fatfs -> vid = vid;
+		/* set cluster root vnode id */
 		fatfs -> root_vnid = (((uint64_t)fatfs_get_root_cluster(fatfs)) << 32) + 0xFFFFFFFF;
 			
 		*data = fatfs;
@@ -67,12 +65,9 @@ status_t fatfs_mount (int32_t vid, const char * dev_path, uint32_t flags, void *
 		
 		/* get cluster root vnode */
 		status = fatfs_read_vnode(fatfs, fatfs -> root_vnid, (void **)& root_inode);
-		
-/*		log (INFO_LEVEL, "status %d", status);*/
-		
 		check(source_error, status == 0, DNA_ERROR);
 	
-		log (INFO_LEVEL, "Mounting FAT32 [end]");
+		log (VERBOSE_LEVEL, "[end] FATFS mount ");
 
 		return vnode_create (fatfs -> root_vnid, fatfs -> vid, (void *) root_inode);
 	}

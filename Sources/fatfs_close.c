@@ -20,8 +20,7 @@
 
 status_t fatfs_close (void * ns, void * node, void * data)
 {
-  log (INFO_LEVEL, "FATFS close [start]");
-  log (INFO_LEVEL, "FATFS close [end]");
+  log (VERBOSE_LEVEL, "FATFS close");
 
   return DNA_OK;
 }

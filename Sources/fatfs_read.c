@@ -36,11 +36,10 @@ status_t fatfs_read (void * ns, void * node, void * file, void * data, int64_t o
   
 	struct sector_buffer data_buffer;
 	
-	log (INFO_LEVEL, "FATFS read [start]");
+	log (VERBOSE_LEVEL, "[start] FATFS read");
 
 	watch(status_t)
 	{
-	
 		ensure (ns != NULL && node != NULL && file != NULL, DNA_ERROR)
 	
 		/* Nothing to be done */
@@ -85,7 +84,8 @@ status_t fatfs_read (void * ns, void * node, void * file, void * data, int64_t o
 				copyCount = (count - bytesRead);
 
 			/* Copy to application buffer */
-			memcpy((unsigned char*)((unsigned char*)data + bytesRead), (unsigned char*)(data_buffer.sector + sector_offset), copyCount);
+			memcpy((unsigned char*)((unsigned char*)data + bytesRead), 
+				(unsigned char*)(data_buffer.sector + sector_offset), copyCount);
 
 			/* Increase total read count */
 			bytesRead += copyCount;
@@ -94,13 +94,12 @@ status_t fatfs_read (void * ns, void * node, void * file, void * data, int64_t o
 			sector++;
 			sector_offset = 0;
 		}
-
 	}
 		  
-	 *p_count = bytesRead;
+	*p_count = bytesRead;
 
-	  log (INFO_LEVEL, "FATFS read [end]");
+	log (VERBOSE_LEVEL, "[end] FATFS read ");
 
-	  return DNA_OK;
+	return DNA_OK;
 }
 
