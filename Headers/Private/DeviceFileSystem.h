@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#ifndef DEVFS_H
-#define DEVFS_H
+#ifndef DEVFS_PRIVATE_H
+#define DEVFS_PRIVATE_H
 
 #include <Private/Entry.h>
 #include <Private/FileSystem.h>

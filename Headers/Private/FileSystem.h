@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#ifndef DEVFS_FILESYSTEM_H
-#define DEVFS_FILESYSTEM_H
+#ifndef DEVFS_FILESYSTEM_PRIVATE_H
+#define DEVFS_FILESYSTEM_PRIVATE_H
 
 #include <stdarg.h>
 #include <stdbool.h>

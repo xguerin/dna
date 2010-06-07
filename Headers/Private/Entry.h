@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#ifndef DEVFS_ENTRY_H
-#define DEVFS_ENTRY_H
+#ifndef DEVFS_ENTRY_PRIVATE_H
+#define DEVFS_ENTRY_PRIVATE_H
 
 #include <stdarg.h>
 #include <stdbool.h>

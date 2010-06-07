@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#ifndef DEVFS_INODE_H
-#define DEVFS_INODE_H
+#ifndef DEVFS_INODE_PRIVATE_H
+#define DEVFS_INODE_PRIVATE_H
 
 #include <stdarg.h>
 #include <stdbool.h>
