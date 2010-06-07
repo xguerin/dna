@@ -30,7 +30,5 @@ typedef struct _mbr_module
 }
 mbr_module_t;
 
-extern mbr_module_t mbr_module;
-
 #endif
 
