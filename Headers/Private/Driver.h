@@ -18,6 +18,7 @@
 #ifndef RDV_CHANNEL_PRIVATE_H
 #define RDV_CHANNEL_PRIVATE_H
 
+#include <RendezVousChannelDriver/Driver.h>
 #include <Core/Core.h>
 #include <DnaTools/DnaTools.h>
 

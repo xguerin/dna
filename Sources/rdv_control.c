@@ -16,7 +16,6 @@
  */
 
 #include <Private/Driver.h>
-#include <Driver/Driver.h>
 
 status_t rdv_control (void * handler, int32_t operation,
     void * data, int32_t * p_res)
