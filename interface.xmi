@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<component author="xavier.guerin@imag.fr" unique="false" wrapper="false">
+<APES:Interface
+  xmlns:xmi="http://www.omg.org/XMI"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:APES="http://www.ocm.org/APES"
+  xsi:schemaLocation="http://www.ocm.org/APES APESInterface.ecore"
+  author="xavier.guerin@imag.fr"
+  unique="false"
+  wrapper="false">
 
-  <id name="RendezVousChannelDriver" short_name="RDV" version="1.0"/>
+  <id name="RendezVousChannelDriver" version="1.0"/>
 
   <provide>
     <method name="init_hardware" return_type="status_t"/>

@@ -15,22 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#include <Private/RendezVousChannel.h>
+#include <Private/Driver.h>
 #include <MemoryManager/MemoryManager.h>
 #include <DnaTools/DnaTools.h>
-
-const char ** rdv_devices;
-channel_rdv_t * rdv;
-
-driver_t rdv_module =
-{
-  "rdv",
-  rdv_init_hardware,
-  rdv_init_driver,
-  rdv_uninit_driver,
-  rdv_publish_devices,
-  rdv_find_device
-};
 
 status_t rdv_init_driver (void)
 {

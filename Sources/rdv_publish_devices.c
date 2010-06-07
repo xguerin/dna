@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#include <Private/RendezVousChannel.h>
+#include <Private/Driver.h>
 
 const char ** rdv_publish_devices (void)
 {

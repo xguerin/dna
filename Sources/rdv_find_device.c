@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#include <Private/RendezVousChannel.h>
+#include <Private/Driver.h>
 #include <DnaTools/DnaTools.h>
 
 device_cmd_t rdv_commands =

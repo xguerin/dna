@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#include <Private/RendezVousChannel.h>
+#include <Private/Driver.h>
 #include <Processor/Processor.h>
 #include <DnaTools/DnaTools.h>
 

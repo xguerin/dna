@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#include <Private/RendezVousChannel.h>
-#include <RendezVousChannel/RendezVousChannel.h>
+#include <Private/Driver.h>
+#include <Driver/Driver.h>
 
 status_t rdv_control (void * handler, int32_t operation,
     void * data, int32_t * p_res)
