@@ -9,7 +9,7 @@
   unique="true"
   wrapper="false">
 
-  <id name="DnaMM-WorstFit" version="1.0"/>
+  <id name="DnaMM_WorstFit" version="1.0"/>
 
   <provide>
     <context name="LifeCycle">
