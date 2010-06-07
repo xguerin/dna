@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#ifndef ROOTFS_H
-#define ROOTFS_H
+#ifndef ROOTFS_FILESYSTEM_PRIVATE_H
+#define ROOTFS_FILESYSTEM_PRIVATE_H
 
 #include <stdarg.h>
 #include <DnaTools/DnaTools.h>
