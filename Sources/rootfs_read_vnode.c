@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#include <Private/RootFileSystem.h>
+#include <Private/Filesystem.h>
 #include <DnaTools/DnaTools.h>
 
 status_t rootfs_read_vnode (void * ns, int64_t vnid, void ** data)

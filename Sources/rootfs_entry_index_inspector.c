@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#include <Private/RootFileSystem.h>
+#include <Private/Filesystem.h>
 #include <DnaTools/DnaTools.h>
 
 bool rootfs_entry_index_inspector (void * entry, va_list list)
