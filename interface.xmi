@@ -62,6 +62,12 @@
         <argument name="integer" type="int32_t" direction="In"/>
         <argument name="buffer" type="string" direction="Out"/>
       </method>
+
+      <method name="dna_printf" result="int32_t">
+        <argument name="format" type="string" direction="In"/>
+        <argument name="..." type="array of void" direction="In"/>
+      </method>
+
     </context>
 
     <context name="Device">

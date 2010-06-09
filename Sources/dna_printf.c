@@ -62,6 +62,8 @@ void dna_printf (const char * format, ...)
 
             case '%' :
               {
+                is_long = false;
+                is_long_long = false;
                 state = FORMAT;
                 break;
               }
@@ -136,13 +138,13 @@ void dna_printf (const char * format, ...)
                  * Check the data size
                  */
 
-                if (is_long)
-                {
-                  unsigned_value = va_arg (arg, unsigned long int);
-                }
-                else if (is_long_long)
+                if (is_long_long)
                 {
                   unsigned_value = va_arg (arg, unsigned long long int);
+                }
+                else if (is_long)
+                {
+                  unsigned_value = va_arg (arg, unsigned long int);
                 }
                 else
                 {
@@ -176,9 +178,6 @@ void dna_printf (const char * format, ...)
                  * Return to NORMAL state
                  */
 
-                is_long = false;
-                is_long_long = false;
-
                 state = NORMAL;
                 break;
               }
@@ -191,13 +190,13 @@ void dna_printf (const char * format, ...)
                  * Check the data size
                  */
 
-                if (is_long)
-                {
-                  signed_value = va_arg (arg, long int);
-                }
-                else if (is_long_long)
+                if (is_long_long)
                 {
                   signed_value = va_arg (arg, long long int);
+                }
+                else if (is_long)
+                {
+                  signed_value = va_arg (arg, long int);
                 }
                 else
                 {
@@ -253,9 +252,6 @@ void dna_printf (const char * format, ...)
                  * Return to NORMAL state
                  */
 
-                is_long = false;
-                is_long_long = false;
-
                 state = NORMAL;
                 break;
               }
@@ -263,7 +259,27 @@ void dna_printf (const char * format, ...)
             case 'x' :
               {
                 ascii_index = 0;
-                unsigned_value = va_arg (arg, unsigned long int);
+
+                /*
+                 * Check the data size
+                 */
+
+                if (is_long_long)
+                {
+                  unsigned_value = va_arg (arg, unsigned long long int);
+                }
+                else if (is_long)
+                {
+                  unsigned_value = va_arg (arg, unsigned long int);
+                }
+                else
+                {
+                  unsigned_value = va_arg (arg, unsigned int);
+                }
+
+                /*
+                 * Compute the data
+                 */
 
                 do
                 {
@@ -283,11 +299,19 @@ void dna_printf (const char * format, ...)
                 }
                 while (unsigned_value > 0);
 
+                /*
+                 * Echo the data into the buffer
+                 */
+
                 for(int32_t i = ascii_index - 1; i >= 0; i--)
                 {
                   buffer[j] = ascii[i];
                   j += 1;
                 }
+
+                /*
+                 * Return to NORMAL state
+                 */
 
                 state = NORMAL;
                 break;
