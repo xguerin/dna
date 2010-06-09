@@ -49,7 +49,7 @@ status_t rootfs_readdir (void * ns, void * node, void * data,
       }
       else
       {
-        p_entry -> vnid = inode -> id;
+        p_entry -> vnid = entry -> id;
         p_entry -> vid = rootfs -> vid;
         dna_strcpy (p_entry -> d_name, entry -> name);
 
