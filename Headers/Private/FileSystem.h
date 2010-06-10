@@ -43,7 +43,10 @@ extern status_t devfs_mount (int32_t vid, const char * dev_path,
 
 extern status_t devfs_read_vnode (void * ns, int64_t vnid, void ** data);
 extern status_t devfs_write_vnode (void * ns, void * node);
+extern status_t devfs_destroy_vnode (void * ns, void * node);
 
+extern status_t devfs_create (void * ns, void * node, char * path,
+    int32_t mode, int32_t perms, int64_t * vnid, void ** data);
 extern status_t devfs_open (void * ns, void * node, int32_t mode, void ** data);
 extern status_t devfs_close (void * ns, void * node, void * data);
 
@@ -52,6 +55,7 @@ extern status_t devfs_read (void * ns, void * node, void * file,
 extern status_t devfs_write (void * ns, void * node, void * file,
     void * data, int64_t offset, int32_t * p_count);
 
+extern status_t devfs_mkdir (void * ns, void * node, char * name, int32_t mode);
 extern status_t devfs_readdir (void * ns, void * node, void * data,
     void * entry_array, int64_t * offset, int32_t * p_count);
 extern status_t devfs_ioctl (void * ns, void * node, void * data,

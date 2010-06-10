@@ -20,7 +20,7 @@
 #include <DnaTools/DnaTools.h>
 #include <MemoryManager/MemoryManager.h>
 
-status_t devfs_walk (void * ns, void * base, char * restrict path,
+status_t devfs_walk (void * ns, void * base, char * path,
     char ** new_path, int64_t * p_vnid)
 {
   devfs_t devfs = ns;

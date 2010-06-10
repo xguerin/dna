@@ -18,24 +18,8 @@
 #include <Private/DeviceFileSystem.h>
 #include <DnaTools/DnaTools.h>
 
-static filesystem_cmd_t devfs_cmd = {
-  devfs_walk,
-  devfs_mount,
-  devfs_read_vnode,
-  devfs_write_vnode,
-  devfs_destroy_vnode,
-  devfs_open,
-  devfs_close,
-  devfs_create,
-  devfs_read,
-  devfs_write,
-  devfs_mkdir,
-  devfs_readdir,
-  devfs_ioctl
-};
-
-filesystem_t devfs_module = {
-  "devfs",
-  & devfs_cmd
-};
+status_t devfs_mkdir (void * ns, void * node, char * name, int32_t mode)
+{
+  return DNA_NOT_IMPLEMENTED;
+}
 
