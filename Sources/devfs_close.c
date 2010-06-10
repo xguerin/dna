@@ -22,11 +22,15 @@ status_t devfs_close (void * ns, void * node, void * data)
 {
   devfs_inode_t inode = node;
 
-  if (inode -> class == DNA_DEVFS_FILE)
+  watch (status_t)
   {
-    return inode -> dev_cmd -> close (data);
-  }
+    if (inode -> class == DNA_DEVFS_FILE)
+    {
+      ensure (inode -> dev_cmd -> close != NULL, DNA_ERROR);
+      return inode -> dev_cmd -> close (data);
+    }
 
-  return DNA_OK;
+    return DNA_OK;
+  }
 }
 

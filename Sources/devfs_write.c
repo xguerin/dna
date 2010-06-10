@@ -23,6 +23,10 @@ status_t devfs_write (void * ns, void * node, void * file, void * data,
 {
   devfs_inode_t inode = node;
 
-  return inode -> dev_cmd -> write (file, data, offset, p_count);
+  watch (status_t)
+  {
+    ensure (inode -> dev_cmd -> write != NULL, DNA_ERROR);
+    return inode -> dev_cmd -> write (file, data, offset, p_count);
+  }
 }
 

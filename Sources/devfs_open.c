@@ -22,12 +22,14 @@ status_t devfs_open (void * ns, void * node, int32_t mode, void ** data)
 {
   devfs_inode_t inode = node;
 
-  if (inode -> class == DNA_DEVFS_FILE)
+  watch (status_t)
   {
-    return inode -> dev_cmd -> open (inode -> path, mode, data);
-  }
-  else
-  {
+    if (inode -> class == DNA_DEVFS_FILE)
+    {
+      ensure (inode -> dev_cmd -> open != NULL, DNA_ERROR);
+      return inode -> dev_cmd -> open (inode -> path, mode, data);
+    }
+
     return DNA_OK;
   }
 }

@@ -19,15 +19,19 @@
 #include <DnaTools/DnaTools.h>
 
 status_t devfs_ioctl (void * ns, void * node, void * data,
-    int32_t function, void * arguments, int32_t * p_ret) {
+    int32_t function, void * arguments, int32_t * p_ret)
+{
   devfs_inode_t inode = node;
 
   watch (status_t)
   {
-    ensure (ns != NULL, DNA_ERROR);
-    ensure (node != NULL, DNA_ERROR);
+    if (inode -> class == DNA_DEVFS_FILE)
+    {
+      ensure (inode -> dev_cmd -> control != NULL, DNA_ERROR);
+      return inode -> dev_cmd -> control (data, function, arguments, p_ret);
+    }
 
-    return inode -> dev_cmd -> control (data, function, arguments, p_ret);
+    return DNA_OK;
   }
 }
 

@@ -23,6 +23,10 @@ status_t devfs_read (void * ns, void * node, void * file, void * data,
 {
   devfs_inode_t inode = node;
 
-  return inode -> dev_cmd -> read (file, data, offset, p_count);
+  watch (status_t)
+  {
+    ensure (inode -> dev_cmd -> read != NULL, DNA_ERROR);
+    return inode -> dev_cmd -> read (file, data, offset, p_count);
+  }
 }
 
