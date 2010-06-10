@@ -44,6 +44,7 @@ status_t vnode_walk (char * restrict path, volume_t * p_volume,
  */
 
 {
+  bool keep_walking = false;
   int64_t vnid = -1, new_vnid = -1;
   void * data = NULL;
   volume_t volume = NULL, new_volume = NULL;
@@ -82,35 +83,57 @@ status_t vnode_walk (char * restrict path, volume_t * p_volume,
     ensure (status == DNA_OK, status);
 
     /*
-     * We now walk the remaining path
+     * Then, we iteratively analyze the path.
      */
 
     while ((status = path_get_next_entry (& path_ptr, token)) == DNA_OK)
     {
-      status = volume -> cmd -> walk
-        (volume -> data, data, token, NULL, & new_vnid);
-      ensure (status == DNA_ALREADY_AT_ROOT || status == DNA_OK, DNA_ERROR);
-
-      /*
-       * If the walk is stuck to the volume's root directory,
-       * we try to move one stage upward.
-       */
-
-      if (status == DNA_ALREADY_AT_ROOT && volume -> host_volume != NULL)
+      do
       {
-        status = vnode_put (volume -> id, new_vnid);
-        if (status != DNA_OK) return status;
+        keep_walking = false;
 
-        vnid = volume -> host_vnid;
-        volume = volume -> host_volume;
-
-        status = vnode_get (volume -> id, vnid, & data);
-        if (status != DNA_OK) return status;
+        /*
+         * Walk the current token on the current vnode.
+         */
 
         status = volume -> cmd -> walk
           (volume -> data, data, token, NULL, & new_vnid);
-        if (status != DNA_OK) return status;
+        ensure (status == DNA_ALREADY_AT_ROOT || status == DNA_OK, DNA_ERROR);
+
+        /*
+        * If the walk is stuck to the volume's root directory,
+        * we try to move one stage upward.
+        */
+
+        if (status == DNA_ALREADY_AT_ROOT)
+        {
+          new_vnid = vnid;
+
+          /*
+           * So, we are already at the root vnode of the volume,
+           * and the user asks for .., so we first forced new_vnid to
+           * the old vnid value, just in case the driver overwrites it.
+           *
+           * Then we check if the volume has a host. In such a case, we
+           * move one stage upward.
+           */
+
+          if (volume -> host_volume != NULL)
+          {
+            keep_walking = true;
+
+            status = vnode_put (volume -> id, new_vnid);
+            ensure (status == DNA_OK, status);
+
+            vnid = volume -> host_vnid;
+            volume = volume -> host_volume;
+
+            status = vnode_get (volume -> id, vnid, & data);
+            ensure (status == DNA_OK, status);
+          }
+        }
       }
+      while (keep_walking);
 
       /*
        * Do we need to update the node ? If yes, put back
@@ -152,6 +175,10 @@ status_t vnode_walk (char * restrict path, volume_t * p_volume,
         vnid = new_vnid;
       }
     }
+
+    /*
+     * Assign the results into the arguments, and return.
+     */
 
     *p_volume = volume;
     *p_vnid = vnid;
