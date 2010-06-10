@@ -23,7 +23,10 @@ status_t rootfs_read_vnode (void * ns, int64_t vnid, void ** data)
   rootfs_t rootfs = ns;
   rootfs_inode_t inode = NULL;
 
-  inode = queue_lookup (& rootfs -> inode_list, rootfs_inode_inspector,vnid);
+  inode = queue_lookup (& rootfs -> inode_list, rootfs_inode_inspector, vnid);
+
+  log (VERBOSE_LEVEL, "NS = 0x%x, VNID = %lld, DATA = 0x%x",
+      ns, vnid, inode);
 
   *data = inode;
   return DNA_OK;
