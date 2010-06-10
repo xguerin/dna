@@ -101,10 +101,10 @@ status_t vnode_walk (char * restrict path, volume_t * p_volume,
         status = vnode_put (volume -> id, new_vnid);
         if (status != DNA_OK) return status;
 
+        vnid = volume -> host_vnid;
         volume = volume -> host_volume;
-        new_vnid = volume -> host_vnid;
 
-        status = vnode_get (volume -> id, new_vnid, & data);
+        status = vnode_get (volume -> id, vnid, & data);
         if (status != DNA_OK) return status;
 
         status = volume -> cmd -> walk

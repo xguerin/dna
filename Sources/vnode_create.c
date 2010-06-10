@@ -57,7 +57,7 @@ status_t vnode_create (int64_t vnid, int32_t vid, void * data)
         volume_id_inspector, vid);
 
     lock_release (& volume_manager . volume_list . lock);
-    cpu_trap_restore(it_status);
+    cpu_trap_restore (it_status);
 
     ensure (volume != NULL, DNA_NO_VOLUME);
     
