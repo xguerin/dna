@@ -67,7 +67,10 @@ extern status_t rootfs_mount (int32_t vid, const char * dev_path,
 
 extern status_t rootfs_read_vnode (void * ns, int64_t vnid, void ** data);
 extern status_t rootfs_write_vnode (void * ns, void * node);
+extern status_t rootfs_destroy_vnode (void * ns, void * node);
 
+extern status_t rootfs_create (void * ns, void * node, char * path,
+    int32_t mode, int32_t perms, int64_t * vnid, void ** data);
 extern status_t rootfs_open (void * ns, void * node, int32_t mode, void ** data);
 extern status_t rootfs_close (void * ns, void * node, void * data);
 
@@ -78,10 +81,14 @@ extern status_t rootfs_read (void * ns, void * node, void * file,
 extern status_t rootfs_write (void * ns, void * node, void * file,
     void * data, int64_t offset, int32_t * p_count);
 
+extern status_t rootfs_mkdir (void * ns, void * node, char * name, int32_t mode);
 extern status_t rootfs_mkdir (void * ns, void * node,
     char * restrict name, int32_t mode);
 extern status_t rootfs_readdir (void * ns, void * node, void * data,
     void * entry_array, int64_t * offset, int32_t * p_count);
+
+extern status_t rootfs_ioctl (void * ns, void * node, void * data,
+    int32_t function, void * arguments, int32_t * p_ret);
 
 extern bool rootfs_entry_name_inspector (void * entry, va_list list);
 extern bool rootfs_entry_index_inspector (void * entry, va_list list);

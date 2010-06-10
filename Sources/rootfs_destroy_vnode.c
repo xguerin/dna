@@ -15,29 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#include <Private/Filesystem.h>
 #include <DnaTools/DnaTools.h>
 
-static filesystem_cmd_t rootfs_cmd =
+status_t rootfs_destroy_vnode (void * ns, void * node)
 {
-  rootfs_walk,
-  rootfs_mount,
-  rootfs_read_vnode,
-  rootfs_write_vnode,
-  rootfs_destroy_vnode,
-  rootfs_open,
-  rootfs_close,
-  rootfs_create,
-  rootfs_read,
-  rootfs_write,
-  rootfs_mkdir,
-  rootfs_readdir,
-  rootfs_ioctl
-};
 
-filesystem_t rootfs_module =
-{
-  "rootfs",
-  & rootfs_cmd
-};
+  return DNA_OK;
+}
 
