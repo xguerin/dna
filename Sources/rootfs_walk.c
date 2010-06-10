@@ -29,21 +29,16 @@ status_t rootfs_walk (void * ns, void * base, char * restrict path,
   watch (status_t)
   {
     ensure (ns != NULL && base != NULL, DNA_ERROR);
-
-    log (VERBOSE_LEVEL, "Looking for entry \"%s\" in inode %lld",
-        path, base_inode -> id);
+    ensure (base_inode -> id != rootfs -> root_vnid ||
+        dna_strcmp (path, "..") != 0, DNA_ALREADY_AT_ROOT);
 
     entry = queue_lookup (& base_inode -> entry_list,
         rootfs_entry_name_inspector, path);
     ensure (entry != NULL, DNA_NO_ENTRY);
 
     vnid = entry -> id;
-    ensure (vnid != rootfs -> root_vnid || base_inode -> id != vnid
-        || dna_strcmp (path, "..") != 0, DNA_ALREADY_AT_ROOT);
-
-    log (VERBOSE_LEVEL, "Found VNID %lld", vnid);
-
     *p_vnid = vnid;
+
     return DNA_OK;
   }
 }
