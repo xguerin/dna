@@ -20,7 +20,6 @@
 
 status_t devfs_destroy_vnode (void * ns, void * node)
 {
-
   return DNA_OK;
 }
 

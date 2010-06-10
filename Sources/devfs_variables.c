@@ -18,7 +18,8 @@
 #include <Private/DeviceFileSystem.h>
 #include <DnaTools/DnaTools.h>
 
-static filesystem_cmd_t devfs_cmd = {
+static filesystem_cmd_t devfs_cmd =
+{
   devfs_walk,
   devfs_mount,
   devfs_read_vnode,
@@ -34,7 +35,8 @@ static filesystem_cmd_t devfs_cmd = {
   devfs_ioctl
 };
 
-filesystem_t devfs_module = {
+filesystem_t devfs_module =
+{
   "devfs",
   & devfs_cmd
 };
