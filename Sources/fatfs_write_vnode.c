@@ -21,19 +21,6 @@
 
 status_t fatfs_write_vnode (void * ns, void * node)
 {
-    fatfs_inode_t inode = node;
-
-	log (VERBOSE_LEVEL, "FATFS write_vnode ");
-
-	watch (status_t)
-	{
-		ensure (ns != NULL && node != NULL, DNA_ERROR);
-		
-		if (inode -> cluster_chain_directory != NULL)
-			free (inode -> cluster_chain_directory);
-			
-		free(inode);
-	}
 	
 	return DNA_OK;
 }

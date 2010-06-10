@@ -167,6 +167,7 @@ extern status_t fatfs_mount (int32_t vid, const char * dev_path,
 
 extern status_t fatfs_read_vnode (void * ns, int64_t vnid, void ** data);
 extern status_t fatfs_write_vnode (void * ns, void * node);
+extern status_t fatfs_destroy_vnode (void * ns, void * node);
 
 extern status_t fatfs_open (void * ns, void * node, int32_t mode, void ** data);
 extern status_t fatfs_close (void * ns, void * node, void * data);
@@ -183,9 +184,8 @@ extern status_t fatfs_mkdir (void * ns, void * node,
 extern status_t fatfs_readdir (void * ns, void * node, void * data,
     void * entry_array, int64_t * offset, int32_t * p_count);
 
-extern bool fatfs_entry_name_inspector (void * entry, va_list list);
-extern bool fatfs_entry_index_inspector (void * entry, va_list list);
-extern bool fatfs_inode_inspector (void * inode, va_list list);
+extern status_t fatfs_ioctl (void * ns, void * node, void * data,
+    int32_t function, void * arguments, int32_t * p_ret);
 
 #endif
 

@@ -15,27 +15,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
+#include <stdlib.h>
 #include <Private/FATFileSystem.h>
 #include <DnaTools/DnaTools.h>
 
-static filesystem_cmd_t fatfs_cmd = {
-  fatfs_walk,
-  fatfs_mount,
-  fatfs_read_vnode,
-  fatfs_write_vnode,
-  fatfs_destroy_vnode,
-  fatfs_open,
-  fatfs_close,
-  fatfs_create,
-  fatfs_read,
-  fatfs_write,
-  fatfs_mkdir,
-  fatfs_readdir,
-  fatfs_ioctl
-};
+status_t fatfs_destroy_vnode (void * ns, void * node)
+{
+    fatfs_inode_t inode = node;
 
-filesystem_t fatfs_module = {
-  "fatfs",
-  & fatfs_cmd
-};
+	log (VERBOSE_LEVEL, "FATFS write_vnode ");
+
+	watch (status_t)
+	{
+		ensure (ns != NULL && node != NULL, DNA_ERROR);
+		
+		if (inode -> cluster_chain_directory != NULL)
+			free (inode -> cluster_chain_directory);
+			
+		free(inode);
+	}
+	
+	return DNA_OK;
+}
 
