@@ -28,16 +28,16 @@ status_t fatfs_open (void * ns, void * node, int32_t mode, void ** data)
     fatfs_inode_t inode = node;
 
 	log (VERBOSE_LEVEL, "FATFS open");
-	
+//	  log (INFO_LEVEL, "open vnid %lx %lx", (uint32_t)(inode->id >> 32), (uint32_t)(inode->id & 0x00000000FFFFFFFF));
+
 	watch(status_t)
 	{
 		ensure (ns != NULL && node != NULL, DNA_ERROR);
-		ensure (inode -> cluster_chain_directory == NULL, DNA_ERROR);
-
+		
 		/* return the inode entry */
 		*data = (void *)&(inode -> entry);
 	}
-
+	
 	return DNA_OK;
 }
 

@@ -26,6 +26,7 @@ status_t fatfs_read (void * ns, void * node, void * file, void * data, int64_t o
 {
 	fatfs_t fatfs = ns;
 	fatfs_entry_t entry = file;
+//	fatfs_inode_t inode = node;
 
 	uint32_t startcluster;
 	uint32_t sector;
@@ -33,11 +34,11 @@ status_t fatfs_read (void * ns, void * node, void * file, void * data, int64_t o
 	uint32_t copyCount;
 	uint32_t count = *p_count;
 	uint32_t bytesRead = 0;
-  
+	
 	struct sector_buffer data_buffer;
 	
 	log (VERBOSE_LEVEL, "[start] FATFS read");
-
+	
 	watch(status_t)
 	{
 		ensure (ns != NULL && node != NULL && file != NULL, DNA_ERROR)
@@ -49,7 +50,7 @@ status_t fatfs_read (void * ns, void * node, void * file, void * data, int64_t o
 		/* Check if read starts past end of file */
 		if (offset >= entry -> FileSize)
 			return DNA_ERROR;
-
+			
 		/* Limit to file size */
 		if ((offset + count) > entry -> FileSize)
 			count = entry -> FileSize - offset;
@@ -57,13 +58,13 @@ status_t fatfs_read (void * ns, void * node, void * file, void * data, int64_t o
 		startcluster = ((uint32_t)(entry -> FstClusHI) << 16) + entry -> FstClusLO;
 
 		/* Calculate start sector */
-		sector = offset / FAT_SECTOR_SIZE;
+		sector = (uint32_t)(offset / FAT_SECTOR_SIZE);
 
 		/* Offset to start copying data from first sector */
-		sector_offset = offset % FAT_SECTOR_SIZE;
-
+		sector_offset = (uint32_t)(offset % FAT_SECTOR_SIZE);
+		
 		data_buffer.address = 0xFFFFFFFF;
-
+		
 		while (bytesRead < count)
 		{
 			/* Do we need to re-read the sector? */
@@ -77,22 +78,23 @@ status_t fatfs_read (void * ns, void * node, void * file, void * data, int64_t o
 			}
 
 			/* We have upto one sector to copy */
-			copyCount = FAT_SECTOR_SIZE - offset;
-
+			copyCount = FAT_SECTOR_SIZE - sector_offset;
+			
 			/* Only require some of this sector? */
 			if (copyCount > (count - bytesRead))
 				copyCount = (count - bytesRead);
-
+				
 			/* Copy to application buffer */
 			memcpy((unsigned char*)((unsigned char*)data + bytesRead), 
 				(unsigned char*)(data_buffer.sector + sector_offset), copyCount);
-
+				
 			/* Increase total read count */
 			bytesRead += copyCount;
-
+			
 			/* Move onto next sector and reset copy offset */
 			sector++;
 			sector_offset = 0;
+			offset += copyCount;
 		}
 	}
 		  
