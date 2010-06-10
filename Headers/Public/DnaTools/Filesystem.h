@@ -33,7 +33,7 @@
 
 typedef struct filesystem_cmd
 {
-  status_t (* walk) (void * ns, void * base, char * restrict path,
+  status_t (* walk) (void * ns, void * base, char * path,
       char ** new_path, int64_t * vnid);
   status_t (* mount) (int32_t vid, const char * dev_path, uint32_t flags,
       void * params, void ** data, int64_t * vnid);
@@ -42,14 +42,13 @@ typedef struct filesystem_cmd
   status_t (* destroy_vnode) (void * ns, void * node);
   status_t (* open) (void * ns, void * node, int32_t mode, void ** data);
   status_t (* close) (void * ns, void * node, void * data);
-  status_t (* create) (void * ns, void * node, char * restrict path,
+  status_t (* create) (void * ns, void * node, char * path,
       int32_t mode, int32_t perms, int64_t * vnid, void ** data);
   status_t (* read) (void * ns, void * node, void * file, void * data,
       int64_t offset, int32_t * p_count);
   status_t (* write) (void * ns, void * node, void * file, void * data,
       int64_t offset, int32_t * p_count);
-  status_t (* mkdir) (void * ns, void * node,
-      char * restrict name, int32_t mode);
+  status_t (* mkdir) (void * ns, void * node, char * name, int32_t mode);
   status_t (* readdir) (void * ns, void * node, void * data,
       void * entry_array, int64_t * offset, int32_t * p_count);
   status_t (* ioctl) (void * ns, void * node, void * data,

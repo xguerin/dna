@@ -31,16 +31,33 @@ status_t filesystem_load (char * name, filesystem_t ** fs)
  */
 
 {
-  for (int32_t i = 0; i < OS_N_FILESYSTEMS; i++)
-  {
-    if (dna_strcmp (OS_FILESYSTEMS_LIST[i] -> name, name) == 0)
-    {
-      *fs = OS_FILESYSTEMS_LIST[i];
-      return DNA_OK;
-    }
-  }
+  filesystem_t * new_fs = NULL;
 
-  return DNA_ERROR;
+  watch (status_t)
+  {
+    log (INFO_LEVEL, "Loading FS \"%s\"", name);
+
+    for (int32_t i = 0; i < OS_N_FILESYSTEMS; i++)
+    {
+      if (dna_strcmp (OS_FILESYSTEMS_LIST[i] -> name, name) == 0)
+      {
+        new_fs = OS_FILESYSTEMS_LIST[i];
+        break;
+      }
+    }
+
+    /*
+     * Check the consistency of the filesystem.
+     */
+
+    for (int32_t i = 0; i < sizeof (filesystem_cmd_t) >> 2; i += 1)
+    {
+      ensure (((void **)new_fs -> cmd)[i] != NULL, DNA_ERROR);
+    }
+
+    *fs = new_fs;
+    return DNA_OK;
+  }
 }
 
 /*
