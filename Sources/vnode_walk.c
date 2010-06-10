@@ -88,6 +88,8 @@ status_t vnode_walk (char * restrict path, volume_t * p_volume,
 
     while ((status = path_get_next_entry (& path_ptr, token)) == DNA_OK)
     {
+      log (VERBOSE_LEVEL, "Walking \"%s\" on volume %d", token, volume -> id);
+
       do
       {
         keep_walking = false;
