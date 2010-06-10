@@ -21,6 +21,10 @@
 status_t devfs_create (void * ns, void * node, char * path,
     int32_t mode, int32_t perms, int64_t * vnid, void ** data)
 {
-  return DNA_NOT_IMPLEMENTED;
+  /*
+   * Oops! We don't authorize mkdir on this FS !
+   */
+
+  return DNA_ERROR;
 }
 

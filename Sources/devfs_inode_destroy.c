@@ -34,21 +34,24 @@ status_t devfs_inode_destroy (devfs_t fs, devfs_inode_t inode)
     queue_extract (& fs -> inode_list, inode);
     ensure (status == DNA_OK, status);
 
-    devfs_entry_remove_by_name (inode, ".");
-    devfs_entry_remove_by_name (inode, "..");
-
-    entry = queue_rem (& inode -> entry_list);
-    while (entry != NULL)
+    if (inode -> class == DNA_DEVFS_DIRECTORY)
     {
-      next_inode = queue_lookup (& fs -> inode_list,
-          devfs_inode_id_inspector, entry -> id);
-      ensure (next_inode != NULL, DNA_NO_VNODE);
+      devfs_entry_remove_by_name (inode, ".");
+      devfs_entry_remove_by_name (inode, "..");
 
-      status = devfs_inode_destroy (fs, next_inode);
-      ensure (status == DNA_OK, status);
-
-      kernel_free (entry);
       entry = queue_rem (& inode -> entry_list);
+      while (entry != NULL)
+      {
+        next_inode = queue_lookup (& fs -> inode_list,
+            devfs_inode_id_inspector, entry -> id);
+        ensure (next_inode != NULL, DNA_NO_VNODE);
+
+        status = devfs_inode_destroy (fs, next_inode);
+        ensure (status == DNA_OK, status);
+
+        kernel_free (entry);
+        entry = queue_rem (& inode -> entry_list);
+      }
     }
 
     kernel_free (inode);

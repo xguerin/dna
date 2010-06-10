@@ -32,13 +32,12 @@ status_t devfs_walk (void * ns, void * base, char * path,
 
   watch (status_t)
   {
-    ensure (ns != NULL, DNA_ERROR);
-    ensure (dna_strcmp (path, "..") != 0, DNA_ALREADY_AT_ROOT);
+    ensure (ns != NULL && base != NULL, DNA_ERROR);
+    log (VERBOSE_LEVEL, "Analyzing \"%s\" on vnode %lld", path, inode -> id);
 
     if (inode -> id == devfs -> root_vnid)
     {
-      log (VERBOSE_LEVEL, "Path = %s, Size = %d",
-          path, devfs -> inode_list . status);
+      ensure (dna_strcmp (path, "..") != 0, DNA_ALREADY_AT_ROOT);
 
      /*
       * Parse the publish_devices.
@@ -75,8 +74,6 @@ status_t devfs_walk (void * ns, void * base, char * path,
     ensure (entry != NULL, DNA_NO_ENTRY);
 
     *p_vnid = entry -> id;
-    ensure (entry -> id != devfs -> root_vnid, DNA_ALREADY_AT_ROOT);
-
     return DNA_OK;
   }
 }

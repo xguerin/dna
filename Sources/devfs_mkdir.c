@@ -20,6 +20,10 @@
 
 status_t devfs_mkdir (void * ns, void * node, char * name, int32_t mode)
 {
-  return DNA_NOT_IMPLEMENTED;
+  /*
+   * Oops! We don't authorize mkdir on this FS !
+   */
+
+  return DNA_ERROR;
 }
 

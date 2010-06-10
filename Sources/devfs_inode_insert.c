@@ -42,6 +42,9 @@ status_t devfs_inode_insert (devfs_t fs, devfs_inode_t inode,
         devfs_inode_create (fs, inode, DNA_DEVFS_DIRECTORY,
             token, fs -> inode_index ++, NULL, & next_inode);
 
+        devfs_entry_add (next_inode, ".", next_inode -> id);
+        devfs_entry_add (next_inode, "..", inode -> id);
+
         devfs_inode_insert (fs, next_inode, path, commands);
       }
       else
