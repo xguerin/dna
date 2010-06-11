@@ -58,7 +58,7 @@ status_t vfs_read (int16_t fd, void * data, int32_t count, int32_t * p_ret)
     ensure (fd >= 0 && fd < DNA_MAX_FILE, DNA_INVALID_FD);
 
     /*
-     * Get the file associated to the fd
+     * Get the file associated to the fd.
      */
 
     it_status = cpu_trap_mask_and_backup();

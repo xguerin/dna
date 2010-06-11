@@ -54,28 +54,30 @@ status_t vfs_close (int16_t fd)
     ensure (fd >= 0 && fd < DNA_MAX_FILE, DNA_INVALID_FD);
 
     /*
-     * Get the file associated to the fd
+     * Get the file associated to the fd.
      */
 
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& fdarray -> lock);
 
     file = fdarray -> fds[fd];
+    check (error, file != NULL && file != (file_t) -1, DNA_INVALID_FD);
+    check (error, file -> vnode -> volume -> cmd -> close != NULL, DNA_ERROR);
 
+    lock_acquire (& file -> lock);
     lock_release (& fdarray -> lock);
+
+    file -> usage_counter += 1;
+
+    lock_release (& file -> lock);
     cpu_trap_restore(it_status);
 
-    ensure (file != NULL && file != (file_t) -1, DNA_INVALID_FD);
-    ensure (file -> vnode -> volume -> cmd -> close != NULL, DNA_ERROR);
-
     /*
-     * Close the file
+     * Close the file.
      */
 
     status = file -> vnode -> volume -> cmd -> close
       (file -> vnode -> volume -> data, file -> vnode -> data, file -> data);
-
-    ensure (status == DNA_OK, status);
 
     /*
      * Reset the file's entry in the fd_array
@@ -84,10 +86,22 @@ status_t vfs_close (int16_t fd)
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& fdarray -> lock);
 
-    fdarray -> fds[fd] = NULL;
+    file -> usage_counter -= 1;
+    check (error, status == DNA_OK, status);
+
+    if (file -> usage_counter == 0)
+    {
+      fdarray -> fds[fd] = NULL;
+      free_file = true;
+    }
 
     lock_release (& fdarray -> lock);
     cpu_trap_restore(it_status);
+
+    if (free_file)
+    {
+      kernel_free (file);
+    }
 
     /*
      * Put the corresponding vnode, free the memory
@@ -96,8 +110,14 @@ status_t vfs_close (int16_t fd)
     status = vnode_put (file -> vnode -> volume -> id, file -> vnode -> id);
     ensure (status == DNA_OK, status);
 
-    kernel_free (file);
     return DNA_OK;
+  }
+
+  rescue (error)
+  {
+    lock_release (& fdarray -> lock);
+    cpu_trap_restore(it_status);
+    leave;
   }
 }
 

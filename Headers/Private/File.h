@@ -15,15 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DNA_VFS_FDARRAY_PRIVATE_H
-#define DNA_VFS_FDARRAY_PRIVATE_H
+#ifndef DNA_VFS_FILE_PRIVATE_H
+#define DNA_VFS_FILE_PRIVATE_H
 
 #include <stdint.h>
 #include <stdbool.h>
 #include <Private/VNode.h>
 #include <DnaTools/DnaTools.h>
 
-/****t* fdarray/file_t
+/****t* VirtualFileSystem/file_t
  * SUMMARY
  * File type.
  *
@@ -33,6 +33,7 @@
 typedef struct _file
 {
   spinlock_t lock;
+  int32_t usage_counter;
   vnode_t vnode;
 
   int32_t mode;
@@ -44,42 +45,23 @@ typedef struct _file
 /*
  ****/
 
-/****t* fdarray/fdarray_t
+/****t* VirtualFileSystem/file_manager_t
  * SUMMARY
- * File descriptor array type.
+ * File manager type.
  *
  * SOURCE
  */
 
-typedef struct _fdarray
+typedef struct _file_manager
 {
   spinlock_t lock;
-  int32_t associated_id;
-  file_t fds[DNA_MAX_FILE];
-  queue_link_t link;
+  file_t ** file;
 }
-* fdarray_t;
+file_manager;
 
 /*
  ****/
 
-/****t* fdarray/fdarray_t
- * SUMMARY
- * File descriptor array type.
- *
- * SOURCE
- */
-
-typedef struct _fdarray_manager
-{
-  spinlock_t lock;
-  fdarray_t fdarray[DNA_MAX_FDARRAY];
-}
-fdarray_manager_t;
-
-/*
- ****/
-
-extern fdarray_manager_t fdarray_manager;
+extern file_manager_t file_manager;
 
 #endif
