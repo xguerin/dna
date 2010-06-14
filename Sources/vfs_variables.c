@@ -62,14 +62,14 @@ volume_manager_t volume_manager;
 /*
  ****/
 
-/****v* volume/fdarray_manager
+/****v* FilePrivate/file_pool
  * SUMMARY
- * Instance of the fdarray manager.
+ * Instance of the file pool.
  *
  * SYNOPSIS
  */
 
-fdarray_manager_t fdarray_manager;
+file_pool_t file_pool;
 
 /*
  ****/

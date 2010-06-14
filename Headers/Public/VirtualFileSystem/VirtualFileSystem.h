@@ -1,4 +1,4 @@
-/****h* dna/vfs
+/****h* DNA/VirtualFileSystem
  * SUMMARY
  * VFS component.
  ****

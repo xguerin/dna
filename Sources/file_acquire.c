@@ -17,89 +17,85 @@
 
 #include <Private/VirtualFileSystem.h>
 #include <Core/Core.h>
+#include <MemoryManager/MemoryManager.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* vfs/vfs_read
+/****f* FilePrivate/file_acquire
  * SUMMARY
- * Read data from a file.
+ * Acquire a file from the file pool.
  *
  * SYNOPSIS
  */
 
-status_t vfs_read (int16_t fd, void * data, int32_t count, int32_t * p_ret)
+status_t file_acquire (int16_t fd, file_t * p_file, int32_t tokens)
 
 /*
  * ARGUMENTS
- * * fd : the identifier of the file.
- * * buffer : the destination buffer.
- * * count : the number of bytes to read.
- * * p_ret : a pointer to the return value
+ * * fd : the file descriptor.
+ * * p_file : a pointer to a file_t.
  *
  * FUNCTION
- * * Looks-up for the file corresponding to fd
- * * If it exists, then calls the file's read () function.
+ * Check if the fd entry exist in the current group pool. If it is the case, put
+ * the file into *file after incrementing its usage counter.
  *
  * RESULT
- * Positive number if the function succeeded, -1 otherwise.
+ * * DNA_INVALID_FD if fd is not a valid file
+ * * DNA_OK if the operation succeed
  *
  * SOURCE
  */
 
 {
-  file_t file = NULL;
-  int32_t n_data = count;
-  interrupt_status_t it_status;
+  file_t file;
+  thread_id_t tid;
   status_t status = DNA_OK;
+  interrupt_status_t it_status = 0;
 
   watch (status_t)
   {
-    ensure (data != NULL && p_ret != NULL && count > 0, DNA_ERROR);
-    ensure (fd >= 0 && fd < DNA_MAX_FILE, DNA_INVALID_FD);
+    status = thread_find (NULL, & tid . raw);
 
-    /*
-     * Get the file associated to the fd.
-     */
-
-    status = file_acquire (fd, & file, 1);
     ensure (status == DNA_OK, status);
+    ensure (tid . s . group >= 0, DNA_BAD_ARGUMENT);
+    ensure (tid . s . group < DNA_MAX_GROUP, DNA_BAD_ARGUMENT);
+
+    ensure (tokens > 0, DNA_BAD_ARGUMENT);
+    ensure (p_file != NULL, DNA_BAD_ARGUMENT);
 
     /*
-     * Read the file.
-     */
-
-    status = file -> vnode -> volume -> cmd -> read
-      (file -> vnode -> volume -> data, file -> vnode -> data, file -> data,
-       data, file -> offset, & n_data);
-
-    check (read_error, status == DNA_OK, status);
-
-    /*
-     * If everything went well, increasing the file offset.
+     * Look for the file in the pool.
      */
 
     it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& file -> lock);
+    lock_acquire (& file_pool . lock);
 
-    file -> offset += n_data;
+    file = file_pool . file[tid . s . group][fd];
+    check (error, file != NULL && file != (file_t) -1, DNA_INVALID_FD);
+
+    lock_acquire (& file -> lock);
+    lock_release (& file_pool . lock);
+
+    file -> usage_counter += tokens;
+
+    /*
+     * Check if we need to keep the file locked.
+     */
 
     lock_release (& file -> lock);
     cpu_trap_restore(it_status);
 
-    /*
-     * Release the file and return.
-     */
-
-    *p_ret = n_data;
-    return file_release (fd, 1);
+    *p_file = file;
+    return DNA_OK;
   }
 
-  rescue (read_error)
+  rescue (error)
   {
-    file_release (fd, 1);
-    *p_ret = -1;
+    lock_release (& file_pool . lock);
+    cpu_trap_restore(it_status);
     leave;
   }
 }
 
 /*
  ****/
+

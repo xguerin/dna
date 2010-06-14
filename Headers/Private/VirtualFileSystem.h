@@ -1,4 +1,4 @@
-/****h* dna/vfs
+/****h* DNA/VirtualFileSystemPrivate
  * SUMMARY
  * VFS component.
  ****
@@ -22,7 +22,7 @@
 #define DNA_VFS_PRIVATE_H
 
 #include <Private/LifeCycle.h>
-#include <Private/FdArray.h>
+#include <Private/File.h>
 #include <Private/VNode.h>
 #include <Private/Volume.h>
 

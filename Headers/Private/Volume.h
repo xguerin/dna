@@ -1,6 +1,6 @@
-/****h* vfs/volume
+/****h* VirtualFileSystem/VolumePrivate
  * SUMMARY
- * Volume management.
+ * Volume management, private header.
  ****
  * Copyright (C) 2007 TIMA Laboratory
  *
@@ -27,7 +27,7 @@
 #include <Core/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****t* vfs/volume_t
+/****t* VolumePrivate/volume_t
  * SUMMARY
  * Name space type.
  *
@@ -53,7 +53,7 @@ typedef struct _volume
 /*
  ****/
 
-/****t* volume/volume_manager_t
+/****t* VolumePrivate/volume_manager_t
  * SUMMARY
  * Volume manager type.
  *

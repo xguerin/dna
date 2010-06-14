@@ -1,4 +1,4 @@
-/****h* vfs/vnode
+/****h* VirtualFileSystem/VNode
  * SUMMARY
  * vNode management.
  ****

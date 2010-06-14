@@ -1,6 +1,6 @@
-/****h* vfs/vnode
+/****h* VirtualFileSystem/VNodePrivate
  * SUMMARY
- * vNode management.
+ * vNode management, private header.
  ****
  * Copyright (C) 2007 TIMA Laboratory
  *
@@ -29,7 +29,7 @@
 #include <Core/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****t* vnode/vnode_t
+/****t* VNodePrivate/vnode_t
  * SUMMARY
  * Virtual node type.
  *
@@ -52,7 +52,7 @@ typedef struct _vnode
 /*
  ****/
 
-/****t* vnode/vnode_manager_t
+/****t* VNodePrivate/vnode_manager_t
  * SUMMARY
  * Vnode manager type.
  *

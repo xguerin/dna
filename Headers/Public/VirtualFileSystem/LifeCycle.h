@@ -1,4 +1,4 @@
-/****h* vfs/framework
+/****h* VirtualFileSystem/LifeCycle
  * SUMMARY
  * VFS life cycle.
  ****

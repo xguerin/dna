@@ -1,4 +1,7 @@
-/*
+/****h* VirtualFileSystem/FilePrivate
+ * SUMMARY
+ * VFS File private header.
+ ****
  * Copyright (C) 2007 TIMA Laboratory
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,7 +26,32 @@
 #include <Private/VNode.h>
 #include <DnaTools/DnaTools.h>
 
-/****t* VirtualFileSystem/file_t
+/****t* FilePrivate/thread_id_t
+ * SUMMARY
+ * Thread ID type.
+ * TODO find a better way to handle this, so as to prevent the duplication.
+ *
+ * SOURCE
+ */
+
+typedef union _thread_id
+{
+  int32_t raw;
+
+  struct _thread_id_s
+  {
+    uint16_t value;
+    uint8_t group;
+    uint8_t index;
+  }
+  s;
+}
+thread_id_t;
+
+/*
+ ****/
+
+/****t* FilePrivate/file_t
  * SUMMARY
  * File type.
  *
@@ -45,23 +73,26 @@ typedef struct _file
 /*
  ****/
 
-/****t* VirtualFileSystem/file_manager_t
+/****t* FilePrivate/file_manager_t
  * SUMMARY
  * File manager type.
  *
  * SOURCE
  */
 
-typedef struct _file_manager
+typedef struct _file_pool
 {
   spinlock_t lock;
   file_t ** file;
 }
-file_manager;
+file_pool_t;
 
 /*
  ****/
 
-extern file_manager_t file_manager;
+extern file_pool_t file_pool;
+
+extern status_t file_acquire (int16_t fd, file_t * p_file, int32_t tokens);
+extern status_t file_release (int16_t fd, int32_t tokens);
 
 #endif

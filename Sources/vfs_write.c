@@ -45,10 +45,9 @@ status_t vfs_write (int16_t fd, void * data, int32_t count, int32_t * p_ret)
 
 {
   file_t file = NULL;
-  status_t status = DNA_OK;
   int32_t n_data = count;
-  fdarray_t fdarray = fdarray_manager . fdarray[0];
-  interrupt_status_t it_status = 0;
+  interrupt_status_t it_status;
+  status_t status = DNA_OK;
 
   watch (status_t)
   {
@@ -56,25 +55,25 @@ status_t vfs_write (int16_t fd, void * data, int32_t count, int32_t * p_ret)
     ensure (fd >= 0 && fd < DNA_MAX_FILE, DNA_INVALID_FD);
 
     /*
-     * Get the file associated to the fd
+     * Get the file associated to the fd.
      */
 
-    it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& fdarray -> lock);
+    status = file_acquire (fd, & file, 1);
+    ensure (status == DNA_OK, status);
 
-    file = fdarray -> fds[fd];
-
-    lock_release (& fdarray -> lock);
-    cpu_trap_restore(it_status);
-
-    ensure (file != NULL && file != (file_t) -1, DNA_INVALID_FD);
-    ensure (file -> vnode -> volume -> cmd -> write != NULL, DNA_ERROR);
+    /*
+     * Read the file.
+     */
 
     status = file -> vnode -> volume -> cmd -> write
       (file -> vnode -> volume -> data, file -> vnode -> data, file -> data,
        data, file -> offset, & n_data);
 
-    check (invalid_file, status == DNA_OK, status);
+    check (write_error, status == DNA_OK, status);
+
+    /*
+     * If everything went well, increasing the file offset.
+     */
 
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& file -> lock);
@@ -84,12 +83,17 @@ status_t vfs_write (int16_t fd, void * data, int32_t count, int32_t * p_ret)
     lock_release (& file -> lock);
     cpu_trap_restore(it_status);
 
+    /*
+     * Release the file and return.
+     */
+
     *p_ret = n_data;
-    return status;
+    return file_release (fd, 1);
   }
 
-  rescue (invalid_file)
+  rescue (write_error)
   {
+    file_release (fd, 1);
     *p_ret = -1;
     leave;
   }

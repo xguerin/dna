@@ -20,21 +20,22 @@
 #include <MemoryManager/MemoryManager.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* vfs/vfs_close
+/****f* FilePrivate/file_release
  * SUMMARY
- * Closes a file.
+ * Release a file from the file pool.
  *
  * SYNOPSIS
  */
 
-status_t vfs_close (int16_t fd)
+status_t file_release (int16_t fd, int32_t tokens)
 
 /*
  * ARGUMENTS
  * * fd : the file descriptor.
  *
  * FUNCTION
- * Not implemented yet.
+ * Check if the fd entry exist in the current group pool. If it is the case,
+ * decrements its usage counter, and delete the file when the counter reaches 0.
  *
  * RESULT
  * * DNA_INVALID_FD if fd is not a valid file
@@ -44,39 +45,66 @@ status_t vfs_close (int16_t fd)
  */
 
 {
-  file_t file = NULL;
+  file_t file;
+  bool delete_file = false;
+  thread_id_t tid;
   status_t status = DNA_OK;
+  interrupt_status_t it_status = 0;
+  vnode_t vnode = NULL;
 
   watch (status_t)
   {
-    ensure (fd >= 0 && fd < DNA_MAX_FILE, DNA_INVALID_FD);
+    status = thread_find (NULL, & tid . raw);
 
-    /*
-     * Get the file associated to the fd.
-     */
-
-    status = file_acquire (fd, & file, 1);
     ensure (status == DNA_OK, status);
+    ensure (tid . s . group >= 0, DNA_BAD_ARGUMENT);
+    ensure (tid . s . group < DNA_MAX_GROUP, DNA_BAD_ARGUMENT);
+    ensure (tokens > 0, DNA_BAD_ARGUMENT);
 
     /*
-     * Close the file.
+     * Look for the file in the pool.
      */
 
-    status = file -> vnode -> volume -> cmd -> close
-      (file -> vnode -> volume -> data, file -> vnode -> data, file -> data);
+    it_status = cpu_trap_mask_and_backup();
+    lock_acquire (& file_pool . lock);
 
-    check (error, status == DNA_OK, status);
+    file = file_pool . file[tid . s . group][fd];
+    check (error, file != NULL && file != (file_t) -1, DNA_INVALID_FD);
+
+    lock_acquire (& file -> lock);
+    file -> usage_counter -= tokens;
+    lock_release (& file -> lock);
+
+    if (file -> usage_counter <= 0)
+    {
+      file_pool . file[tid . s . group][fd] = NULL;
+      delete_file = true;
+    }
+
+    lock_release (& file_pool . lock);
+    cpu_trap_restore(it_status);
 
     /*
-     * Release the file and return.
+     * Check if the file has to be deleted.
+     * If so, free its memory and put its associated vnode.
      */
 
-    return file_release (fd, 2);
+    if (delete_file)
+    {
+      vnode = file -> vnode;
+      kernel_free (file);
+
+      status = vnode_put (vnode -> volume -> id, vnode -> id);
+      ensure (status == DNA_OK, status);
+    }
+
+    return DNA_OK;
   }
 
   rescue (error)
   {
-    file_release (fd, 2);
+    lock_release (& file_pool . lock);
+    cpu_trap_restore(it_status);
     leave;
   }
 }

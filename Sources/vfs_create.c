@@ -37,17 +37,43 @@ status_t vfs_create (void)
  */
 
 {
-  dna_memset (& vnode_manager, 0, sizeof (vnode_manager_t));
-  dna_memset (& volume_manager, 0, sizeof (volume_manager_t));
-  dna_memset (& fdarray_manager, 0, sizeof (fdarray_manager_t));
+  watch (status_t)
+  {
+    dna_memset (& vnode_manager, 0, sizeof (vnode_manager_t));
+    dna_memset (& volume_manager, 0, sizeof (volume_manager_t));
 
-  /*
-   * Allocate the default FdArray
-   */
+    /*
+     * Initialize the file pool.
+     */
 
-  fdarray_manager . fdarray[0] = kernel_malloc (sizeof (struct _fdarray), true);
+    dna_memset (& file_pool, 0, sizeof (file_pool_t));
 
-  return DNA_OK;
+    file_pool . file = kernel_malloc (DNA_MAX_GROUP * sizeof (file_t *), true);
+    ensure (file_pool . file != NULL, DNA_OUT_OF_MEM);
+
+    for (int32_t i = 0; i < DNA_MAX_GROUP; i += 1)
+    {
+      file_pool . file[i] = kernel_malloc
+        (DNA_MAX_FILE * sizeof (file_t), true);
+      check (file_no_mem, file_pool . file[i] != NULL, DNA_OUT_OF_MEM);
+    }
+
+    return DNA_OK;
+  }
+
+  rescue (file_no_mem)
+  {
+    for (int32_t i = 0; i < DNA_MAX_GROUP; i += 1)
+    {
+      if (file_pool . file[i] != NULL)
+      {
+        kernel_free (file_pool . file[i]);
+      }
+    }
+
+    kernel_free (file_pool . file);
+    leave;
+  }
 }
 
 /*

@@ -45,25 +45,28 @@ status_t vfs_lseek (int16_t fd, int64_t offset, int32_t whence, int64_t * p_ret)
 
 {
   file_t file = NULL;
-  fdarray_t fdarray = fdarray_manager . fdarray[0];
+  status_t status = DNA_OK;
   interrupt_status_t it_status = 0;
 
   watch (status_t)
   {
     ensure (fd >= 0 && fd < DNA_MAX_FILE, DNA_INVALID_FD);
+    ensure (whence == DNA_SEEK_SET ||
+        whence == DNA_SEEK_FROM_CURRENT, DNA_INVALID_WHENCE);
 
     /*
-     * Get the file associated to the fd
+     * Get the file associated to the fd.
+     */
+
+    status = file_acquire (fd, & file, 1);
+    ensure (status == DNA_OK, status);
+
+    /*
+     * Check the seek whence operator.
      */
 
     it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& fdarray -> lock);
-
-    file = fdarray -> fds[fd];
-    check (bad_file, file != NULL && file != (file_t) -1, DNA_INVALID_FD);
-
     lock_acquire (& file -> lock);
-    lock_release (& fdarray -> lock);
 
     switch (whence)
     {
@@ -74,33 +77,14 @@ status_t vfs_lseek (int16_t fd, int64_t offset, int32_t whence, int64_t * p_ret)
       case DNA_SEEK_FROM_CURRENT :
         file -> offset += offset;
         break;
-
-      case DNA_SEEK_FROM_END :
-        lock_release (& file -> lock);
-        cpu_trap_restore(it_status);
-        return DNA_NOT_IMPLEMENTED;
-
-      default :
-        lock_release (& file -> lock);
-        cpu_trap_restore(it_status);
-        return DNA_INVALID_WHENCE;
     }
-
-    *p_ret = file -> offset;
 
     lock_release (& file -> lock);
     cpu_trap_restore(it_status);
     
-    return DNA_OK;
+    *p_ret = file -> offset;
+    return file_release (fd, 1);
   }
-  
-  rescue (bad_file)
-  {
-    lock_release (& fdarray -> lock);
-    cpu_trap_restore(it_status);
-    leave;
-  }
-
 }
 
 /*

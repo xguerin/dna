@@ -1,6 +1,6 @@
-/****h* vfs/operation
+/****h* VirtualFileSystem/Operations
  * SUMMARY
- * VFS operation.
+ * VFS operations.
  ****
  * Copyright (C) 2007 TIMA Laboratory
  *
@@ -38,7 +38,7 @@
 #define DNA_FAIL_IF_EXIST               0x00000800
 #define DNA_NON_BLOCKING                0x00004000
 
-/****t* vfs/directory_entry_t
+/****t* Operations/directory_entry_t
  * SUMMARY
  * Directory entry type.
  *

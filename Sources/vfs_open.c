@@ -45,20 +45,24 @@ status_t vfs_open (char * restrict path, int32_t mode,
  */
 
 {
-  int16_t fd_index = 0;
+  int16_t fd = 0;
   file_t file = NULL;
   int64_t vnid = -1, file_vnid = -1;
   vnode_t vnode = NULL;
   volume_t volume = NULL;
-  void * data = NULL;
-  void * file_data = NULL;
+  void * data = NULL, * file_data = NULL;
   char buffer[DNA_PATH_LENGTH], token[DNA_FILENAME_LENGTH];
-  fdarray_t fdarray = fdarray_manager . fdarray[0];
   interrupt_status_t it_status = 0;
+  thread_id_t tid;
   status_t status = DNA_OK;
 
   watch (status_t)
   {
+    status = thread_find (NULL, & tid . raw);
+
+    ensure (status == DNA_OK, status);
+    ensure (tid . s . group >= 0, DNA_BAD_ARGUMENT);
+    ensure (tid . s . group < DNA_MAX_GROUP, DNA_BAD_ARGUMENT);
     ensure (path != NULL && p_fd != NULL, DNA_ERROR);
 
     /*
@@ -66,22 +70,24 @@ status_t vfs_open (char * restrict path, int32_t mode,
      */
 
     it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& fdarray -> lock);
+    lock_acquire (& file_pool . lock);
 
-    for (fd_index = 0; fd_index < DNA_MAX_FILE; fd_index ++)
+    while (file_pool . file[tid . s . group][fd] != NULL && fd < DNA_MAX_FILE)
     {
-      if (fdarray -> fds[fd_index] == NULL) break;
+      fd += 1;
     }
 
-    check (invalid_file, fd_index != DNA_MAX_FILE, DNA_MAX_OPENED_FILES);
+    check (invalid_file, fd != DNA_MAX_FILE, DNA_MAX_OPENED_FILES);
+
+    log (INFO_LEVEL, "Reserved descriptor %d.", fd);
 
     /*
-     * The line that follows tag fd_index as reserved.
+     * The line that follows tag fd as reserved.
      */
 
-    fdarray -> fds[fd_index] = (file_t) -1;
+    file_pool . file[tid . s . group][fd] = (file_t)-1;
 
-    lock_release (& fdarray -> lock);
+    lock_release (& file_pool . lock);
     cpu_trap_restore(it_status);
 
     /*
@@ -139,7 +145,7 @@ status_t vfs_open (char * restrict path, int32_t mode,
     }
     
     /*
-     * Find the new vnode
+     * Find the new vnode.
      */
 
     it_status = cpu_trap_mask_and_backup();
@@ -160,24 +166,38 @@ status_t vfs_open (char * restrict path, int32_t mode,
     file = kernel_malloc (sizeof (struct _file), true);
     ensure (file != NULL, DNA_OUT_OF_MEM);
 
+    file -> usage_counter = 1;
     file -> vnode = vnode;
     file -> mode = mode;
     file -> data = file_data;
 
-    fdarray -> fds[fd_index] = file;
-    *p_fd = fd_index;
+    /*
+     * Associate the new file to the fd.
+     */
 
+    it_status = cpu_trap_mask_and_backup();
+    lock_acquire (& file_pool . lock);
+
+    file_pool . file[tid . s . group][fd] = file;
+
+    lock_release (& file_pool . lock);
+    cpu_trap_restore(it_status);
+
+    log (INFO_LEVEL, "FD %d = 0x%x.",
+         fd, file_pool . file[tid . s . group][fd]);
+
+    *p_fd = fd;
     return DNA_OK;
   }
 
   rescue (mode_error)
   {
     it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& fdarray -> lock);
+    lock_acquire (& file_pool . lock);
 
-    fdarray -> fds[fd_index] = NULL;
+    file_pool . file[tid . s . group][fd] = NULL;
 
-    lock_release (& fdarray -> lock);
+    lock_release (& file_pool . lock);
     cpu_trap_restore(it_status);
 
     leave;
@@ -185,8 +205,9 @@ status_t vfs_open (char * restrict path, int32_t mode,
 
   rescue (invalid_file)
   {
-    lock_release (& fdarray -> lock);
+    lock_release (& file_pool . lock);
     cpu_trap_restore (it_status);
+
     leave;
   }
 }

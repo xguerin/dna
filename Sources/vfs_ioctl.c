@@ -47,8 +47,6 @@ status_t vfs_ioctl (int16_t fd, int32_t function,
 
 {
   file_t file = NULL;
-  fdarray_t fdarray = fdarray_manager . fdarray[0];
-  interrupt_status_t it_status = 0;
   status_t status = DNA_OK;
 
   watch (status_t)
@@ -56,26 +54,36 @@ status_t vfs_ioctl (int16_t fd, int32_t function,
     ensure (fd >= 0 && fd < DNA_MAX_FILE, DNA_INVALID_FD);
 
     /*
-     * Get the file associated to the fd
+     * Get the file associated to the fd.
      */
 
-    it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& fdarray -> lock);
+    status = file_acquire (fd, & file, 1);
+    ensure (status == DNA_OK, status);
 
-    file = fdarray -> fds[fd];
-
-    lock_release (& fdarray -> lock);
-    cpu_trap_restore(it_status);
-
-    ensure (file != NULL && file != (file_t) -1, DNA_INVALID_FD);
-    ensure (file -> vnode -> volume -> cmd -> ioctl != NULL, DNA_ERROR);
+    /*
+     * Call ioctl on the file.
+     */
 
     status = file -> vnode -> volume -> cmd -> ioctl
       (file -> vnode -> volume -> data, file -> vnode -> data, file -> data,
        function, arguments, p_ret);
 
-    return status;
+    check (error, status == DNA_OK, status);
+
+    /*
+     * Release the file and return.
+     */
+
+    return file_release (fd, 1);
   }
+
+  rescue (error)
+  {
+    file_release (fd, 1);
+    *p_ret = -1;
+    leave;
+  }
+
 }
 
 /*

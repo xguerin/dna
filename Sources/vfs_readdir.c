@@ -47,37 +47,42 @@ status_t vfs_readdir (int16_t fd, directory_entry_t * entry_array,
   file_t file = NULL;
   int32_t n_data = count;
   status_t status = DNA_OK;
-  fdarray_t fdarray = fdarray_manager . fdarray[0];
-  interrupt_status_t it_status = 0;
 
-  watch (status_t);
+  watch (status_t)
   {
-    ensure (entry_array != NULL && count > 0 && p_ret != NULL, DNA_ERROR);
+    ensure (entry_array != NULL && p_ret != NULL && count > 0, DNA_ERROR);
     ensure (fd >= 0 && fd < DNA_MAX_FILE, DNA_INVALID_FD);
 
     /*
-     * Get the file associated to the fd
+     * Get the file associated to the fd.
      */
 
-    it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& fdarray -> lock);
+    status = file_acquire (fd, & file, 1);
+    ensure (status == DNA_OK, status);
 
-    file = fdarray -> fds[fd];
-
-    lock_release (& fdarray -> lock);
-    cpu_trap_restore(it_status);
-
-    ensure (file != NULL && file != (file_t) -1, DNA_INVALID_FD);
-    ensure (file -> vnode -> volume -> cmd -> readdir != NULL, DNA_ERROR);
+    /*
+     * Read the file.
+     */
 
     status = file -> vnode -> volume -> cmd -> readdir
       (file -> vnode -> volume -> data, file -> vnode -> data,
        file -> data, entry_array, & file -> offset, & n_data);
 
-    ensure (status == DNA_OK, status);
+    check (error, status == DNA_OK, status);
+
+    /*
+     * Release the file and return.
+     */
 
     *p_ret = n_data;
-    return DNA_OK;
+    return file_release (fd, 1);
+  }
+
+  rescue (error)
+  {
+    file_release (fd, 1);
+    *p_ret = -1;
+    leave;
   }
 }
 
