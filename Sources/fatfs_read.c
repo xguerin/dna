@@ -15,12 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#include <string.h>
-
 #include <Private/FATFileSystem.h>
+#include <Private/FATlib.h>
 #include <DnaTools/DnaTools.h>
-
-#include <Private/fatlib_access.h>
 
 status_t fatfs_read (void * ns, void * node, void * file, void * data, int64_t offset, int32_t * p_count)
 {
@@ -85,7 +82,7 @@ status_t fatfs_read (void * ns, void * node, void * file, void * data, int64_t o
 				copyCount = (count - bytesRead);
 				
 			/* Copy to application buffer */
-			memcpy((unsigned char*)((unsigned char*)data + bytesRead), 
+			dna_memcpy((unsigned char*)((unsigned char*)data + bytesRead), 
 				(unsigned char*)(data_buffer.sector + sector_offset), copyCount);
 				
 			/* Increase total read count */

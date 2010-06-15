@@ -18,8 +18,6 @@
 #ifndef MEDIA_H
 #define MEDIA_H
 
-#include <stdint.h>
-
 extern int media_open(const char *dev_path, int32_t *fs_fd);
 
 extern int media_read(const uint32_t sector, unsigned char *buffer, const int32_t fs_fd);

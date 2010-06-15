@@ -15,14 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#include <stdlib.h>
-#include <string.h>
-
 #include <Private/FATFileSystem.h>
+#include <Private/FATlib.h>
 #include <DnaTools/DnaTools.h>
-
-#include <Private/fatlib_access.h>
-#include <Private/fatlib_misc.h>
+#include <MemoryManager/MemoryManager.h>
 
 status_t fatfs_read_vnode (void * ns, int64_t vnid, void ** data)
 {
@@ -39,7 +35,7 @@ status_t fatfs_read_vnode (void * ns, int64_t vnid, void ** data)
 		ensure (ns != NULL && vnid != -1, DNA_ERROR);
 		
 		/* create the new vnode */
-		inode = malloc (sizeof (struct fatfs_inode));
+		inode = kernel_malloc (sizeof (struct fatfs_inode), true);
 		ensure (inode != NULL, DNA_OUT_OF_MEM);
 
 		inode -> id = vnid;
@@ -52,7 +48,7 @@ status_t fatfs_read_vnode (void * ns, int64_t vnid, void ** data)
 		{
 			check(source_error, fatfs_sector_reader(fatfs, dirid , 
 					entry_offset / FAT_SECTOR_SIZE, NULL), DNA_ERROR)
-			memcpy(&(inode -> entry), fatfs->currentsector.sector + 
+			dna_memcpy(&(inode -> entry), fatfs->currentsector.sector + 
 					(entry_offset % FAT_SECTOR_SIZE), sizeof(struct fatfs_entry));
 		}
 	
@@ -71,8 +67,8 @@ status_t fatfs_read_vnode (void * ns, int64_t vnid, void ** data)
 		
 			/* create the cluster chain */
 			inode -> nb_sector = sector_offset;
-			inode -> cluster_chain_directory = malloc (inode -> nb_sector * 
-					FAT_SECTOR_SIZE * sizeof(unsigned char));
+			inode -> cluster_chain_directory = kernel_malloc (inode -> nb_sector * 
+					FAT_SECTOR_SIZE * sizeof(unsigned char), true);
 			check (source_error, inode -> cluster_chain_directory != NULL, DNA_OUT_OF_MEM);
 			
 			/* walk and copy the cluster chain*/
@@ -91,7 +87,7 @@ status_t fatfs_read_vnode (void * ns, int64_t vnid, void ** data)
 	
    rescue (source_error)
    {
-     free (inode);
+     kernel_free (inode);
      leave;
    }
 }

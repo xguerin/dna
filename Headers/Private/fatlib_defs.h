@@ -1,8 +1,6 @@
 #ifndef __FAT_DEFS_H__
 #define __FAT_DEFS_H__
 
-#include <stdint.h>
-
 #include <Private/fatlib_opts.h>
 
 /*----------------------------------------------------------------------------- */
@@ -86,7 +84,6 @@
 #define FAT32_LAST_CLUSTER		0xFFFFFFFF
 #define FAT32_INVALID_CLUSTER	0xFFFFFFFF
 
-
 /*----------------------------------------------------------------------------- */
 /* Defines */
 /*----------------------------------------------------------------------------- */
@@ -105,22 +102,5 @@
 #define FILE_ERASE	(1 << 4)
 #define FILE_CREATE	(1 << 5)
 
-/*
-typedef struct
-{
-	unsigned char Name[11];
-	unsigned char Attr;
-	unsigned char NTRes;
-	unsigned char CrtTimeTenth;
-	unsigned char CrtTime[2];
-	unsigned char CrtDate[2];
-	unsigned char LstAccDate[2];
-	uint16_t FstClusHI;
-	unsigned char WrtTime[2];
-	unsigned char WrtDate[2];
-	uint16_t FstClusLO;
-	uint32_t FileSize;
-} FAT32_ShortEntry;
-*/
 #endif
 

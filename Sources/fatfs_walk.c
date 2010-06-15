@@ -15,12 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-
-#include <string.h>
 #include <Private/FATFileSystem.h>
 #include <DnaTools/DnaTools.h>
-#include <Private/fatlib_misc.h>
-#include <Private/fatlib_string.h>
+#include <Private/FATlib.h>
 
 status_t fatfs_walk (void * ns, void * base, char * restrict path,
     char ** new_path, int64_t * p_vnid)
@@ -28,19 +25,13 @@ status_t fatfs_walk (void * ns, void * base, char * restrict path,
 //  fatfs_t fatfs = ns;
   fatfs_inode_t base_inode = base;
   int64_t vnid = -1;
-  unsigned char item=0;
   uint16_t recordoffset = 0;
-  unsigned char i=0;
-  unsigned int sector=0;
-  unsigned char *LongFilename;
-  char ShortFilename[13];
-  struct lfn_cache lfn;
-  int dotRequired = 0;
+  uint8_t item = 0;
+  uint16_t sector = 0;
   fatfs_entry_t directoryEntry;
+  char filename[261] = {0};
 
-  log (VERBOSE_LEVEL, "[start] FATFS walk(path = %s)", path);
-  log (VERBOSE_LEVEL, "\tvnid %lx %lx", (uint32_t)(base_inode->id >> 32), 
-  	(uint32_t)(base_inode->id & 0x00000000FFFFFFFF));
+  log (VERBOSE_LEVEL, "[start] FATFS walk (path = %s)", path);
 
   watch (status_t)
   {
@@ -50,7 +41,7 @@ status_t fatfs_walk (void * ns, void * base, char * restrict path,
     ensure (base_inode -> cluster_chain_directory != NULL, 
     	DNA_BAD_INODE_TYPE);
     	
-    if(strcmp (path, ".") == 0)
+    if(dna_strcmp (path, ".") == 0)
     {
     	vnid = base_inode->id;
     }
@@ -68,86 +59,30 @@ status_t fatfs_walk (void * ns, void * base, char * restrict path,
 				/* Overlay directory entry over buffer */
 				directoryEntry = (fatfs_entry_t)(base_inode -> cluster_chain_directory 
 					+ sector*FAT_SECTOR_SIZE + recordoffset);
-
-				/* Long File Name Text Found */
-				if (fatfs_entry_lfn_text(directoryEntry) )
-					fatfs_lfn_cache_entry(&lfn, base_inode -> cluster_chain_directory 
-						+ sector*FAT_SECTOR_SIZE + recordoffset);
-
-				/* If Invalid record found delete any long file name 
-					information collated */
-				else if (fatfs_entry_lfn_invalid(directoryEntry) )
-					fatfs_lfn_cache_init(&lfn, false);
-
-				/* Normal SFN Entry and Long text exists  */
-				else if (fatfs_entry_lfn_exists(&lfn, directoryEntry) )
+					
+				if(fatfs_get_fn_entry(directoryEntry, filename) == 0)
 				{
-					LongFilename = fatfs_lfn_cache_get(&lfn);
-
 					/* Compare names to see if they match */
-					if (fatfs_compare_names((char *)LongFilename, (char *)path))
+					if (fatfs_compare_names(filename, path) == 0)
 					{
 						vnid = ((uint64_t)base_inode -> cc_dirid << 32) + 
 							sector*FAT_SECTOR_SIZE + recordoffset;
 						break;
 					}
-
-		 			fatfs_lfn_cache_init(&lfn, false);
-				}
-
-				/* Normal Entry, only 8.3 Text */
-				else if (fatfs_entry_sfn_only(directoryEntry) )
-				{
-					memset(ShortFilename, 0, sizeof(ShortFilename));
-
-					/* Copy name to string */
-					for (i=0; i<8; i++)
-						ShortFilename[i] = directoryEntry->Name[i];
-
-					/* Extension */
-					dotRequired = 0;
-					for (i=8; i<11; i++)
-					{
-						ShortFilename[i+1] = directoryEntry->Name[i];
-						if (directoryEntry->Name[i] != ' ')
-							dotRequired = 1;
-					}
-
-					/* Dot only required if extension present */
-					if (dotRequired)
-					{
-						/* If not . or .. entry */
-						if (ShortFilename[0]!='.')
-							ShortFilename[8] = '.';
-						else
-							ShortFilename[8] = ' ';
-					}
-					else
-						ShortFilename[8] = ' ';
-
-					/* Compare names to see if they match */
-					if (fatfs_compare_names(ShortFilename, (strcmp (path, "..") == 0) ? "..          " : path))
-					{
-						vnid = ((uint64_t)base_inode -> cc_dirid << 32) + 
-							sector*FAT_SECTOR_SIZE + recordoffset;
-						break;
-					}
-
-					fatfs_lfn_cache_init(&lfn, false);
+					
+					fatfs_reset_lfn(filename);
 				}
 			} /* End of for */
 		}/* End of for */
     }
 
-	ensure (vnid != -1 || strcmp (path, "..") != 0,
+	ensure (vnid != -1 || dna_strcmp (path, "..") != 0,
 		 DNA_ALREADY_AT_ROOT);
     ensure (vnid != -1, DNA_NO_ENTRY);
     
     *p_vnid = vnid;
 
-    log (VERBOSE_LEVEL, "\tvnid %lx %lx", (uint32_t)(vnid >> 32), 
-    	(uint32_t)(vnid & 0x00000000FFFFFFFF));
-    log (VERBOSE_LEVEL, "[end] FATFS walk");
+    log (VERBOSE_LEVEL, "[end] FATFS walk (vnid = 0x%llx)", vnid);
     
     return DNA_OK;
   } /* End of watch */

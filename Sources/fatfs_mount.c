@@ -15,15 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-#include <stdlib.h>
-	
 #include <Private/FATFileSystem.h>
 #include <Private/Media.h>
+#include <Private/FATlib.h>
 #include <DnaTools/DnaTools.h>
-
-#include <Private/fatlib_access.h>
-
+#include <MemoryManager/MemoryManager.h>
 
 status_t fatfs_mount (int32_t vid, const char * dev_path, uint32_t flags, 
 	void * params, void ** data, int64_t * vnid)
@@ -33,14 +29,14 @@ status_t fatfs_mount (int32_t vid, const char * dev_path, uint32_t flags,
 	
 	status_t status;
 
-	log (VERBOSE_LEVEL, "[start] FATFS mount(dev_path = %s)", dev_path);
+	log (VERBOSE_LEVEL, "[start] FATFS mount (dev_path = %s)", dev_path);
 
 	watch(status_t)
 	{
 		ensure (dev_path != NULL, DNA_ERROR);
 
 		/* create the fatfs structure */
-		fatfs = malloc (sizeof (struct fatfs));
+		fatfs = kernel_malloc (sizeof (struct fatfs), true);
 		ensure (fatfs != NULL, DNA_OUT_OF_MEM);
 	
 		/* open and get the file descriptor of the device */
@@ -53,7 +49,6 @@ status_t fatfs_mount (int32_t vid, const char * dev_path, uint32_t flags,
 
 		/* initialize the fatfs structure */
 		status = (status_t)fatfs_init(fatfs);
-		log (VERBOSE_LEVEL, "\tfatfs_init status %d", status);
 		check(source_error, status == FAT_INIT_OK, DNA_ERROR); 
 
 		/* set volume id */		
@@ -68,14 +63,14 @@ status_t fatfs_mount (int32_t vid, const char * dev_path, uint32_t flags,
 		status = fatfs_read_vnode(fatfs, fatfs -> root_vnid, (void **)& root_inode);
 		check(source_error, status == 0, DNA_ERROR);
 	
-		log (VERBOSE_LEVEL, "[end] FATFS mount ");
+		log (VERBOSE_LEVEL, "[end] FATFS mount");
 
 		return vnode_create (fatfs -> root_vnid, fatfs -> vid, (void *) root_inode);
 	}
 	
 	rescue (source_error)
 	{
-		free (fatfs);
+		kernel_free (fatfs);
 		leave;
 	}
 }

@@ -15,13 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#include <stdlib.h>
 #include <Private/FATFileSystem.h>
 #include <DnaTools/DnaTools.h>
 
 status_t fatfs_write_vnode (void * ns, void * node)
 {
-	
 	return DNA_OK;
 }
 

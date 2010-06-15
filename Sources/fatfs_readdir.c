@@ -15,11 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#include <string.h>
 #include <Private/FATFileSystem.h>
+#include <Private/FATlib.h>
 #include <DnaTools/DnaTools.h>
-#include <Private/fatlib_misc.h>
-#include <Private/fatlib_string.h>
 
 status_t fatfs_readdir (void * ns, void * node, void * data,
     void * entry_array, int64_t * offset, int32_t * p_count)
@@ -27,18 +25,12 @@ status_t fatfs_readdir (void * ns, void * node, void * data,
 	fatfs_t fatfs = ns;
 	fatfs_inode_t inode = node;
 	directory_entry_t * p_entry = entry_array;
-
-	unsigned char item=0;
+	uint8_t item = 0;
 	uint16_t recordoffset = 0;
-	unsigned char i=0;
-	unsigned int sector=0;
-	unsigned char *LongFilename;
-	char ShortFilename[13];
-	struct lfn_cache lfn;
-	int dotRequired = 0;
+	uint16_t sector=0;
+	char filename[261] = { 0 };
+	uint16_t item_start;
 	fatfs_entry_t directoryEntry;
-	int item_start;
-	
 	
 	log (VERBOSE_LEVEL, "readdir [start]");
 	
@@ -48,9 +40,6 @@ status_t fatfs_readdir (void * ns, void * node, void * data,
 			&& p_count != NULL, DNA_ERROR);
 		ensure (inode->cluster_chain_directory != NULL, DNA_OK);
    	
-	   	/* Initialise LFN cache first */
-		fatfs_lfn_cache_init(&lfn, false);
-		
 		item_start = (*offset)%FAT_SECTOR_SIZE;
 
 		for(sector = (*offset)/FAT_SECTOR_SIZE; sector < inode -> nb_sector; sector++)
@@ -64,85 +53,24 @@ status_t fatfs_readdir (void * ns, void * node, void * data,
 				/* Overlay directory entry over buffer */
 				directoryEntry = (fatfs_entry_t)(inode -> cluster_chain_directory 
 					+ sector*FAT_SECTOR_SIZE + recordoffset);
-
-				/* Long File Name Text Found */
-				if ( fatfs_entry_lfn_text(directoryEntry) )
-					fatfs_lfn_cache_entry(&lfn, inode -> cluster_chain_directory 
-						+ sector*FAT_SECTOR_SIZE + recordoffset);
-
-				/* If Invalid record found delete any long file name information collated */
-				else if ( fatfs_entry_lfn_invalid(directoryEntry) )
-					fatfs_lfn_cache_init(&lfn, false);
-
-				/* Normal SFN Entry and Long text exists  */
-				else if (fatfs_entry_lfn_exists(&lfn, directoryEntry) )
+				
+				if(fatfs_get_fn_entry(directoryEntry, filename) == 0)
 				{
-					/* Get text */
-					LongFilename = fatfs_lfn_cache_get(&lfn);
-
 					/* return data */
-					strncpy (p_entry -> d_name, (char *)LongFilename, FATFS_NAME_LENGTH); /* FIXME */
+					dna_memcpy (p_entry -> d_name, (char *)filename, FATFS_NAME_LENGTH);
 				
 				    p_entry -> vnid = ((uint64_t)inode -> cc_dirid << 32) + 
-							sector*FAT_SECTOR_SIZE + recordoffset; /* FIXME : à vérifier */
+							sector*FAT_SECTOR_SIZE + recordoffset;
 				    p_entry -> vid = fatfs -> vid;
 
 				    p_entry -> d_reclen = sizeof (struct _directory_entry)
-		    		  + strlen (p_entry -> d_name);
+		    		  + dna_strlen (p_entry -> d_name);
 		    		  
 					/* Next starting position */
 					*offset = sector*FAT_SECTOR_SIZE + item + 1;
 					*p_count = p_entry -> d_reclen;
 
 		 			return DNA_OK;
-				}
-				/* Normal Entry, only 8.3 Text		  */
-				else if ( fatfs_entry_sfn_only(directoryEntry) )
-				{
-	   				fatfs_lfn_cache_init(&lfn, false);
-
-					memset(ShortFilename, 0, sizeof(ShortFilename));
-
-					/* Copy name to string */
-					for (i=0; i<8; i++)
-						ShortFilename[i] = directoryEntry->Name[i];
-
-					/* Extension */
-					dotRequired = 0;
-					for (i=8; i<11; i++)
-					{
-						ShortFilename[i+1] = directoryEntry->Name[i];
-						if (directoryEntry->Name[i] != ' ')
-							dotRequired = 1;
-					}
-
-					/* Dot only required if extension present */
-					if (dotRequired)
-					{
-						/* If not . or .. entry */
-						if (ShortFilename[0]!='.')
-							ShortFilename[8] = '.';
-						else
-							ShortFilename[8] = ' ';
-					}
-					else
-						ShortFilename[8] = ' ';
-
-					/* return data */
-					strncpy (p_entry -> d_name, ShortFilename, FATFS_NAME_LENGTH);
-			
-				    p_entry -> vnid = ((uint64_t)inode -> cc_dirid << 32) + 
-							sector*FAT_SECTOR_SIZE + recordoffset;
-				    p_entry -> vid = fatfs -> vid;
-
-				    p_entry -> d_reclen = sizeof (struct _directory_entry)
-		    		  + strlen (p_entry -> d_name);
-
-					/* Next starting position */
-					*offset = sector*FAT_SECTOR_SIZE + item + 1;
-					*p_count = p_entry -> d_reclen;
-
-					return DNA_OK;
 				}
 			}/* end of for */
 			
@@ -157,5 +85,4 @@ status_t fatfs_readdir (void * ns, void * node, void * data,
 
     return DNA_OK;
 }
-
 

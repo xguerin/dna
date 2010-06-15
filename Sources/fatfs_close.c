@@ -16,6 +16,7 @@
  */
 
 #include <Private/FATFileSystem.h>
+#include <Private/FATlib.h>
 #include <DnaTools/DnaTools.h>
 
 status_t fatfs_close (void * ns, void * node, void * data)

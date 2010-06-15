@@ -5,12 +5,6 @@
 #include <Private/fatlib_opts.h>
 
 /*----------------------------------------------------------------------------- */
-/* Defines */
-/*----------------------------------------------------------------------------- */
-#define MAX_LONGFILENAME_ENTRIES	20
-#define MAX_SFN_ENTRY_LENGTH		13
-
-/*----------------------------------------------------------------------------- */
 /* Macros */
 /*----------------------------------------------------------------------------- */
 /* Little Endian */
@@ -40,33 +34,19 @@
 #endif
 
 /*----------------------------------------------------------------------------- */
-/* Structures */
-/*----------------------------------------------------------------------------- */
-struct lfn_cache
-{
-	/* Long File Name Structure (max 260 LFN length) */
-	unsigned char String[MAX_LONGFILENAME_ENTRIES][MAX_SFN_ENTRY_LENGTH];
-	unsigned char Null;
-	unsigned char no_of_strings;
-};
-
-/*----------------------------------------------------------------------------- */
 /* Prototypes */
 /*----------------------------------------------------------------------------- */
-void			fatfs_lfn_cache_init(struct lfn_cache *lfn, int wipeTable);
-void			fatfs_lfn_cache_entry(struct lfn_cache *lfn, unsigned char *entryBuffer);
-unsigned char*	fatfs_lfn_cache_get(struct lfn_cache *lfn);
-int				fatfs_entry_lfn_text(FAT32_ShortEntry *entry);
-int				fatfs_entry_lfn_invalid(FAT32_ShortEntry *entry);
-int				fatfs_entry_lfn_exists(struct lfn_cache *lfn, FAT32_ShortEntry *entry);
-int				fatfs_entry_sfn_only(FAT32_ShortEntry *entry);
-int				fatfs_entry_is_dir(FAT32_ShortEntry *entry);
-int				fatfs_entry_is_file(FAT32_ShortEntry *entry);
-int				fatfs_lfn_entries_required(char *filename);
-void			fatfs_filename_to_lfn(char *filename, unsigned char *buffer, int entry, unsigned char sfnChk);
-void			fatfs_sfn_create_entry(char *shortfilename, uint32_t size, uint32_t startCluster, FAT32_ShortEntry *entry, int dir);
-int				fatfs_lfn_create_sfn(char *sfn_output, char *filename);
-int				fatfs_lfn_generate_tail(char *sfn_output, char *sfn_input, uint32_t tailNum);
+int16_t	fatfs_entry_lfn_text(fatfs_entry_t entry);
+int16_t	fatfs_entry_lfn_invalid(fatfs_entry_t entry);
+int16_t	fatfs_entry_lfn_exists(fatfs_entry_t entry);
+int16_t	fatfs_entry_sfn_only(fatfs_entry_t entry);
+int16_t	fatfs_entry_is_dir(fatfs_entry_t entry);
+//int16_t	fatfs_entry_is_file(fatfs_entry_t entry);
+void	fatfs_lfn_entry(unsigned char *entryBuffer, char *LongFilename);
+void 	fatfs_reset_lfn(char *filename);
+int16_t	fatfs_get_fn_entry(fatfs_entry_t directoryEntry, char *filename);
+int16_t fatfs_get_sfn_from_entry(fatfs_entry_t directoryEntry, char *ShortFilename);
+int32_t fatfs_compare_names(char* s1, char* s2);
 
 #endif
 

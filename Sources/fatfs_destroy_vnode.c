@@ -15,9 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#include <stdlib.h>
 #include <Private/FATFileSystem.h>
 #include <DnaTools/DnaTools.h>
+#include <MemoryManager/MemoryManager.h>
 
 status_t fatfs_destroy_vnode (void * ns, void * node)
 {
@@ -30,9 +30,9 @@ status_t fatfs_destroy_vnode (void * ns, void * node)
 		ensure (ns != NULL && node != NULL, DNA_ERROR);
 		
 		if (inode -> cluster_chain_directory != NULL)
-			free (inode -> cluster_chain_directory);
+			kernel_free (inode -> cluster_chain_directory);
 			
-		free(inode);
+		kernel_free(inode);
 	}
 	
 	return DNA_OK;

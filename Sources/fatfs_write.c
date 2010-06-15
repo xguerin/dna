@@ -18,11 +18,8 @@
 #include <Private/FATFileSystem.h>
 #include <DnaTools/DnaTools.h>
 
-status_t fatfs_write (void * ns, void * node, void * file, void * data, int64_t offset, int32_t * p_count) {
- /* status_t status = DNA_OK;
-
-  * p_count = 0;
-  return status;*/
+status_t fatfs_write (void * ns, void * node, void * file, void * data, int64_t offset, int32_t * p_count)
+{
   return DNA_OK;
 }
 

@@ -24,7 +24,7 @@
 
 #include <Private/fatlib_defs.h>
 
-#define FATFS_NAME_LENGTH 256
+#define FATFS_NAME_LENGTH	DNA_FILENAME_LENGTH
 
 /*----------------------------------------------------------------------------- */
 /* Function Pointers */
@@ -44,9 +44,9 @@ struct disk_if
 
 struct sector_buffer
 {
-	unsigned char			sector[FAT_SECTOR_SIZE];
-	uint32_t				address;
-	int						dirty;
+	uint8_t		sector[FAT_SECTOR_SIZE];
+	uint32_t	address;
+	int16_t		dirty;
 
 	/* Next in chain of sector buffers */
 	struct sector_buffer  *next;
@@ -58,25 +58,22 @@ typedef enum eFatType
 	FAT_TYPE_32
 } tFatType;
 
-/* pour remplir cette structure, la lib fait un memcpy */
 typedef struct fatfs_entry
 {
-  	unsigned char Name[11];
-	unsigned char Attr;
-	unsigned char NTRes;
-	unsigned char CrtTimeTenth;
-	unsigned char CrtTime[2];
-	unsigned char CrtDate[2];
-	unsigned char LstAccDate[2];
-	uint16_t FstClusHI;
-	unsigned char WrtTime[2];
-	unsigned char WrtDate[2];
-	uint16_t FstClusLO;
-    uint32_t FileSize;
+  	uint8_t 	Name[11];
+	uint8_t 	Attr;
+	uint8_t 	NTRes;
+	uint8_t 	CrtTimeTenth;
+	uint8_t 	CrtTime[2];
+	uint8_t 	CrtDate[2];
+	uint8_t 	LstAccDate[2];
+	uint16_t 	FstClusHI;
+	uint8_t 	WrtTime[2];
+	uint8_t		WrtDate[2];
+	uint16_t 	FstClusLO;
+    uint32_t 	FileSize;
 }
 * fatfs_entry_t;
-
-typedef struct fatfs_entry FAT32_ShortEntry;
 
 typedef struct fatfs_inode
 {
@@ -95,25 +92,21 @@ typedef struct fatfs
   	int32_t fs_fd; /* file descriptor */
   
   	/* Filesystem globals */
-	unsigned char			sectors_per_cluster;
-	uint32_t				cluster_begin_lba;
-	uint32_t				rootdir_first_cluster;
-	uint32_t				rootdir_first_sector;
-	uint32_t				rootdir_sectors;
-	uint32_t				fat_begin_lba;
-	uint16_t				fs_info_sector;
-	uint32_t				lba_begin;
-	uint32_t				fat_sectors;
-	uint32_t				next_free_cluster;
-	uint16_t				root_entry_count;
-	tFatType				fat_type;
+	uint8_t		sectors_per_cluster;
+	uint32_t	cluster_begin_lba;
+	uint32_t	rootdir_first_cluster;
+	uint32_t	rootdir_first_sector;
+	uint32_t	rootdir_sectors;
+	uint32_t	fat_begin_lba;
+	uint16_t	fs_info_sector;
+	uint32_t	lba_begin;
+	uint32_t	fat_sectors;
+	uint32_t	next_free_cluster;
+	uint16_t	root_entry_count;
+	tFatType	fat_type;
 
 	/* Disk/Media API */
 	struct disk_if			disk_io;
-
-	/* [Optional] Thread Safety */
-	void					(*fl_lock)(void);  /* unused */
-	void					(*fl_unlock)(void); /* unused */
 
 	/* Working buffer */
 	struct sector_buffer	currentsector;
@@ -124,41 +117,6 @@ typedef struct fatfs
   
 }
 * fatfs_t;
-
-typedef struct sFL_FILE
-{
-	uint32_t				parentcluster;
-	uint32_t				startcluster;
-	uint32_t				bytenum;
-	uint32_t				filelength;
-	int						filelength_changed;
-	char					path[FATFS_MAX_LONG_FILENAME];
-	char					filename[FATFS_MAX_LONG_FILENAME];
-	unsigned char			shortfilename[11];
-
-	/* Read/Write sector buffer */
-	struct sector_buffer	file_data;
-
-	/* File fopen flags */
-	unsigned char			flags;
-
-	struct sFL_FILE			*next;
-} FL_FILE;
-
-struct fs_dir_list_status
-{
-	uint32_t				sector;
-	uint32_t				cluster;
-	unsigned char			offset;
-};
-
-struct fs_dir_ent
-{
-	char					filename[FATFS_MAX_LONG_FILENAME];
-	unsigned char			is_dir;
-	uint32_t				cluster;
-	uint32_t				size;
-};
 
 extern status_t fatfs_walk (void * ns, void * base,
     char * restrict path, char ** new_path, int64_t * vnid);
