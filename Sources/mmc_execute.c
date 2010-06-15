@@ -129,8 +129,6 @@ status_t mmc_execute (mmc_card_t a_card, mmc_operation_t operation,
   rescue (error)
   {
     card_status . raw = response[0];
-    mmc_show_card_status (card_status);
-
     leave;
   }
 }

@@ -55,14 +55,14 @@ static char * state_string[] =
 
 void mmc_show_card_status (mmc_card_status_t status)
 {
-  log (INFO_LEVEL, "Card state = %s",
+  dna_printf ("Card state = %s\r\n",
       state_string[status . bits . current_state]);
 
   for (int32_t index = 0; status_string[index] != NULL; index += 1)
   {
     if ((status . raw & status_code[index]) != 0)
     {
-      log (INFO_LEVEL, "%s", status_string[index]);
+      dna_printf ("%s\r\n", status_string[index]);
     }
   }
 

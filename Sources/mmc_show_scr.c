@@ -20,7 +20,7 @@
 
 void mmc_show_scr (mmc_scr_t scr)
 {
-  log (INFO_LEVEL, "Data bus width = %d",
+  dna_printf ("Data bus width = %d\r\n",
       scr . data_bus_width == SCR_1BIT_BUS_WIDTH ? 1 : 4);
 }
 

@@ -22,9 +22,9 @@ void mmc_show_csd (mmc_csd_t csd)
 {
   uint32_t memory_size = 0, blk_len, mult, blk_nr;
 
-  log (INFO_LEVEL, "CSD structure = %d", csd . csd_structure);
-  log (INFO_LEVEL, "Read block length = 0x%x", csd . read_block_length);
-  log (INFO_LEVEL, "Device size = 0x%x", csd . device_size);
+  dna_printf ("CSD structure = %d\r\n", csd . csd_structure);
+  dna_printf ("Read block length = 0x%x\r\n", csd . read_block_length);
+  dna_printf ("Device size = 0x%x\r\n", csd . device_size);
 
   switch (csd . csd_structure)
   {
@@ -43,7 +43,7 @@ void mmc_show_csd (mmc_csd_t csd)
       break;
   }
 
-  log (INFO_LEVEL, "Memory size = %d bytes (%d MB)",
+  dna_printf ("Memory size = %d bytes (%d MB)\r\n",
       memory_size, memory_size / (1024 * 1024));
 
 #if 0

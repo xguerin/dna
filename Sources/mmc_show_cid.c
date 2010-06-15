@@ -20,11 +20,11 @@
 
 void mmc_show_cid (mmc_cid_t cid)
 {
-  log (INFO_LEVEL, "Manufacturer ID: 0x%x", cid . manufacturer_id);
-  log (INFO_LEVEL, "OEM ID: 0x%x", cid . oem_id);
-  log (INFO_LEVEL, "Product name : %s", cid . name);
-  log (INFO_LEVEL, "Revision: 0x%x", cid . revision);
-  log (INFO_LEVEL, "S/N: 0x%x", cid . serial_number);
-  log (INFO_LEVEL, "Date: 0x%x", cid . manufacturing_date);
+  dna_printf ("Manufacturer ID: 0x%x\r\n", cid . manufacturer_id);
+  dna_printf ("OEM ID: 0x%x\r\n", cid . oem_id);
+  dna_printf ("Product name : %s\r\n", cid . name);
+  dna_printf ("Revision: 0x%x\r\n", cid . revision);
+  dna_printf ("S/N: 0x%x\r\n", cid . serial_number);
+  dna_printf ("Date: 0x%x\r\n", cid . manufacturing_date);
 }
 
