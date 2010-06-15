@@ -57,7 +57,7 @@ status_t vfs_readdir (int16_t fd, directory_entry_t * entry_array,
      * Get the file associated to the fd.
      */
 
-    status = file_acquire (fd, & file, 1);
+    status = file_get (fd, & file);
     ensure (status == DNA_OK, status);
 
     /*
@@ -75,12 +75,12 @@ status_t vfs_readdir (int16_t fd, directory_entry_t * entry_array,
      */
 
     *p_ret = n_data;
-    return file_release (fd, 1);
+    return file_put (fd);
   }
 
   rescue (error)
   {
-    file_release (fd, 1);
+    file_put (fd);
     *p_ret = -1;
     leave;
   }

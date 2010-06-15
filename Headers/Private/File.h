@@ -64,6 +64,7 @@ typedef struct _file
   int32_t usage_counter;
   vnode_t vnode;
 
+  bool destroy;
   int32_t mode;
   int64_t offset;
   void * data;
@@ -92,7 +93,10 @@ file_pool_t;
 
 extern file_pool_t file_pool;
 
-extern status_t file_acquire (int16_t fd, file_t * p_file, int32_t tokens);
-extern status_t file_release (int16_t fd, int32_t tokens);
+extern status_t file_create (vnode_t vnode, int32_t mode, void * data,
+    int16_t * fd, file_t * p_file);
+extern status_t file_destroy (int16_t fd);
+extern status_t file_get (int16_t fd, file_t * p_file);
+extern status_t file_put (int16_t fd);
 
 #endif

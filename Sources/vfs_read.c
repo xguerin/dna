@@ -60,7 +60,7 @@ status_t vfs_read (int16_t fd, void * data, int32_t count, int32_t * p_ret)
      * Get the file associated to the fd.
      */
 
-    status = file_acquire (fd, & file, 1);
+    status = file_get (fd, & file);
     ensure (status == DNA_OK, status);
 
     /*
@@ -90,12 +90,12 @@ status_t vfs_read (int16_t fd, void * data, int32_t count, int32_t * p_ret)
      */
 
     *p_ret = n_data;
-    return file_release (fd, 1);
+    return file_put (fd);
   }
 
   rescue (read_error)
   {
-    file_release (fd, 1);
+    file_put (fd);
     *p_ret = -1;
     leave;
   }

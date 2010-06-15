@@ -20,22 +20,23 @@
 #include <MemoryManager/MemoryManager.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* FilePrivate/file_release
+/****f* FilePrivate/file_acquire
  * SUMMARY
- * Release a file from the file pool.
+ * Acquire a file from the file pool.
  *
  * SYNOPSIS
  */
 
-status_t file_release (int16_t fd, int32_t tokens)
+status_t file_get (int16_t fd, file_t * p_file)
 
 /*
  * ARGUMENTS
- * * fd : the file descriptor.
+ * * fd : a file descriptor
+ * * p_file : a pointer to a file_t
  *
  * FUNCTION
- * Check if the fd entry exist in the current group pool. If it is the case,
- * decrements its usage counter, and delete the file when the counter reaches 0.
+ * Check if the fd entry exist in the current group pool. If it is the case, put
+ * the file into *file after incrementing its usage counter.
  *
  * RESULT
  * * DNA_INVALID_FD if fd is not a valid file
@@ -45,12 +46,10 @@ status_t file_release (int16_t fd, int32_t tokens)
  */
 
 {
-  file_t file;
-  bool delete_file = false;
   thread_id_t tid;
   status_t status = DNA_OK;
+  file_t file = NULL;
   interrupt_status_t it_status = 0;
-  vnode_t vnode = NULL;
 
   watch (status_t)
   {
@@ -59,7 +58,7 @@ status_t file_release (int16_t fd, int32_t tokens)
     ensure (status == DNA_OK, status);
     ensure (tid . s . group >= 0, DNA_BAD_ARGUMENT);
     ensure (tid . s . group < DNA_MAX_GROUP, DNA_BAD_ARGUMENT);
-    ensure (tokens > 0, DNA_BAD_ARGUMENT);
+    ensure (p_file != NULL, DNA_BAD_ARGUMENT);
 
     /*
      * Look for the file in the pool.
@@ -69,35 +68,19 @@ status_t file_release (int16_t fd, int32_t tokens)
     lock_acquire (& file_pool . lock);
 
     file = file_pool . file[tid . s . group][fd];
-    check (error, file != NULL && file != (file_t) -1, DNA_INVALID_FD);
+    check (error, file != NULL && file -> usage_counter != 0, DNA_INVALID_FD);
 
     lock_acquire (& file -> lock);
-    file -> usage_counter -= tokens;
-    lock_release (& file -> lock);
-
-    if (file -> usage_counter <= 0)
-    {
-      file_pool . file[tid . s . group][fd] = NULL;
-      delete_file = true;
-    }
-
     lock_release (& file_pool . lock);
+
+    file -> usage_counter += 1;
+
+    lock_release (& file -> lock);
     cpu_trap_restore(it_status);
 
-    /*
-     * Check if the file has to be deleted.
-     * If so, free its memory and put its associated vnode.
-     */
+    log (VERBOSE_LEVEL, "Got FD %d.", fd);
 
-    if (delete_file)
-    {
-      vnode = file -> vnode;
-      kernel_free (file);
-
-      status = vnode_put (vnode -> volume -> id, vnode -> id);
-      ensure (status == DNA_OK, status);
-    }
-
+    *p_file = file;
     return DNA_OK;
   }
 

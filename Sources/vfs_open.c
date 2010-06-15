@@ -45,7 +45,7 @@ status_t vfs_open (char * restrict path, int32_t mode,
  */
 
 {
-  int16_t fd = 0;
+  int16_t fd = -1;
   file_t file = NULL;
   int64_t vnid = -1, file_vnid = -1;
   vnode_t vnode = NULL;
@@ -64,35 +64,6 @@ status_t vfs_open (char * restrict path, int32_t mode,
     ensure (tid . s . group >= 0, DNA_BAD_ARGUMENT);
     ensure (tid . s . group < DNA_MAX_GROUP, DNA_BAD_ARGUMENT);
     ensure (path != NULL && p_fd != NULL, DNA_ERROR);
-
-    /*
-     * Look for an available file slot.
-     */
-
-    it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& file_pool . lock);
-
-    while (file_pool . file[tid . s . group][fd] != NULL && fd < DNA_MAX_FILE)
-    {
-      fd += 1;
-    }
-
-    check (invalid_file, fd != DNA_MAX_FILE, DNA_MAX_OPENED_FILES);
-
-    log (INFO_LEVEL, "Reserved descriptor %d.", fd);
-
-    /*
-     * The line that follows tag fd as reserved.
-     */
-
-    file_pool . file[tid . s . group][fd] = (file_t)-1;
-
-    lock_release (& file_pool . lock);
-    cpu_trap_restore(it_status);
-
-    /*
-     * Open or create the file
-     */
 
     dna_strcpy (buffer, path);
 
@@ -143,7 +114,7 @@ status_t vfs_open (char * restrict path, int32_t mode,
       status = volume -> cmd -> open (volume -> data, data, mode, & file_data);
       check (mode_error, status == DNA_OK, status);
     }
-    
+  
     /*
      * Find the new vnode.
      */
@@ -160,32 +131,12 @@ status_t vfs_open (char * restrict path, int32_t mode,
     ensure (vnode != NULL, DNA_NO_VNODE);
 
     /*
-     * Allocate the new file.
+     * Acquire a new file.
      */
 
-    file = kernel_malloc (sizeof (struct _file), true);
-    ensure (file != NULL, DNA_OUT_OF_MEM);
-
-    file -> usage_counter = 1;
-    file -> vnode = vnode;
-    file -> mode = mode;
-    file -> data = file_data;
-
-    /*
-     * Associate the new file to the fd.
-     */
-
-    it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& file_pool . lock);
-
-    file_pool . file[tid . s . group][fd] = file;
-
-    lock_release (& file_pool . lock);
-    cpu_trap_restore(it_status);
-
-    log (INFO_LEVEL, "FD %d = 0x%x.",
-         fd, file_pool . file[tid . s . group][fd]);
-
+    status = file_create (vnode, mode, file_data, & fd, & file); 
+    ensure (status == DNA_OK, status);
+ 
     *p_fd = fd;
     return DNA_OK;
   }
@@ -199,14 +150,6 @@ status_t vfs_open (char * restrict path, int32_t mode,
 
     lock_release (& file_pool . lock);
     cpu_trap_restore(it_status);
-
-    leave;
-  }
-
-  rescue (invalid_file)
-  {
-    lock_release (& file_pool . lock);
-    cpu_trap_restore (it_status);
 
     leave;
   }

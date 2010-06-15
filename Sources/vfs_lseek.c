@@ -58,7 +58,7 @@ status_t vfs_lseek (int16_t fd, int64_t offset, int32_t whence, int64_t * p_ret)
      * Get the file associated to the fd.
      */
 
-    status = file_acquire (fd, & file, 1);
+    status = file_get (fd, & file);
     ensure (status == DNA_OK, status);
 
     /*
@@ -83,7 +83,7 @@ status_t vfs_lseek (int16_t fd, int64_t offset, int32_t whence, int64_t * p_ret)
     cpu_trap_restore(it_status);
     
     *p_ret = file -> offset;
-    return file_release (fd, 1);
+    return file_put (fd);
   }
 }
 

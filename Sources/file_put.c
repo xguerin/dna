@@ -20,21 +20,22 @@
 #include <MemoryManager/MemoryManager.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* vfs/vfs_close
+/****f* FilePrivate/file_release
  * SUMMARY
- * Closes a file.
+ * Release a file from the file pool.
  *
  * SYNOPSIS
  */
 
-status_t vfs_close (int16_t fd)
+status_t file_put (int16_t fd)
 
 /*
  * ARGUMENTS
  * * fd : the file descriptor.
  *
  * FUNCTION
- * Not implemented yet.
+ * Check if the fd entry exist in the current group pool. If it is the case,
+ * decrements its usage counter, and delete the file when the counter reaches 0.
  *
  * RESULT
  * * DNA_INVALID_FD if fd is not a valid file
@@ -44,45 +45,61 @@ status_t vfs_close (int16_t fd)
  */
 
 {
-  file_t file = NULL;
+  file_t file;
+  thread_id_t tid;
   status_t status = DNA_OK;
+  interrupt_status_t it_status = 0;
+  vnode_t vnode = NULL;
 
   watch (status_t)
   {
-    ensure (fd >= 0 && fd < DNA_MAX_FILE, DNA_INVALID_FD);
+    status = thread_find (NULL, & tid . raw);
+
+    ensure (status == DNA_OK, status);
+    ensure (tid . s . group >= 0, DNA_BAD_ARGUMENT);
+    ensure (tid . s . group < DNA_MAX_GROUP, DNA_BAD_ARGUMENT);
 
     /*
-     * Get the file associated to the fd.
+     * Look for the file in the pool.
      */
 
-    status = file_get (fd, & file);
-    ensure (status == DNA_OK, status);
+    it_status = cpu_trap_mask_and_backup();
+    lock_acquire (& file_pool . lock);
 
-    /*
-     * Close the file.
-     */
+    file = file_pool . file[tid . s . group][fd];
+    check (error, file != NULL, DNA_INVALID_FD);
+    check (error, file -> usage_counter > 0, DNA_ERROR);
 
-    status = file -> vnode -> volume -> cmd -> close
-      (file -> vnode -> volume -> data, file -> vnode -> data, file -> data);
+    file -> usage_counter -= 1;
+ 
+    if (file -> usage_counter == 0 && file -> destroy)
+    {
+      file_pool . file[tid . s . group][fd] = NULL;
 
-    check (error, status == DNA_OK, status);
+      lock_release (& file_pool . lock);
+      cpu_trap_restore(it_status);
 
-    /*
-     * Release the file and return.
-     */
+      vnode = file -> vnode;
+      kernel_free (file);
 
-    status = file_destroy (fd);
-    ensure (status == DNA_OK, status);
+      status = vnode_put (vnode -> volume -> id, vnode -> id);
+      ensure (status == DNA_OK, status);
+    }
+    else
+    {
+      lock_release (& file_pool . lock);
+      cpu_trap_restore(it_status);
+    }
 
-    status = file_put (fd);
-    ensure (status == DNA_OK, status);
+    log (VERBOSE_LEVEL, "Put FD %d.", fd);
 
     return DNA_OK;
   }
 
   rescue (error)
   {
-    file_put (fd);
+    lock_release (& file_pool . lock);
+    cpu_trap_restore(it_status);
     leave;
   }
 }
