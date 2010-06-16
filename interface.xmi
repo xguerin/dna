@@ -206,6 +206,10 @@
       </method>
     </context>
 
+    <context name="Power">
+      <method name="cpu_power_wake_on_interrupt" result=""/>
+    </context>
+
   </provide>
 
   <require>
