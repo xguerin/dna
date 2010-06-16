@@ -77,8 +77,7 @@ int pthread_create (pthread_t *thread, pthread_attr_t *attr,
   thread_info . stack_base = new -> attributs -> stackaddr;
   thread_info . stack_size = new -> attributs -> stacksize;
 
-  thread_create ((thread_handler_t)start, (void *) arg,
-      DNA_KERNEL_GROUP, thread_info, & t_new);
+  thread_create ((thread_handler_t)start, (void *) arg, thread_info, & t_new);
 
   new -> tid = t_new;
   thread_resume (t_new);
