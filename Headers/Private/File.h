@@ -26,31 +26,6 @@
 #include <Private/VNode.h>
 #include <DnaTools/DnaTools.h>
 
-/****t* FilePrivate/thread_id_t
- * SUMMARY
- * Thread ID type.
- * TODO find a better way to handle this, so as to prevent the duplication.
- *
- * SOURCE
- */
-
-typedef union _thread_id
-{
-  int32_t raw;
-
-  struct _thread_id_s
-  {
-    uint16_t value;
-    uint8_t group;
-    uint8_t index;
-  }
-  s;
-}
-thread_id_t;
-
-/*
- ****/
-
 /****t* FilePrivate/file_t
  * SUMMARY
  * File type.

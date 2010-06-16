@@ -46,18 +46,22 @@ status_t file_put (int16_t fd)
 
 {
   file_t file;
-  thread_id_t tid;
+  int32_t tid;
+  thread_info_t info;
   status_t status = DNA_OK;
   interrupt_status_t it_status = 0;
   vnode_t vnode = NULL;
 
   watch (status_t)
   {
-    status = thread_find (NULL, & tid . raw);
-
+    status = thread_find (NULL, & tid);
     ensure (status == DNA_OK, status);
-    ensure (tid . s . group >= 0, DNA_BAD_ARGUMENT);
-    ensure (tid . s . group < DNA_MAX_GROUP, DNA_BAD_ARGUMENT);
+
+    status = thread_get_info (tid, & info);
+    ensure (status == DNA_OK, status);
+
+    ensure (info . group >= 0, DNA_BAD_ARGUMENT);
+    ensure (info . group < DNA_MAX_GROUP, DNA_BAD_ARGUMENT);
 
     /*
      * Look for the file in the pool.
@@ -66,7 +70,7 @@ status_t file_put (int16_t fd)
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& file_pool . lock);
 
-    file = file_pool . file[tid . s . group][fd];
+    file = file_pool . file[info . group][fd];
     check (error, file != NULL, DNA_INVALID_FD);
     check (error, file -> usage_counter > 0, DNA_ERROR);
 
@@ -74,7 +78,7 @@ status_t file_put (int16_t fd)
  
     if (file -> usage_counter == 0 && file -> destroy)
     {
-      file_pool . file[tid . s . group][fd] = NULL;
+      file_pool . file[info . group][fd] = NULL;
 
       lock_release (& file_pool . lock);
       cpu_trap_restore(it_status);

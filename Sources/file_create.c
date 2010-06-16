@@ -48,18 +48,22 @@ status_t file_create (vnode_t vnode, int32_t mode, void * data,
 
 {
   int16_t fd = 0;
-  thread_id_t tid;
+  int32_t tid;
+  thread_info_t info;
   status_t status = DNA_OK;
   file_t file = NULL, * file_array = NULL;
   interrupt_status_t it_status = 0;
 
   watch (status_t)
   {
-    status = thread_find (NULL, & tid . raw);
-
+    status = thread_find (NULL, & tid);
     ensure (status == DNA_OK, status);
-    ensure (tid . s . group >= 0, DNA_BAD_ARGUMENT);
-    ensure (tid . s . group < DNA_MAX_GROUP, DNA_BAD_ARGUMENT);
+
+    status = thread_get_info (tid, & info);
+    ensure (status == DNA_OK, status);
+
+    ensure (info . group >= 0, DNA_BAD_ARGUMENT);
+    ensure (info . group < DNA_MAX_GROUP, DNA_BAD_ARGUMENT);
 
     ensure (p_fd != NULL, DNA_BAD_ARGUMENT);
     ensure (p_file != NULL, DNA_BAD_ARGUMENT);
@@ -71,7 +75,7 @@ status_t file_create (vnode_t vnode, int32_t mode, void * data,
      * Find a free file descriptor.
      */
 
-    file_array = file_pool . file[tid . s . group];
+    file_array = file_pool . file[info . group];
 
     for (fd = 0; file_array[fd] != NULL && fd < DNA_MAX_FILE; fd += 1);
     check (error, fd != DNA_MAX_FILE, DNA_MAX_OPENED_FILES);
@@ -88,7 +92,7 @@ status_t file_create (vnode_t vnode, int32_t mode, void * data,
     file -> data = data;
     file -> usage_counter = 1;
 
-    file_pool . file[tid . s . group][fd] = file;
+    file_pool . file[info . group][fd] = file;
 
     lock_release (& file_pool . lock);
     cpu_trap_restore (it_status);

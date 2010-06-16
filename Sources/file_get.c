@@ -46,18 +46,22 @@ status_t file_get (int16_t fd, file_t * p_file)
  */
 
 {
-  thread_id_t tid;
+  int32_t tid;
+  thread_info_t info;
   status_t status = DNA_OK;
   file_t file = NULL;
   interrupt_status_t it_status = 0;
 
   watch (status_t)
   {
-    status = thread_find (NULL, & tid . raw);
-
+    status = thread_find (NULL, & tid);
     ensure (status == DNA_OK, status);
-    ensure (tid . s . group >= 0, DNA_BAD_ARGUMENT);
-    ensure (tid . s . group < DNA_MAX_GROUP, DNA_BAD_ARGUMENT);
+
+    status = thread_get_info (tid, & info);
+    ensure (status == DNA_OK, status);
+
+    ensure (info . group >= 0, DNA_BAD_ARGUMENT);
+    ensure (info . group < DNA_MAX_GROUP, DNA_BAD_ARGUMENT);
     ensure (p_file != NULL, DNA_BAD_ARGUMENT);
 
     /*
@@ -67,7 +71,7 @@ status_t file_get (int16_t fd, file_t * p_file)
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& file_pool . lock);
 
-    file = file_pool . file[tid . s . group][fd];
+    file = file_pool . file[info . group][fd];
     check (error, file != NULL && file -> usage_counter != 0, DNA_INVALID_FD);
 
     lock_acquire (& file -> lock);
