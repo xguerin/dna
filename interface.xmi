@@ -100,7 +100,6 @@
         <argument name="handler" type="thread_handler_t" direction="In"/>
         <argument name="arguments" type="void" direction="In"/>
         <argument name="name" type="string" direction="In"/>
-        <argument name="group" type="int32_t" direction="In"/>
         <argument name="info" type="thread_info_t" direction="In"/>
         <argument name="tid" type="int32_t" direction="Out"/>
       </method>
