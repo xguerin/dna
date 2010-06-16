@@ -219,11 +219,14 @@
     </method>
 
     <method name="cpu_mp_count" result="int32_t"/>
+
     <method name="cpu_mp_id" result="int32_t"/>
 
     <method name="cpu_test_and_set" result="int32_t">
       <argument name="lock" type="int32_t" direction="InOut"/>
     </method>
+
+    <method name="cpu_power_wake_on_interrupt" result=""/>
 
     <method name="kernel_malloc" result="access">
       <argument name="size" type="int32_t" direction="In"/>

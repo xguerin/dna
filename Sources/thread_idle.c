@@ -17,7 +17,9 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+
 #include <Private/Core.h>
+#include <Processor/Processor.h>
 
 /****f* ThreadPrivate/thread_idle
  * SUMMARY
@@ -39,7 +41,11 @@ int32_t thread_idle (void * data)
  */
 
 {
-  while (true);
+  while (true)
+  {
+    cpu_power_wake_on_interrupt ();
+  }
+
   return 0;
 }
 
