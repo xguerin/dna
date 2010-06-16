@@ -62,6 +62,7 @@
 {                           \
   "thread",                 \
   0,                        \
+  0,                        \
   DNA_NO_AFFINITY,          \
   0,                        \
   DNA_THREAD_SUSPENDED,     \
@@ -136,6 +137,7 @@ typedef struct _thread_info
   char name[DNA_NAME_LENGTH];
 
   int32_t cpu_id;
+  int32_t group;
   int32_t affinity;
   int32_t sem_tokens;
 
@@ -154,8 +156,8 @@ thread_info_t;
 /*
  ****/
 
-extern status_t thread_create (thread_handler_t handler, void * arguments,
-    int32_t group, thread_info_t info, int32_t * tid);
+extern status_t thread_create (thread_handler_t handler,
+    void * arguments, thread_info_t info, int32_t * tid);
 extern status_t thread_destroy (int32_t id);
 
 extern status_t thread_resume (int32_t id);

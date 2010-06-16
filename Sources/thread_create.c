@@ -28,13 +28,12 @@
  */
 
 status_t thread_create (thread_handler_t handler, void * arguments,
-    int32_t group, thread_info_t info, int32_t * tid)
+    thread_info_t info, int32_t * tid)
 
 /*
  * ARGUMENTS
  * * handler : the thread's handler
  * * arguments : the handler's arguments
- * * group : the thread's group
  * * info : various thread information
  * * tid : the placeholder of the created thread's ID
  *
@@ -54,7 +53,7 @@ status_t thread_create (thread_handler_t handler, void * arguments,
   watch (status_t)
   {
     ensure (handler != NULL && tid != NULL, DNA_BAD_ARGUMENT);
-    ensure (group >= 0 && group < DNA_MAX_GROUP, DNA_BAD_ARGUMENT);
+    ensure (info . group >= 0 && info . group < DNA_MAX_GROUP, DNA_BAD_ARGUMENT);
 
     /*
      * Check the content of the information structure.
@@ -80,7 +79,7 @@ status_t thread_create (thread_handler_t handler, void * arguments,
      * a different group than self.
      */
 
-    thread -> id . s . group = group;
+    thread -> id . s . group = info . group;
 
     /*
      * Copy and adjust the information structure.
@@ -122,12 +121,12 @@ status_t thread_create (thread_handler_t handler, void * arguments,
 
     for (index = 0; index < DNA_MAX_THREAD; index += 1)
     {
-      if (thread_pool . thread[group][index] == NULL)
+      if (thread_pool . thread[info . group][index] == NULL)
       {
         thread -> id . s . value = thread_pool . counter;
         thread -> id . s . index = index;
 
-        thread_pool . thread[group][index] = thread;
+        thread_pool . thread[info . group][index] = thread;
         thread_pool . counter += 1;
 
         break;

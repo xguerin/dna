@@ -137,12 +137,12 @@ status_t core_create (void)
        */
 
       dna_strcpy (thread_info . name, "IdleThread");
+      thread_info . group = DNA_KERNEL_GROUP;
       thread_info . affinity = cpu_i;
       thread_info . stack_base = cpu -> stack;
       thread_info . stack_size = DNA_IDLE_STACK_SIZE;
 
-      status = thread_create (thread_idle, NULL,
-          DNA_KERNEL_GROUP, thread_info, & tid . raw);
+      status = thread_create (thread_idle, NULL, thread_info, & tid . raw);
       check (cpu_initialize, status == DNA_OK, DNA_ERROR);
 
       thread = thread_pool . thread[tid . s . group][tid . s . index];
@@ -164,12 +164,12 @@ status_t core_create (void)
      */
 
     dna_strcpy (thread_info . name, "Main");
+    thread_info . group = DNA_KERNEL_GROUP;
     thread_info . affinity = DNA_NO_AFFINITY;
     thread_info . stack_base = NULL;
     thread_info . stack_size = DNA_THREAD_STACK_SIZE;
 
-    status = thread_create (APP_ENTRY_POINT, NULL,
-        DNA_KERNEL_GROUP, thread_info, & tid . raw);
+    status = thread_create (APP_ENTRY_POINT, NULL, thread_info, & tid . raw);
     check (cpu_initialize, status == DNA_OK, DNA_ERROR);
 
     thread = thread_pool . thread[tid . s . group][tid . s . index];
