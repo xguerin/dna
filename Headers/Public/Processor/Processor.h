@@ -6,6 +6,7 @@
 #include <Processor/Endian.h>
 #include <Processor/IO.h>
 #include <Processor/Mp.h>
+#include <Processor/Power.h>
 #include <Processor/Synchronization.h>
 #include <Processor/Trap.h>
 #include <Processor/Timer.h>
