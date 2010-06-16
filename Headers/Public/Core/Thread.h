@@ -62,7 +62,7 @@
 {                           \
   "thread",                 \
   0,                        \
-  0,                        \
+  DNA_KERNEL_GROUP,         \
   DNA_NO_AFFINITY,          \
   0,                        \
   DNA_THREAD_SUSPENDED,     \

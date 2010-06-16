@@ -137,7 +137,6 @@ status_t core_create (void)
        */
 
       dna_strcpy (thread_info . name, "IdleThread");
-      thread_info . group = DNA_KERNEL_GROUP;
       thread_info . affinity = cpu_i;
       thread_info . stack_base = cpu -> stack;
       thread_info . stack_size = DNA_IDLE_STACK_SIZE;
@@ -164,7 +163,6 @@ status_t core_create (void)
      */
 
     dna_strcpy (thread_info . name, "Main");
-    thread_info . group = DNA_KERNEL_GROUP;
     thread_info . affinity = DNA_NO_AFFINITY;
     thread_info . stack_base = NULL;
     thread_info . stack_size = DNA_THREAD_STACK_SIZE;
