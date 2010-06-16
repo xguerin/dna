@@ -195,7 +195,7 @@ int16_t fatfs_get_sfn_from_entry(fatfs_entry_t directoryEntry, char *filename)
 /* fatfs_compare_names : nocase sensible string comparaison */
 /*----------------------------------------------------------------------------- */
 
-static char dna_toupper(char c)
+static char fatfs_toupper(char c)
 {
 	return ((c >= 'a') && (c <= 'z')) ? c - 32 : c;
 }
@@ -207,7 +207,7 @@ int32_t fatfs_compare_names(char* s1, char* s2)
 	
   do
   {
-    if (dna_toupper(*s1_ptr++) != dna_toupper(*s2_ptr))
+    if (fatfs_toupper(*s1_ptr++) != fatfs_toupper(*s2_ptr))
     {
       return -1;
     }
