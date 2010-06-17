@@ -32,6 +32,13 @@ status_t scheduler_dispatch (thread_t thread)
  * ARGUMENTS
  * * A valid thread_t 
  *
+ * FUNCTION
+ * In the first part of the test, we check whether a distant, compatible CPU is
+ * available. If not, if the thread is compatible with the current processor,
+ * and whether this processor is available or not, we return that it is
+ * necessary to invoke the scheduler. It will be the role of the calling
+ * function to decide what to do.
+ *
  * RETURN:
  * * DNA_BAD_ARGUMENT: thread is not valid
  * * DNA_INVOKE_SCHEDULER: success, invoke the scheduler on return
@@ -43,69 +50,57 @@ status_t scheduler_dispatch (thread_t thread)
 {
   cpu_t * cpu = NULL;
   status_t status = DNA_OK;
-  int32_t affinity = -1;
+  int32_t affinity = thread -> info . affinity;
 
   watch (status_t)
   {
     ensure (thread != NULL, DNA_BAD_ARGUMENT);
 
     /*
-     * Add the thread to the list it belongs to.
-     */
-
-    lock_acquire (& scheduler . queue[thread -> info . affinity] . lock);
-    lock_release (& thread -> lock);
-
-    queue_add (& scheduler . queue[thread -> info . affinity], thread);
-
-    /*
      * Look for an available processor.
      */
 
     lock_acquire (& cpu_pool . queue . lock);
-    lock_release (& scheduler . queue[thread -> info . affinity] . lock);
 
-    if (thread -> info . affinity == cpu_mp_count ())
+    if (affinity == cpu_mp_count ())
     {
       cpu = queue_rem (& cpu_pool . queue);
     }
     else
     {
-      cpu = & cpu_pool . cpu[thread -> info . affinity] ;
+      lock_acquire (& cpu_pool . cpu[affinity] . lock);
+
       if (cpu -> status == DNA_CPU_READY)
       {
+        cpu = & cpu_pool . cpu[affinity];
         queue_extract (& cpu_pool . queue, cpu);
       }
-      else cpu = NULL;
+
+      lock_release (& cpu_pool . cpu[affinity] . lock);
     }
 
     lock_release (& cpu_pool . queue . lock);
 
     /*
-     * Explanation of what follows: in the first part of the test,
-     * we check whether a distant, compatible CPU is available. If
-     * not, if the thread is compatible with the current processor,
-     * and whether this processor is available or not, we return
-     * that it is necessary to invoke the scheduler. It will be the
-     * role of the calling function to decide what to do.
+     * Check if we can send the thread to a distant CPU.
      */
+
+    lock_acquire (& scheduler . queue[affinity] . lock);
+    lock_release (& thread -> lock);
+
+    queue_add (& scheduler . queue[affinity], thread);
+    lock_release (& scheduler . queue[affinity] . lock);
 
     if (cpu != NULL && cpu -> id != cpu_mp_id ())
     {
-      log (VERBOSE_LEVEL, "Dispatch 0x%x to CPU(%d)",
-          thread -> id . raw, cpu -> id);
-
-      cpu_mp_send_ipi (cpu -> id, DNA_IPI_YIELD, NULL);
+      log (INFO_LEVEL, "%s => CPU(%d)", thread -> info . name, cpu -> id);
+      cpu_mp_send_ipi (cpu -> id, DNA_IPI_YIELD, thread);
     }
     else
     {
-      affinity = thread -> info . affinity;
-
       if (affinity == cpu_mp_count () || affinity == cpu_mp_id ())
       {
-        log (VERBOSE_LEVEL, "Schedule 0x%x on queue(%d)",
-            thread -> id . raw, affinity);
-
+        log (INFO_LEVEL, "%s => queue(%d)", thread -> info . name, affinity);
         status = DNA_INVOKE_SCHEDULER;
       }
     }
