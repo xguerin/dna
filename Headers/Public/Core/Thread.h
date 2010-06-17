@@ -71,7 +71,7 @@
   0,                        \
   0,                        \
   NULL,                     \
-  0                         \
+  0x8000                    \
 };
 
 /****t* Thread/thread_status_t
