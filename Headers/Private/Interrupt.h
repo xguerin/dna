@@ -28,14 +28,14 @@
 #include <Processor/Processor.h>
 #include <DnaTools/DnaTools.h>
 
-/****d* InterruptPrivate/DNA_IPI_YIELD
+/****d* InterruptPrivate/DNA_IPI_DISPATCH
  * SUMMARY
- * DNA_IPI_YIELD command constant.
+ * DNA_IPI_DISPATCH command constant.
  *
  * SOURCE
  */
 
-#define DNA_IPI_YIELD         0xFFFF
+#define DNA_IPI_DISPATCH         0xFFFF
 
 /*
  ****/

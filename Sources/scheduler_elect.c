@@ -79,17 +79,6 @@ status_t scheduler_elect (thread_t * p_thread, bool with_idle)
 
     ensure (with_idle, DNA_NO_AVAILABLE_THREAD);
 
-    lock_acquire (& cpu_pool . cpu[current_cpuid] . lock);
-
-    log (VERBOSE_LEVEL, "Set CPU %d @ READY", current_cpuid);
-    cpu_pool . cpu[current_cpuid] . status = DNA_CPU_READY;
-
-    lock_acquire (& cpu_pool . queue . lock);
-    lock_release (& cpu_pool . cpu[current_cpuid] . lock);
-
-    queue_add (& cpu_pool . queue, & cpu_pool . cpu[current_cpuid]);
-    lock_release (& cpu_pool . queue . lock);
-
     thread = cpu_pool . cpu[current_cpuid] . idle_thread;
     check (thread_found, thread == NULL, DNA_OK);
 

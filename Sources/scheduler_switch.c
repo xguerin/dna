@@ -50,6 +50,8 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
   watch (status_t)
   {
     ensure (thread != NULL, DNA_BAD_ARGUMENT);
+    log (VERBOSE_LEVEL, "(%d) %s -> %s", current_cpuid,
+        self -> info . name, thread -> info . name);
 
     /*
      * Compute the correct times if necessary
@@ -69,6 +71,28 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
     lock_release (& thread -> lock);
 
     /*
+     * Save the current context
+     */
+
+    cpu_context_save (& self -> context, & __scheduler_switch_end);
+
+    /*
+     * Check if self is IDLE. In this case, remove CPU
+     * from the available list.
+     */
+
+    if (self == cpu -> idle_thread)
+    {
+      log (VERBOSE_LEVEL, "CPU(%d) << RUNNING", cpu -> id);
+
+      lock_acquire (& cpu_pool . queue . lock);
+      queue_extract (& cpu_pool . queue, cpu);
+      lock_release (& cpu_pool . queue . lock);
+
+      cpu -> status = DNA_CPU_RUNNING;
+    }
+
+    /*
      * Update the processor's status
      */
 
@@ -76,13 +100,7 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
     cpu -> current_thread = thread;
 
     /*
-     * Save the current context
-     */
-
-    cpu_context_save (& self -> context, & __scheduler_switch_end);
-
-    /*
-     * If queue is not NULL, then add the current thread to this queue
+     * Release the queue's lock if queue is not NULL.
      */
 
     if (queue != NULL)
@@ -101,6 +119,22 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
      */
 
     __asm__ volatile ("__scheduler_switch_end:");
+
+    /*
+     * Check if self is IDLE. In this case, add the CPU
+     * into the available list.
+     */
+
+    if (self == cpu -> idle_thread)
+    {
+      log (VERBOSE_LEVEL, "CPU(%d) >> READY", cpu -> id);
+      cpu -> status = DNA_CPU_READY;
+
+      lock_acquire (& cpu_pool . queue . lock);
+      queue_add (& cpu_pool . queue, cpu);
+      lock_release (& cpu_pool . queue . lock);
+    }
+
     return DNA_OK;
   }
 }

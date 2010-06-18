@@ -68,15 +68,18 @@ status_t scheduler_dispatch (thread_t thread)
     }
     else
     {
-      lock_acquire (& cpu_pool . cpu[affinity] . lock);
+      status = queue_extract (& cpu_pool . queue, & cpu_pool . cpu[affinity]);
+      cpu = status == DNA_OK ? & cpu_pool . cpu[affinity] : NULL;
+    }
 
-      if (cpu -> status == DNA_CPU_READY)
-      {
-        cpu = & cpu_pool . cpu[affinity];
-        queue_extract (& cpu_pool . queue, cpu);
-      }
+    /*
+     * If we found a CPU but it is ourselve, we push the CPU back.
+     */
 
-      lock_release (& cpu_pool . cpu[affinity] . lock);
+    if (cpu != NULL && cpu -> id == cpu_mp_id ())
+    {
+      queue_pushback (& cpu_pool . queue, cpu);
+      cpu = NULL;
     }
 
     lock_release (& cpu_pool . queue . lock);
@@ -85,22 +88,23 @@ status_t scheduler_dispatch (thread_t thread)
      * Check if we can send the thread to a distant CPU.
      */
 
-    lock_acquire (& scheduler . queue[affinity] . lock);
-    lock_release (& thread -> lock);
-
-    queue_add (& scheduler . queue[affinity], thread);
-    lock_release (& scheduler . queue[affinity] . lock);
-
-    if (cpu != NULL && cpu -> id != cpu_mp_id ())
+    if (cpu != NULL)
     {
-      log (INFO_LEVEL, "%s => CPU(%d)", thread -> info . name, cpu -> id);
-      cpu_mp_send_ipi (cpu -> id, DNA_IPI_YIELD, thread);
+      log (VERBOSE_LEVEL, "(%d) %s => CPU(%d)", cpu_mp_id (),
+          thread -> info . name, cpu -> id);
+      cpu_mp_send_ipi (cpu -> id, DNA_IPI_DISPATCH, thread);
     }
     else
     {
+      lock_acquire (& scheduler . queue[affinity] . lock);
+      lock_release (& thread -> lock);
+
+      queue_add (& scheduler . queue[affinity], thread);
+      lock_release (& scheduler . queue[affinity] . lock);
+
       if (affinity == cpu_mp_count () || affinity == cpu_mp_id ())
       {
-        log (INFO_LEVEL, "%s => queue(%d)", thread -> info . name, affinity);
+        log (VERBOSE_LEVEL, "%s => queue(%d)", thread -> info . name, affinity);
         status = DNA_INVOKE_SCHEDULER;
       }
     }

@@ -46,11 +46,28 @@ status_t ipi_handler (int32_t command, void * cookie)
 
   switch (command)
   {
-    case DNA_IPI_YIELD :
+    case DNA_IPI_DISPATCH :
       {
+        thread_t target = (thread_t)cookie;
+        thread_t self = cpu_pool . cpu[cpu_mp_id ()] . current_thread;
+
         log (VERBOSE_LEVEL, "%d YIELD", cpu_mp_id ());
 
-        status = DNA_INVOKE_SCHEDULER;
+        if (self == cpu_pool . cpu[cpu_mp_id ()] . idle_thread)
+        {
+          lock_acquire (& self -> lock);
+          self -> info . status = DNA_THREAD_READY;
+          status = scheduler_switch (target, NULL);
+        }
+        else
+        {
+          lock_acquire (& scheduler . queue[target -> info . affinity] . lock);
+          lock_release (& target -> lock);
+
+          queue_add (& scheduler . queue[target -> info . affinity], target);
+          lock_release (& scheduler . queue[target -> info . affinity] . lock);
+        }
+
         break;
       }
 

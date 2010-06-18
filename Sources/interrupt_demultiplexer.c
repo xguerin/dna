@@ -41,53 +41,21 @@ int32_t interrupt_demultiplexer (int32_t itn)
  */
 
 {
-  bool cpu_was_ready = false;
   queue_link_t * isr;
   status_t status;
   int32_t current_cpuid = cpu_mp_id ();
   cpu_t * cpu = & cpu_pool . cpu[current_cpuid];
-  thread_t self = cpu -> current_thread;
   queue_t * queue = & cpu -> isr[itn];
+
+#if 0
+  bool cpu_was_ready = false;
+  thread_t self = cpu -> current_thread;
   bigtime_t lap_date, current_time;
+#endif
 
   watch (int32_t)
   {
     ensure (itn < cpu_trap_count (), DNA_BAD_ARGUMENT);
-    cpu_timer_get (current_cpuid, & current_time);
-
-    /*
-     * Extract the processor from the cpu list.
-     */
-    
-    lock_acquire (& cpu_pool . queue . lock);
-    status = queue_extract (& cpu_pool . queue, cpu);
-
-    lock_acquire (& cpu -> lock);
-    lock_release (& cpu_pool . queue . lock);
-
-    if (cpu -> status == DNA_CPU_READY)
-    {
-      log (VERBOSE_LEVEL, ">>>> CPU %d ready", cpu -> id);
-      cpu_was_ready = true;
-    }
-    else
-    {
-      log (VERBOSE_LEVEL, ">>>> CPU %d running", cpu -> id);
-    }
-
-    cpu -> status = DNA_CPU_RUNNING;
-    lap_date = cpu -> lap_date;
-    cpu -> lap_date = current_time;
-
-    /*
-     * Updating thread's user_time.
-     */
-
-    lock_acquire (& self -> lock);
-    lock_release (& cpu -> lock);
-
-    self -> info . user_time += current_time - lap_date;
-    lock_release (& self -> lock);
 
     /*
      * Look for the corresponding handler
@@ -109,60 +77,12 @@ int32_t interrupt_demultiplexer (int32_t itn)
     lock_release (& queue -> lock);
 
     /*
-     * Update self's timings.
-     */
-
-    cpu_timer_get (current_cpuid, & current_time);
-    lock_acquire (& cpu -> lock);
-
-    lap_date = cpu -> lap_date;
-    cpu -> lap_date = current_time;
-
-    lock_acquire (& self -> lock);
-    lock_release (& cpu -> lock);
-
-    self -> info . kernel_time += current_time - lap_date;
-    lock_release (& self -> lock);
-
-    /*
      * If necessary, invoke the scheduler.
      */
 
     if (status == DNA_INVOKE_SCHEDULER)
     {
       thread_yield ();
-    }
-
-    /*
-     * Finally, check the status of the CPU.
-     * If it entered ready and comes back not ready,
-     * push it back into a ready state.
-     */
-
-    lock_acquire (& cpu -> lock);
-
-    if (cpu -> status == DNA_CPU_READY)
-    {
-      log (VERBOSE_LEVEL, "<<<< CPU %d ready");
-    }
-    else
-    {
-      log (VERBOSE_LEVEL, "<<<< CPU %d running");
-    }
-
-    if (cpu_was_ready && cpu -> status != DNA_CPU_READY)
-    {
-      cpu -> status = DNA_CPU_READY;
-
-      lock_acquire (& cpu_pool . queue . lock);
-      lock_release (& cpu -> lock);
-
-      queue_add (& cpu_pool . queue, cpu);
-      lock_release (& cpu_pool . queue . lock);
-    }
-    else
-    {
-      lock_release (& cpu -> lock);
     }
 
     return DNA_OK;
