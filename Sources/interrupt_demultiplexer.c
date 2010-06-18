@@ -47,12 +47,6 @@ int32_t interrupt_demultiplexer (int32_t itn)
   cpu_t * cpu = & cpu_pool . cpu[current_cpuid];
   queue_t * queue = & cpu -> isr[itn];
 
-#if 0
-  bool cpu_was_ready = false;
-  thread_t self = cpu -> current_thread;
-  bigtime_t lap_date, current_time;
-#endif
-
   watch (int32_t)
   {
     ensure (itn < cpu_trap_count (), DNA_BAD_ARGUMENT);
