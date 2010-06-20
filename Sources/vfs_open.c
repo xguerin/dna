@@ -67,27 +67,25 @@ status_t vfs_open (char * restrict path, int32_t mode,
        */
 
       status = path_split (buffer, token);
-      check (mode_error, status == DNA_OK, status);
+      ensure (status == DNA_OK, status);
 
       /*
        * Get the vnode corresponding to the base directory
        */
 
       status = vnode_walk (buffer, & volume, & vnid, & data);
-      check (mode_error, status == DNA_OK, status);
+      ensure (status == DNA_OK, status);
 
       /*
        * Ask to create the file
        */
 
-      check (mode_error, volume -> cmd -> create != NULL, DNA_ERROR);
-
       status = volume -> cmd -> create (volume -> data, data, token,
           mode, perms, & file_vnid, & file_data);
-      check (mode_error, status == DNA_OK, status);
+      ensure (status == DNA_OK, status);
 
       status = vnode_put (volume -> id, vnid);
-      check (mode_error, status == DNA_OK, status);
+      panic (status == DNA_OK);
     }
     else
     {
@@ -96,16 +94,14 @@ status_t vfs_open (char * restrict path, int32_t mode,
        */
 
       status = vnode_walk (buffer, & volume, & vnid, & data);
-      check (mode_error, status == DNA_OK, status);
+      ensure (status == DNA_OK, status);
 
       /*
        * Ask to open the file
        */
 
-      check (mode_error, volume -> cmd -> open != NULL, DNA_ERROR);
-
       status = volume -> cmd -> open (volume -> data, data, mode, & file_data);
-      check (mode_error, status == DNA_OK, status);
+      ensure (status == DNA_OK, status);
     }
   
     /*
@@ -132,13 +128,6 @@ status_t vfs_open (char * restrict path, int32_t mode,
  
     *p_fd = fd;
     return DNA_OK;
-  }
-
-  rescue (mode_error)
-  {
-    lock_release (& file_pool . lock);
-    cpu_trap_restore(it_status);
-    leave;
   }
 }
 
