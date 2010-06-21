@@ -18,7 +18,7 @@
 #include <Private/Filesystem.h>
 #include <DnaTools/DnaTools.h>
 
-status_t rootfs_free_cookie (void * ns, void * node, void * data)
+status_t rootfs_free (void * ns, void * node, void * data)
 {
 
   return DNA_OK;

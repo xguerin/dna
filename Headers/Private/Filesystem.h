@@ -75,7 +75,7 @@ extern status_t rootfs_create (void * ns, void * node, char * path,
     int32_t mode, int32_t perms, int64_t * vnid, void ** data);
 extern status_t rootfs_open (void * ns, void * node, int32_t mode, void ** data);
 extern status_t rootfs_close (void * ns, void * node, void * data);
-extern status_t rootfs_free_cookie (void * ns, void * node, void * data);
+extern status_t rootfs_free (void * ns, void * node, void * data);
 
 extern status_t rootfs_create (void * ns, void * node, char * restrict path,
     int32_t mode, int32_t perms, int64_t * vnid, void ** data);
