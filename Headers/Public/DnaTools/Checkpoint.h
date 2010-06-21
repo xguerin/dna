@@ -26,17 +26,17 @@
 #define watch(type) type _rescue_status;
 #define leave return _rescue_status
 
-#define panic(condition)                          \
-  if (condition)                                  \
-  {                                               \
+#define panic(condition)                                  \
+  if (condition)                                          \
+  {                                                       \
     log (PANIC_LEVEL, "PANIC! " #condition " failed.");   \
-    for (;;);                                     \
+    for (;;);                                             \
   }
 
 #define ensure(condition,code)                    \
   if (! (condition))                              \
   {                                               \
-    log (VERBOSE_LEVEL, #condition " failed.");          \
+    log (VERBOSE_LEVEL, #condition " failed.");   \
     _rescue_status = code;                        \
     return _rescue_status;                        \
   }
@@ -44,7 +44,7 @@
 #define check(tag,condition,code)                 \
   if (! (condition))                              \
   {                                               \
-    log (VERBOSE_LEVEL, #condition " failed.");          \
+    log (VERBOSE_LEVEL, #condition " failed.");   \
     _rescue_status = code;                        \
     goto tag;                                     \
   }

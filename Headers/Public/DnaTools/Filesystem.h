@@ -42,6 +42,7 @@ typedef struct filesystem_cmd
   status_t (* destroy_vnode) (void * ns, void * node);
   status_t (* open) (void * ns, void * node, int32_t mode, void ** data);
   status_t (* close) (void * ns, void * node, void * data);
+  status_t (* free) (void * ns, void * node, void * data);
   status_t (* create) (void * ns, void * node, char * path,
       int32_t mode, int32_t perms, int64_t * vnid, void ** data);
   status_t (* read) (void * ns, void * node, void * file, void * data,
