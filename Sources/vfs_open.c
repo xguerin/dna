@@ -85,7 +85,7 @@ status_t vfs_open (char * restrict path, int32_t mode,
       ensure (status == DNA_OK, status);
 
       status = vnode_put (volume -> id, vnid);
-      panic (status == DNA_OK);
+      panic (status != DNA_OK);
     }
     else
     {

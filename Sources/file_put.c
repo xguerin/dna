@@ -85,13 +85,13 @@ status_t file_put (int16_t fd)
 
       status =  file -> vnode -> volume -> cmd -> free
         (file -> vnode -> volume -> data, file -> vnode -> data, file -> data);
-      panic (status == DNA_OK);
+      panic (status != DNA_OK);
 
       vnode = file -> vnode;
       kernel_free (file);
 
       status = vnode_put (vnode -> volume -> id, vnode -> id);
-      panic (status == DNA_OK);
+      panic (status != DNA_OK);
     }
     else
     {
