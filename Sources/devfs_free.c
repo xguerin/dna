@@ -18,7 +18,7 @@
 #include <Private/DeviceFileSystem.h>
 #include <DnaTools/DnaTools.h>
 
-status_t devfs_free_cookie (void * ns, void * node, void * data)
+status_t devfs_free (void * ns, void * node, void * data)
 {
   devfs_inode_t inode = node;
 

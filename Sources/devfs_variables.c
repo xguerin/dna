@@ -27,7 +27,7 @@ static filesystem_cmd_t devfs_cmd =
   devfs_destroy_vnode,
   devfs_open,
   devfs_close,
-  devfs_free_cookie,
+  devfs_free,
   devfs_create,
   devfs_read,
   devfs_write,

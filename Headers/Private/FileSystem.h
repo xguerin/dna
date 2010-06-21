@@ -49,7 +49,7 @@ extern status_t devfs_create (void * ns, void * node, char * path,
     int32_t mode, int32_t perms, int64_t * vnid, void ** data);
 extern status_t devfs_open (void * ns, void * node, int32_t mode, void ** data);
 extern status_t devfs_close (void * ns, void * node, void * data);
-extern status_t devfs_free_cookie (void * ns, void * node, void * data);
+extern status_t devfs_free (void * ns, void * node, void * data);
 
 extern status_t devfs_read (void * ns, void * node, void * file,
     void * data, int64_t offset, int32_t * p_count);
