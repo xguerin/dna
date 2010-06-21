@@ -18,27 +18,19 @@
 #include <Private/DeviceFileSystem.h>
 #include <DnaTools/DnaTools.h>
 
-static filesystem_cmd_t devfs_cmd =
+status_t devfs_close (void * ns, void * node, void * data)
 {
-  devfs_walk,
-  devfs_mount,
-  devfs_read_vnode,
-  devfs_write_vnode,
-  devfs_destroy_vnode,
-  devfs_open,
-  devfs_close,
-  devfs_free_cookie,
-  devfs_create,
-  devfs_read,
-  devfs_write,
-  devfs_mkdir,
-  devfs_readdir,
-  devfs_ioctl
-};
+  devfs_inode_t inode = node;
 
-filesystem_t devfs_module =
-{
-  "devfs",
-  & devfs_cmd
-};
+  watch (status_t)
+  {
+    if (inode -> class == DNA_DEVFS_FILE)
+    {
+      ensure (inode -> dev_cmd -> free != NULL, DNA_ERROR);
+      return inode -> dev_cmd -> free (data);
+    }
+
+    return DNA_OK;
+  }
+}
 
