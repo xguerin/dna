@@ -19,7 +19,7 @@
 #include <Private/FATlib.h>
 #include <DnaTools/DnaTools.h>
 
-status_t fatfs_free_cookie (void * ns, void * node, void * data)
+status_t fatfs_free (void * ns, void * node, void * data)
 {
 
   return DNA_OK;

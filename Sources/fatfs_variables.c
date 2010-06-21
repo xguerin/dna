@@ -26,6 +26,7 @@ static filesystem_cmd_t fatfs_cmd = {
   fatfs_destroy_vnode,
   fatfs_open,
   fatfs_close,
+  fatfs_free,
   fatfs_create,
   fatfs_read,
   fatfs_write,
