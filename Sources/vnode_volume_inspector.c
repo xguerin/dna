@@ -18,7 +18,7 @@
 #include <Private/VirtualFileSystem.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* vnode/vnode_volume_inspector
+/****f* VNode/vnode_volume_inspector
  * SUMMARY
  * Compare an volume and a vnode's volume.
  *

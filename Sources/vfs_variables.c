@@ -19,7 +19,7 @@
 #include <Private/VirtualFileSystem.h>
 #include <DnaTools/DnaTools.h>
 
-/****v* framework/vfs_component
+/****v* LifeCycle/vfs_component
  * SUMMARY
  * The VFS component.
  *
@@ -38,7 +38,7 @@ component_t vfs_component =
 /*
  ****/
 
-/****v* vnode/vnode_manager
+/****v* VNodePrivate/vnode_manager
  * SUMMARY
  * Instance of the vnode manager.
  *
@@ -50,7 +50,7 @@ vnode_manager_t vnode_manager;
 /*
  ****/
 
-/****v* volume/volume_manager
+/****v* VolumePrivate/volume_manager
  * SUMMARY
  * Instance of the volume manager.
  *

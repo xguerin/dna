@@ -19,7 +19,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* vfs/vfs_umount
+/****f* Operation/vfs_umount
  * SUMMARY
  * Unmount a volume.
  *
@@ -30,6 +30,7 @@ status_t vfs_umount (char * restrict target)
 
 /*
  * ARGUMENTS
+ * * target : the target mount point where the volume is mounted.
  *
  * RESULT
  *

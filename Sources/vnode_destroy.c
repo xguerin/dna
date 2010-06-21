@@ -20,7 +20,7 @@
 #include <MemoryManager/MemoryManager.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* vnode/vnode_destroy
+/****f* VNode/vnode_destroy
  * SUMMARY
  * Destroy a vnode.
  *
@@ -57,7 +57,7 @@ status_t vnode_destroy (int32_t vid, int64_t vnid)
         vnode_id_inspector, vnid, vid);
     check (invalid_vnode, vnode != NULL, DNA_NO_VNODE);
 
-    vnode -> usage_counter -= 1;
+    atomic_add (& vnode -> usage_counter, -1);
 
     if (vnode -> usage_counter == 0)
     {

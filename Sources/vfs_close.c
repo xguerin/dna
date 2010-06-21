@@ -20,7 +20,7 @@
 #include <MemoryManager/MemoryManager.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* vfs/vfs_close
+/****f* Operation/vfs_close
  * SUMMARY
  * Closes a file.
  *
@@ -34,7 +34,7 @@ status_t vfs_close (int16_t fd)
  * * fd : the file descriptor.
  *
  * FUNCTION
- * Not implemented yet.
+ * Close the file corresponding to the fd file descriptor.
  *
  * RESULT
  * * DNA_INVALID_FD if fd is not a valid file
@@ -68,21 +68,23 @@ status_t vfs_close (int16_t fd)
     check (error, status == DNA_OK, status);
 
     /*
-     * Release the file and return.
+     * Release the file, destroy the file, and return.
      */
 
-    status = file_destroy (fd);
-    ensure (status == DNA_OK, status);
-
     status = file_put (fd);
-    ensure (status == DNA_OK, status);
+    panic (status != DNA_OK);
+
+    status = file_destroy (fd);
+    panic (status != DNA_OK);
 
     return DNA_OK;
   }
 
   rescue (error)
   {
-    file_put (fd);
+    status = file_put (fd);
+    panic (status != DNA_OK);
+
     leave;
   }
 }

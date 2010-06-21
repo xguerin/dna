@@ -19,9 +19,9 @@
 #include <DnaTools/DnaTools.h>
 #include <Core/Core.h>
 
-/****f* vfs/vfs_mkdir
+/****f* Operation/vfs_mkdir
  * SUMMARY
- * Create a directory.
+ * Creates a directory.
  *
  * SYNOPSIS
  */

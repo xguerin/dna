@@ -21,9 +21,9 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* vfs/vfs_mount
+/****f* Operation/vfs_mount
  * SUMMARY
- * Mount a volume.
+ * Mounts a volume.
  *
  * SYNOPSIS
  */
@@ -109,7 +109,8 @@ status_t vfs_mount (char * restrict source, char * restrict target,
 
     status = fs -> cmd -> mount (volume -> id, source, flags, data,
         & volume -> data, & volume -> root_vnid);
-    ensure (status == DNA_OK, status);
+
+    check (cannot_mount, status == DNA_OK, status);
 
     /*
      * Put the host vnode back
@@ -118,10 +119,18 @@ status_t vfs_mount (char * restrict source, char * restrict target,
     if (host_volume != NULL)
     {
       status = vnode_put (host_volume -> id, host_vnid);
-      ensure (status == DNA_OK, status);
+      panic (status != DNA_OK);
     }
 
     return DNA_OK;
+  }
+
+  rescue (cannot_mount)
+  {
+    status = volume_destroy (volume);
+    panic (status != DNA_OK);
+
+    leave;
   }
 }
 

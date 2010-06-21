@@ -20,7 +20,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* vnode/vnode_get
+/****f* VNode/vnode_get
  * SUMMARY
  * Get a vnode from a volume.
  *

@@ -20,7 +20,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* vnode/vnode_walk
+/****f* VNodePrivate/vnode_walk
  * SUMMARY
  * Retrieve a reference to a vnode from a path.
  *

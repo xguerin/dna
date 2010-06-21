@@ -18,7 +18,7 @@
 #include <Private/VirtualFileSystem.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* vnode/vnode_id_inspector
+/****f* VNode/vnode_id_inspector
  * SUMMARY
  * Compare an id and a vnode's id.
  *

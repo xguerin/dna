@@ -19,7 +19,7 @@
 #include <Core/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* vfs/vfs_ioctl
+/****f* Operation/vfs_ioctl
  * SUMMARY
  * Execute an implementation-dependent operation on a file.
  *
@@ -31,13 +31,14 @@ status_t vfs_ioctl (int16_t fd, int32_t function,
 
 /*
  * ARGUMENTS
- * * fd : the file identifier.
- * * function : the operation's number.
- * * arguments : the arguments of the operation.
+ * * fd : the file identifier
+ * * function : the operation's number
+ * * arguments : the arguments of the operation
+ * * p_ret : a pointer to the return value
  *
  * FUNCTION
- * * Looks-up for the file corresponding to fd
- * * If it exists, then calls the file's ioctl() function.
+ * Looks-up for the file corresponding to fd * If it exists, then calls the
+ * file's ioctl() function.
  *
  * RESULT
  * Implementation-dependent.
@@ -74,12 +75,17 @@ status_t vfs_ioctl (int16_t fd, int32_t function,
      * Release the file and return.
      */
 
-    return file_put (fd);
+    status = file_put (fd);
+    panic (status != DNA_OK);
+
+    return DNA_OK;
   }
 
   rescue (error)
   {
-    file_put (fd);
+    status = file_put (fd);
+    panic (status != DNA_OK);
+
     *p_ret = -1;
     leave;
   }

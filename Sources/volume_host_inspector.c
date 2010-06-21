@@ -18,7 +18,7 @@
 #include <Private/VirtualFileSystem.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* volume/volume_host_inspector
+/****f* VolumePrivate/volume_host_inspector
  * SUMMARY
  * Compare an volume and a volume's host.
  *

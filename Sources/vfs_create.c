@@ -19,7 +19,7 @@
 #include <MemoryManager/MemoryManager.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* framework/vfs_create
+/****f* LifeCyclePrivate/vfs_create
  * SUMMARY
  * Initialize the I/O subsystem
  *
@@ -30,8 +30,7 @@ status_t vfs_create (void)
 
 /*
  * FUNCTION
- * * Initialize devices
- * * Initialize VFS
+ * Initializes the VFS structures.
  *
  * SOURCE
  */

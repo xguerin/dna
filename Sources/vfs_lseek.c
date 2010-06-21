@@ -20,7 +20,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* vfs/vfs_lseek
+/****f* Operation/vfs_lseek
  * SUMMARY
  * Reposition the offset of an opened file.
  *
@@ -37,8 +37,14 @@ status_t vfs_lseek (int16_t fd, int64_t offset, int32_t whence, int64_t * p_ret)
  * * p_ret : the return value
  *
  * FUNCTION
+ * Relocate the position pointer of the file corresponding to the file
+ * descriptor FD.
  *
  * RESULT
+ * * DNA_INVALID_FD : the file descriptor fd does not exist
+ * * DNA_INVALID_WHENCE : the whence value is not valid
+ * * DNA_ERROR : an error occured while getting or releasing the file
+ * * DN_OK : the operation succeeded
  *
  * SOURCE
  */
@@ -79,11 +85,19 @@ status_t vfs_lseek (int16_t fd, int64_t offset, int32_t whence, int64_t * p_ret)
         break;
     }
 
+    /*
+     * Update the offset, release the file, and return.$
+     */
+
     lock_release (& file -> lock);
     cpu_trap_restore(it_status);
     
     *p_ret = file -> offset;
-    return file_put (fd);
+
+    status = file_put (fd);
+    panic (status != DNA_OK);
+
+    return DNA_OK;
   }
 }
 

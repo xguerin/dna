@@ -19,9 +19,9 @@
 #include <MemoryManager/MemoryManager.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* volume/volume_destroy
+/****f* VolumePrivate/volume_destroy
  * SUMMARY
- * Decreate a volume.
+ * Destroy a volume.
  *
  * SYNOPSIS
  */

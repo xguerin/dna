@@ -20,9 +20,9 @@
 #include <MemoryManager/MemoryManager.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* vfs/vfs_open
+/****f* Operation/vfs_open
 * SUMMARY
- * Open a file.
+ * Opens a file.
  *
  * SYNOPSIS
  */
@@ -38,8 +38,13 @@ status_t vfs_open (char * restrict path, int32_t mode,
  * * p_fd : a pointer to a file descriptor
  *
  * FUNCTION
+ * Parses the path and checks if it is valid. Then checks if the file shoulb be
+ * created or opened. Finally, calls the appropriate function and returns.
  *
  * RESULT
+ * * DNA_NO_VNODE : the requested file does not exist
+ * * DNA_ERROR : error while parsing the file path
+ * * DNA_OK : the operation succeeded
  *
  * SOURCE
  */
@@ -77,12 +82,16 @@ status_t vfs_open (char * restrict path, int32_t mode,
       ensure (status == DNA_OK, status);
 
       /*
-       * Ask to create the file
+       * Ask to create the file.
        */
 
       status = volume -> cmd -> create (volume -> data, data, token,
           mode, perms, & file_vnid, & file_data);
       ensure (status == DNA_OK, status);
+
+      /*
+       * Release the parent file, it is not required anymore.
+       */
 
       status = vnode_put (volume -> id, vnid);
       panic (status != DNA_OK);

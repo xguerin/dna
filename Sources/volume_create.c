@@ -20,7 +20,7 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* volume/volume_create
+/****f* VolumePrivate/volume_create
  * SUMMARY
  * Allocate a volume.
  *

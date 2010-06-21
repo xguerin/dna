@@ -20,7 +20,7 @@
 #include <Core/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* framework/vfs_stop
+/****f* LifeCycle/vfs_stop
  * SUMMARY
  * Stop the I/O subsystem.
  *
@@ -30,10 +30,6 @@
 status_t vfs_stop (void)
 
 /*
- * FUNCTION
- * * Initialize devices
- * * Initialize VFS
- *
  * SOURCE
  */
 

@@ -18,7 +18,7 @@
 #include <Private/VirtualFileSystem.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* framework/vfs_start
+/****f* LifeCycle/vfs_start
  * SUMMARY
  * Start the VFS subsystem.
  *
@@ -29,7 +29,7 @@ status_t vfs_start (void)
 
 /*
  * FUNCTION
- * Mount the base file systems.
+ * Mount the base file systems and open the standard files.
  *
  * SOURCE
  */

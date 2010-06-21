@@ -19,9 +19,9 @@
 #include <Core/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* vfs/vfs_readdir
+/****f* Operation/vfs_readdir
  * SUMMARY
- * Read directory entries
+ * Read directory entries.
  *
  * SYNOPSIS
  */
@@ -37,8 +37,11 @@ status_t vfs_readdir (int16_t fd, directory_entry_t * entry_array,
  * * p_ret : a pointer to the result value
  *
  * FUNCTION
+ * Check if fd exists. If it is the case, call readdir on its file system.
  *
  * RESULT
+ * * DNA_ERROR : an error occured while acquiring or releasing the file
+ * * DNA_OK : the operation succeeded
  *
  * SOURCE
  */
@@ -74,13 +77,18 @@ status_t vfs_readdir (int16_t fd, directory_entry_t * entry_array,
      * Release the file and return.
      */
 
+    status = file_put (fd);
+    panic (status != DNA_OK);
+
     *p_ret = n_data;
-    return file_put (fd);
+    return DNA_OK;
   }
 
   rescue (error)
   {
-    file_put (fd);
+    status = file_put (fd);
+    panic (status != DNA_OK);
+
     *p_ret = -1;
     leave;
   }

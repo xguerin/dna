@@ -19,7 +19,7 @@
 #include <Core/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* vfs/vfs_read
+/****f* Operation/vfs_read
  * SUMMARY
  * Read data from a file.
  *
@@ -36,11 +36,12 @@ status_t vfs_read (int16_t fd, void * data, int32_t count, int32_t * p_ret)
  * * p_ret : a pointer to the return value
  *
  * FUNCTION
- * * Looks-up for the file corresponding to fd
- * * If it exists, then calls the file's read () function.
+ * Looks-up for the file corresponding to fd. If it exists, then calls the
+ * file's read () function.
  *
  * RESULT
- * Positive number if the function succeeded, -1 otherwise.
+ * * DNA_ERROR : an error occured while acquiring or releasing the file
+ * * DNA_OK : the operation succeeded
  *
  * SOURCE
  */
@@ -89,13 +90,18 @@ status_t vfs_read (int16_t fd, void * data, int32_t count, int32_t * p_ret)
      * Release the file and return.
      */
 
+    status = file_put (fd);
+    panic (status != DNA_OK);
+
     *p_ret = n_data;
-    return file_put (fd);
+    return DNA_OK;
   }
 
   rescue (read_error)
   {
-    file_put (fd);
+    status = file_put (fd);
+    panic (status != DNA_OK);
+
     *p_ret = -1;
     leave;
   }

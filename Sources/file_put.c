@@ -74,7 +74,7 @@ status_t file_put (int16_t fd)
     check (error, file != NULL, DNA_INVALID_FD);
     check (error, file -> usage_counter > 0, DNA_ERROR);
 
-    file -> usage_counter -= 1;
+    atomic_add (& file -> usage_counter, -1);
  
     if (file -> usage_counter == 0 && file -> destroy)
     {

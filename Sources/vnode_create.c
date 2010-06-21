@@ -19,7 +19,7 @@
 #include <DnaTools/DnaTools.h>
 #include <MemoryManager/MemoryManager.h>
 
-/****f* vnode/vnode_create
+/****f* VNode/vnode_create
  * SUMMARY
  * Create a vnode.
  *

@@ -72,14 +72,11 @@ status_t file_get (int16_t fd, file_t * p_file)
     lock_acquire (& file_pool . lock);
 
     file = file_pool . file[info . group][fd];
-    check (error, file != NULL && file -> usage_counter != 0, DNA_INVALID_FD);
+    check (error, file != NULL && ! file -> destroy, DNA_INVALID_FD);
 
-    lock_acquire (& file -> lock);
+    atomic_add (& file -> usage_counter, 1);
+
     lock_release (& file_pool . lock);
-
-    file -> usage_counter += 1;
-
-    lock_release (& file -> lock);
     cpu_trap_restore(it_status);
 
     log (VERBOSE_LEVEL, "Got FD %d.", fd);

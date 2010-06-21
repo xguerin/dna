@@ -18,7 +18,7 @@
 #include <Private/VirtualFileSystem.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* volume/volume_id_inspector
+/****f* VolumePrivate/volume_id_inspector
  * SUMMARY
  * Compare a string and a vnode's absolute path.
  *

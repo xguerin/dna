@@ -20,7 +20,7 @@
 #include <Core/Core.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* framework/vfs_destroy
+/****f* LifeCyclePrivate/vfs_destroy
  * SUMMARY
  * Destroy the I/O subsystem.
  *
