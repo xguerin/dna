@@ -18,7 +18,8 @@
 #include <Private/Filesystem.h>
 #include <DnaTools/DnaTools.h>
 
-status_t rootfs_close (void * ns, void * node, void * data) {
+status_t rootfs_close (void * ns, void * node, void * data)
+{
 
   return DNA_OK;
 }

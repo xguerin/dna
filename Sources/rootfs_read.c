@@ -18,7 +18,8 @@
 #include <Private/Filesystem.h>
 #include <DnaTools/DnaTools.h>
 
-status_t rootfs_read (void * ns, void * node, void * file, void * data, int64_t offset, int32_t * p_count)
+status_t rootfs_read (void * ns, void * node, void * file, void * data,
+    int64_t offset, int32_t * p_count)
 {
   status_t status = DNA_OK;
 

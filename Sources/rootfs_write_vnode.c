@@ -18,7 +18,8 @@
 #include <Private/Filesystem.h>
 #include <DnaTools/DnaTools.h>
 
-status_t rootfs_write_vnode (void * ns, void * node) {
+status_t rootfs_write_vnode (void * ns, void * node)
+{
 
   return DNA_OK;
 }

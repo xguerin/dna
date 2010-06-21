@@ -24,11 +24,13 @@
 
 #define ROOTFS_NAME_LENGTH 256
 
-typedef enum rootfs_inode_class {
+typedef enum rootfs_inode_class
+{
   DNA_ROOTFS_FILE,
   DNA_ROOTFS_DIRECTORY,
   DNA_ROOTFS_SYMLINK
-} rootfs_inode_class_t;
+}
+rootfs_inode_class_t;
 
 typedef struct rootfs_entry
 {
@@ -73,6 +75,7 @@ extern status_t rootfs_create (void * ns, void * node, char * path,
     int32_t mode, int32_t perms, int64_t * vnid, void ** data);
 extern status_t rootfs_open (void * ns, void * node, int32_t mode, void ** data);
 extern status_t rootfs_close (void * ns, void * node, void * data);
+extern status_t rootfs_free_cookie (void * ns, void * node, void * data);
 
 extern status_t rootfs_create (void * ns, void * node, char * restrict path,
     int32_t mode, int32_t perms, int64_t * vnid, void ** data);

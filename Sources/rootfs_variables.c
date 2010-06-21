@@ -27,6 +27,7 @@ static filesystem_cmd_t rootfs_cmd =
   rootfs_destroy_vnode,
   rootfs_open,
   rootfs_close,
+  rootfs_free_cookie,
   rootfs_create,
   rootfs_read,
   rootfs_write,

@@ -18,11 +18,8 @@
 #include <Private/Filesystem.h>
 #include <DnaTools/DnaTools.h>
 
-status_t rootfs_open (void * ns, void * node, int32_t mode, void ** data) {
-  //rootfs_inode_t inode = node;
-
-  //dna_printf ("[rootfs] Inode : name = %s, id = %d", inode -> name, inode -> id);
-
+status_t rootfs_open (void * ns, void * node, int32_t mode, void ** data)
+{
   *data = NULL;
   return DNA_OK;
 }
