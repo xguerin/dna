@@ -59,7 +59,7 @@ extern status_t rdv_read (void * handler, void * destination,
 extern status_t rdv_write (void * handler, void * source,
     int64_t offset, int32_t * p_count);
 extern status_t rdv_control (void * handler, int32_t operation,
-    void * data, int32_t * p_res);
+    va_list arguments, int32_t * p_res);
 
 #endif
 

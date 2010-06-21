@@ -18,7 +18,7 @@
 #include <Private/Driver.h>
 
 status_t rdv_control (void * handler, int32_t operation,
-    void * data, int32_t * p_res)
+    va_list arguments, int32_t * p_res)
 {
   channel_rdv_t * rdv = (channel_rdv_t *)handler;
   bool * result = NULL;
@@ -31,7 +31,7 @@ status_t rdv_control (void * handler, int32_t operation,
   switch (operation)
   {
     case RDV_RTEST :
-      result = ((bool **)data)[0];
+      result = va_arg (arguments, bool *);
 
       if (rdv -> setter . ready)
       {
@@ -47,7 +47,7 @@ status_t rdv_control (void * handler, int32_t operation,
       break;
 
     case RDV_WTEST :
-      result = ((bool **)data)[0];
+      result = va_arg (arguments, bool *);
 
       if (rdv -> getter . ready)
       {
