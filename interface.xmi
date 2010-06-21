@@ -18,6 +18,7 @@
   </provide>
 
   <require>
+    <type name="filesystem_t"/>
 
     <!-- Memory hooks -->
 
