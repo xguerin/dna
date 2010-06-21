@@ -56,6 +56,11 @@ extern status_t devfs_read (void * ns, void * node, void * file,
 extern status_t devfs_write (void * ns, void * node, void * file,
     void * data, int64_t offset, int32_t * p_count);
 
+extern status_t devfs_get_info (void * ns, void * node,
+    void * data, file_info_t * p_info);
+extern status_t devfs_set_info (void * ns, void * node, void * data,
+    file_info_t info, int32_t mask);
+
 extern status_t devfs_mkdir (void * ns, void * node, char * name, int32_t mode);
 extern status_t devfs_readdir (void * ns, void * node, void * data,
     void * entry_array, int64_t * offset, int32_t * p_count);
