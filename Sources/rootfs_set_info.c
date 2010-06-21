@@ -18,29 +18,10 @@
 #include <Private/Filesystem.h>
 #include <DnaTools/DnaTools.h>
 
-static filesystem_cmd_t rootfs_cmd =
+status_t rootfs_set_info (void * ns, void * node, void * data,
+    file_info_t info, int32_t mask)
 {
-  rootfs_walk,
-  rootfs_mount,
-  rootfs_read_vnode,
-  rootfs_write_vnode,
-  rootfs_destroy_vnode,
-  rootfs_open,
-  rootfs_close,
-  rootfs_free,
-  rootfs_create,
-  rootfs_read,
-  rootfs_write,
-  rootfs_get_info,
-  rootfs_set_info,
-  rootfs_mkdir,
-  rootfs_readdir,
-  rootfs_ioctl
-};
 
-filesystem_t rootfs_module =
-{
-  "rootfs",
-  & rootfs_cmd
-};
+  return DNA_OK;
+}
 

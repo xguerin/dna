@@ -73,7 +73,8 @@ extern status_t rootfs_destroy_vnode (void * ns, void * node);
 
 extern status_t rootfs_create (void * ns, void * node, char * path,
     int32_t mode, int32_t perms, int64_t * vnid, void ** data);
-extern status_t rootfs_open (void * ns, void * node, int32_t mode, void ** data);
+extern status_t rootfs_open (void * ns, void * node,
+    int32_t mode, void ** data);
 extern status_t rootfs_close (void * ns, void * node, void * data);
 extern status_t rootfs_free (void * ns, void * node, void * data);
 
@@ -84,7 +85,11 @@ extern status_t rootfs_read (void * ns, void * node, void * file,
 extern status_t rootfs_write (void * ns, void * node, void * file,
     void * data, int64_t offset, int32_t * p_count);
 
-extern status_t rootfs_mkdir (void * ns, void * node, char * name, int32_t mode);
+extern status_t rootfs_get_info (void * ns, void * node,
+    void * data, file_info_t * p_info);
+extern status_t rootfs_set_info (void * ns, void * node, void * data,
+    file_info_t info, int32_t mask);
+
 extern status_t rootfs_mkdir (void * ns, void * node,
     char * restrict name, int32_t mode);
 extern status_t rootfs_readdir (void * ns, void * node, void * data,
