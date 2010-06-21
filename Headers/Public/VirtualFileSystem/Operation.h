@@ -23,6 +23,8 @@
 
 #include <stdarg.h>
 #include <stdint.h>
+
+#include <VirtualFileSystem/File.h>
 #include <DnaTools/DnaTools.h>
 
 #define DNA_SEEK_SET                    0x00000000
@@ -37,25 +39,6 @@
 #define DNA_TRUNCATE                    0x00000400
 #define DNA_FAIL_IF_EXIST               0x00000800
 #define DNA_NON_BLOCKING                0x00004000
-
-/****t* Operations/directory_entry_t
- * SUMMARY
- * Directory entry type.
- *
- * SOURCE
- */
-
-typedef struct _directory_entry
-{
-  int64_t vnid;
-  int32_t vid;
-  uint16_t d_reclen;
-  char d_name[1];
-}
-directory_entry_t;
-
-/*
- ****/
 
 extern status_t vfs_mount (char * restrict source,
     char * restrict target, char * restrict fs_type,
@@ -77,6 +60,9 @@ extern status_t vfs_read (int16_t fd, void * data,
     int32_t count, int32_t * p_ret);
 extern status_t vfs_write (int16_t fd, void * data,
     int32_t count, int32_t * p_ret);
+
+extern status_t vfs_get_info (int16_t fd, file_info_t * p_info);
+extern status_t vfs_set_info (int16_t fd, file_info_t info, int32_t mask);
 
 extern status_t vfs_lseek (int16_t fd, int64_t offset,
     int32_t whence, int64_t * p_ret);

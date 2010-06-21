@@ -21,6 +21,8 @@
 #ifndef DNA_VFS_PUBLIC_H
 #define DNA_VFS_PUBLIC_H
 
+#include <VirtualFileSystem/File.h>
+#include <VirtualFileSystem/Filesystem.h>
 #include <VirtualFileSystem/LifeCycle.h>
 #include <VirtualFileSystem/Operation.h>
 #include <VirtualFileSystem/VNode.h>

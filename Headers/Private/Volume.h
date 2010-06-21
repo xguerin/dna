@@ -24,6 +24,7 @@
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <VirtualFileSystem/Filesystem.h>
 #include <Core/Core.h>
 #include <DnaTools/DnaTools.h>
 

@@ -21,8 +21,9 @@
 #ifndef DNA_VFS_PRIVATE_H
 #define DNA_VFS_PRIVATE_H
 
-#include <Private/LifeCycle.h>
 #include <Private/File.h>
+#include <Private/Filesystem.h>
+#include <Private/LifeCycle.h>
 #include <Private/VNode.h>
 #include <Private/Volume.h>
 
