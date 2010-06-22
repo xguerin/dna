@@ -30,5 +30,6 @@
 #include <DnaTools/Path.h>
 #include <DnaTools/Queue.h>
 #include <DnaTools/Status.h>
+#include <DnaTools/VaCall.h>
 
 #endif
