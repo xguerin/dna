@@ -21,7 +21,63 @@
 status_t devfs_get_info (void * ns, void * node,
     void * data, file_info_t * p_info)
 {
+  devfs_t devfs = ns;
+  devfs_inode_t inode = node;
 
-  return DNA_OK;
+  watch (status_t)
+  {
+    ensure (devfs != NULL, DNA_BAD_ARGUMENT);
+    ensure (inode != NULL, DNA_BAD_ARGUMENT);
+    ensure (p_info != NULL, DNA_BAD_ARGUMENT);
+
+    switch (inode -> class)
+    {
+      case DNA_DEVFS_FILE :
+        {
+          int32_t ret;
+          device_info_t dev_info;
+
+          va_call (list,
+              {
+                inode -> dev_cmd -> control (data, DNA_GET_INFO, list, & ret);
+              },
+              & dev_info);
+
+          switch (dev_info . type)
+          {
+            case DNA_NETWORK_DEVICE :
+            case DNA_CHARACTER_DEVICE :
+              p_info -> type = DNA_FILE_SPECIAL_CHARACTER;
+              break;
+
+            case DNA_DISK_DEVICE :
+            case DNA_WORM_DEVICE :
+            case DNA_CD_DEVICE :
+              p_info -> type = DNA_FILE_SPECIAL_BLOCK;
+              break;
+
+            default :
+              p_info -> type = DNA_FILE_REGULAR;
+              break;
+          }
+
+          break;
+        }
+
+      case DNA_DEVFS_DIRECTORY :
+        {
+          p_info -> type = DNA_FILE_DIRECTORY;
+          break;
+        }
+
+      case DNA_DEVFS_SYMLINK :
+        {
+          p_info -> type = DNA_FILE_SYMBOLIC_LINK;
+          break;
+        }
+    }
+
+    return DNA_OK;
+  }
 }
 
