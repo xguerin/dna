@@ -30,6 +30,11 @@ status_t devfs_get_info (void * ns, void * node,
     ensure (inode != NULL, DNA_BAD_ARGUMENT);
     ensure (p_info != NULL, DNA_BAD_ARGUMENT);
 
+    dna_memset (p_info, 0, sizeof (file_info_t));
+
+    p_info -> volume = devfs -> vid;
+    p_info -> vnode = inode -> id;
+
     switch (inode -> class)
     {
       case DNA_DEVFS_FILE :
