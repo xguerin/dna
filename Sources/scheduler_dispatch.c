@@ -97,10 +97,10 @@ status_t scheduler_dispatch (thread_t thread)
     else
     {
       lock_acquire (& scheduler . queue[affinity] . lock);
-      lock_release (& thread -> lock);
-
       queue_add (& scheduler . queue[affinity], thread);
+
       lock_release (& scheduler . queue[affinity] . lock);
+      lock_release (& thread -> lock);
 
       if (affinity == cpu_mp_count () || affinity == cpu_mp_id ())
       {
