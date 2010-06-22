@@ -46,6 +46,7 @@ int32_t interrupt_demultiplexer (int32_t itn)
   int32_t current_cpuid = cpu_mp_id ();
   cpu_t * cpu = & cpu_pool . cpu[current_cpuid];
   queue_t * queue = & cpu -> isr[itn];
+  thread_t thread, self = cpu -> current_thread;
 
   watch (int32_t)
   {
@@ -76,7 +77,24 @@ int32_t interrupt_demultiplexer (int32_t itn)
 
     if (status == DNA_INVOKE_SCHEDULER)
     {
-      thread_yield ();
+      status = scheduler_elect (& thread, false);
+      ensure (status != DNA_ERROR && status != DNA_BAD_ARGUMENT, status);
+
+      if (status != DNA_NO_AVAILABLE_THREAD)
+      {
+        lock_acquire (& self -> lock);
+        self -> info . status = DNA_THREAD_READY;
+
+        if (self != cpu_pool . cpu[cpu_mp_id()] . idle_thread)
+        {
+          queue = & scheduler . queue[self -> info . affinity];
+          lock_acquire (& queue -> lock);
+          queue_add (queue, self);
+        }
+
+        status = scheduler_switch (thread, queue);
+        ensure (status == DNA_OK, status);
+      }
     }
 
     return DNA_OK;

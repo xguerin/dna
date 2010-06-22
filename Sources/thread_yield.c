@@ -52,13 +52,10 @@ status_t thread_yield (void)
     {
       lock_acquire (& self -> lock);
       self -> info . status = DNA_THREAD_READY;
+      queue = & scheduler . queue[self -> info . affinity];
 
-      if (self != cpu_pool . cpu[cpu_mp_id()] . idle_thread)
-      {
-        queue = & scheduler . queue[self -> info . affinity];
-        lock_acquire (& queue -> lock);
-        queue_add (queue, self);
-      }
+      lock_acquire (& queue -> lock);
+      queue_add (queue, self);
 
       status = scheduler_switch (thread, queue);
       ensure (status == DNA_OK, status);
