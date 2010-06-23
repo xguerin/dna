@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-
 #include <Private/FATFileSystem.h>
 #include <DnaTools/DnaTools.h>
 
@@ -52,5 +51,7 @@ status_t fatfs_get_info (void * ns, void * node,
 
     return DNA_OK;
   }
+
+  return DNA_OK;
 }
 
