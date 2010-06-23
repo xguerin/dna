@@ -18,27 +18,10 @@
 #include <Private/FATFileSystem.h>
 #include <DnaTools/DnaTools.h>
 
-static filesystem_cmd_t fatfs_cmd = {
-  fatfs_walk,
-  fatfs_mount,
-  fatfs_read_vnode,
-  fatfs_write_vnode,
-  fatfs_destroy_vnode,
-  fatfs_open,
-  fatfs_close,
-  fatfs_free,
-  fatfs_create,
-  fatfs_read,
-  fatfs_write,
-  fatfs_get_info,
-  fatfs_set_info,
-  fatfs_mkdir,
-  fatfs_readdir,
-  fatfs_ioctl
-};
+status_t fatfs_set_info (void * ns, void * node, void * data,
+    file_info_t info, int32_t mask)
+{
 
-filesystem_t fatfs_module = {
-  "fatfs",
-  & fatfs_cmd
-};
+  return DNA_OK;
+}
 
