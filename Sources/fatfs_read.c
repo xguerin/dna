@@ -34,7 +34,7 @@ status_t fatfs_read (void * ns, void * node, void * file, void * data, int64_t o
 	
 	struct sector_buffer data_buffer;
 	
-	log (VERBOSE_LEVEL, "[start] FATFS read");
+//	log (VERBOSE_LEVEL, "[start] FATFS read");
 	
 	watch(status_t)
 	{
@@ -97,7 +97,7 @@ status_t fatfs_read (void * ns, void * node, void * file, void * data, int64_t o
 		  
 	*p_count = bytesRead;
 
-	log (VERBOSE_LEVEL, "[end] FATFS read ");
+//	log (VERBOSE_LEVEL, "[end] FATFS read ");
 
 	return DNA_OK;
 }
