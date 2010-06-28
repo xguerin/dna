@@ -13,8 +13,8 @@ exception_id_t;
 
 typedef uint32_t interrupt_id_t;
 typedef uint32_t interrupt_status_t;
-typedef int32_t (* exception_handler_t) (void);
-typedef int32_t (* interrupt_handler_t) (int32_t itn);
+typedef int32_t (* exception_handler_t) (void * data);
+typedef int32_t (* interrupt_handler_t) (void * data);
 
 extern interrupt_handler_t * cpu_handler_table[8];
 
