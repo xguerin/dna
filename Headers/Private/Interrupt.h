@@ -92,7 +92,7 @@ typedef struct _isr
 /*
  ****/
 
-extern int32_t interrupt_demultiplexer (int32_t itn);
+extern int32_t interrupt_demultiplexer (void * data);
 extern bool interrupt_handler_inspector (void * isr, va_list list);
 
 #endif

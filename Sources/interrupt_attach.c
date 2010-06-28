@@ -96,6 +96,7 @@ status_t interrupt_attach (int32_t cpuid, interrupt_id_t id,
       }
       else
       {
+        lock_acquire (& cpu_pool . cpu[cpuid] . lock);
         cpu_mp_send_ipi (cpuid, DNA_IPI_TRAP_ENABLE, (void *) id);
       }
     }

@@ -27,7 +27,7 @@
  * SYNOPSIS
  */
 
-int32_t interrupt_demultiplexer (int32_t itn)
+int32_t interrupt_demultiplexer (void * data)
 
 /*
  * ARGUMENTS
@@ -43,7 +43,7 @@ int32_t interrupt_demultiplexer (int32_t itn)
 {
   queue_link_t * isr;
   status_t status;
-  int32_t current_cpuid = cpu_mp_id ();
+  int32_t current_cpuid = cpu_mp_id (), itn = (int32_t) data;
   cpu_t * cpu = & cpu_pool . cpu[current_cpuid];
   queue_t * queue = & cpu -> isr[itn];
   thread_t thread, self = cpu -> current_thread;
@@ -61,7 +61,7 @@ int32_t interrupt_demultiplexer (int32_t itn)
 
     for (isr = queue -> head; isr != NULL; isr = isr -> next)
     {
-      status = ((isr_t)isr) -> handler (itn);
+      status = ((isr_t)isr) -> handler (data);
 
       if (status == DNA_INVOKE_SCHEDULER || status == DNA_HANDLED_INTERRUPT)
       {

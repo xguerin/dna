@@ -92,6 +92,8 @@ status_t scheduler_dispatch (thread_t thread)
     {
       log (VERBOSE_LEVEL, "(%d) %s => CPU(%d)", cpu_mp_id (),
           thread -> info . name, cpu -> id);
+
+      lock_acquire (& cpu -> lock);
       cpu_mp_send_ipi (cpu -> id, DNA_IPI_DISPATCH, thread);
     }
     else
