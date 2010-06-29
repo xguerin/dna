@@ -27,7 +27,7 @@ typedef struct _soclib_aicu_slot
   uint32_t status;
   uint32_t mask;
   uint32_t active_handler;
-  uint32_t reserved;
+  uint32_t active_id;
 }
 soclib_aicu_slot_t;
 
@@ -38,7 +38,7 @@ typedef struct _soclib_aicu_port
   uint32_t reserved[64 - (SOCLIB_AICU_MAX_SLOTS + 1)];
   soclib_aicu_slot_t slot[SOCLIB_AICU_MAX_SLOTS];
 }
-* soclib_aicu_port_t
+* soclib_aicu_port_t;
 
 extern soclib_aicu_port_t PLATFORM_AICU_BASE;
 
