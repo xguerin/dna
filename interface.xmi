@@ -44,7 +44,6 @@
       </method>
     </context>
 
-
     <context name="Operations">
       <type name="directory_entry_t"/>
       <type name="file_info_t"/>
@@ -139,6 +138,7 @@
   </provide>
 
   <require>
+    <type name="component_t"/>
     <type name="interrupt_status_t"/>
     <type name="spinlock_t"/>
 
