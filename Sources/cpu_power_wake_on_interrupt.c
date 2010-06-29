@@ -2,6 +2,7 @@
 
 void cpu_power_wake_on_interrupt (void)
 {
+#if 0
   register int32_t id = 0;
 
   __asm__ volatile (
@@ -9,4 +10,5 @@ void cpu_power_wake_on_interrupt (void)
       : "=r"(id)
       :
       );
+#endif
 }

@@ -16,8 +16,6 @@ typedef uint32_t interrupt_status_t;
 typedef int32_t (* exception_handler_t) (void * data);
 typedef int32_t (* interrupt_handler_t) (void * data);
 
-extern interrupt_handler_t * cpu_handler_table[8];
-
 extern int32_t cpu_trap_count (void);
 
 extern void cpu_trap_attach_esr (int32_t cpuid, exception_id_t id,

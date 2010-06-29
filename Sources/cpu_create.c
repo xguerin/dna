@@ -19,6 +19,7 @@
 
 void cpu_create (void)
 {
-
+  int32_t cpu_id = cpu_mp_id ();
+  PLATFORM_AICU_BASE -> slot[cpu_id] . mask = 0x3;
 }
 

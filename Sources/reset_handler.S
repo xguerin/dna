@@ -6,7 +6,8 @@
 .section .excep,#alloc,#execinstr
 	.align 4
 	.global reset_handler
-	.extern system_kickstart
+	.extern cpu_create
+	.extern cpu_start
 	.extern CPU_SVC_STACK_ADDR
 
 reset_handler:
@@ -35,12 +36,19 @@ reset_handler:
 	mov	sp, r1
 	mov fp, sp
 
-	@ Disable CPU interrupts
+	@ Enable CPU interrupts
 	mrs r0, cpsr
-	orr r0, r0, #0xC0
+	bic r0, r0, #0xC0
 	msr cpsr_c, r0
 
-	@ Start the Operating system
-	ldr	lr, = system_kickstart
-	mov pc, lr
+	@ Call CPU create
+	ldr	r0, = cpu_create
+  blx r0
+
+	@ Call CPU start
+	ldr	r0, = cpu_start
+  blx r0
+
+_hell_pit:
+  b _hell_pit
 

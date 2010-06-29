@@ -1,7 +1,7 @@
 .section .excep,#alloc,#execinstr
 	.align 4
 	.global irq_handler
-  .extern cpu_handler_table
+  .extern PLATFORM_AICU_BASE
 
 irq_registers:
   .word 0x0 @ R1
@@ -28,13 +28,18 @@ irq_handler:
   ldmia r0, {r1, r2, r3}
   push {r1, r2, r3}
 
+	@ Fetch the current interruption source
 	@ Branch to IRQ handler
-  mrc p15,0,r3,c0,c0,5
-  ldr r2, =cpu_handler_table
-  ldr r1, [r2]
-  ldr r2, [r1, r3, lsl #2]
-  mov r0, #0
-	blx r2
+
+	ldr r1, =PLATFORM_AICU_BASE
+	ldr r1, [r1]
+  mrc p15,0,r2,c0,c0,5
+  add r1, r1, #0x100
+  add r1, r1, r2, lsl #0x4
+
+	ldr r0, [r1, #0xC]
+	ldr r1, [r1, #0x8]
+	blx r1
 
 	@ Restore the context
   ldr r0, =irq_registers

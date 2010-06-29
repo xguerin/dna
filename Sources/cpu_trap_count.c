@@ -3,6 +3,6 @@
 
 int32_t cpu_trap_count (void)
 {
-  return 2;
+  return 32;
 }
 
