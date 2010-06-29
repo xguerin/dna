@@ -165,6 +165,7 @@
 
     <!-- Types -->
 
+    <type name="component_t"/>
     <type name="interrupt_id_t"/>
     <type name="interrupt_status_t"/>
     <type name="interrupt_handler_t"/>
