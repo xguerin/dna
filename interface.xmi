@@ -32,6 +32,7 @@
   </provide>
 
   <require>
+    <type name="component_t"/>
     <type name="spinlock_t"/>
 
     <method name="cpu_trap_mask_and_backup" result="interrupt_status_t"/>
