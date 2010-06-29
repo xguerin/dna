@@ -15,23 +15,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#ifndef PLATFORM_TIMER_H
-#define PLATFORM_TIMER_H
+#ifndef PLATFORM_AICU_H
+#define PLATFORM_AICU_H
 
 #include <stdint.h>
 
-#define PLATFORM_TIMER_RES 10
+#define SOCLIB_AICU_MAX_SLOTS 32
 
-typedef struct _soclib_timer_port
+typedef struct _soclib_aicu_slot
 {
-  uint32_t value;
-  uint32_t mode;
-  uint32_t period;
-  uint32_t irq_ack;
+  uint32_t status;
+  uint32_t mask;
+  uint32_t active_handler;
+  uint32_t reserved;
 }
-* soclib_timer_port_t;
+soclib_aicu_slot_t;
 
-extern soclib_timer_port_t PLATFORM_TIMER_BASE;
+typedef struct _soclib_aicu_port
+{
+  uint32_t control;
+  uint32_t handlers[SOCLIB_AICU_MAX_SLOTS];
+  uint32_t reserved[64 - (SOCLIB_AICU_MAX_SLOTS + 1)];
+  soclib_aicu_slot_t slot[SOCLIB_AICU_MAX_SLOTS];
+}
+* soclib_aicu_port_t
+
+extern soclib_aicu_port_t PLATFORM_AICU_BASE;
 
 #endif
 

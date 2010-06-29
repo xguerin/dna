@@ -29,7 +29,6 @@ typedef struct _soclib_ipi_port
 }
 * soclib_ipi_port_t;
 
-extern int32_t PLATFORM_IPI_INTN;
 extern soclib_ipi_port_t PLATFORM_IPI_BASE;
 
 #endif
