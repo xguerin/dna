@@ -78,7 +78,8 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
 
     /*
      * Check if self is IDLE. In this case, remove CPU
-     * from the available list.
+     * from the available list. If target is IDLE, restore
+     * the processor status to READY.
      */
 
     if (self == cpu -> idle_thread)
@@ -90,6 +91,15 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
       lock_release (& cpu_pool . queue . lock);
 
       cpu -> status = DNA_CPU_RUNNING;
+    }
+    else if (thread == cpu -> idle_thread)
+    {
+      log (VERBOSE_LEVEL, "CPU(%d) >> READY", cpu -> id);
+      cpu -> status = DNA_CPU_READY;
+
+      lock_acquire (& cpu_pool . queue . lock);
+      queue_add (& cpu_pool . queue, cpu);
+      lock_release (& cpu_pool . queue . lock);
     }
 
     /*
@@ -121,19 +131,11 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
     __asm__ volatile ("__scheduler_switch_end:");
 
     /*
-     * Check if self is IDLE. In this case, add the CPU
-     * into the available list.
+     * Contrary to what I thought at first, we cannot 
+     * check if self is running the IDLE thread here, because
+     * in the case of the CPU0 (the boot CPU), swithching to IDLE
+     * would not branch here but directly in the IDLE thread handler.
      */
-
-    if (self == cpu -> idle_thread)
-    {
-      log (VERBOSE_LEVEL, "CPU(%d) >> READY", cpu -> id);
-      cpu -> status = DNA_CPU_READY;
-
-      lock_acquire (& cpu_pool . queue . lock);
-      queue_add (& cpu_pool . queue, cpu);
-      lock_release (& cpu_pool . queue . lock);
-    }
 
     return DNA_OK;
   }
