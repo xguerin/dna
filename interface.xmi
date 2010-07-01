@@ -213,6 +213,11 @@
   </provide>
 
   <require>
+    <type name="soclib_aicu_port_t"/>
+    <type name="soclib_aicu_slot_t"/>
+    <type name="soclib_ipi_port_t"/>
+    <type name="soclib_timer_port_t"/>
+
     <definition name="PLATFORM_ENDIANNESS"/>
 
     <method name="system_kickstart" result=""/>
