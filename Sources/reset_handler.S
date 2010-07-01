@@ -6,8 +6,7 @@
 .section .excep,#alloc,#execinstr
 	.align 4
 	.global reset_handler
-	.extern cpu_create
-	.extern cpu_start
+	.extern system_kickstart
 	.extern CPU_SVC_STACK_ADDR
 
 reset_handler:
@@ -41,12 +40,8 @@ reset_handler:
 	bic r0, r0, #0xC0
 	msr cpsr_c, r0
 
-	@ Call CPU create
-	ldr	r0, = cpu_create
-  blx r0
-
-	@ Call CPU start
-	ldr	r0, = cpu_start
+	@ Call to system kickstart
+	ldr	r0, = system_kickstart
   blx r0
 
 _hell_pit:
