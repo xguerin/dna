@@ -79,6 +79,7 @@ status_t interrupt_detach (int32_t cpuid, interrupt_id_t id,
       }
       else
       {
+        lock_acquire (& cpu_pool . cpu[cpuid] . ipi_lock);
         cpu_mp_send_ipi (cpuid, DNA_IPI_TRAP_DISABLE, (void *) id);
       }
     }

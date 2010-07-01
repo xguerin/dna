@@ -57,6 +57,7 @@ typedef struct _cpu
   cpu_status_t status;
 
   spinlock_t lock;
+  spinlock_t ipi_lock;
 
   bigtime_t lap_date;
   queue_t * isr;

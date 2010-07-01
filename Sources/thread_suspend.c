@@ -120,7 +120,7 @@ status_t thread_suspend (int32_t id)
               next_cpuid = thread -> info . cpu_id;
               lock_release (& thread -> lock);
 
-              lock_acquire (& cpu_pool . cpu[next_cpuid] . lock);
+              lock_acquire (& cpu_pool . cpu[next_cpuid] . ipi_lock);
               cpu_mp_send_ipi (next_cpuid, DNA_IPI_SUSPEND,
                   (void *) thread -> id . raw);
             }

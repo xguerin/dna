@@ -43,7 +43,7 @@ status_t ipi_handler (int32_t command, void * cookie)
 
 {
   status_t status = DNA_OK;
-  lock_release (& cpu_pool . cpu[cpu_mp_id ()] . lock);
+  lock_release (& cpu_pool . cpu[cpu_mp_id ()] . ipi_lock);
 
   switch (command)
   {
