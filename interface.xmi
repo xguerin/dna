@@ -22,6 +22,13 @@
         <argument name="string" type="string" direction="In"/>
       </method>
     </context>
+
+    <context name="Devices">
+      <type name="soclib_aicu_port_t"/>
+      <type name="soclib_aicu_slot_t"/>
+      <type name="soclib_ipi_port_t"/>
+      <type name="soclib_timer_port_t"/>
+    </context>
   </provide>
 
   <require>

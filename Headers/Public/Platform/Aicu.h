@@ -37,7 +37,7 @@ typedef struct _soclib_aicu_port
   uint32_t reserved_0[3];
 
   uint32_t handlers[SOCLIB_AICU_MAX_SLOTS];
-  uint32_t reserved_1[64 - (SOCLIB_AICU_MAX_SLOTS + 1)];
+  uint32_t reserved_1[64 - (SOCLIB_AICU_MAX_SLOTS + 4)];
 
   soclib_aicu_slot_t slot[SOCLIB_AICU_MAX_SLOTS];
 }
