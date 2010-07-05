@@ -63,10 +63,10 @@ status_t ipi_handler (int32_t command, void * cookie)
         else
         {
           lock_acquire (& scheduler . queue[target -> info . affinity] . lock);
-          lock_release (& target -> lock);
-
           queue_add (& scheduler . queue[target -> info . affinity], target);
+
           lock_release (& scheduler . queue[target -> info . affinity] . lock);
+          lock_release (& target -> lock);
         }
 
         break;
