@@ -91,6 +91,7 @@ typedef struct _thread
   thread_id_t id;
   thread_info_t info;
 
+  bool stack_allocated;
   thread_signature_t signature;
   cpu_context_t context;
 }

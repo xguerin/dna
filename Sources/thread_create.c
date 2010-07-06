@@ -90,6 +90,7 @@ status_t thread_create (thread_handler_t handler, void * arguments,
     if (info . stack_base == NULL)
     {
       thread -> info . stack_base = kernel_malloc (info . stack_size, false);
+      thread -> stack_allocated = true;
       check (error, thread -> info . stack_base != NULL, DNA_OUT_OF_MEM);
     }
 
