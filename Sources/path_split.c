@@ -17,7 +17,7 @@
 
 #include <DnaTools/DnaTools.h>
 
-/****f* path/path_split
+/****f* Path/path_split
  * SUMMARY
  *
  * SYNOPSIS

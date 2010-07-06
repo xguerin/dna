@@ -17,7 +17,7 @@
 
 #include <DnaTools/DnaTools.h>
 
-/****f* path/path_get_next_entry
+/****f* Path/path_get_next_entry
  * SUMMARY
  * Get a token from a path.
  *

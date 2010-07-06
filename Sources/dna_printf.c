@@ -18,7 +18,7 @@
 #include <stdint.h>
 #include <DnaTools/DnaTools.h>
 
-/****f* libc/dna_printf
+/****f* C/dna_printf
  * SUMMARY
  * Basic kernel printf support.
  *

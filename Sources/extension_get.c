@@ -17,26 +17,26 @@
 
 #include <DnaTools/DnaTools.h>
 
-/****f* module/module_load
+/****f* Extension/extension_load
  * SUMMARY
- * Load a module.
+ * Load an extension.
  *
  * SYNOPSIS
  */
 
-status_t module_load (char * name, module_t ** module)
+status_t extension_get (char * name, extension_t ** extension)
 
 /*
  * SOURCE
  */
 
 {
-  for (int32_t i = 0; i < OS_N_MODULES; i++)
+  for (int32_t i = 0; i < OS_N_EXTENSIONS; i++)
   {
-    if (dna_strcmp (OS_MODULES_LIST[i] -> name, name) == 0)
+    if (dna_strcmp (OS_EXTENSIONS_LIST[i] -> name, name) == 0)
     {
-      *module = OS_MODULES_LIST[i];
-      return DNA_OK;
+      *extension = OS_EXTENSIONS_LIST[i];
+      return *extension -> initialize ();
     }
   }
 

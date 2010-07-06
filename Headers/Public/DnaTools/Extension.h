@@ -52,8 +52,8 @@ typedef struct extension_info
 {
   char * name;
   int32_t flags;
-  status_t (* init_extension) (void);
-  void (* uninit_extension) (void);
+  status_t (* initialize) (void);
+  void (* cleanup) (void);
 }
 extension_info_t;
 
@@ -63,7 +63,7 @@ extension_info_t;
 extern int32_t OS_N_EXTENSIONS;
 extern extension_info_t * OS_EXTENSIONS_LIST[];
 
-extern status_t extension_load (char * name, extension_info_t ** p_info);
+extern status_t extension_get (char * name, extension_info_t ** p_info);
 
 #endif
 
