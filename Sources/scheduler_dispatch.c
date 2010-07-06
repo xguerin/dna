@@ -72,6 +72,7 @@ status_t scheduler_dispatch (thread_t thread)
       cpu = status == DNA_OK ? & cpu_pool . cpu[affinity] : NULL;
     }
 
+#if 0
     /*
      * If we found a CPU but it is ourselve, we push the CPU back.
      * It will be used directly as we return INVOKE_SCHED.
@@ -82,6 +83,7 @@ status_t scheduler_dispatch (thread_t thread)
       queue_pushback (& cpu_pool . queue, cpu);
       cpu = NULL;
     }
+#endif
 
     lock_release (& cpu_pool . queue . lock);
 
@@ -89,7 +91,7 @@ status_t scheduler_dispatch (thread_t thread)
      * Check if we can send the thread to a distant CPU.
      */
 
-    if (cpu != NULL)
+    if (cpu != NULL && cpu -> id != cpu_mp_id ())
     {
       log (INFO_LEVEL, "(%d) %s => CPU(%d)", cpu_mp_id (),
           thread -> info . name, cpu -> id);
