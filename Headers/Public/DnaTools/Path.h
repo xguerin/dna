@@ -1,4 +1,4 @@
-/****h* tools/path
+/****h* Tools/Path
  * SUMMARY
  * Path management.
  ****
@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DNA_TOOLS_PATH_PRIVATE_H
-#define DNA_TOOLS_PATH_PRIVATE_H
+#ifndef DNA_TOOLS_PATH_H
+#define DNA_TOOLS_PATH_H
 
 #include <DnaTools/DnaTools.h>
 

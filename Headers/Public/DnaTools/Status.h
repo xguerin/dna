@@ -1,6 +1,6 @@
-/****h* support/status
+/****h* Tools/Status
  * SUMMARY
- * Support status.
+ * Status definitions.
  ****
  * Copyright (C) 2007 TIMA Laboratory
  *
@@ -18,12 +18,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ****/
 
-#ifndef DNA_SUPPORT_STATUS_H
-#define DNA_SUPPORT_STATUS_H
+#ifndef DNA_TOOLS_STATUS_H
+#define DNA_TOOLS_STATUS_H
 
 #include <stdint.h>
 
-/****t* support/status_t
+/****t* Status/status_t
  * SUMMARY
  * Status type
  *

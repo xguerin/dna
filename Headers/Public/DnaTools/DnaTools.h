@@ -1,4 +1,7 @@
-/*
+/****h* DNA/Tools
+ * SUMMARY
+ * DNA-OS support tools.
+ ****
  * Copyright (C) 2007 TIMA Laboratory
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,7 +29,6 @@
 #include <DnaTools/Driver.h>
 #include <DnaTools/Extension.h>
 #include <DnaTools/Log.h>
-#include <DnaTools/Module.h>
 #include <DnaTools/Path.h>
 #include <DnaTools/Queue.h>
 #include <DnaTools/Status.h>

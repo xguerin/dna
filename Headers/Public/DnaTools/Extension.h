@@ -1,4 +1,4 @@
-/****h* support/extension
+/****h* Tools/Extension
  * SUMMARY
  * Extension management.
  ****
@@ -18,41 +18,44 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#ifndef DNA_SUPPORT_EXTENSION_H
-#define DNA_SUPPORT_EXTENSION_H
+#ifndef DNA_TOOLS_EXTENSION_H
+#define DNA_TOOLS_EXTENSION_H
 
 #include <stdint.h>
-
 #include <DnaTools/Status.h>
 
-/****t* extension/extension_cmd_t
+/****t* Extension/extension_cmd_t
  * SUMMARY
  * Module commands type.
  *
  * SOURCE
  */
 
-typedef enum extension_cmd {
+typedef enum extension_cmd
+{
   DNA_EXTENSION_INIT,
   DNA_EXTENSION_UNINIT
-} extension_cmd_t;
+}
+extension_cmd_t;
 
 /*
  ****/
 
-/****t* extension/extension_t
+/****t* Extension/extension_t
  * SUMMARY
  * Module type.
  *
  * SOURCE
  */
 
-typedef struct extension_info {
+typedef struct extension_info
+{
   char * name;
   int32_t flags;
   status_t (* init_extension) (void);
   void (* uninit_extension) (void);
-} extension_info_t;
+}
+extension_info_t;
 
 /*
  ****/

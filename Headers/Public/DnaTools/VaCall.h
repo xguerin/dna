@@ -1,6 +1,6 @@
-/****h* support/control.h
+/****h* Tools/VaCalls
  * SUMMARY
- * Support control.
+ * Variadic to va_list calls.
  ****
  * Copyright (C) 2007 TIMA Laboratory                                    
  *                                                                       

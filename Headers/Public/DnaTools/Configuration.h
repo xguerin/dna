@@ -1,4 +1,4 @@
-/****h* DnaInterface/Configuration
+/****h* Tools/Configuration
  * SUMMARY
  * Configuration.
  ****
@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ****/
 
-#ifndef DNA_LIBRARY_CONFIGURATION_H
-#define DNA_LIBRARY_CONFIGURATION_H
+#ifndef DNA_TOOLS_CONFIGURATION_H
+#define DNA_TOOLS_CONFIGURATION_H
 
 #define DNA_NAME_LENGTH           32
 #define DNA_FILENAME_LENGTH       256

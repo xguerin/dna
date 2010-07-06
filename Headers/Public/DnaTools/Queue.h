@@ -1,6 +1,6 @@
-/****h* support/types
+/****h* Tools/Queue
  * SUMMARY
- * Support types.
+ * Queue management.
  ****
  * Copyright (C) 2007 TIMA Laboratory
  *
@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DNA_SUPPORT_QUEUE_H
-#define DNA_SUPPORT_QUEUE_H
+#ifndef DNA_POOL_QUEUE_H
+#define DNA_POOL_QUEUE_H
 
 #include <stdarg.h>
 #include <stddef.h>
@@ -29,7 +29,7 @@
 #include <Core/Lock.h>
 #include <DnaTools/Status.h>
 
-/****t* support/queue_inspector_t
+/****t* Queue/queue_inspector_t
  * SUMMARY
  * Queue inspector type.
  *
@@ -41,7 +41,7 @@ typedef bool (* queue_inspector_t)(void * item, va_list list);
 /*
  ****/
 
-/****t* support/queue_comparator_t
+/****t* Queue/queue_comparator_t
  * SUMMARY
  * Queue comparator type. Represent an ordering < function.
  *
@@ -53,7 +53,7 @@ typedef bool (* queue_comparator_t)(void * item1, void * item2);
 /*
  ****/
 
-/****t* support/queue_link_t
+/****t* Queue/queue_link_t
  * SUMMARY
  * Queue item type.
  *
@@ -69,7 +69,7 @@ queue_link_t;
 /*
  ****/
 
-/****t* support/queue_t
+/****t* Queue/queue_t
  * SUMMARY
  * Queue type.
  *
@@ -94,11 +94,8 @@ extern void * queue_rem (queue_t * queue);
 extern status_t queue_extract (queue_t * queue, void * data);
 extern status_t queue_pushback (queue_t * queue, void * data);
 
-extern void * queue_lookup (queue_t * queue,
-    queue_inspector_t inspector, ...);
-
-extern void queue_walk (queue_t * queue,
-    queue_inspector_t inspector, ...);
+extern void * queue_lookup (queue_t * queue, queue_inspector_t inspector, ...);
+extern void queue_walk (queue_t * queue, queue_inspector_t inspector, ...);
 
 extern void queue_insert (queue_t * queue,
     queue_comparator_t comparator, void * data);

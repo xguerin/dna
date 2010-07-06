@@ -1,6 +1,6 @@
-/****h* support/control.h
+/****h* Tools/Checkpoint.h
  * SUMMARY
- * Support control.
+ * Checkpoint C extension.
  ****
  * Copyright (C) 2007 TIMA Laboratory                                    
  *                                                                       

@@ -1,4 +1,4 @@
-/****h* libos/component
+/****h* Tools/Component
  * SUMMARY
  * Component definition.
  ****
@@ -24,20 +24,22 @@
 #include <stdint.h>
 #include <DnaTools/Status.h>
 
-/****t* component/component_t
+/****t* Component/component_t
  * SUMMARY
  * Component type.
  *
  * SOURCE
  */
 
-typedef struct _component {
+typedef struct _component
+{
   char * name;
   status_t (* create) (void);
   status_t (* destroy) (void);
   status_t (* start) (void);
   status_t (* stop) (void);
-} component_t;
+}
+component_t;
 
 /*
  ****/

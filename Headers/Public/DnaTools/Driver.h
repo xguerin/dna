@@ -1,6 +1,6 @@
-/****h* dnatools/driver
+/****h* Tools/Driver
  * SUMMARY
- * DNA tools driver definitions.
+ * Driver-related definitions.
  ****
  * Copyright (C) 2007 TIMA Laboratory                                    
  *                                                                       
@@ -27,7 +27,7 @@
 #include <DnaTools/Device.h>
 #include <DnaTools/Status.h>
 
-/****t* driver/driver_t
+/****t* Driver/driver_t
  * SUMMARY
  * Driver type.
  *

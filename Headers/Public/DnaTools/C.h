@@ -1,4 +1,7 @@
-/*
+/****h* Tools/C
+ * SUMMARY
+ * Small C library.
+ ****
  * Copyright (C) 2007 TIMA Laboratory
  *
  * This program is free software: you can redistribute it and/or modify

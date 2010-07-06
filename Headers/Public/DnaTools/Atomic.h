@@ -1,4 +1,4 @@
-/****h* support/atomic
+/****h* Tools/Atomic
  * SUMMARY
  * Atomic operation management.
  ****
@@ -18,15 +18,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#ifndef DNA_SUPPORT_ATOMIC_H
-#define DNA_SUPPORT_ATOMIC_H
+#ifndef DNA_TOOLS_ATOMIC_H
+#define DNA_TOOLS_ATOMIC_H
 
 #include <stdint.h>
 #include <stdbool.h>
 #include <Processor/Processor.h>
 
-/****f* atomic/atomic_add
+/****f* Atomic/atomic_add
  * SUMMARY
+ * Atomically add a value to a 32-bit data.
  *
  * SYNOPSIS
  */

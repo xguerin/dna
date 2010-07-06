@@ -1,6 +1,6 @@
-/****h* dnatools/device
+/****h* Tools/Device
  * SUMMARY
- * DNA tools device definitions.
+ * Device-related definitions.
  ****
  * Copyright (C) 2007 TIMA Laboratory                                    
  *                                                                       
@@ -27,7 +27,7 @@
 
 #include <DnaTools/Status.h>
 
-/****v* device/device_control_code
+/****v* Device/device_control_code
  * SUMMARY
  * Device control codes.
  */
@@ -57,7 +57,7 @@ enum _device_control_codes
 /*
  ****/
 
-/****v* device/device_type
+/****v* Device/device_type
  * SUMMARY
  * Device types.
  */
@@ -74,7 +74,7 @@ enum _device_type
 /*
  ****/
 
-/****t* device/partition_info_t
+/****t* Device/partition_info_t
  * SUMMARY
  * Partition information type.
  *
@@ -93,7 +93,7 @@ partition_info_t;
 /*
  ****/
 
-/****t* device/device_info_t
+/****t* Device/device_info_t
  * SUMMARY
  * Device information.
  *
@@ -114,7 +114,7 @@ device_info_t;
 /*
  ****/
 
-/****t* device/device_cmd_t
+/****t* Device/device_cmd_t
  * SUMMARY
  * Device commands type.
  *
