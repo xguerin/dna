@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DNA_POOL_QUEUE_H
-#define DNA_POOL_QUEUE_H
+#ifndef DNA_TOOLS_QUEUE_H
+#define DNA_TOOLS_QUEUE_H
 
 #include <stdarg.h>
 #include <stddef.h>
