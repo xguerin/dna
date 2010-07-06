@@ -74,6 +74,7 @@ status_t scheduler_dispatch (thread_t thread)
 
     /*
      * If we found a CPU but it is ourselve, we push the CPU back.
+     * It will be used directly as we return INVOKE_SCHED.
      */
 
     if (cpu != NULL && cpu -> id == cpu_mp_id ())
@@ -90,7 +91,7 @@ status_t scheduler_dispatch (thread_t thread)
 
     if (cpu != NULL)
     {
-      log (VERBOSE_LEVEL, "(%d) %s => CPU(%d)", cpu_mp_id (),
+      log (INFO_LEVEL, "(%d) %s => CPU(%d)", cpu_mp_id (),
           thread -> info . name, cpu -> id);
 
       lock_acquire (& cpu -> ipi_lock);
@@ -104,9 +105,14 @@ status_t scheduler_dispatch (thread_t thread)
       lock_release (& scheduler . queue[affinity] . lock);
       lock_release (& thread -> lock);
 
+      /*
+       * If the thread is compatible with the current CPU,
+       * we return DNA_INVOKE_SCHEDULER.
+       */
+
       if (affinity == cpu_mp_count () || affinity == cpu_mp_id ())
       {
-        log (VERBOSE_LEVEL, "%s => queue(%d)", thread -> info . name, affinity);
+        log (INFO_LEVEL, "%s => Q(%d)", thread -> info . name, affinity);
         status = DNA_INVOKE_SCHEDULER;
       }
     }

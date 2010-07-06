@@ -50,7 +50,7 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
   watch (status_t)
   {
     ensure (thread != NULL, DNA_BAD_ARGUMENT);
-    log (VERBOSE_LEVEL, "(%d) %s -> %s", current_cpuid,
+    log (INFO_LEVEL, "(%d) %s -> %s", current_cpuid,
         self -> info . name, thread -> info . name);
 
     /*
