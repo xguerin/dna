@@ -96,7 +96,7 @@ status_t scheduler_dispatch (thread_t thread)
 
       /*
        * If the thread is compatible with the current CPU,
-       * we return DNA_INVOKE_SCHEDULER.
+       * we return DNA_INVOKE_SCHEDULER to indicate potential reschedule.
        */
 
       if (affinity == cpu_mp_count () || affinity == cpu_mp_id ())
