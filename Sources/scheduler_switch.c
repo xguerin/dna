@@ -86,11 +86,9 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
     {
       log (VERBOSE_LEVEL, "CPU(%d) << RUNNING", cpu -> id);
 
-#if 0
       lock_acquire (& cpu_pool . queue . lock);
       queue_extract (& cpu_pool . queue, cpu);
       lock_release (& cpu_pool . queue . lock);
-#endif
 
       cpu -> status = DNA_CPU_RUNNING;
     }
