@@ -1,4 +1,4 @@
-/****h* dna/memory
+/****h* DNA/MemoryManagerPrivate
  * SUMMARY
  * Base functions for the memory subsystem.
  ****
@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#ifndef DNA_MEMORY_PRIVATE_H
-#define DNA_MEMORY_PRIVATE_H
+#ifndef DNA_MEMORYMANAGER_PRIVATE_H
+#define DNA_MEMORYMANAGER_PRIVATE_H
 
 #include <Private/LifeCycle.h>
 #include <Private/Allocator.h>

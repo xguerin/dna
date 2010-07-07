@@ -1,4 +1,4 @@
-/****h* memory/allocator
+/****h* MemoryManagerPrivate/AllocatorPrivate
  * SUMMARY
  * Base functions for the kernel allocator.
  ****
@@ -18,15 +18,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DNA_MEMORY_KERNEL_PRIVATE_H
-#define DNA_MEMORY_KERNEL_PRIVATE_H
+#ifndef DNA_MEMORYMANAGER_ALLOCATOR_PRIVATE_H
+#define DNA_MEMORYMANAGER_ALLOCATOR_PRIVATE_H
 
 #include <stdint.h>
 #include <stdbool.h>
 #include <Core/Core.h>
 #include <DnaTools/Status.h>
 
-/****d* kernel/DNA_KERNEL_BLOCK_SIZE
+/****d* AllocatorPrivate/DNA_KERNEL_BLOCK_SIZE
  * SUMMARY
  * Defines the minimum size of a memory block.
  *
@@ -38,7 +38,7 @@
 /*
  ****/
 
-/****v* kernel/region_status
+/****v* AllocatorPrivate/region_status
  * SUMMARY
  * Status of region.
  *
@@ -54,7 +54,7 @@ enum region_status
 /*
  ****/
 
-/****t* kernel/kernel_region_t
+/****t* AllocatorPrivate/kernel_region_t
  * SUMMARY
  * Type of an allocated kernel memory region.
  *
@@ -74,7 +74,7 @@ typedef struct _kernel_region
 /*
  ****/
 
-/****t* kernel/kernel_allocator_t
+/****t* AllocatorPrivate/kernel_allocator_t
  * SUMMARY
  * Type of the kernel allocator.
  *

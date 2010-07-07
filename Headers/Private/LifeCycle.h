@@ -1,6 +1,6 @@
-/****h* memory/framework
+/****h* MemoryManagerPrivate/LifeCyclePrivate
  * SUMMARY
- * The memory component framework.
+ * The memory component life cycle.
  ****
  * Copyright (C) 2007 TIMA Laboratory                                    
  *                                                                       
@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#ifndef DNA_MEMORY_LIFECYCLE_PRIVATE_H
-#define DNA_MEMORY_LIFECYCLE_PRIVATE_H
+#ifndef DNA_MEMORYMANAGER_LIFECYCLE_PRIVATE_H
+#define DNA_MEMORYMANAGER_LIFECYCLE_PRIVATE_H
 
 #include <DnaTools/DnaTools.h>
 

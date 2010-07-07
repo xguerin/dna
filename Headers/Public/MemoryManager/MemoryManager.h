@@ -1,4 +1,4 @@
-/****h* dna/memory
+/****h* DNA/MemoryManager
  * SUMMARY
  * Base functions for the memory subsystem.
  ****
@@ -18,11 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-#ifndef DNA_MEMORY_PUBLIC_H
-#define DNA_MEMORY_PUBLIC_H
+#ifndef DNA_MEMORYMANAGER_H
+#define DNA_MEMORYMANAGER_H
 
 #include <MemoryManager/Allocator.h>
 #include <MemoryManager/LifeCycle.h>
-#include <DnaTools/DnaTools.h>
 
 #endif

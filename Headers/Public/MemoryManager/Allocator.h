@@ -1,4 +1,4 @@
-/****h* memory/allocator
+/****h* MemoryManager/Allocator
  * SUMMARY
  * Base functions for the kernel allocator.
  ****
@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DNA_MEMORY_KERNEL_PUBLIC_H
-#define DNA_MEMORY_KERNEL_PUBLIC_H
+#ifndef DNA_MEMORYMANAGER_ALLOCATOR_H
+#define DNA_MEMORYMANAGER_ALLOCATOR_H
 
 #include <stdint.h>
 #include <stdbool.h>
