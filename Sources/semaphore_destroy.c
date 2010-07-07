@@ -103,7 +103,7 @@ status_t semaphore_destroy (int32_t id)
      */
 
     kernel_free (sem);
-    return DNA_OK;
+    return smart_to_reschedule ? DNA_INVOKE_SCHEDULER : DNA_OK;
   }
 
   rescue (invalid_semaphore)
