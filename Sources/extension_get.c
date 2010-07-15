@@ -17,14 +17,14 @@
 
 #include <DnaTools/DnaTools.h>
 
-/****f* Extension/extension_load
+/****f* Extension/extension_get
  * SUMMARY
- * Load an extension.
+ * Get an extension.
  *
  * SYNOPSIS
  */
 
-status_t extension_get (char * name, extension_info_t ** extension)
+status_t extension_get (char * name, extension_t ** p_ext)
 
 /*
  * SOURCE
@@ -35,8 +35,8 @@ status_t extension_get (char * name, extension_info_t ** extension)
   {
     if (dna_strcmp (OS_EXTENSIONS_LIST[i] -> name, name) == 0)
     {
-      *extension = OS_EXTENSIONS_LIST[i];
-      return (*extension) -> initialize ();
+      *p_ext = OS_EXTENSIONS_LIST[i];
+      return (*p_ext) -> initialize ();
     }
   }
 

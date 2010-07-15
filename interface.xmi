@@ -106,12 +106,12 @@
       <type name="driver_t"/>
     </context>
 
-    <context name="Module">
-      <type name="module_t"/>
+    <context name="Extension">
+      <type name="extension_t"/>
 
-      <method name="module_load" result="status_t">
+      <method name="extension_get" result="status_t">
         <argument name="name" type="string" direction="In"/>
-        <argument name="module" type="access module_t" direction="Out"/>
+        <argument name="p_ext" type="extension_t" direction="Out"/>
       </method>
     </context>
 

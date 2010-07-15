@@ -24,23 +24,6 @@
 #include <stdint.h>
 #include <DnaTools/Status.h>
 
-/****t* Extension/extension_cmd_t
- * SUMMARY
- * Module commands type.
- *
- * SOURCE
- */
-
-typedef enum extension_cmd
-{
-  DNA_EXTENSION_INIT,
-  DNA_EXTENSION_UNINIT
-}
-extension_cmd_t;
-
-/*
- ****/
-
 /****t* Extension/extension_t
  * SUMMARY
  * Module type.
@@ -55,15 +38,15 @@ typedef struct extension_info
   status_t (* initialize) (void);
   void (* cleanup) (void);
 }
-extension_info_t;
+extension_t;
 
 /*
  ****/
 
 extern int32_t OS_N_EXTENSIONS;
-extern extension_info_t * OS_EXTENSIONS_LIST[];
+extern extension_t * OS_EXTENSIONS_LIST[];
 
-extern status_t extension_get (char * name, extension_info_t ** p_info);
+extern status_t extension_get (char * name, extension_t ** p_ext);
 
 #endif
 
