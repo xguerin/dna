@@ -23,15 +23,15 @@
 #include <MultiMediaCard/Operation.h>
 #include <DnaTools/DnaTools.h>
 
-typedef struct _mmc_module
+typedef struct _mmc_extension
 {
-  module_t module;
+  extension_t extension;
   status_t (* create) (mmc_card_t * card, mmc_callbacks_t callbacks);
   status_t (* destroy) (mmc_card_t card);
   status_t (* execute) (mmc_card_t card, mmc_operation_t operation,
     void * buffer, int64_t block_start, int32_t block_count);
 }
-mmc_module_t;
+mmc_extension_t;
 
 #endif
 

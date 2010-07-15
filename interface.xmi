@@ -13,7 +13,7 @@
 
   <provide>
     <context name="Module">
-      <type name="mmc_module_t" />
+      <type name="mmc_extension_t" />
     </context>
   </provide>
 

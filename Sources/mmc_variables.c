@@ -18,7 +18,7 @@
 #include <Private/MultiMediaCard.h>
 #include <MultiMediaCard/MultiMediaCard.h>
 
-mmc_module_t mmc_module = 
+mmc_extension_t mmc_extension = 
 {
   { "mmc", 0 },
   mmc_card_create,

@@ -22,7 +22,7 @@
 #include <MultiMediaCard/Module.h>
 #include <DnaTools/DnaTools.h>
 
-extern mmc_module_t mmc_module;
+extern mmc_extension_t mmc_extension;
 
 #endif
 
