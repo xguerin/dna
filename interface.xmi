@@ -13,8 +13,7 @@
 
   <provide>
     <context name="Module">
-      <type name="mbr_module_t"/>
-      <variable name="mbr_module" type="mbr_module_t"/>
+      <type name="mbr_extension_t"/>
     </context>
   </provide>
 

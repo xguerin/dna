@@ -19,7 +19,7 @@
 #include <Private/MasterBootRecord.h>
 #include <MasterBootRecord/MasterBootRecord.h>
 
-mbr_module_t mbr_module = 
+mbr_extension_t mbr_extension = 
 {
   { "mbr", 0 },
   mbr_load,

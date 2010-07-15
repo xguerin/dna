@@ -21,7 +21,7 @@
 #include <stdint.h>
 #include <MasterBootRecord/Module.h>
 
-extern mbr_module_t mbr_module;
+extern mbr_extension_t mbr_extension;
 
 #endif
 

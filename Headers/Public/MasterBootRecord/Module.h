@@ -22,13 +22,13 @@
 #include <MasterBootRecord/Partition.h>
 #include <DnaTools/DnaTools.h>
 
-typedef struct _mbr_module
+typedef struct _mbr_extension
 {
-  module_t module;
+  extension_t extension;
   status_t (* load) (uint8_t sector[512], mbr_partition_t partition[4]);
   status_t (* dump) (mbr_partition_t partition[4], uint8_t sector[512]);
 }
-mbr_module_t;
+mbr_extension_t;
 
 #endif
 
