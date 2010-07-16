@@ -22,6 +22,7 @@
 #define DNA_VFS_FILESYSTEM_PUBLIC_H
 
 #include <stdint.h>
+#include <stdarg.h>
 #include <VirtualFileSystem/File.h>
 #include <DnaTools/Status.h>
 
@@ -65,7 +66,7 @@ typedef struct filesystem_cmd
       void * entry_array, int64_t * offset, int32_t * p_count);
 
   status_t (* ioctl) (void * ns, void * node, void * data,
-      int32_t function, void * arguments, int32_t * p_ret);
+      int32_t function, va_list arguments, int32_t * p_ret);
 }
 filesystem_cmd_t;
 
