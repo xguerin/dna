@@ -96,7 +96,7 @@ extern status_t rootfs_readdir (void * ns, void * node, void * data,
     void * entry_array, int64_t * offset, int32_t * p_count);
 
 extern status_t rootfs_ioctl (void * ns, void * node, void * data,
-    int32_t function, void * arguments, int32_t * p_ret);
+    int32_t function, va_list arguments, int32_t * p_ret);
 
 extern bool rootfs_entry_name_inspector (void * entry, va_list list);
 extern bool rootfs_entry_index_inspector (void * entry, va_list list);
