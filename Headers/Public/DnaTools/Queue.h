@@ -29,6 +29,24 @@
 #include <Core/Lock.h>
 #include <DnaTools/Status.h>
 
+/****d* Queue/DNA_QUEUE_DEFAULTS
+ * SUMMARY
+ * Queue default values.
+ *
+ * SOURCE
+ */
+
+#define DNA_QUEUE_DEFAULTS  \
+{                           \
+  0,                        \
+  NULL,                     \
+  NULL,                     \
+  0                         \
+}
+
+/*
+ ****/
+
 /****t* Queue/queue_inspector_t
  * SUMMARY
  * Queue inspector type.
