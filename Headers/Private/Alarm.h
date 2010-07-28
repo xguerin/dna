@@ -26,18 +26,6 @@
 #include <DnaTools/DnaTools.h>
 #include <Core/Core.h>
 
-/****d* AlarmPrivate/DNA_TIMER_DELAY
- * SUMMARY
- * Arbitrary alarm processing delay. Expressed in nanoseconds.
- *
- * SOURCE
- */
-
-#define DNA_TIMER_DELAY 1000
-
-/*
- ****/
-
 /****t* AlarmPrivate/alarm_callback_t
  * SUMMARY
  * Alarm callback type.
@@ -76,11 +64,14 @@ typedef struct _alarm
   int32_t thread_id;
   int32_t cpu_id;
   int32_t mode;
+  bool is_invalid;
 
+  spinlock_t lock;
   bigtime_t quantum;
   bigtime_t deadline;
-  alarm_callback_t callback;
+  bigtime_t execution_time;
 
+  alarm_callback_t callback;
   void * data;
 }
 * alarm_t;

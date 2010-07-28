@@ -38,112 +38,148 @@ status_t alarm_handler (void)
  */
 
 {
+  queue_t alarm_garbage = DNA_QUEUE_DEFAULTS;
   alarm_t current_alarm = NULL, next_alarm = NULL;
   status_t status = DNA_OK;
   int32_t current_cpuid = cpu_mp_id ();
-  bigtime_t start_time = 0, quantum = 0, updated_time;
+  bigtime_t start_time, quantum, current_deadline = 0, timer_delay;
+  bigtime_t delta_start, delta_end;
   bool reschedule = false;
-  bool process_next_alarm = true, delete_alarm = false;
+  bool process_next_alarm = true;
   cpu_t * cpu = & cpu_pool . cpu[current_cpuid];
 
   watch (status_t)
   {
-    while (process_next_alarm)
+    do
     {
-      lock_acquire (& cpu -> lock);
-      current_alarm = cpu -> current_alarm;
-      check (no_alarm, current_alarm != NULL, DNA_ERROR);
-
-      /*
-       * Get the present time and check if this is not
-       * a false alarm.
-       */
-
+      process_next_alarm = false;
       cpu_timer_get (cpu -> id, & start_time);
 
-      check (false_alarm,
-          current_alarm -> deadline <= start_time + DNA_TIMER_DELAY, DNA_ERROR);
+      /*
+       * Lock the processor to access its queue and
+       * its current alarm.
+       */
+
+      lock_acquire (& cpu -> lock);
+      current_alarm = cpu -> current_alarm;
+
+      /*
+       * If the current alarm is valid, check if it
+       * has to be restarted. Otherwise, it goes to the garbage.
+       */
+
+      check (no_alarm, current_alarm != NULL, DNA_ERROR);
+      lock_acquire (& current_alarm -> lock);
 
       log (VERBOSE_LEVEL, "Processing alarm (%d:%d) of thread 0x%x",
           current_alarm -> id . s . value, current_alarm -> id . s . index,
           current_alarm -> thread_id);
 
-      /*
-       * We check whether or not the alarm has to be restarted
-       */
+      current_deadline = current_alarm -> deadline;
+      check (false_alarm, current_deadline <= start_time, DNA_ERROR);
 
-      if ((current_alarm -> mode & DNA_PERIODIC_ALARM) != 0)
+      if (! current_alarm -> is_invalid
+          && (current_alarm -> mode & DNA_PERIODIC_ALARM) != 0)
       {
         current_alarm -> deadline += current_alarm -> quantum;
         queue_insert (& cpu -> alarm_queue, alarm_comparator, current_alarm);
       }
       else
       {
-        delete_alarm = true;
+        queue_add (& alarm_garbage, current_alarm);
+      }
+
+      lock_release (& current_alarm -> lock);
+
+      /*
+       * Look through the next alarm.
+       */
+
+      while ((next_alarm = queue_rem (& cpu -> alarm_queue)) != NULL)
+      {
+        if (! next_alarm -> is_invalid)
+        {
+          break;
+        }
+
+        queue_add (& alarm_garbage, current_alarm);
       }
 
       /*
-       * Look through the next alarm
+       * Unlock the processor since we do not need its
+       * data anymore.
        */
-
-      next_alarm = queue_rem (& cpu -> alarm_queue);
+        
       cpu -> current_alarm = next_alarm;
+      lock_release (& cpu -> lock);
+
+      /*
+       * Check if the next alarm is valid, and restart the
+       * loop of its deadline is to close.
+       */
 
       if (next_alarm != NULL)
       {
         /*
          * We get the new current time in order to adjust the alarm.
-         * We should also substract the time spent in the processor
+         * We also substract the time spent in the processor
          * handler. We might be off by approx. 500 cycles anyway,
          * due to the interrupt demultiplexer and the platform driver's
          * timer ISR.
          */
 
-        cpu_timer_get (cpu -> id, & updated_time);
-        quantum = next_alarm -> deadline - updated_time;
+        cpu_timer_get (cpu -> id, & start_time);
+        quantum = next_alarm -> deadline - start_time;
+        timer_delay = start_time - current_deadline;
 
-        if (quantum <= DNA_TIMER_DELAY)
+        if (quantum <= timer_delay + current_alarm -> execution_time)
         {
-          log (VERBOSE_LEVEL, "low (%d), alarm (%d:%d) from thread 0x%x",
-              (int32_t) quantum, next_alarm -> id . s . value,
-              next_alarm -> id . s . index, next_alarm -> thread_id);
+          log (VERBOSE_LEVEL, "low (%d:%d), alarm (%d:%d) from thread 0x%x",
+              (int32_t) quantum, (int32_t) timer_delay,
+              next_alarm -> id . s . value, next_alarm -> id . s . index,
+              next_alarm -> thread_id);
+
+          process_next_alarm = true;
         }
         else
         {
-          process_next_alarm = false;
           cpu_timer_set (cpu -> id, quantum);
         }
       }
-      else
-      {
-        process_next_alarm = false;
-      }
-
-      lock_release (& cpu -> lock);
 
       /*
-       * Execute the alarm
+       * Execute the alarm, and compute its WCET.
        */
 
+      cpu_timer_get (cpu -> id, & delta_start);
       status = current_alarm -> callback (current_alarm -> data);
-      if (status == DNA_INVOKE_SCHEDULER)
+      cpu_timer_get (cpu -> id, & delta_end);
+
+      quantum = delta_end - delta_start;
+      if (quantum > current_alarm -> execution_time)
       {
-        reschedule = true;
+        current_alarm -> execution_time = quantum;
       }
 
       /*
-       * Delete the alarm if necessary
+       * Update the reschedule flag.
        */
 
-      if (delete_alarm)
-      {
-        lock_acquire (& alarm_manager . lock);
-        alarm_manager . alarm[current_alarm -> id . s . index] = NULL;
-        lock_release (& alarm_manager . lock);
+      reschedule = reschedule || status == DNA_INVOKE_SCHEDULER;
+    }
+    while (process_next_alarm);
 
-        delete_alarm = false;
-        kernel_free (current_alarm);
-      }
+    /*
+     * Parse the garbage and delete its content.
+     */
+
+    while ((current_alarm = queue_rem (& alarm_garbage)) != NULL)
+    {
+      lock_acquire (& alarm_manager . lock);
+      alarm_manager . alarm[current_alarm -> id . s . index] = NULL;
+      lock_release (& alarm_manager . lock);
+
+      kernel_free (current_alarm);
     }
 
     return reschedule ? DNA_INVOKE_SCHEDULER : DNA_OK;
@@ -151,7 +187,8 @@ status_t alarm_handler (void)
 
   rescue (false_alarm)
   {
-    quantum = current_alarm -> deadline - start_time;
+    lock_release (& current_alarm -> lock);
+    quantum = current_deadline - start_time;
     cpu_timer_set (cpu -> id, quantum);
   }
 

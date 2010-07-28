@@ -142,7 +142,7 @@ status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
     old_alarm = cpu -> current_alarm;
 
     if (cpu -> current_alarm == NULL ||
-        old_alarm -> deadline > (new_alarm -> deadline + DNA_TIMER_DELAY))
+        old_alarm -> deadline > new_alarm -> deadline)
     {
       log (VERBOSE_LEVEL, "Set alarm (%d:%d)", new_alarm -> id . s . value,
           new_alarm -> id . s . index);

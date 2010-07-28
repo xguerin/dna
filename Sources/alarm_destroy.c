@@ -40,19 +40,13 @@ status_t alarm_destroy (int32_t aid)
  */
 
 {
-  cpu_t * cpu = NULL;
   alarm_t alarm = NULL;
   alarm_id_t alarm_id = { .raw = aid };
   status_t status = DNA_OK;
-  bigtime_t current_time = 0, quantum = 0;
   interrupt_status_t it_status = 0;
 
   watch (status_t)
   {
-    /*
-     * First, we lock the time manager and get the alarm
-     */
-
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& alarm_manager . lock);
 
@@ -60,55 +54,11 @@ status_t alarm_destroy (int32_t aid)
     check (alarm_error, alarm != NULL, DNA_UNKNOWN_ALARM);
     check (alarm_error, alarm -> id . raw == alarm_id . raw, DNA_UNKNOWN_ALARM);
 
-    /*
-     * Next, we lock the related CPU
-     */
-
-    cpu = & cpu_pool . cpu[alarm -> cpu_id];
-    lock_acquire (& cpu -> lock);
-
-    /*
-     * Then, we check if alarm is the current alarm
-     */
-
-    if (cpu -> current_alarm == alarm)
-    {
-      cpu_timer_cancel (cpu -> id);
-
-      alarm_manager . alarm[alarm_id . s . index] = NULL;
-      kernel_free (alarm);
-
-      if (cpu -> alarm_queue . status != 0)
-      {
-        alarm = queue_rem (& cpu -> alarm_queue);
-        cpu_timer_get (cpu -> id, & current_time);
-
-        quantum = alarm -> deadline - current_time;
-        cpu -> current_alarm = alarm;
-        cpu_timer_set (cpu -> id, quantum);
-      }
-      else
-      {
-        cpu -> current_alarm = NULL;
-      }
-    }
-    else
-    {
-      status = queue_extract (& cpu -> alarm_queue, alarm);
-
-      if (status == DNA_ERROR)
-      {
-        status = DNA_UNKNOWN_ALARM;
-      }
-      else
-      {
-        alarm_manager . alarm[alarm_id . s . index] = NULL;
-        kernel_free (alarm);
-      }
-    }
-
-    lock_release (& cpu -> lock);
+    lock_acquire (& alarm -> lock);
     lock_release (& alarm_manager . lock);
+
+    alarm -> is_invalid = true;
+    lock_release (& alarm -> lock);
 
     cpu_trap_restore(it_status);
     return status;
