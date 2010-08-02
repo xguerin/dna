@@ -25,7 +25,7 @@
  */
 
 status_t fatfs_ioctl (void * ns, void * node, void * data,
-    int32_t function, void * arguments, int32_t * p_ret)
+	int32_t function, va_list arguments, int32_t * p_ret)
     
 /*
  * ARGUMENTS
