@@ -198,3 +198,6 @@ uint32_t fatfs_find_next_cluster(struct fatfs *fs, uint32_t current_cluster)
 	return (nextcluster);
 }
 
+/*
+ ****/
+

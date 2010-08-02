@@ -19,8 +19,37 @@
 #include <Private/FATlib.h>
 #include <DnaTools/DnaTools.h>
 
+/****f* FATFileSystem/fatfs_readdir
+ * SUMMARY
+ * Return a directory entry info from an inode on a FAT volume.
+ *
+ * SYNOPSIS
+ */
+
 status_t fatfs_readdir (void * ns, void * node, void * data,
     void * entry_array, int64_t * offset, int32_t * p_count)
+   
+/*  
+ * ARGUMENTS
+ * * ns : the namespace (fatfs_t)
+ * * node : the inode of the directory (fatfs_inode_t)
+ * * data : unused
+ * * entry_array : return data (directory_entry_t)
+ * * offset : byte offset of the next directory entry
+ * * p_count : size of the returned data
+ *
+ * FUNCTION
+ * Return a directory entry info from an inode on a FAT volume.
+ * Return an entry and point to the next one. 
+ * This function is called by vfs_readdir().
+ *
+ * RESULT
+ * * DNA_OK if the operation succeed
+ * * DNA_BAD_ARGUMENT if an argument is missing
+ *
+ * SOURCE
+ */
+    
 {
 	fatfs_t fatfs = ns;
 	fatfs_inode_t inode = node;
@@ -37,26 +66,35 @@ status_t fatfs_readdir (void * ns, void * node, void * data,
 	watch (status_t)
 	{
 		ensure (ns != NULL && node != NULL && entry_array != NULL
-			&& p_count != NULL, DNA_ERROR);
+			&& p_count != NULL, DNA_BAD_ARGUMENT);
+			
 		ensure (inode->cluster_chain_directory != NULL, DNA_OK);
    	
 		item_start = (*offset)%FAT_SECTOR_SIZE;
 
 		for(sector = (*offset)/FAT_SECTOR_SIZE; sector < inode -> nb_sector; sector++)
 		{
-			/* Maximum of 16 directory entries */
+			/*
+			 * Maximum of 16 directory entries
+			 */
 			for (item = item_start; item < 16; item++)
 			{
-				/* Increase directory offset  */
+				/*
+				 * Increase directory offset
+				 */
 				recordoffset = (32*item);
 
-				/* Overlay directory entry over buffer */
+				/*
+				 * Overlay directory entry over buffer
+				 */
 				directoryEntry = (fatfs_entry_t)(inode -> cluster_chain_directory 
 					+ sector*FAT_SECTOR_SIZE + recordoffset);
 				
 				if(fatfs_get_fn_entry(directoryEntry, filename) == 0)
 				{
-					/* return data */
+					/*
+					 * return data
+					 */
 					dna_memcpy (p_entry -> d_name, (char *)filename, FATFS_NAME_LENGTH);
 				
 				    p_entry -> vnid = ((uint64_t)inode -> cc_dirid << 32) + 
@@ -66,18 +104,22 @@ status_t fatfs_readdir (void * ns, void * node, void * data,
 				    p_entry -> d_reclen = sizeof (struct _directory_entry)
 		    		  + dna_strlen (p_entry -> d_name);
 		    		  
-					/* Next starting position */
+					/*
+					 * Next starting position
+					 */
 					*offset = sector*FAT_SECTOR_SIZE + item + 1;
 					*p_count = p_entry -> d_reclen;
 
 		 			return DNA_OK;
 				}
-			}/* end of for */
+			}
 			
 			item_start = 0;
 		}
 		
-		/* empty directory */
+		/*
+		 * empty directory
+		 */
 		*p_count = 0;
 	}
 
@@ -85,4 +127,8 @@ status_t fatfs_readdir (void * ns, void * node, void * data,
 
     return DNA_OK;
 }
+
+/*
+ ****/
+
 

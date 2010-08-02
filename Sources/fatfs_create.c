@@ -18,9 +18,41 @@
 #include <Private/FATFileSystem.h>
 #include <DnaTools/DnaTools.h>
 
+/****f* FATFileSystem/fatfs_create
+ * SUMMARY
+ * Creates an inode on a FAT volume.
+ *
+ * SYNOPSIS
+ */
+
 status_t fatfs_create (void * ns, void * node, char * restrict path,
     int32_t mode, int32_t perms, int64_t * vnid, void ** data)
+    
+/*
+ * ARGUMENTS
+ * * ns : the namespace (fatfs_t)
+ * * node : the base inode (fatfs_inode_t)
+ * * path : the path
+ * * mode : unused
+ * * perms : unused
+ * * vnid : the new inode id
+ * * data : the content of the new inode (fatfs_inode_t)
+ *
+ * FUNCTION
+ * Creates an inode on a FAT volume.
+ * Function called by vnode_create().
+ * Not implemented.
+ *
+ * RESULT
+ * * DNA_OK
+ *
+ * SOURCE
+ */
+    
 {
   return DNA_OK;
 }
+
+/*
+ ****/
 

@@ -18,9 +18,39 @@
 #include <Private/FATFileSystem.h>
 #include <DnaTools/DnaTools.h>
 
+/****f* FATFileSystem/fatfs_mkdir
+ * SUMMARY
+ * Make a new directory on a FAT volume..
+ *
+ * SYNOPSIS
+ */
+
 status_t fatfs_mkdir (void * ns, void * node,
     char * restrict name, int32_t mode)
+    
+/*  
+ * ARGUMENTS
+ * * ns : the namespace (fatfs_t)
+ * * node : the base inode containing the directory to make (fatfs_inode_t)
+ * * name : name of the directory to make
+ * * mode : unused
+ *
+ * FUNCTION
+ * Make a new directory on a FAT volume.
+ * This function is called by vfs_mkdir().
+ * Not implemented.
+ *
+ * RESULT
+ * * DNA_OK
+ *
+ * SOURCE
+ */
+ 
 {
   return DNA_OK;
 }
+
+/*
+ ****/
+
 

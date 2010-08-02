@@ -18,8 +18,42 @@
 #include <Private/FATFileSystem.h>
 #include <DnaTools/DnaTools.h>
 
-status_t fatfs_write (void * ns, void * node, void * file, void * data, int64_t offset, int32_t * p_count)
+/****f* FATFileSystem/fatfs_write
+ * SUMMARY
+ * Write data corresponding to an inode on a FAT volume.
+ *
+ * SYNOPSIS
+ */
+
+status_t fatfs_write (void * ns, void * node, void * file, 
+  void * data, int64_t offset, int32_t * p_count)
+
+/*  
+ * ARGUMENTS
+ * * ns : the namespace (fatfs_t)
+ * * node : the inode (fatfs_inode_t)
+ * * file : the file entry (fatfs_entry_t)
+ * * data : the data to write
+ * * offset : the first byte of the data from the begining of the file
+ * * p_count : the size of the data to write / the size of the data written
+ * 	
+ * FUNCTION
+ * Write data corresponding to an inode on a FAT volume.
+ * This function is called by fvs_write().
+ * Not implemented.
+ *
+ * RESULT
+ * * DNA_OK
+ *
+ * SOURCE
+ */
+
 {
   return DNA_OK;
 }
+
+/*
+ ****/
+
+
 

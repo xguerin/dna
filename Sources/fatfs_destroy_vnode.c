@@ -19,7 +19,31 @@
 #include <DnaTools/DnaTools.h>
 #include <MemoryManager/MemoryManager.h>
 
+/****f* FATFileSystem/fatfs_destroy_vnode
+ * SUMMARY
+ * Destroy a vnode from a FAT volume.
+ *
+ * SYNOPSIS
+ */
+
 status_t fatfs_destroy_vnode (void * ns, void * node)
+
+/*
+ * ARGUMENTS
+ * * ns : the namespace (fatfs_t)
+ * * node : the inode to free (fatfs_inode_t)
+ *
+ * FUNCTION
+ * Free the memory allocated by fatfs_read_vnode().
+ * This function is called by vnode_put().
+ *
+ * RESULT
+ * * DNA_OK if the operation succeed
+ * * DNA_BAD_ARGUMENT if an argument is missing
+ *
+ * SOURCE
+ */
+
 {
     fatfs_inode_t inode = node;
 
@@ -27,14 +51,26 @@ status_t fatfs_destroy_vnode (void * ns, void * node)
 
 	watch (status_t)
 	{
-		ensure (ns != NULL && node != NULL, DNA_ERROR);
+		ensure (ns != NULL && node != NULL, DNA_BAD_ARGUMENT);
 		
+		/*
+		 * if the inode is a directory, free the cluster chain
+		 */
+
 		if (inode -> cluster_chain_directory != NULL)
 			kernel_free (inode -> cluster_chain_directory);
-			
+		
+		/*
+		 * free the inode
+		 */
+		
 		kernel_free(inode);
 	}
 	
 	return DNA_OK;
 }
+
+/*
+ ****/
+
 

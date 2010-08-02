@@ -58,6 +58,13 @@ typedef enum eFatType
 	FAT_TYPE_32
 } tFatType;
 
+/****f* FATFileSystem/fatfs_entry_t
+ * SUMMARY
+ * Inode entry defined according to the FAT specifications.
+ *
+ * SOURCE
+ */
+
 typedef struct fatfs_entry
 {
   	uint8_t 	Name[11];
@@ -75,15 +82,47 @@ typedef struct fatfs_entry
 }
 * fatfs_entry_t;
 
+/*
+ ****/
+
+
+/****f* FATFileSystem/fatfs_inode_t
+ * SUMMARY
+ * FAT inode type
+ *
+ * SOURCE
+ */
+
 typedef struct fatfs_inode
 {
+  /* inode id, composed by the cluster number of the parent inode (32 MSB)
+    and the byte offset of the inode entry in the parent inode cluster chain directory (32 LSB) */
   int64_t id;
+  
+  /* cluster number of the cluster chain directory (if the inode is a directory) */
   uint32_t cc_dirid;
+  
+  /* directory entries of an inode (if the inode is a directory) */
   unsigned char *cluster_chain_directory;
+  
+  /* size of the cluster chain in sector (if the inode is a directory) */   
   uint32_t nb_sector;
+  
+  /* entry of the inode */
   struct fatfs_entry entry;
 }
 * fatfs_inode_t;
+
+/*
+ ****/
+
+
+/****f* FATFileSystem/fatfs_t
+ * SUMMARY
+ * FAT namespace
+ *
+ * SOURCE
+ */
 
 typedef struct fatfs
 {
@@ -117,6 +156,10 @@ typedef struct fatfs
   
 }
 * fatfs_t;
+
+/*
+ ****/
+
 
 extern status_t fatfs_walk (void * ns, void * base,
     char * restrict path, char ** new_path, int64_t * vnid);

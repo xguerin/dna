@@ -19,7 +19,35 @@
 #include <Private/FATlib.h>
 #include <DnaTools/DnaTools.h>
 
+/****f* FATFileSystem/fatfs_read
+ * SUMMARY
+ * Read data from an inode from a FAT volume.
+ *
+ * SYNOPSIS
+ */
+
 status_t fatfs_read (void * ns, void * node, void * file, void * data, int64_t offset, int32_t * p_count)
+
+/*  
+ * ARGUMENTS
+ * * ns : the namespace (fatfs_t)
+ * * node : the current inode (fatfs_inode_t)
+ * * file : the entry of the inode (fatfs_entry_t)
+ * * offset : number of the first byte to read from the begining of the file
+ * * p_count : number of bytes to read/number of read bytes.
+ * * data : read data
+ * 	
+ * FUNCTION
+ * Read data from an inode from a FAT volume .
+ * This function is called by vfs_read().
+ *
+ * RESULT
+ * * DNA_OK if the operation succeed
+ * * DNA_ERROR if read starts past end of file
+ *
+ * SOURCE
+ */
+ 
 {
 	fatfs_t fatfs = ns;
 	fatfs_entry_t entry = file;
@@ -40,65 +68,96 @@ status_t fatfs_read (void * ns, void * node, void * file, void * data, int64_t o
 	{
 		ensure (ns != NULL && node != NULL && file != NULL, DNA_ERROR)
 	
-		/* Nothing to be done */
-		if (!count)
+		/*
+		 * Nothing to be done
+		 */
+		if (count <= 0)
 			return DNA_OK;
 
-		/* Check if read starts past end of file */
+		/*
+		 * Check if read starts past end of file
+		 */
 		if (offset >= entry -> FileSize)
 			return DNA_ERROR;
 			
-		/* Limit to file size */
+		/*
+		 * Limit to file size
+		 */
 		if ((offset + count) > entry -> FileSize)
 			count = entry -> FileSize - offset;
 
 		startcluster = ((uint32_t)(entry -> FstClusHI) << 16) + entry -> FstClusLO;
 
-		/* Calculate start sector */
+		/*
+		 * Calculate start sector
+		 */
 		sector = (uint32_t)(offset / FAT_SECTOR_SIZE);
 
-		/* Offset to start copying data from first sector */
+		/*
+		 * Offset to start copying data from first sector
+		 */
 		sector_offset = (uint32_t)(offset % FAT_SECTOR_SIZE);
 		
 		data_buffer.address = 0xFFFFFFFF;
 		
 		while (bytesRead < count)
 		{
-			/* Do we need to re-read the sector? */
+			/*
+			 * Do we need to re-read the sector?
+			 */
 			if (data_buffer.address != sector)
 			{
-				/* Read sector of file */
+				/*
+				 *  Read sector of file
+				 */
 				if (!fatfs_sector_reader(fatfs, startcluster, sector, data_buffer.sector))
 					break;
 
 				data_buffer.address = sector;
 			}
 
-			/* We have upto one sector to copy */
+			/*
+			 * We have upto one sector to copy
+			 */
 			copyCount = FAT_SECTOR_SIZE - sector_offset;
 			
-			/* Only require some of this sector? */
+			/*
+			 * Only require some of this sector?
+			 */
 			if (copyCount > (count - bytesRead))
 				copyCount = (count - bytesRead);
 				
-			/* Copy to application buffer */
+			/*
+			 * Copy to application buffer
+			 */
 			dna_memcpy((unsigned char*)((unsigned char*)data + bytesRead), 
 				(unsigned char*)(data_buffer.sector + sector_offset), copyCount);
 				
-			/* Increase total read count */
+			/*
+			 * Increase total read count
+			 */
 			bytesRead += copyCount;
 			
-			/* Move onto next sector and reset copy offset */
+			/*
+			 * Move onto next sector and reset copy offset
+			 */
 			sector++;
 			sector_offset = 0;
 			offset += copyCount;
 		}
 	}
 		  
+	/*
+	 * update the number of read bytes
+	 */
 	*p_count = bytesRead;
 
 //	log (VERBOSE_LEVEL, "[end] FATFS read ");
 
 	return DNA_OK;
 }
+
+/*
+ ****/
+
 

@@ -19,8 +19,38 @@
 #include <DnaTools/DnaTools.h>
 #include <Private/FATlib.h>
 
+/****f* FATFileSystem/fatfs_walk
+ * SUMMARY
+ * Return the id corresponding to a path from a base inode on a FAT volume.
+ *
+ * SYNOPSIS
+ */
+
 status_t fatfs_walk (void * ns, void * base, char * restrict path,
     char ** new_path, int64_t * p_vnid)
+    
+/*  
+ * ARGUMENTS
+ * * ns : the namespace (fatfs_t)
+ * * base : the base inode (fatfs_inode_t)
+ * * path : the path
+ * * new_path : unused
+ * * p_vnid : the id corresponding to the path
+ * 	
+ * FUNCTION
+ * Return the id corresponding to a path from a base inode on a FAT volume.
+ * This function is called by vfs_walk().
+ *
+ * RESULT
+ * * DNA_OK if the operation succeed
+ * * DNA_BAD_ARGUMENT if an argument is missing
+ * * DNA_ALREADY_AT_ROOT if the base inode is the root inode and the path is ..
+ * * DNA_NO_ENTRY if no match found
+ * * DNA_BAD_INODE_TYPE if the base inode is not a directory inode
+ *
+ * SOURCE
+ */
+    
 {
 //  fatfs_t fatfs = ns;
   fatfs_inode_t base_inode = base;
@@ -35,34 +65,52 @@ status_t fatfs_walk (void * ns, void * base, char * restrict path,
 
   watch (status_t)
   {
-    ensure (ns != NULL && base != NULL, DNA_ERROR);
+    ensure (ns != NULL && base != NULL, DNA_BAD_ARGUMENT);
     
-	/* check if the inode is an inode directory */        
+	/*
+	 * check if the inode is an inode directory
+	 */
     ensure (base_inode -> cluster_chain_directory != NULL, 
     	DNA_BAD_INODE_TYPE);
     	
+    /*
+     * the path is the current directory ?
+     */
     if(dna_strcmp (path, ".") == 0)
     {
     	vnid = base_inode->id;
     }
+    /*
+     * no, so search the entry
+     */    
     else 
 	{
-		/* walk the inode cluseter chain */
+		/*
+		 * walk the inode cluster chain
+		 */
 		for(sector = 0; sector < base_inode -> nb_sector; sector++)
 		{
-			/* Analyse Sector */
+			/*
+			 * Analyse Sector
+			 */
 			for (item = 0; item < 16; item++)
 			{
-				/* Create the multiplier for sector access */
+				/*
+				 * Create the multiplier for sector access
+				 */
 				recordoffset = (32*item);
 
-				/* Overlay directory entry over buffer */
+				/*
+				 * Overlay directory entry over buffer
+				 */
 				directoryEntry = (fatfs_entry_t)(base_inode -> cluster_chain_directory 
 					+ sector*FAT_SECTOR_SIZE + recordoffset);
 					
 				if(fatfs_get_fn_entry(directoryEntry, filename) == 0)
 				{
-					/* Compare names to see if they match */
+					/*
+					 * Compare names to see if they match
+					 */
 					if (fatfs_compare_names(filename, path) == 0)
 					{
 						vnid = ((uint64_t)base_inode -> cc_dirid << 32) + 
@@ -72,20 +120,29 @@ status_t fatfs_walk (void * ns, void * base, char * restrict path,
 					
 					fatfs_reset_lfn(filename);
 				}
-			} /* End of for */
-		}/* End of for */
+			}
+		}
     }
 
+	/*
+	 * entry not found, check if the path is ".."
+	 */
 	ensure (vnid != -1 || dna_strcmp (path, "..") != 0,
 		 DNA_ALREADY_AT_ROOT);
     ensure (vnid != -1, DNA_NO_ENTRY);
+    
+    /*
+     * return the vnid
+     */
     
     *p_vnid = vnid;
 
     log (VERBOSE_LEVEL, "[end] FATFS walk (vnid = 0x%llx)", vnid);
     
     return DNA_OK;
-  } /* End of watch */
-
+  }
 }
+
+/*
+ ****/
 

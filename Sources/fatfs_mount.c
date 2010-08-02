@@ -21,8 +21,39 @@
 #include <DnaTools/DnaTools.h>
 #include <MemoryManager/MemoryManager.h>
 
+/****f* FATFileSystem/fatfs_mount
+ * SUMMARY
+ * Mount a FAT volume.
+ *
+ * SYNOPSIS
+ */
+
 status_t fatfs_mount (int32_t vid, const char * dev_path, uint32_t flags, 
 	void * params, void ** data, int64_t * vnid)
+	
+/*  
+ * ARGUMENTS
+ * * vid : the volume id
+ * * dev_path : path to the device
+ * * flags : unused
+ * * params : unused
+ * * data : the namespace of the mounted volume (fatfs_t)
+ * * vnid : the inode of root inode
+ *
+ * FUNCTION
+ * Mount a FAT volume.
+ * Create the namespace and create the root vnode of the volume.
+ * This function is called by vfs_mount().
+ *
+ * RESULT
+ * * DNA_OK if the operation succeed
+ * * DNA_ERROR if an error occured
+ * * DNA_BAD_ARGUMENT if an argument
+ * * DNA_OUT_OF_MEM the memory allocation failed
+ *
+ * SOURCE
+ */
+
 {
 	fatfs_t fatfs = NULL;
 	fatfs_inode_t root_inode = NULL;
@@ -33,37 +64,60 @@ status_t fatfs_mount (int32_t vid, const char * dev_path, uint32_t flags,
 
 	watch(status_t)
 	{
-		ensure (dev_path != NULL, DNA_ERROR);
+		ensure (dev_path != NULL, DNA_BAD_ARGUMENT);
 
-		/* create the fatfs structure */
+		/*
+		 * create the fatfs structure
+		 */
 		fatfs = kernel_malloc (sizeof (struct fatfs), true);
 		ensure (fatfs != NULL, DNA_OUT_OF_MEM);
 	
-		/* open and get the file descriptor of the device */
+		/*
+		 * open and get the file descriptor of the device
+		 */
 		status = (status_t)media_open(dev_path, &(fatfs->fs_fd));
 		check(source_error, status == 1, DNA_ERROR);
 	
-		/* attach opening/writing functions */
+		/*
+		 * attach opening/writing functions
+		 */
 		fatfs -> disk_io.read_sector = media_read;
 		fatfs -> disk_io.write_sector = media_write;
 
-		/* initialize the fatfs structure */
+		/*
+		 * initialize the fatfs structure
+		 */
 		status = (status_t)fatfs_init(fatfs);
 		check(source_error, status == FAT_INIT_OK, DNA_ERROR); 
 
-		/* set volume id */		
+		/*
+		 * set volume id 
+		 */
 		fatfs -> vid = vid;
-		/* set cluster root vnode id */
+		
+		/*
+		 * set cluster root vnode id
+		 */
 		fatfs -> root_vnid = (((uint64_t)fatfs_get_root_cluster(fatfs)) << 32) + 0xFFFFFFFF;
+			
+		/*
+		 * return values
+		 */
 			
 		*data = fatfs;
 		*vnid = fatfs -> root_vnid;
 		
-		/* get cluster root vnode */
+		/* 
+		 * get cluster root vnode
+		 */
 		status = fatfs_read_vnode(fatfs, fatfs -> root_vnid, (void **)& root_inode);
 		check(source_error, status == 0, DNA_ERROR);
 	
 		log (VERBOSE_LEVEL, "[end] FATFS mount");
+		
+		/*
+		 * create the root vnode_create
+		 */
 
 		return vnode_create (fatfs -> root_vnid, fatfs -> vid, (void *) root_inode);
 	}
@@ -74,4 +128,7 @@ status_t fatfs_mount (int32_t vid, const char * dev_path, uint32_t flags,
 		leave;
 	}
 }
+
+/*
+ ****/
 

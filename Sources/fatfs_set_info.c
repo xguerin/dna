@@ -18,10 +18,41 @@
 #include <Private/FATFileSystem.h>
 #include <DnaTools/DnaTools.h>
 
+/****f* FATFileSystem/fatfs_set_info
+ * SUMMARY
+ * Update metadatas of an inode from a FAT volume.
+ *
+ * SYNOPSIS
+ */
+
 status_t fatfs_set_info (void * ns, void * node, void * data,
     file_info_t info, int32_t mask)
+
+/*  
+ * ARGUMENTS
+ * * ns : the namespace (fatfs_t)
+ * * node : the current inode (fatfs_inode_t)
+ * * file : the entry of the inode (fatfs_entry_t)
+ * * data :
+ * * info : the new info
+ * * mask : 
+ * 	
+ * FUNCTION
+ * Update metadatas of an inode from a FAT volume.
+ * Not implemented.
+ *
+ * RESULT
+ * * DNA_OK
+ *
+ * SOURCE
+ */    
+
 {
 
   return DNA_OK;
 }
+
+/*
+ ****/
+
 

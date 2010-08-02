@@ -19,10 +19,37 @@
 #include <Private/FATlib.h>
 #include <DnaTools/DnaTools.h>
 
+/****f* FATFileSystem/fatfs_close
+ * SUMMARY
+ * Close a file saved on a FAT volume.
+ *
+ * SYNOPSIS
+ */
+
 status_t fatfs_close (void * ns, void * node, void * data)
+
+/*
+ * ARGUMENTS
+ * * ns : the namespace (fatfs_t)
+ * * node : the inode corresponding to the file (fatfs_inode_t)
+ * * data : the entry of the inode (fatfs_entry_t)
+ *
+ * FUNCTION
+ * Close a file saved on FAT volume. Funtion called by vfs_close(). 
+ * This funtion do nothing.
+ *
+ * RESULT
+ * * DNA_OK
+ *
+ * SOURCE
+ */
+
 {
   log (VERBOSE_LEVEL, "FATFS close");
 
   return DNA_OK;
 }
+
+/*
+ ****/
 

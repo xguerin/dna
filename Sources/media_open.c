@@ -18,8 +18,34 @@
 #include <fcntl.h>
 #include <Private/Media.h>
 
+/****m* FATFileSystem/media_open
+ * SUMMARY
+ * Return a file descriptor to a FAT device.
+ *
+ * SYNOPSIS
+ */
+
 int media_open(const char *dev_path, int32_t *fs_fd)
+
+/*  
+ * ARGUMENTS
+ * * dev_path : the path of the FAT device.
+ * * fs_fd : the file_descriptor
+ * 	
+ * FUNCTION
+ * Return a file descriptor to a FAT device.
+ *
+ * RESULT
+ * * 1 : on success
+ * * 0 : on faillure
+ *
+ * SOURCE
+ */
+
 {
 	return ((*fs_fd = open(dev_path, O_RDWR)) >= 0); 
 }
+
+/*
+ ****/
 

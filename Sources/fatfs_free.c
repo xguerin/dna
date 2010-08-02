@@ -19,9 +19,36 @@
 #include <Private/FATlib.h>
 #include <DnaTools/DnaTools.h>
 
-status_t fatfs_free (void * ns, void * node, void * data)
-{
+/****f* FATFileSystem/fatfs_free
+ * SUMMARY
+ * Free.
+ *
+ * SYNOPSIS
+ */
 
+status_t fatfs_free (void * ns, void * node, void * data)
+
+
+/*
+ * ARGUMENTS
+ * * ns : the namespace (fatfs_t)
+ * * node : the inode to free (fatfs_inode_t)
+ * * data : the data
+ *
+ * FUNCTION
+ * Not implemented.
+ *
+ * RESULT
+ * * DNA_OK
+ *
+ * SOURCE
+ */
+
+{
   return DNA_OK;
 }
+
+/*
+ ****/
+
 

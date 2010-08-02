@@ -19,11 +19,40 @@
 #include <Private/FATFileSystem.h>
 #include <Private/Media.h>
 
-int media_read(const uint32_t sector, unsigned char *buffer, const int32_t fs_fd)
+/****m* FATFileSystem/media_read
+ * SUMMARY
+ * Perform the reading of one sector on a FAT device.
+ *
+ * SYNOPSIS
+ */
+
+int media_read(const uint32_t sector, unsigned char *buffer, 
+	const int32_t fs_fd)
+
+/*  
+ * ARGUMENTS
+ * * sector : the sector to read
+ * * buffer : the read data
+ * * fs_fd : the file descriptor pointing to the FAT volume.
+ * 	
+ * FUNCTION
+ * Perform the reading of one sector on a FAT device.
+ *
+ * RESULT
+ * * 1 : on success
+ * * 0 : on faillure
+ *
+ * SOURCE
+ */
+
 {
 	if(lseek(fs_fd, (sector * FAT_SECTOR_SIZE), SEEK_SET) < 0)
 		return 0;
 
 	return (read(fs_fd, buffer, FAT_SECTOR_SIZE) > 0);
 }
+
+/*
+ ****/
+
 

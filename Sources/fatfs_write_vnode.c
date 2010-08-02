@@ -18,8 +18,35 @@
 #include <Private/FATFileSystem.h>
 #include <DnaTools/DnaTools.h>
 
+/****f* FATFileSystem/fatfs_write_vnode
+ * SUMMARY
+ * Build and write a new inode on FAT volume.
+ *
+ * SYNOPSIS
+ */
+
 status_t fatfs_write_vnode (void * ns, void * node)
+
+/*  
+ * ARGUMENTS
+ * * ns : the namespace (fatfs_t)
+ * * node : the inode to write (fatfs_inode_t)
+ * 	
+ * FUNCTION
+ * Build and write a new inode on FAT volume.
+ * Not implemented.
+ *
+ * RESULT
+ * * DNA_OK
+ *
+ * SOURCE
+ */
+
 {
 	return DNA_OK;
 }
+
+/*
+ ****/
+
 

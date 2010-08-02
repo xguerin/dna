@@ -19,7 +19,34 @@
 #include <Private/FATlib.h>
 #include <DnaTools/DnaTools.h>
 
+/****f* FATFileSystem/fatfs_open
+ * SUMMARY
+ * Open an inode from a FAT volume.
+ *
+ * SYNOPSIS
+ */
+
 status_t fatfs_open (void * ns, void * node, int32_t mode, void ** data)
+
+/*  
+ * ARGUMENTS
+ * * ns : the namespace (fatfs_t)
+ * * node : the current inode (fatfs_inode_t)
+ * * mode : unused
+ * * data : the inode entry of the current inode (fatfs_entry_t)
+ * 	
+ * FUNCTION
+ * Open an inode from a FAT volume.
+ * Get some info about an inode from a FAT volume.
+ * This function is called by vfs_open().
+ *
+ * RESULT
+ * * DNA_OK if the operation succeed
+ * * DNA_BAD_ARGUMENT if an argument is missing
+ *
+ * SOURCE
+ */
+
 {
     fatfs_inode_t inode = node;
 
@@ -27,12 +54,17 @@ status_t fatfs_open (void * ns, void * node, int32_t mode, void ** data)
 
 	watch(status_t)
 	{
-		ensure (ns != NULL && node != NULL, DNA_ERROR);
+		ensure (ns != NULL && node != NULL, DNA_BAD_ARGUMENT);
 		
-		/* return the inode entry */
+		/* 
+		 * return the inode entry
+		 */
 		*data = (void *)&(inode -> entry);
 	}
 	
 	return DNA_OK;
 }
+
+/*
+ ****/
 

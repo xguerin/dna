@@ -17,9 +17,41 @@
 
 #include <DnaTools/DnaTools.h>
 
+/****f* FATFileSystem/fatfs_ioctl
+ * SUMMARY
+ * Execute an implementation-dependent operation on an inode from a FAT volume.
+ *
+ * SYNOPSIS
+ */
+
 status_t fatfs_ioctl (void * ns, void * node, void * data,
     int32_t function, void * arguments, int32_t * p_ret)
+    
+/*
+ * ARGUMENTS
+ * * ns : the namespace (fatfs_t)
+ * * node : the inode (fatfs_inode_t)
+ * * data : the data
+ * * function : the function
+ * * arguments :  the arguments
+ * * p_ret : the return value
+ *
+ * FUNCTION
+ * Execute an implementation-dependent operation on an inode from a FAT volume.
+ * This function is called by vfs_ioctl().
+ * Not implemented.
+ *
+ * RESULT
+ * * DNA_ERROR
+ *
+ * SOURCE
+ */
+    
 {
   return DNA_ERROR;
 }
+
+/*
+ ****/
+
 

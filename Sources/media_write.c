@@ -19,11 +19,40 @@
 #include <Private/FATFileSystem.h>
 #include <Private/Media.h>
 
-int media_write(const uint32_t sector, unsigned char *buffer, const int32_t fs_fd)
+/****m* FATFileSystem/media_write
+ * SUMMARY
+ * Perform the writing of one sector on a FAT device.
+ *
+ * SYNOPSIS
+ */
+
+int media_write(const uint32_t sector, unsigned char *buffer,
+	 const int32_t fs_fd)
+
+/*  
+ * ARGUMENTS
+ * * sector : the sector to write
+ * * buffer : the data to write
+ * * fs_fd : the file descriptor pointing to the FAT volume.
+ * 	
+ * FUNCTION
+ * Perform the writing of one sector on a FAT device.
+ *
+ * RESULT
+ * * 1 : on success
+ * * 0 : on faillure
+ *
+ * SOURCE
+ */
+	 
 {
 	if(lseek(fs_fd, sector * FAT_SECTOR_SIZE, SEEK_SET) < 0)
 		return 0;
 
 	return (write(fs_fd, buffer, FAT_SECTOR_SIZE) > 0);
 }
+
+/*
+ ****/
+
 
