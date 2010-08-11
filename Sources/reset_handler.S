@@ -16,7 +16,7 @@ reset_handler:
 
   @ Compute the basic stack addresses
 	ldr	r1, = CPU_SVC_STACK_ADDR
-  mov r2, r3, lsl r0
+  mul r2, r3, r0
   sub r1, r1, r2
 
   @ Set the processor stack
