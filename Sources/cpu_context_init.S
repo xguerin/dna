@@ -15,3 +15,5 @@ cpu_context_init:
   bic r5, r5, #0xC0
 	str r5, [r0]
 	pop {r4, r5, pc}
+  nop
+  nop

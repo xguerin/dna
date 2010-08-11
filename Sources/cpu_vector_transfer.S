@@ -68,3 +68,6 @@ _cpu_vector_xfer_do_byte:
 _cpu_vector_xfer_end:
 	pop			{r3 - r12}
 	mov pc, lr
+
+  nop
+  nop

@@ -8,4 +8,5 @@ cpu_context_save:
 	mrs r1, cpsr
 	str	r1, [r0]
 	mov pc, lr
-
+  nop
+  nop

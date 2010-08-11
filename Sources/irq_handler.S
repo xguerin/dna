@@ -62,4 +62,5 @@ irq_handler:
 
 	@ Return
 	subs pc, lr, #0x4
-
+  nop
+  nop

@@ -44,6 +44,9 @@ reset_handler:
 	ldr	r0, = system_kickstart
   blx r0
 
+  nop
+  nop
+
 _hell_pit:
   b _hell_pit
 

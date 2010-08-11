@@ -23,3 +23,5 @@ cpu_context_load:
 
   @ And now we restore the registers
   pop {r0, r1, pc}
+  nop
+  nop
