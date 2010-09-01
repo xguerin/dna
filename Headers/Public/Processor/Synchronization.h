@@ -3,38 +3,46 @@
 
 static inline long int cpu_test_and_set (volatile long int * spinlock)
 {
-  register long int result, temp = 1; 
+  register long int ret, temp = 1; 
 
-  __asm__ volatile ("\n"
-      "0:\tswp\t%0,%2,[%1]\n\t"
-      : "=&r" (result)
-      : "r" (spinlock), "r" (temp)
-      : "cc", "memory");
+  __asm__ volatile
+    ("\n"
+     "__start_tst:\n"
+     "ldrex  %0, %3\n"
+     "cmp    %0, #0\n"
+     "bne    __end_tst\n"
+     "strex  r1, %1, %2\n"
+     "cmp    r1, #0\n"
+     "bne    __start_tst\n"
+     "__end_tst:\n"
+     : "=&r" (ret), "=&r" (temp), "=m" (*spinlock)
+     : "m" (*spinlock)
+     : "memory", "r1");
 
-  return result;
+  return ret;
 }
 
 static inline long int cpu_compare_and_swap (volatile long int * p_val,
     long int oldval, long int newval)
 {
-  register long int result, tmp;
+  register long int ret;
 
-  __asm__ volatile ("\n"
-      "0:\tldr\t%1,[%2]\n\t"
-      "mov\t%0,#0\n\t"
-      "cmp\t%1,%4\n\t"
-      "bne\t1f\n\t"
-      "swp\t%0,%3,[%2]\n\t"
-      "cmp\t%1,%0\n\t"
-      "swpne\t%1,%0,[%2]\n\t"
-      "bne\t0b\n\t"
-      "mov\t%0,#1\n"
-      "1:"
-      : "=&r" (result), "=&r" (tmp)
-      : "r" (p_val), "r" (newval), "r" (oldval)
-      : "cc", "memory");
+  __asm__ volatile
+    ("\n"
+     "__start_cas:\n"
+     "ldrex  %0, %4\n"
+     "cmp    %0, %2\n"
+     "bne    __end_cas\n"
+     "mov    %0, %3\n"
+     "strex  r1, %0, %1\n"
+     "cmp    r1, #0\n"
+     "bne    __start_cas\n"
+     "__end_cas:\n"
+     : "=&r" (ret), "=m" (*p_val)
+     : "r" (oldval), "r" (newval), "m" (*p_val)
+     : "memory", "r1");
 
-  return result;
+  return ret;
 }
 
 #endif
