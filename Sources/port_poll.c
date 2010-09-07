@@ -17,7 +17,6 @@
 
 #include <stdbool.h>
 #include <Private/Core.h>
-#include <MemoryManager/MemoryManager.h>
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
@@ -28,17 +27,15 @@
  * SYNOPSIS
  */
 
-status_t port_write (int32_t id, int32_t code, void * buffer,
-    int32_t size, int32_t flags, bigtime_t timeout)
+status_t port_poll (int32_t id, int32_t flags,
+    bigtime_t timeout, int32_t * p_size)
 
 /*
  * ARGUMENTS
  * * id : the ID of the port to acquire.
- * * code : pointer to the message code.
- * * buffer : pointer to the message buffer.
- * * size : message buffer's size.
  * * flags : operation flags.
  * * timeout : potential timeout.
+ * * p_size :  a pointer to the message buffer's size.
  *
  * RESULT
  * * DNA_BAD_PORT_ID if the pid parameter is invalid.
@@ -48,26 +45,16 @@ status_t port_write (int32_t id, int32_t code, void * buffer,
  */
 
 {
-  int32_t read_sem, write_sem;
+  int32_t read_sem, data_size = 0;
   port_t port = NULL;
   port_id_t pid = { .raw = id };
-  message_t message = NULL;
+  message_t message;
   status_t status;
   interrupt_status_t it_status = 0;
 
   watch (status_t)
   {
     ensure (pid . s . index < DNA_MAX_PORT, DNA_BAD_PORT_ID);
-
-    /*
-     * Construct the message.
-     */
-
-    message = kernel_malloc (sizeof (struct _message) + size, false);
-    ensure (message != NULL, DNA_OUT_OF_MEM);
-
-    message -> code = code;
-    dna_memcpy (message -> buffer, buffer, size);
 
     /*
      * Look for the port with ID pid.
@@ -87,7 +74,6 @@ status_t port_write (int32_t id, int32_t code, void * buffer,
         port -> queue . status != 0, DNA_ERROR);
 
     read_sem = port -> read_sem;
-    write_sem = port -> write_sem;
 
     lock_release (& port -> lock);
     cpu_trap_restore(it_status);
@@ -96,7 +82,7 @@ status_t port_write (int32_t id, int32_t code, void * buffer,
      * Acquire the semaphore.
      */
 
-    status = semaphore_acquire (write_sem, 1, flags, timeout);
+    status = semaphore_acquire (read_sem, 1, flags, timeout);
     ensure (status == DNA_OK, status);
 
     /*
@@ -118,16 +104,20 @@ status_t port_write (int32_t id, int32_t code, void * buffer,
         port -> queue . status != 0, DNA_ERROR);
 
     /*
-     * Get the message from the message queue.
+     * Get the message size from the message queue.
      */
 
-    queue_add (& port -> queue, message);
+    message = queue_rem (& port -> queue);
+    check (bad_port, message != NULL, DNA_ERROR);
+
+    data_size = message -> size;
+    queue_pushback (& port -> queue, message);
 
     lock_release (& port -> lock);
     cpu_trap_restore(it_status);
 
     /*
-     * Release the read semaphore, and return.
+     * Release the semaphore and return.
      */
 
     status = semaphore_release (read_sem, 1, DNA_NO_RESCHEDULE);
@@ -140,17 +130,13 @@ status_t port_write (int32_t id, int32_t code, void * buffer,
   {
     lock_release (& port -> lock);
     cpu_trap_restore(it_status);
-
-    kernel_free (message);
     leave;
   }
 
   rescue (bad_portid)
   {
     lock_release (& port_pool . lock);
-    cpu_trap_restore(it_status);
-
-    kernel_free (message);
+    cpu_trap_restore (it_status);
     leave;
   }
 }
