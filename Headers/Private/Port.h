@@ -22,6 +22,8 @@
 #define DNA_CORE_PORT_PRIVATE_H
 
 #include <stdint.h>
+#include <stdbool.h>
+
 #include <Core/Core.h>
 #include <DnaTools/DnaTools.h>
 
@@ -75,10 +77,15 @@ typedef struct _message
 
 typedef struct _port
 {
+  bool closed;
+  spinlock_t lock;
+
   port_id_t id;
   port_info_t info;
 
-  int32_t semaphore;
+  int32_t read_sem;
+  int32_t write_sem;
+
   queue_t message_queue;
 }
 * port_t;

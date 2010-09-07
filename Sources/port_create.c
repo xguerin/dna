@@ -63,8 +63,11 @@ status_t port_create (char * name, int32_t queue_length, int32_t * p_id)
      * Fill in the information
      */
 
-    status = semaphore_create (name, queue_length, & port -> semaphore);
-    check (rsrc_error, status == DNA_OK, status);
+    status = semaphore_create (name, queue_length, & port -> write_sem);
+    check (wsem_error, status == DNA_OK, status);
+
+    status = semaphore_create (name, 0, & port -> read_sem);
+    check (rsem_error, status == DNA_OK, status);
 
     dna_strcpy (port -> info . name, name);
     port -> info . capacity = queue_length;
@@ -91,7 +94,7 @@ status_t port_create (char * name, int32_t queue_length, int32_t * p_id)
     }
 
     lock_release (& port_pool . lock);
-    check (rsrc_error, index < DNA_MAX_PORT, DNA_NO_MORE_PORT);
+    check (pool_error, index < DNA_MAX_PORT, DNA_NO_MORE_PORT);
 
     cpu_trap_restore(it_status);
 
@@ -99,10 +102,21 @@ status_t port_create (char * name, int32_t queue_length, int32_t * p_id)
     return DNA_OK;
   }
 
-  rescue (rsrc_error)
+  rescue (pool_error)
+  {
+    semaphore_destroy (port -> read_sem);
+  }
+
+  rescue (rsem_error)
+  {
+    semaphore_destroy (port -> write_sem);
+  }
+
+  rescue (wsem_error)
   {
     cpu_trap_restore(it_status);
     kernel_free (port);
+
     leave;
   }
 }

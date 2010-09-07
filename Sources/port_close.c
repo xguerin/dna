@@ -15,27 +15,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdbool.h>
 #include <Private/Core.h>
 #include <DnaTools/DnaTools.h>
-#include <MemoryManager/MemoryManager.h>
 #include <Processor/Processor.h>
 
-/****f* Port/port_destroy
+/****f* Port/port_close
  * SUMMARY
- * Destroy a port_t.
+ * Close a port.
  *
  * SYNOPSIS
  */
 
-status_t port_destroy (int32_t id)
+status_t port_close (int32_t id)
 
 /*
  * ARGUMENTS
- * * id : the port id.
+ * * id : the ID of the port to acquire.
  *
  * RESULT
- * * DNA_BAD_PORT_ID: the id parameter is invalid
- * * DNA_OK: the operation succeeded
+ * * DNA_BAD_PORT_ID if the pid parameter is invalid.
+ * * DNA_OK if the operation succeded.
  *
  * SOURCE
  */
@@ -44,45 +44,38 @@ status_t port_destroy (int32_t id)
   port_t port = NULL;
   port_id_t pid = { .raw = id };
   interrupt_status_t it_status = 0;
-  status_t status;
 
   watch (status_t)
   {
     ensure (pid . s . index < DNA_MAX_PORT, DNA_BAD_PORT_ID);
 
+    /*
+     * Look for the port with ID pid.
+     */
+
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& port_pool . lock);
 
+    port = port_pool . port[pid . s . index];
+    check (bad_portid, port != NULL, DNA_BAD_PORT_ID);
+    check (bad_portid, port -> id . raw == pid . raw, DNA_BAD_PORT_ID);
+
+    lock_acquire (& port -> lock);
+    lock_release (& port_pool . lock);
+
     /*
-     * Look for the port with ID id. If found,
-     * remove its entry from the pool.
+     * Close the port and return.
      */
 
-    port = port_pool . port[pid . s . index];
-    check (invalid_port, port != NULL, DNA_BAD_PORT_ID);
-    check (invalid_port, port -> id . raw == pid . raw, DNA_BAD_PORT_ID);
+    port -> closed = true;
 
-    port_pool . port[pid . s . index] = NULL;
-
-    lock_release (& port_pool . lock);
+    lock_release (& port -> lock);
     cpu_trap_restore(it_status);
 
-    /*
-     * Destroy the port's semaphore.
-     */
-
-    status = semaphore_destroy (port -> semaphore);
-    panic (status != DNA_OK);
-
-    /*
-     * Delete the port's memory.
-     */
-
-    kernel_free (port);
-    return status;
+    return DNA_OK;
   }
 
-  rescue (invalid_port)
+  rescue (bad_portid)
   {
     lock_release (& port_pool . lock);
     cpu_trap_restore(it_status);
