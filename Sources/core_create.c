@@ -120,6 +120,7 @@ status_t core_create (void)
 
     area = kernel_malloc (DNA_MAX_PORT * sizeof (port_t), true);
     port_pool . port = area;
+    port_pool . counter = 1;
     check (port_no_mem, area != NULL, DNA_OUT_OF_MEM);
 
     /*
