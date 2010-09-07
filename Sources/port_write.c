@@ -130,7 +130,7 @@ status_t port_write (int32_t id, int32_t code, void * buffer,
      * Delete the message, release the write semaphore, and return.
      */
 
-    status = semaphore_release (read_sem, 1, 0);
+    status = semaphore_release (read_sem, 1, DNA_NO_RESCHEDULE);
     ensure (status == DNA_OK, status);
 
     return DNA_OK;

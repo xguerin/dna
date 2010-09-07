@@ -125,7 +125,7 @@ status_t port_read (int32_t id, int32_t * p_code, void * buffer,
      * Delete the message, release the write semaphore, and return.
      */
 
-    status = semaphore_release (write_sem, 1, 0);
+    status = semaphore_release (write_sem, 1, DNA_NO_RESCHEDULE);
     ensure (status == DNA_OK, status);
 
     kernel_free (message);
