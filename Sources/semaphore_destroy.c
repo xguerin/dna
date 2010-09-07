@@ -97,6 +97,7 @@ status_t semaphore_destroy (int32_t id)
     }
 
     lock_release (& sem -> waiting_queue . lock);
+    cpu_trap_restore(it_status);
 
     /*
      * Delete the semaphore's memory.
