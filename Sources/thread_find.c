@@ -64,6 +64,7 @@ status_t thread_find (char * name, int32_t * tid)
     if (name == NULL)
     {
       *tid = self -> id . raw;
+      cpu_trap_restore (it_status);
     }
     else
     {
@@ -81,10 +82,11 @@ status_t thread_find (char * name, int32_t * tid)
       }
 
       lock_release (& thread_pool . lock);
+      cpu_trap_restore (it_status);
+
       ensure (index != DNA_MAX_THREAD, DNA_UNKNOWN_THREAD);
     }
 
-    cpu_trap_restore (it_status);
     return DNA_OK;
   }
 }
