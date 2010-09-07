@@ -128,7 +128,7 @@
         <argument name="value" type="int32_t" direction="In"/>
       </method>
 
-      <method name="thread_find" result="int32_t">
+      <method name="thread_find" result="status_t">
         <argument name="name" type="string" direction="In"/>
       </method>
 
@@ -146,7 +146,7 @@
       <definition name="DNA_RELATIVE_ALARM"/>
       <definition name="DNA_ABSOLUTE_ALARM"/>
 
-      <method name="alarm_create" result="int32_t">
+      <method name="alarm_create" result="status_t">
         <argument name="deadline" type="bigtime_t" direction="In"/>
         <argument name="mode" type="int32_t" direction="In"/>
         <argument name="callback" type="alarm_callback_t" direction="In"/>
@@ -158,6 +158,59 @@
       </method>
 
       <method name="timer_callback" result=""/>
+    </context>
+
+    <context name="Port">
+      <type name="port_info_t"/>
+
+      <method name="port_create" result="status_t">
+        <argument name="name" type="string" direction="In"/>
+        <argument name="queue_length" type="int32_t" direction="In"/>
+        <argument name="p_id" type="int32_t" direction="Out"/>
+      </method>
+
+      <method name="port_destroy" result="status_t">
+        <argument name="id" type="int32_t" direction="In"/>
+      </method>
+
+      <method name="port_close" result="status_t">
+        <argument name="id" type="int32_t" direction="In"/>
+      </method>
+
+      <method name="port_find" result="status_t">
+        <argument name="name" type="string" direction="In"/>
+        <argument name="p_id" type="int32_t" direction="Out"/>
+      </method>
+
+      <method name="port_poll" result="status_t">
+        <argument name="id" type="int32_t" direction="In"/>
+        <argument name="flags" type="int32_t" direction="In"/>
+        <argument name="timeout" type="bigtime_t" direction="In"/>
+        <argument name="p_size" type="int32_t" direction="Out"/>
+      </method>
+
+      <method name="port_read" result="status_t">
+        <argument name="id" type="int32_t" direction="In"/>
+        <argument name="p_code" type="int32_t" direction="Out"/>
+        <argument name="buffer" type="access" direction="In"/>
+        <argument name="size" type="int32_t" direction="In"/>
+        <argument name="flags" type="int32_t" direction="In"/>
+        <argument name="timeout" type="bigtime_t" direction="In"/>
+      </method>
+
+      <method name="port_write" result="status_t">
+        <argument name="id" type="int32_t" direction="In"/>
+        <argument name="code" type="int32_t" direction="In"/>
+        <argument name="buffer" type="access" direction="In"/>
+        <argument name="size" type="int32_t" direction="In"/>
+        <argument name="flags" type="int32_t" direction="In"/>
+        <argument name="timeout" type="bigtime_t" direction="In"/>
+      </method>
+
+      <method name="port_get_info" result="status_t">
+        <argument name="id" type="int32_t" direction="In"/>
+        <argument name="p_info" type="port_info_t" direction="Out"/>
+      </method>
     </context>
   </provide>
 
