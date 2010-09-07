@@ -59,6 +59,7 @@ port_id_t;
 
 typedef struct _message
 {
+  queue_link_t link;
   int32_t code;
   int32_t size;
   int8_t buffer[];
@@ -86,7 +87,7 @@ typedef struct _port
   int32_t read_sem;
   int32_t write_sem;
 
-  queue_t message_queue;
+  queue_t queue;
 }
 * port_t;
 

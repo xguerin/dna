@@ -71,7 +71,10 @@ status_t port_destroy (int32_t id)
      * Destroy the port's semaphore.
      */
 
-    status = semaphore_destroy (port -> semaphore);
+    status = semaphore_destroy (port -> read_sem);
+    panic (status != DNA_OK);
+
+    status = semaphore_destroy (port -> write_sem);
     panic (status != DNA_OK);
 
     /*

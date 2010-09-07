@@ -21,20 +21,20 @@
 #include <DnaTools/DnaTools.h>
 #include <Processor/Processor.h>
 
-/****f* Port/port_read
+/****f* Port/port_write
  * SUMMARY
  * Read a message from a port.
  *
  * SYNOPSIS
  */
 
-status_t port_read (int32_t id, int32_t * p_code, void * buffer,
+status_t port_write (int32_t id, int32_t code, void * buffer,
     int32_t size, int32_t flags, bigtime_t timeout)
 
 /*
  * ARGUMENTS
  * * id : the ID of the port to acquire.
- * * p_code : pointer to the message code.
+ * * code : pointer to the message code.
  * * buffer : pointer to the message buffer.
  * * size : message buffer's size.
  * * flags : operation flags.
@@ -48,7 +48,7 @@ status_t port_read (int32_t id, int32_t * p_code, void * buffer,
  */
 
 {
-  int32_t read_sem, write_sem, data_size = 0;
+  int32_t read_sem, write_sem;
   port_t port = NULL;
   port_id_t pid = { .raw = id };
   message_t message = NULL;
@@ -58,6 +58,16 @@ status_t port_read (int32_t id, int32_t * p_code, void * buffer,
   watch (status_t)
   {
     ensure (pid . s . index < DNA_MAX_PORT, DNA_BAD_PORT_ID);
+
+    /*
+     * Construct the message.
+     */
+
+    message = kernel_malloc (sizeof (struct _message) + size, false);
+    ensure (message != NULL, DNA_OUT_OF_MEM);
+
+    message -> code = code;
+    dna_memcpy (message -> buffer, buffer, size);
 
     /*
      * Look for the port with ID pid.
@@ -86,7 +96,7 @@ status_t port_read (int32_t id, int32_t * p_code, void * buffer,
      * Acquire the semaphore.
      */
 
-    status = semaphore_acquire (read_sem, 1, flags, timeout);
+    status = semaphore_acquire (write_sem, 1, flags, timeout);
     ensure (status == DNA_OK, status);
 
     /*
@@ -111,12 +121,7 @@ status_t port_read (int32_t id, int32_t * p_code, void * buffer,
      * Get the message from the message queue.
      */
 
-    message = queue_rem (& port -> queue);
-    check (bad_port, message != NULL, DNA_ERROR);
-
-    *p_code = message -> code;
-    data_size = size >= message -> size ? message -> size : size;
-    dna_memcpy (buffer, message -> buffer, size);
+    queue_add (& port -> queue, message);
 
     lock_release (& port -> lock);
     cpu_trap_restore(it_status);
@@ -136,6 +141,8 @@ status_t port_read (int32_t id, int32_t * p_code, void * buffer,
   {
     lock_release (& port -> lock);
     cpu_trap_restore(it_status);
+
+    kernel_free (message);
     leave;
   }
 
@@ -143,6 +150,8 @@ status_t port_read (int32_t id, int32_t * p_code, void * buffer,
   {
     lock_release (& port_pool . lock);
     cpu_trap_restore(it_status);
+
+    kernel_free (message);
     leave;
   }
 }
