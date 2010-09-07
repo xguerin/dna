@@ -25,6 +25,7 @@
 #include <Private/Cpu.h>
 #include <Private/LifeCycle.h>
 #include <Private/Interrupt.h>
+#include <Private/Port.h>
 #include <Private/Scheduler.h>
 #include <Private/Semaphore.h>
 #include <Private/Thread.h>

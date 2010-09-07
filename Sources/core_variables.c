@@ -97,3 +97,15 @@ semaphore_pool_t semaphore_pool;
 /*
  ****/
 
+/****v* PortPrivate/port_pool
+ * SUMMARY
+ * The port pool instance.
+ *
+ * SOURCE
+ */
+
+port_pool_t port_pool;
+
+/*
+ ****/
+

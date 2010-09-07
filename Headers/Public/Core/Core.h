@@ -25,8 +25,8 @@
 #include <Core/LifeCycle.h>
 #include <Core/Interrupt.h>
 #include <Core/Lock.h>
+#include <Core/Port.h>
 #include <Core/Semaphore.h>
 #include <Core/Thread.h>
-#include <DnaTools/DnaTools.h>
 
 #endif

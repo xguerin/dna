@@ -113,6 +113,16 @@ status_t core_create (void)
     check (sem_no_mem, area != NULL, DNA_OUT_OF_MEM);
 
     /*
+     * Initialize the port pool
+     */
+
+    dna_memset (& port_pool, 0, sizeof (port_pool_t));
+
+    area = kernel_malloc (DNA_MAX_PORT * sizeof (port_t), true);
+    port_pool . port = area;
+    check (port_no_mem, area != NULL, DNA_OUT_OF_MEM);
+
+    /*
      * Initialize the CPUs
      */
 
@@ -206,6 +216,11 @@ status_t core_create (void)
       }
     }
 
+    kernel_free (port_pool . port);
+  }
+
+  rescue (port_no_mem)
+  {
     kernel_free (semaphore_pool . semaphore);
   }
 
