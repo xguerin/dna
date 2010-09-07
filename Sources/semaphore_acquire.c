@@ -43,6 +43,7 @@ status_t semaphore_acquire (int32_t id, int32_t tokens,
  * * DNA_WOULD_BLOCK if the semaphore is already locked and the timeout is 0.
  * * DNA_SEM_DESTROYED if the semaphore has been deleted during a wait.
  * * DNA_INTERRUPTED if the acquisition has been interrupted.
+ * * DNA_TIMED_OUT if the acquisition has timed out.
  * * DNA_OK if the operation succeded.
  *
  * SOURCE
