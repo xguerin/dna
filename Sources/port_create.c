@@ -51,6 +51,7 @@ status_t port_create (char * name, int32_t queue_length, int32_t * p_id)
   watch (status_t)
   {
     ensure (name != NULL && p_id != NULL, DNA_BAD_ARGUMENT);
+    ensure (queue_length > 0, DNA_BAD_ARGUMENT);
 
     /*
      * Create the port and fill in its information
