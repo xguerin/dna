@@ -63,6 +63,7 @@ status_t core_create (void)
 
     area = kernel_malloc (DNA_MAX_GROUP * sizeof (thread_t *), true);
     thread_pool . thread = area;
+    thread_pool . counter = 1;
 
     for (int32_t i = 0; i < DNA_MAX_GROUP; i += 1)
     {
@@ -97,6 +98,7 @@ status_t core_create (void)
     dna_memset (& alarm_manager, 0, sizeof (alarm_manager_t));
     area = kernel_malloc (DNA_MAX_CPU * sizeof (cpu_t), true);
     alarm_manager . alarm = area;
+    alarm_manager . counter = 1;
     check (alarm_no_mem, area != NULL, DNA_OUT_OF_MEM);
 
     /*
@@ -107,6 +109,7 @@ status_t core_create (void)
 
     area = kernel_malloc (DNA_MAX_SEM * sizeof (semaphore_t), true);
     semaphore_pool . semaphore = area;
+    semaphore_pool . counter = 1;
     check (sem_no_mem, area != NULL, DNA_OUT_OF_MEM);
 
     /*
