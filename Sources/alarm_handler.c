@@ -189,9 +189,9 @@ status_t alarm_handler (void)
     {
       current_alarm -> id . s . value = 0;
 
-      lock_acquire (& alarm_manager . lock);
-      queue_add (& alarm_manager . alarm, current_alarm);
-      lock_release (& alarm_manager . lock);
+      lock_acquire (& alarm_pool . lock);
+      queue_add (& alarm_pool . alarm, current_alarm);
+      lock_release (& alarm_pool . lock);
     }
 
     return reschedule ? DNA_INVOKE_SCHEDULER : DNA_OK;

@@ -79,26 +79,26 @@ typedef struct _alarm
 /*
  ****/
 
-/****t* AlarmPrivate/alarm_manager_t
+/****t* AlarmPrivate/alarm_pool_t
  * SUMMARY
  * The time manager type.
  *
  * SOURCE
  */
 
-typedef struct _alarm_manager
+typedef struct _alarm_pool
 {
   spinlock_t lock;
   uint16_t counter;
   struct _alarm data[DNA_MAX_ALARM];
   queue_t alarm;
 }
-alarm_manager_t;
+alarm_pool_t;
 
 /*
  ****/
 
-extern alarm_manager_t alarm_manager;
+extern alarm_pool_t alarm_pool;
 extern bool alarm_comparator (void * item1, void * item2);
 
 #endif

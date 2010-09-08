@@ -48,14 +48,14 @@ status_t alarm_destroy (int32_t aid)
   watch (status_t)
   {
     it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& alarm_manager . lock);
+    lock_acquire (& alarm_pool . lock);
 
-    alarm = & alarm_manager . data[alarm_id . s . index];
+    alarm = & alarm_pool . data[alarm_id . s . index];
     check (alarm_error, alarm != NULL, DNA_UNKNOWN_ALARM);
     check (alarm_error, alarm -> id . raw == alarm_id . raw, DNA_UNKNOWN_ALARM);
 
     lock_acquire (& alarm -> lock);
-    lock_release (& alarm_manager . lock);
+    lock_release (& alarm_pool . lock);
 
     alarm -> is_invalid = true;
     lock_release (& alarm -> lock);
@@ -66,7 +66,7 @@ status_t alarm_destroy (int32_t aid)
 
   rescue (alarm_error)
   {
-    lock_release (& alarm_manager . lock);
+    lock_release (& alarm_pool . lock);
     cpu_trap_restore(it_status);
     leave;
   }

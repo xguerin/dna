@@ -73,14 +73,14 @@ cpu_pool_t cpu_pool;
 /*
  ****/
 
-/****v* AlarmPrivate/alarm_manager
+/****v* AlarmPrivate/alarm_pool
  * SUMMARY
  * The time manager instance.
  *
  * SOURCE
  */
 
-alarm_manager_t alarm_manager;
+alarm_pool_t alarm_pool;
 
 /*
  ****/

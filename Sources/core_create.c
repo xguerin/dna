@@ -95,13 +95,13 @@ status_t core_create (void)
      * Initialize the alarm manager
      */
 
-    dna_memset (& alarm_manager, 0, sizeof (alarm_manager_t));
-    alarm_manager . counter = 1;
+    dna_memset (& alarm_pool, 0, sizeof (alarm_pool_t));
+    alarm_pool . counter = 1;
 
     for (int32_t i = 0; i < DNA_MAX_ALARM; i += 1)
     {
-      alarm_manager . data[i] . id . s . index = i;
-      queue_add (& alarm_manager . alarm, & alarm_manager . data[i]);
+      alarm_pool . data[i] . id . s . index = i;
+      queue_add (& alarm_pool . alarm, & alarm_pool . data[i]);
     }
 
     /*

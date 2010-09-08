@@ -63,18 +63,18 @@ status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
      */
 
     it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& alarm_manager . lock);
+    lock_acquire (& alarm_pool . lock);
 
     current_cpuid = cpu_mp_id ();
     cpu = & cpu_pool . cpu[current_cpuid];
 
-    new_alarm = queue_rem (& alarm_manager . alarm);
+    new_alarm = queue_rem (& alarm_pool . alarm);
     check (no_alarm, new_alarm != NULL, DNA_NO_MORE_ALARM);
 
-    new_alarm -> id . s . value = alarm_manager . counter;
-    alarm_manager . counter += 1;
+    new_alarm -> id . s . value = alarm_pool . counter;
+    alarm_pool . counter += 1;
 
-    lock_release (& alarm_manager . lock);
+    lock_release (& alarm_pool . lock);
 
     /*
      * Set various information.
@@ -180,7 +180,7 @@ status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
 
   rescue (no_alarm)
   {
-    lock_release (& alarm_manager . lock);
+    lock_release (& alarm_pool . lock);
     cpu_trap_restore(it_status);
     leave;
   }
