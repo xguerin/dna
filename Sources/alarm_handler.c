@@ -84,7 +84,7 @@ status_t alarm_handler (void)
 
       timer_delay = start_time - current_deadline;
 
-      if (timer_delay / current_alarm -> quantum > 1)
+      if (timer_delay / current_alarm -> quantum > 2)
       {
         log (VERBOSE_LEVEL,
             "Irrealistic delay(%d)/quantum(%d) ratio for alarm 0x%x.",
