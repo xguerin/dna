@@ -103,7 +103,7 @@ status_t semaphore_acquire (int32_t id, int32_t tokens,
 
     lock_acquire (& semaphore_pool . lock);
 
-    sem = semaphore_pool . semaphore[sid . s . index];
+    sem = & semaphore_pool . data[sid . s . index];
     check (bad_semid, sem != NULL, DNA_BAD_SEM_ID);
     check (bad_semid, sem -> id . raw == sid . raw, DNA_BAD_SEM_ID);
 
@@ -196,7 +196,7 @@ status_t semaphore_acquire (int32_t id, int32_t tokens,
 
       lock_acquire (& semaphore_pool . lock);
 
-      sem = semaphore_pool . semaphore[sid . s . index];
+      sem = & semaphore_pool . data[sid . s . index];
       check (bad_semid, sem != NULL, DNA_SEM_DESTROYED);
       check (bad_semid, sem -> id . raw == sid . raw, DNA_SEM_DESTROYED);
 

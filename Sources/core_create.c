@@ -106,11 +106,13 @@ status_t core_create (void)
      */
 
     dna_memset (& semaphore_pool, 0, sizeof (semaphore_pool_t));
-
-    area = kernel_malloc (DNA_MAX_SEM * sizeof (semaphore_t), true);
-    semaphore_pool . semaphore = area;
     semaphore_pool . counter = 1;
-    check (sem_no_mem, area != NULL, DNA_OUT_OF_MEM);
+
+    for (int32_t sem_i = 0; sem_i < DNA_MAX_SEM; sem_i += 1)
+    {
+      semaphore_pool . data[sem_i] . id . s . index = sem_i;
+      queue_add (& semaphore_pool . semaphore, & semaphore_pool . data[sem_i]);
+    }
 
     /*
      * Initialize the port pool
@@ -221,11 +223,6 @@ status_t core_create (void)
   }
 
   rescue (port_no_mem)
-  {
-    kernel_free (semaphore_pool . semaphore);
-  }
-
-  rescue (sem_no_mem)
   {
     kernel_free (alarm_manager . alarm);
   }

@@ -64,7 +64,7 @@ status_t semaphore_destroy (int32_t id)
     check (invalid_semaphore, sem != NULL, DNA_BAD_SEM_ID);
     check (invalid_semaphore, sem -> id . raw == sid . raw, DNA_BAD_SEM_ID);
 
-    semaphore_pool . semaphore[sid . s . index] = NULL;
+    semaphore_pool . data[sid . s . index] . id . s . value = 0;
 
     lock_acquire (& sem -> waiting_queue . lock);
     lock_release (& semaphore_pool . lock);

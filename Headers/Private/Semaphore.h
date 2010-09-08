@@ -59,6 +59,7 @@ semaphore_id_t;
 typedef struct _semaphore
 {
   semaphore_id_t id;
+
   spinlock_t lock;
   queue_t waiting_queue;
 
@@ -80,7 +81,8 @@ typedef struct _semaphore_pool
 {
   spinlock_t lock;
   int16_t counter;
-  semaphore_t * semaphore;
+  struct _semaphore data[DNA_MAX_SEM];
+  queue_t semaphore;
 }
 semaphore_pool_t;
 
