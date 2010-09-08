@@ -66,7 +66,7 @@ status_t port_read (int32_t id, int32_t * p_code, void * buffer,
     it_status = cpu_trap_mask_and_backup ();
     lock_acquire (& port_pool . lock);
 
-    port = port_pool . port[pid . s . index];
+    port = & port_pool . data[pid . s . index];
     check (bad_portid, port != NULL, DNA_BAD_PORT_ID);
     check (bad_portid, port -> id . raw == pid . raw, DNA_BAD_PORT_ID);
 
@@ -97,7 +97,7 @@ status_t port_read (int32_t id, int32_t * p_code, void * buffer,
     it_status = cpu_trap_mask_and_backup ();
     lock_acquire (& port_pool . lock);
 
-    port = port_pool . port[pid . s . index];
+    port = & port_pool . data[pid . s . index];
     check (bad_portid, port != NULL, DNA_BAD_PORT_ID);
     check (bad_portid, port -> id . raw == pid . raw, DNA_BAD_PORT_ID);
 

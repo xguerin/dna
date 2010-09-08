@@ -57,7 +57,7 @@ status_t port_find (char * name, int32_t * p_id)
 
     for (index = 0; index < DNA_MAX_PORT; index += 1)
     {
-      port = port_pool . port[index];
+      port = & port_pool . data[index];
 
       if (port != NULL && dna_strcmp (name, port -> info . name) == 0)
       {

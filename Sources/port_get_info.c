@@ -59,7 +59,7 @@ status_t port_get_info (int32_t id, port_info_t * p_info)
      * Look for the port with ID id
      */
 
-    port = port_pool . port[pid . s . index];
+    port = & port_pool . data[pid . s . index];
     check (invalid_port, port != NULL, DNA_BAD_PORT_ID);
     check (invalid_port, port -> id . raw == pid . raw, DNA_BAD_PORT_ID);
 

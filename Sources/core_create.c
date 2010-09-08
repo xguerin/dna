@@ -56,7 +56,7 @@ status_t core_create (void)
   watch (status_t)
   {
     /*
-     * Initialize the thread pool
+     * Initialize the thread pool.
      */
 
     dna_memset (& thread_pool, 0, sizeof (thread_pool_t));
@@ -73,7 +73,7 @@ status_t core_create (void)
     }
 
     /*
-     * Initialize the scheduler
+     * Initialize the scheduler.
      */
 
     dna_memset (& scheduler, 0, sizeof (scheduler_t));
@@ -83,7 +83,7 @@ status_t core_create (void)
     check (thread_no_mem, area != NULL, DNA_OUT_OF_MEM);
 
     /*
-     * Initialize the CPU pool
+     * Initialize the CPU pool.
      */
 
     dna_memset (& cpu_pool, 0, sizeof (cpu_pool_t));
@@ -92,7 +92,7 @@ status_t core_create (void)
     check (cpu_no_mem, area != NULL, DNA_OUT_OF_MEM);
 
     /*
-     * Initialize the alarm manager
+     * Initialize the alarm pool.
      */
 
     dna_memset (& alarm_pool, 0, sizeof (alarm_pool_t));
@@ -105,7 +105,7 @@ status_t core_create (void)
     }
 
     /*
-     * Initialize the semaphore pool
+     * Initialize the semaphore pool.
      */
 
     dna_memset (& semaphore_pool, 0, sizeof (semaphore_pool_t));
@@ -118,15 +118,17 @@ status_t core_create (void)
     }
 
     /*
-     * Initialize the port pool
+     * Initialize the port pool.
      */
 
     dna_memset (& port_pool, 0, sizeof (port_pool_t));
-
-    area = kernel_malloc (DNA_MAX_PORT * sizeof (port_t), true);
-    port_pool . port = area;
     port_pool . counter = 1;
-    check (port_no_mem, area != NULL, DNA_OUT_OF_MEM);
+
+    for (int32_t i = 0; i < DNA_MAX_PORT; i += 1)
+    {
+      port_pool . data[i] . id . s . index = i;
+      queue_add (& port_pool . port, & port_pool . data[i]);
+    }
 
     /*
      * Initialize the CPUs
@@ -222,11 +224,6 @@ status_t core_create (void)
       }
     }
 
-    kernel_free (port_pool . port);
-  }
-
-  rescue (port_no_mem)
-  {
     kernel_free (cpu_pool . cpu);
   }
 

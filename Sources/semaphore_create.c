@@ -43,6 +43,7 @@ status_t semaphore_create (char * name, int32_t tokens, int32_t * id)
  */
 
 {
+  int16_t index;
   semaphore_t semaphore = NULL;
   interrupt_status_t it_status = 0;
 
@@ -61,13 +62,22 @@ status_t semaphore_create (char * name, int32_t tokens, int32_t * id)
     check (pool_error, semaphore != NULL, DNA_NO_MORE_SEM);
 
     /*
-     * Fill in the information
+     * Make the place clean.
+     */
+
+    index = semaphore -> id . s . index;
+    dna_memset (semaphore, 0, sizeof (struct _semaphore));
+
+    /*
+     * Fill in the information.
      */
 
     dna_strcpy (semaphore -> info . name, name);
     semaphore -> info . tokens = tokens;
 
+    semaphore -> id . s . index = index;
     semaphore -> id . s . value = semaphore_pool . counter;
+
     semaphore_pool . counter += 1;
 
     /*

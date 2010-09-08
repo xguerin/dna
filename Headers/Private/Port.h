@@ -78,10 +78,12 @@ typedef struct _message
 
 typedef struct _port
 {
-  bool closed;
+  queue_link_t link;
+  port_id_t id;
+
   spinlock_t lock;
 
-  port_id_t id;
+  bool closed;
   port_info_t info;
 
   int32_t read_sem;
@@ -105,7 +107,8 @@ typedef struct _port_pool
 {
   spinlock_t lock;
   int16_t counter;
-  port_t * port;
+  struct _port data[DNA_MAX_PORT];
+  queue_t port;
 }
 port_pool_t;
 

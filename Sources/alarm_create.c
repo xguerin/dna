@@ -49,6 +49,7 @@ status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
 
 {
   cpu_t * cpu = NULL;
+  int16_t index;
   int32_t current_cpuid = 0;
   interrupt_status_t it_status;
   alarm_t new_alarm = NULL, old_alarm = NULL;
@@ -71,9 +72,21 @@ status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
     new_alarm = queue_rem (& alarm_pool . alarm);
     check (no_alarm, new_alarm != NULL, DNA_NO_MORE_ALARM);
 
-    new_alarm -> id . s . value = alarm_pool . counter;
-    alarm_pool . counter += 1;
+    /*
+     * Make the place clean.
+     */
 
+    index = new_alarm -> id . s . index;
+    dna_memset (new_alarm, 0, sizeof (struct _alarm));
+
+    /*
+     * Fill in the information.
+     */
+
+    new_alarm -> id . s . index = index;
+    new_alarm -> id . s . value = alarm_pool . counter;
+
+    alarm_pool . counter += 1;
     lock_release (& alarm_pool . lock);
 
     /*

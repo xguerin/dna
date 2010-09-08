@@ -43,7 +43,7 @@ status_t port_create (char * name, int32_t queue_length, int32_t * p_id)
  */
 
 {
-  int32_t index = 0;
+  int16_t index;
   port_t port = NULL;
   status_t status;
   interrupt_status_t it_status = 0;
@@ -53,15 +53,33 @@ status_t port_create (char * name, int32_t queue_length, int32_t * p_id)
     ensure (name != NULL && p_id != NULL, DNA_BAD_ARGUMENT);
     ensure (queue_length > 0, DNA_BAD_ARGUMENT);
 
+    it_status = cpu_trap_mask_and_backup();
+    lock_acquire (& port_pool . lock);
+
     /*
-     * Create the port and fill in its information
+     * Get an empty port slot.
      */
 
-    port = kernel_malloc (sizeof (struct _port), true);
-    ensure (port != NULL, DNA_OUT_OF_MEM);
+    port = queue_rem (& port_pool . port);
+    check (pool_error, port != NULL, DNA_NO_MORE_PORT);
 
     /*
-     * Fill in the information
+     * Make the place clean.
+     */
+
+    index = port -> id . s . index;
+    dna_memset (port, 0, sizeof (struct _port));
+
+    port -> id . s . index = index;
+    port -> id . s . value = port_pool . counter;
+
+    semaphore_pool . counter += 1;
+
+    lock_release (& port_pool . lock);
+    cpu_trap_restore(it_status);
+
+    /*
+     * Fill in the information.
      */
 
     status = semaphore_create (name, queue_length, & port -> write_sem);
@@ -74,38 +92,11 @@ status_t port_create (char * name, int32_t queue_length, int32_t * p_id)
     port -> info . capacity = queue_length;
 
     /*
-     * Insert the port if a room is available
+     * Return the port information.
      */
-
-    it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& port_pool . lock);
-
-    for (index = 0; index < DNA_MAX_PORT; index ++)
-    {
-      if (port_pool . port[index] == NULL)
-      {
-        port -> id . s . value = port_pool . counter;
-        port -> id . s . index = index;
-
-        port_pool . counter += 1;
-        port_pool . port[index] = port;
-
-        break;
-      }
-    }
-
-    lock_release (& port_pool . lock);
-    check (pool_error, index < DNA_MAX_PORT, DNA_NO_MORE_PORT);
-
-    cpu_trap_restore(it_status);
 
     *p_id = port -> id . raw;
     return DNA_OK;
-  }
-
-  rescue (pool_error)
-  {
-    semaphore_destroy (port -> read_sem);
   }
 
   rescue (rsem_error)
@@ -115,9 +106,16 @@ status_t port_create (char * name, int32_t queue_length, int32_t * p_id)
 
   rescue (wsem_error)
   {
-    cpu_trap_restore(it_status);
-    kernel_free (port);
+    it_status = cpu_trap_mask_and_backup();
+    lock_acquire (& port_pool . lock);
 
+    queue_add (& port_pool . port, port);
+  }
+
+  rescue (pool_error)
+  {
+    lock_release (& port_pool . lock);
+    cpu_trap_restore(it_status);
     leave;
   }
 }

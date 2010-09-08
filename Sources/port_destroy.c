@@ -58,11 +58,11 @@ status_t port_destroy (int32_t id)
      * remove its entry from the pool.
      */
 
-    port = port_pool . port[pid . s . index];
+    port = & port_pool . data[pid . s . index];
     check (invalid_port, port != NULL, DNA_BAD_PORT_ID);
     check (invalid_port, port -> id . raw == pid . raw, DNA_BAD_PORT_ID);
 
-    port_pool . port[pid . s . index] = NULL;
+    port -> id . s . value = 0;
 
     lock_release (& port_pool . lock);
     cpu_trap_restore(it_status);
