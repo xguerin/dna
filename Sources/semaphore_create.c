@@ -77,7 +77,7 @@ status_t semaphore_create (char * name, int32_t tokens, int32_t * id)
     lock_release (& semaphore_pool . lock);
     cpu_trap_restore(it_status);
 
-    log (INFO_LEVEL, "ID(%d:%d) TOKEN(%d)",
+    log (VERBOSE_LEVEL, "ID(%d:%d) TOKEN(%d)",
         semaphore -> id . s . value, semaphore -> id . s . index,
         semaphore -> info . tokens);
 

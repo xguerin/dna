@@ -107,7 +107,7 @@ status_t semaphore_acquire (int32_t id, int32_t tokens,
     check (bad_semid, sem != NULL, DNA_BAD_SEM_ID);
     check (bad_semid, sem -> id . raw == sid . raw, DNA_BAD_SEM_ID);
 
-    log (INFO_LEVEL, "%s(#%d), %d:%d(#%d)", self -> info . name,
+    log (VERBOSE_LEVEL, "%s(#%d), %d:%d(#%d)", self -> info . name,
         tokens, sid . s . value, sid . s . index, sem -> info . tokens);
 
     lock_acquire (& sem -> lock);

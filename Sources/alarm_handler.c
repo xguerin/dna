@@ -43,7 +43,7 @@ status_t alarm_handler (void)
   status_t status = DNA_OK;
   int32_t current_cpuid = cpu_mp_id ();
   bigtime_t start_time, quantum, current_deadline = 0, timer_delay;
-  bigtime_t delta_start, delta_end;
+  bigtime_t delta_start, delta_end, expected_deadline, expected_delay;
   bool reschedule = false;
   bool process_next_alarm = true;
   cpu_t * cpu = & cpu_pool . cpu[current_cpuid];
@@ -64,19 +64,34 @@ status_t alarm_handler (void)
       current_alarm = cpu -> current_alarm;
 
       /*
-       * If the current alarm is valid, check if it
-       * has to be restarted. Otherwise, it goes to the garbage.
+       * Check if the current alarm is valid.
        */
 
       check (no_alarm, current_alarm != NULL, DNA_ERROR);
       lock_acquire (& current_alarm -> lock);
 
-      log (VERBOSE_LEVEL, "Processing alarm (%d:%d) of thread 0x%x",
+      log (INFO_LEVEL, "Processing alarm (%d:%d) of thread 0x%x",
           current_alarm -> id . s . value, current_alarm -> id . s . index,
           current_alarm -> thread_id);
 
       current_deadline = current_alarm -> deadline;
-      check (false_alarm, current_deadline <= start_time, DNA_ERROR);
+      check (false_alarm, current_deadline < start_time, DNA_ERROR);
+
+      /*
+       * Check if the alarm needs to be restarted.
+       */
+
+      timer_delay = start_time - current_deadline;
+
+      if (timer_delay / current_alarm -> quantum > 1)
+      {
+        log (INFO_LEVEL,
+            "Irrealistic delay(%d)/quantum(%d) ratio for alarm 0x%x.",
+            (int32_t) timer_delay, (int32_t) current_alarm -> quantum,
+            current_alarm -> id . raw);
+
+        current_alarm -> is_invalid = true;
+      }
 
       if (! current_alarm -> is_invalid
           && (current_alarm -> mode & DNA_PERIODIC_ALARM) != 0)
@@ -128,22 +143,21 @@ status_t alarm_handler (void)
          * timer ISR.
          */
 
-        cpu_timer_get (cpu -> id, & start_time);
-        quantum = next_alarm -> deadline - start_time;
-        timer_delay = start_time - current_deadline;
+        expected_deadline = start_time + timer_delay
+          + current_alarm -> execution_time;
+        expected_delay = expected_deadline - next_alarm -> deadline;
 
-        if (quantum <= timer_delay + current_alarm -> execution_time)
+        if (expected_delay > 0)
         {
-          log (VERBOSE_LEVEL, "low (%d:%d), alarm (%d:%d) from thread 0x%x",
-              (int32_t) quantum, (int32_t) timer_delay,
-              next_alarm -> id . s . value, next_alarm -> id . s . index,
-              next_alarm -> thread_id);
+          log (INFO_LEVEL, "Over by %d ns, alarm (%d:%d) from thread 0x%x.",
+              (int32_t) expected_delay, next_alarm -> id . s . value,
+              next_alarm -> id . s . index, next_alarm -> thread_id);
 
           process_next_alarm = true;
         }
         else
         {
-          cpu_timer_set (cpu -> id, quantum);
+          cpu_timer_set (cpu -> id, next_alarm -> deadline - start_time);
         }
       }
 

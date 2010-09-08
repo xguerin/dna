@@ -67,7 +67,6 @@ status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
 
     current_cpuid = cpu_mp_id ();
     cpu = & cpu_pool . cpu[current_cpuid];
-    cpu_timer_get (current_cpuid, & start_time);
 
     new_alarm = queue_rem (& alarm_manager . alarm);
     check (no_alarm, new_alarm != NULL, DNA_NO_MORE_ALARM);
@@ -91,6 +90,8 @@ status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
      * Check and compute the deadline according to the
      * alarm mode passed as parameter.
      */
+
+    cpu_timer_get (current_cpuid, & start_time);
 
     switch (mode)
     {

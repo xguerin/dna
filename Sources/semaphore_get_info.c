@@ -70,7 +70,7 @@ status_t semaphore_get_info (int32_t id, semaphore_info_t * info)
      * Copy the semaphore information
      */
 
-    log (INFO_LEVEL, "ID(%d:%d) TOKEN(%d)",
+    log (VERBOSE_LEVEL, "ID(%d:%d) TOKEN(%d)",
         sem -> id . s . value, sem -> id . s . index, sem -> info . tokens);
 
     *info = sem -> info;
