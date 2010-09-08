@@ -58,6 +58,7 @@ semaphore_id_t;
 
 typedef struct _semaphore
 {
+  queue_link_t link;
   semaphore_id_t id;
 
   spinlock_t lock;

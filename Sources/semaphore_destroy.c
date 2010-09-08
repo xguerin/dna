@@ -60,7 +60,7 @@ status_t semaphore_destroy (int32_t id)
      * remove its entry from the pool.
      */
 
-    sem = semaphore_pool . semaphore[sid . s . index];
+    sem = & semaphore_pool . data[sid . s . index];
     check (invalid_semaphore, sem != NULL, DNA_BAD_SEM_ID);
     check (invalid_semaphore, sem -> id . raw == sid . raw, DNA_BAD_SEM_ID);
 
@@ -94,14 +94,18 @@ status_t semaphore_destroy (int32_t id)
       lock_release (& thread -> lock);
     }
 
+    lock_acquire (& semaphore_pool . lock);
     lock_release (& sem -> waiting_queue . lock);
-    cpu_trap_restore(it_status);
 
     /*
-     * Delete the semaphore's memory.
+     * Add the freed semaphore into the semaphore queue and return.
      */
 
-    kernel_free (sem);
+    queue_add (& semaphore_pool . semaphore, sem);
+
+    lock_release (& semaphore_pool . lock);
+    cpu_trap_restore(it_status);
+
     return smart_to_reschedule ? DNA_INVOKE_SCHEDULER : DNA_OK;
   }
 

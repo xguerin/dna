@@ -59,7 +59,7 @@ status_t semaphore_get_info (int32_t id, semaphore_info_t * info)
      * Look for the semaphore with ID id
      */
 
-    sem = semaphore_pool . semaphore[sid . s . index];
+    sem = & semaphore_pool . data[sid . s . index];
     check (invalid_semaphore, sem != NULL, DNA_BAD_SEM_ID);
     check (invalid_semaphore, sem -> id . raw == sid . raw, DNA_BAD_SEM_ID);
 
