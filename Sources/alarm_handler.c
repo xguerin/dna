@@ -175,11 +175,11 @@ status_t alarm_handler (void)
 
     while ((current_alarm = queue_rem (& alarm_garbage)) != NULL)
     {
-      lock_acquire (& alarm_manager . lock);
-      alarm_manager . alarm[current_alarm -> id . s . index] = NULL;
-      lock_release (& alarm_manager . lock);
+      current_alarm -> id . s . value = 0;
 
-      kernel_free (current_alarm);
+      lock_acquire (& alarm_manager . lock);
+      queue_add (& alarm_manager . alarm, current_alarm);
+      lock_release (& alarm_manager . lock);
     }
 
     return reschedule ? DNA_INVOKE_SCHEDULER : DNA_OK;

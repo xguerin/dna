@@ -96,10 +96,13 @@ status_t core_create (void)
      */
 
     dna_memset (& alarm_manager, 0, sizeof (alarm_manager_t));
-    area = kernel_malloc (DNA_MAX_CPU * sizeof (cpu_t), true);
-    alarm_manager . alarm = area;
     alarm_manager . counter = 1;
-    check (alarm_no_mem, area != NULL, DNA_OUT_OF_MEM);
+
+    for (int32_t i = 0; i < DNA_MAX_ALARM; i += 1)
+    {
+      alarm_manager . data[i] . id . s . index = i;
+      queue_add (& alarm_manager . alarm, & alarm_manager . data[i]);
+    }
 
     /*
      * Initialize the semaphore pool
@@ -108,10 +111,10 @@ status_t core_create (void)
     dna_memset (& semaphore_pool, 0, sizeof (semaphore_pool_t));
     semaphore_pool . counter = 1;
 
-    for (int32_t sem_i = 0; sem_i < DNA_MAX_SEM; sem_i += 1)
+    for (int32_t i = 0; i < DNA_MAX_SEM; i += 1)
     {
-      semaphore_pool . data[sem_i] . id . s . index = sem_i;
-      queue_add (& semaphore_pool . semaphore, & semaphore_pool . data[sem_i]);
+      semaphore_pool . data[i] . id . s . index = i;
+      queue_add (& semaphore_pool . semaphore, & semaphore_pool . data[i]);
     }
 
     /*
@@ -223,11 +226,6 @@ status_t core_create (void)
   }
 
   rescue (port_no_mem)
-  {
-    kernel_free (alarm_manager . alarm);
-  }
-
-  rescue (alarm_no_mem)
   {
     kernel_free (cpu_pool . cpu);
   }

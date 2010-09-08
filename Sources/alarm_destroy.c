@@ -50,7 +50,7 @@ status_t alarm_destroy (int32_t aid)
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& alarm_manager . lock);
 
-    alarm = alarm_manager . alarm[alarm_id . s . index];
+    alarm = & alarm_manager . data[alarm_id . s . index];
     check (alarm_error, alarm != NULL, DNA_UNKNOWN_ALARM);
     check (alarm_error, alarm -> id . raw == alarm_id . raw, DNA_UNKNOWN_ALARM);
 

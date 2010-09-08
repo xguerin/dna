@@ -49,7 +49,7 @@ status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
 
 {
   cpu_t * cpu = NULL;
-  int32_t current_cpuid = 0, index = 0;
+  int32_t current_cpuid = 0;
   interrupt_status_t it_status;
   alarm_t new_alarm = NULL, old_alarm = NULL;
   bigtime_t start_time = 0, updated_time = 0, updated_quantum = 0;
@@ -63,18 +63,19 @@ status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
      */
 
     it_status = cpu_trap_mask_and_backup();
+    lock_acquire (& alarm_manager . lock);
+
     current_cpuid = cpu_mp_id ();
     cpu = & cpu_pool . cpu[current_cpuid];
     cpu_timer_get (current_cpuid, & start_time);
 
-    /*
-     * Allocate the new alarm. We do this after deactivating the
-     * interrupts in order to get as close as possible to the
-     * the moment alarm_create was called.
-     */
+    new_alarm = queue_rem (& alarm_manager . alarm);
+    check (no_alarm, new_alarm != NULL, DNA_NO_MORE_ALARM);
 
-    new_alarm = kernel_malloc (sizeof (struct _alarm), true);
-    ensure (new_alarm != NULL, DNA_OUT_OF_MEM);
+    new_alarm -> id . s . value = alarm_manager . counter;
+    alarm_manager . counter += 1;
+
+    lock_release (& alarm_manager . lock);
 
     /*
      * Set various information.
@@ -85,29 +86,6 @@ status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
     new_alarm -> cpu_id = current_cpuid;
     new_alarm -> callback = callback;
     new_alarm -> data = data;
-
-    /*
-     * Find an empty slot to store the alarm
-     */
-
-    lock_acquire (& alarm_manager . lock);
-
-    for (index = 0; index < DNA_MAX_ALARM; index += 1)
-    {
-      if (alarm_manager . alarm[index] == NULL)
-      {
-        alarm_manager . alarm[index] = new_alarm;
-
-        new_alarm -> id . s . index = index;
-        new_alarm -> id . s . value = alarm_manager . counter;
-
-        alarm_manager . counter += 1;
-        break;
-      }
-    }
-
-    lock_release (& alarm_manager . lock);
-    check (error, index != DNA_MAX_ALARM, DNA_ERROR);
 
     /*
      * Check and compute the deadline according to the
@@ -126,7 +104,7 @@ status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
 
       case DNA_ONE_SHOT_ABSOLUTE_ALARM :
         {
-          check (error, quantum > start_time, DNA_BAD_ARGUMENT);
+          check (bad_quantum, quantum > start_time, DNA_BAD_ARGUMENT);
 
           new_alarm -> quantum = quantum - start_time;
           new_alarm -> deadline = quantum;
@@ -144,8 +122,8 @@ status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
     if (cpu -> current_alarm == NULL ||
         old_alarm -> deadline > new_alarm -> deadline)
     {
-      log (VERBOSE_LEVEL, "Set alarm (%d:%d)", new_alarm -> id . s . value,
-          new_alarm -> id . s . index);
+      log (VERBOSE_LEVEL, "Set alarm (%d:%d)",
+          new_alarm -> id . s . value, new_alarm -> id . s . index);
 
       /*
        * Check if we are still in the game, although
@@ -194,15 +172,21 @@ status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
     return DNA_OK;
   }
 
+  rescue (no_alarm)
+  {
+    lock_release (& alarm_manager . lock);
+    cpu_trap_restore(it_status);
+    leave;
+  }
+
   rescue (short_quantum)
   {
     lock_release (& cpu -> lock);
   }
 
-  rescue (error)
+  rescue (bad_quantum)
   {
     cpu_trap_restore(it_status);
-    kernel_free (new_alarm);
     leave;
   }
 }

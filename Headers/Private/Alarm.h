@@ -90,7 +90,8 @@ typedef struct _alarm_manager
 {
   spinlock_t lock;
   uint16_t counter;
-  alarm_t * alarm;
+  struct _alarm data[DNA_MAX_ALARM];
+  queue_t alarm;
 }
 alarm_manager_t;
 
