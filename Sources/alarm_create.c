@@ -83,6 +83,11 @@ status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
     new_alarm -> mode = mode;
     new_alarm -> thread_id = cpu -> current_thread -> id . raw;
     new_alarm -> cpu_id = current_cpuid;
+    new_alarm -> is_invalid = false;
+
+    new_alarm -> lock = 0;
+    new_alarm -> execution_time = 0;
+
     new_alarm -> callback = callback;
     new_alarm -> data = data;
 
@@ -139,7 +144,7 @@ status_t alarm_create (bigtime_t quantum, alarm_mode_t mode,
       /*
        * Cancel the old alarm, set the new one, and enqueue the old
        * alarm if this is necessary.
-       * */
+       */
 
       if (old_alarm != NULL)
       {
