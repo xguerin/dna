@@ -71,7 +71,7 @@ status_t port_poll (int32_t id, int32_t flags,
     lock_release (& port_pool . lock);
 
     check (bad_port, ! port -> closed ||
-        port -> queue . status != 0, DNA_ERROR);
+        port -> mailbox . status != 0, DNA_ERROR);
 
     read_sem = port -> read_sem;
 
@@ -101,17 +101,17 @@ status_t port_poll (int32_t id, int32_t flags,
     lock_release (& port_pool . lock);
 
     check (bad_port, ! port -> closed ||
-        port -> queue . status != 0, DNA_ERROR);
+        port -> mailbox . status != 0, DNA_ERROR);
 
     /*
      * Get the message size from the message queue.
      */
 
-    message = queue_rem (& port -> queue);
+    message = queue_rem (& port -> mailbox);
     check (bad_port, message != NULL, DNA_ERROR);
 
     data_size = message -> size;
-    queue_pushback (& port -> queue, message);
+    queue_pushback (& port -> mailbox, message);
 
     lock_release (& port -> lock);
     cpu_trap_restore(it_status);

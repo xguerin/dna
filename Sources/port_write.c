@@ -54,20 +54,11 @@ status_t port_write (int32_t id, int32_t code, void * buffer,
   message_t message = NULL;
   status_t status;
   interrupt_status_t it_status = 0;
+  int8_t * message_buffer = NULL;
 
   watch (status_t)
   {
     ensure (pid . s . index < DNA_MAX_PORT, DNA_BAD_PORT_ID);
-
-    /*
-     * Construct the message.
-     */
-
-    message = kernel_malloc (sizeof (struct _message) + size, false);
-    ensure (message != NULL, DNA_OUT_OF_MEM);
-
-    message -> code = code;
-    dna_memcpy (message -> buffer, buffer, size);
 
     /*
      * Look for the port with ID pid.
@@ -83,9 +74,6 @@ status_t port_write (int32_t id, int32_t code, void * buffer,
     lock_acquire (& port -> lock);
     lock_release (& port_pool . lock);
 
-    check (bad_port, ! port -> closed ||
-        port -> queue . status != 0, DNA_ERROR);
-
     read_sem = port -> read_sem;
     write_sem = port -> write_sem;
 
@@ -93,11 +81,23 @@ status_t port_write (int32_t id, int32_t code, void * buffer,
     cpu_trap_restore(it_status);
 
     /*
-     * Acquire the semaphore.
+     * Acquire the write semaphore.
      */
 
     status = semaphore_acquire (write_sem, 1, flags, timeout);
     ensure (status == DNA_OK, status);
+
+    /*
+     * Construct the message buffer, if necessary.
+     */
+
+    if (size != 0)
+    {
+      message_buffer = kernel_malloc (size, false);
+      check (no_mem, message_buffer != NULL, DNA_OUT_OF_MEM);
+
+      dna_memcpy (message -> buffer, buffer, size);
+    }
 
     /*
      * Get the port once again, just to make sure
@@ -115,13 +115,20 @@ status_t port_write (int32_t id, int32_t code, void * buffer,
     lock_release (& port_pool . lock);
 
     check (bad_port, ! port -> closed ||
-        port -> queue . status != 0, DNA_ERROR);
+        port -> mailbox . status != 0, DNA_ERROR);
 
     /*
-     * Get the message from the message queue.
+     * Get the message from the message queue, and put
+     * it the the mailbox.
      */
 
-    queue_add (& port -> queue, message);
+    message = queue_rem (& port -> message);
+
+    message -> code = code;
+    message -> size = size;
+    message -> buffer = message_buffer;
+
+    queue_add (& port -> mailbox, message);
 
     lock_release (& port -> lock);
     cpu_trap_restore(it_status);
@@ -136,12 +143,22 @@ status_t port_write (int32_t id, int32_t code, void * buffer,
     return DNA_OK;
   }
 
+  rescue (no_mem)
+  {
+    semaphore_release (write_sem, 1, 0);
+    leave;
+  }
+
   rescue (bad_port)
   {
     lock_release (& port -> lock);
     cpu_trap_restore(it_status);
 
-    kernel_free (message);
+    if (message_buffer != NULL)
+    {
+      kernel_free (message_buffer);
+    }
+
     leave;
   }
 
@@ -150,7 +167,11 @@ status_t port_write (int32_t id, int32_t code, void * buffer,
     lock_release (& port_pool . lock);
     cpu_trap_restore(it_status);
 
-    kernel_free (message);
+    if (message_buffer != NULL)
+    {
+      kernel_free (message_buffer);
+    }
+
     leave;
   }
 }

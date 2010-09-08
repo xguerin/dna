@@ -74,7 +74,7 @@ status_t port_read (int32_t id, int32_t * p_code, void * buffer,
     lock_release (& port_pool . lock);
 
     check (bad_port, ! port -> closed ||
-        port -> queue . status != 0, DNA_ERROR);
+        port -> mailbox . status != 0, DNA_ERROR);
 
     read_sem = port -> read_sem;
     write_sem = port -> write_sem;
@@ -105,18 +105,21 @@ status_t port_read (int32_t id, int32_t * p_code, void * buffer,
     lock_release (& port_pool . lock);
 
     check (bad_port, ! port -> closed ||
-        port -> queue . status != 0, DNA_ERROR);
+        port -> mailbox . status != 0, DNA_ERROR);
 
     /*
-     * Get the message from the message queue.
+     * Get the message from the mailbox, and
+     * put it back in the message queue.
      */
 
-    message = queue_rem (& port -> queue);
+    message = queue_rem (& port -> mailbox);
     check (bad_port, message != NULL, DNA_ERROR);
 
     *p_code = message -> code;
     data_size = size >= message -> size ? message -> size : size;
     dna_memcpy (buffer, message -> buffer, size);
+
+    queue_add (& port -> message, port);
 
     lock_release (& port -> lock);
     cpu_trap_restore(it_status);
@@ -128,7 +131,6 @@ status_t port_read (int32_t id, int32_t * p_code, void * buffer,
     status = semaphore_release (write_sem, 1, DNA_NO_RESCHEDULE);
     ensure (status == DNA_OK, status);
 
-    kernel_free (message);
     return DNA_OK;
   }
 

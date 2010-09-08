@@ -62,7 +62,7 @@ typedef struct _message
   queue_link_t link;
   int32_t code;
   int32_t size;
-  int8_t buffer[];
+  int8_t * buffer;
 }
 * message_t;
 
@@ -89,7 +89,10 @@ typedef struct _port
   int32_t read_sem;
   int32_t write_sem;
 
-  queue_t queue;
+  struct _message * data;
+  queue_t message;
+
+  queue_t mailbox;
 }
 * port_t;
 

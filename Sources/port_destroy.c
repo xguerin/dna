@@ -78,11 +78,32 @@ status_t port_destroy (int32_t id)
     panic (status != DNA_OK);
 
     /*
-     * Delete the port's memory.
+     * Delete the port's memory and its messages.
      */
 
-    kernel_free (port);
-    return status;
+    for (int32_t i = 0; i < port -> info . capacity; i += 1)
+    {
+      if (port -> data[i] . buffer != NULL)
+      {
+        kernel_free (port -> data[i] . buffer);
+      }
+    }
+
+    kernel_free (port -> data);
+
+    /*
+     * Add the port back to the pool.
+     */
+
+    it_status = cpu_trap_mask_and_backup();
+    lock_acquire (& port_pool . lock);
+
+    queue_add (& port_pool . port, port);
+
+    lock_release (& port_pool . lock);
+    cpu_trap_restore(it_status);
+
+    return DNA_OK;
   }
 
   rescue (invalid_port)

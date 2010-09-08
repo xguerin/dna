@@ -79,7 +79,20 @@ status_t port_create (char * name, int32_t queue_length, int32_t * p_id)
     cpu_trap_restore(it_status);
 
     /*
-     * Fill in the information.
+     * Creating the messages.
+     */
+
+    port -> data = kernel_malloc
+      (sizeof (struct _message) * queue_length, true);
+    check (no_mem, port -> data != NULL, DNA_OUT_OF_MEM);
+
+    for (int32_t i = 0; i < queue_length; i += 1)
+    {
+      queue_add (& port -> message, & port -> data[i]);
+    }
+
+    /*
+     * Creating the semaphores.
      */
 
     status = semaphore_create (name, queue_length, & port -> write_sem);
@@ -105,6 +118,11 @@ status_t port_create (char * name, int32_t queue_length, int32_t * p_id)
   }
 
   rescue (wsem_error)
+  {
+    kernel_free (port -> data);
+  }
+
+  rescue (no_mem)
   {
     it_status = cpu_trap_mask_and_backup();
     lock_acquire (& port_pool . lock);
