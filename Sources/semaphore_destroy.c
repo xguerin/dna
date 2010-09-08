@@ -66,15 +66,13 @@ status_t semaphore_destroy (int32_t id)
 
     semaphore_pool . semaphore[sid . s . index] = NULL;
 
-    lock_acquire (& sem -> lock);
+    lock_acquire (& sem -> waiting_queue . lock);
     lock_release (& semaphore_pool . lock);
 
     /*
      * Reschedule each waiting thread, and
      * reset its information.
      */
-
-    lock_acquire (& sem -> waiting_queue . lock);
 
     while ((thread = queue_rem (& sem -> waiting_queue)) != NULL)
     {
