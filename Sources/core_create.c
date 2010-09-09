@@ -62,7 +62,7 @@ status_t core_create (void)
     {
       for (int32_t j = 0; j < DNA_MAX_THREAD; j += 1)
       {
-        thread = & thread_pool . data[i * DNA_MAX_THREAD + j];
+        thread = & thread_pool . data[i][j];
 
         thread -> id . s . group = i;
         thread -> id . s . index = j;
@@ -127,8 +127,7 @@ status_t core_create (void)
       status = thread_create (thread_idle, NULL, thread_info, & tid . raw);
       check (cpu_initialize, status == DNA_OK, DNA_ERROR);
 
-      thread = & thread_pool . data
-        [tid . s . group * DNA_MAX_THREAD + tid . s . index];
+      thread = & thread_pool . data[tid . s . group][tid . s . index];
       thread -> info . status = DNA_THREAD_READY;
 
       /*
@@ -154,8 +153,7 @@ status_t core_create (void)
     status = thread_create (APP_ENTRY_POINT, NULL, thread_info, & tid . raw);
     check (cpu_initialize, status == DNA_OK, DNA_ERROR);
 
-    thread = & thread_pool . data
-      [tid . s . group * DNA_MAX_THREAD + tid . s . index];
+    thread = & thread_pool . data[tid . s . group][tid . s . index];
     cpu_pool . cpu[0] . current_thread = thread;
 
     return DNA_OK;

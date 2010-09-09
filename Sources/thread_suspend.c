@@ -75,9 +75,7 @@ status_t thread_suspend (int32_t id)
     do
     {
       lock_acquire (& thread_pool . lock);
-
-      thread = & thread_pool . data
-        [tid . s . group * DNA_MAX_THREAD + tid . s . index];
+      thread = & thread_pool . data[tid . s . group][tid . s . index];
 
       check (bad_thread, thread != NULL &&
           thread -> id . raw == tid . raw , DNA_INVALID_THREAD_ID);

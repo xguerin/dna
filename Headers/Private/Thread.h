@@ -111,7 +111,7 @@ typedef struct _thread_pool
 {
   spinlock_t lock;
   int16_t counter;
-  struct _thread data[DNA_MAX_GROUP * DNA_MAX_THREAD];
+  struct _thread data[DNA_MAX_GROUP][DNA_MAX_THREAD];
   queue_t thread[DNA_MAX_GROUP];
 }
 thread_pool_t;

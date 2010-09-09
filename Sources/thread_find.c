@@ -72,8 +72,7 @@ status_t thread_find (char * name, int32_t * tid)
 
       for (index = 0; index < DNA_MAX_THREAD; index += 1)
       {
-        thread = & thread_pool . data
-          [self -> id . s . group * DNA_MAX_THREAD + index];
+        thread = & thread_pool . data[self -> id . s . group][index];
 
         if (thread -> id . s . value != 0 &&
             dna_strcmp (name, thread -> info . name) == 0)

@@ -66,9 +66,7 @@ status_t thread_destroy (int32_t id)
      */
 
     lock_acquire (& thread_pool . lock);
-
-    thread = & thread_pool . data
-      [tid . s . group * DNA_MAX_THREAD + tid . s . index];
+    thread = & thread_pool . data[tid . s . group][tid . s . index];
 
     check (bad_thread, thread != NULL &&
         thread -> id . raw == tid . raw , DNA_INVALID_THREAD_ID);
