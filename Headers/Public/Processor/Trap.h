@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#define CPU_TRAP_COUNT 32
+
 typedef enum exception_id
 {
   cpu_trap_data_abort,
@@ -15,8 +17,6 @@ typedef uint32_t interrupt_id_t;
 typedef uint32_t interrupt_status_t;
 typedef int32_t (* exception_handler_t) (void * data);
 typedef int32_t (* interrupt_handler_t) (void * data);
-
-extern int32_t cpu_trap_count (void);
 
 extern void cpu_trap_attach_esr (int32_t cpuid, exception_id_t id,
     exception_handler_t isr);
