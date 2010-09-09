@@ -50,7 +50,7 @@ int32_t interrupt_demultiplexer (void * data)
 
   watch (int32_t)
   {
-    ensure (itn < cpu_trap_count (), DNA_BAD_ARGUMENT);
+    ensure (itn < CPU_TRAP_COUNT, DNA_BAD_ARGUMENT);
 
     /*
      * Look for the corresponding handler

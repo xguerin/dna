@@ -37,7 +37,7 @@
 typedef struct _scheduler
 {
   spinlock_t lock;
-  queue_t * queue;
+  queue_t queue[DNA_MAX_CPU + 1];
 }
 scheduler_t;
 

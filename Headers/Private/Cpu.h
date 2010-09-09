@@ -60,15 +60,13 @@ typedef struct _cpu
   spinlock_t ipi_lock;
 
   bigtime_t lap_date;
-  queue_t * isr;
+  queue_t isr[CPU_TRAP_COUNT];
 
   thread_t current_thread;
   thread_t idle_thread;
 
   alarm_t current_alarm;
   queue_t alarm_queue;
-
-  uint8_t * stack;
 }
 cpu_t;
 
@@ -86,7 +84,7 @@ typedef struct _cpu_pool
 {
   spinlock_t lock;
 
-  cpu_t * cpu;
+  cpu_t cpu[DNA_MAX_CPU];
   queue_t queue;
 }
 cpu_pool_t;

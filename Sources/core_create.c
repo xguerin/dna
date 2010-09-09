@@ -32,15 +32,13 @@ status_t core_create (void)
 /*
  * FUNCTION
  * * Initialize the thread pool
- * * Initialize the scheduler manager
- * * Initialize the cpu pool
  * * Initialize the alarm manager
  * * Initialize the semaphore pool
  * * Initialize the IDLE threads
  *
  * RETURN
  * * DNA_OK: the operation succeeded
- * * !DNA_OK: error creating a
+ * * !DNA_OK: error creating something
  *
  * SOURCE
  */
@@ -48,7 +46,6 @@ status_t core_create (void)
 {
   status_t status;
   cpu_t * cpu = NULL;
-  void * area = NULL;
   thread_t thread;
   thread_id_t tid;
   thread_info_t thread_info = DNA_THREAD_DEFAULTS;
@@ -61,41 +58,10 @@ status_t core_create (void)
 
     dna_memset (& thread_pool, 0, sizeof (thread_pool_t));
 
-    area = kernel_malloc (DNA_MAX_GROUP * sizeof (thread_t *), true);
-    thread_pool . thread = area;
-    thread_pool . counter = 1;
-
-    for (int32_t i = 0; i < DNA_MAX_GROUP; i += 1)
-    {
-      area = kernel_malloc (DNA_MAX_THREAD * sizeof (thread_t), true);
-      thread_pool . thread[i] = area;
-      check (thread_no_mem, area != NULL, DNA_OUT_OF_MEM);
-    }
-
-    /*
-     * Initialize the scheduler.
-     */
-
-    dna_memset (& scheduler, 0, sizeof (scheduler_t));
-
-    area = kernel_malloc ((DNA_MAX_CPU + 1) * sizeof (queue_t), true);
-    scheduler . queue = area;
-    check (thread_no_mem, area != NULL, DNA_OUT_OF_MEM);
-
-    /*
-     * Initialize the CPU pool.
-     */
-
-    dna_memset (& cpu_pool, 0, sizeof (cpu_pool_t));
-    area = kernel_malloc (DNA_MAX_CPU * sizeof (cpu_t), true);
-    cpu_pool . cpu = area;
-    check (cpu_no_mem, area != NULL, DNA_OUT_OF_MEM);
-
     /*
      * Initialize the alarm pool.
      */
 
-    dna_memset (& alarm_pool, 0, sizeof (alarm_pool_t));
     alarm_pool . counter = 1;
 
     for (int32_t i = 0; i < DNA_MAX_ALARM; i += 1)
@@ -108,7 +74,6 @@ status_t core_create (void)
      * Initialize the semaphore pool.
      */
 
-    dna_memset (& semaphore_pool, 0, sizeof (semaphore_pool_t));
     semaphore_pool . counter = 1;
 
     for (int32_t i = 0; i < DNA_MAX_SEM; i += 1)
@@ -121,7 +86,6 @@ status_t core_create (void)
      * Initialize the port pool.
      */
 
-    dna_memset (& port_pool, 0, sizeof (port_pool_t));
     port_pool . counter = 1;
 
     for (int32_t i = 0; i < DNA_MAX_PORT; i += 1)
@@ -139,27 +103,12 @@ status_t core_create (void)
       cpu = & cpu_pool . cpu[cpu_i];
 
       /*
-       * Create the ISR lists
-       */
-
-      cpu -> isr = kernel_malloc (sizeof (queue_t) *
-          cpu_trap_count (), true);
-      check (cpu_initialize, area != NULL, DNA_OUT_OF_MEM);
-
-      /*
-       * Create the Idle stack
-       */
-
-      cpu -> stack = kernel_malloc (DNA_IDLE_STACK_SIZE, true);
-      check (cpu_initialize, area != NULL, DNA_OUT_OF_MEM);
-
-      /*
        * Create the Idle thread
        */
 
       dna_strcpy (thread_info . name, "IdleThread");
       thread_info . affinity = cpu_i;
-      thread_info . stack_base = cpu -> stack;
+      thread_info . stack_base = NULL;
       thread_info . stack_size = DNA_IDLE_STACK_SIZE;
 
       status = thread_create (thread_idle, NULL, thread_info, & tid . raw);
@@ -212,39 +161,6 @@ status_t core_create (void)
         cpu_pool . cpu[cpu_i] . idle_thread = NULL;
         cpu_pool . cpu[cpu_i] . current_thread = NULL;
       }
-
-      if (cpu[cpu_i] . stack != NULL)
-      {
-        kernel_free (cpu[cpu_i] . stack);
-      }
-
-      if (cpu[cpu_i] . isr != NULL)
-      {
-        kernel_free (cpu[cpu_i] . isr);
-      }
-    }
-
-    kernel_free (cpu_pool . cpu);
-  }
-
-  rescue (cpu_no_mem)
-  {
-    kernel_free (scheduler . queue);
-  }
-
-  rescue (thread_no_mem)
-  {
-    for (int32_t i = 0; i < DNA_MAX_GROUP; i += 1)
-    {
-      if (thread_pool . thread[i] != NULL)
-      {
-        kernel_free (thread_pool . thread[i]);
-      }
-    }
-
-    if (thread_pool . thread != NULL)
-    {
-      kernel_free (thread_pool . thread);
     }
 
     leave;
@@ -252,5 +168,8 @@ status_t core_create (void)
 }
 
 /*
+ * NOTE
+ * No need to memset the areas of the pools, it is
+ * done automatically when we erase the BSS.
  ****/
 
