@@ -66,12 +66,34 @@ status_t thread_create (thread_handler_t handler, void * arguments,
     ensure (info . resource == DNA_NO_RESOURCE, DNA_BAD_ARGUMENT);
     ensure (info . resource_id == -1, DNA_BAD_ARGUMENT);
 
+    it_status = cpu_trap_mask_and_backup();
+    lock_acquire (& thread_pool . lock);
+
     /*
-     * Allocate the new thread structure.
+     * Get an empty thread slot.
      */
 
-    thread = kernel_malloc (sizeof (struct _thread), true);
-    ensure (thread != NULL, DNA_OUT_OF_MEM);
+    thread = queue_rem (& thread_pool . thread[info . group]);
+    check (pool_error, thread != NULL, DNA_NO_MORE_SEM);
+
+    /*
+     * Make the place clean.
+     */
+
+    index = thread -> id . s . index;
+    dna_memset (thread, 0, sizeof (struct _thread));
+
+    thread -> id . s . index = index;
+    thread -> id . s . value = thread_pool . counter;
+
+    thread_pool . counter += 1;
+
+    /*
+     * Release the pool.
+     */
+
+    lock_release (& thread_pool . lock);
+    cpu_trap_restore(it_status);
 
     /*
      * Deal with the thread group. In the future, only the kernel
@@ -91,7 +113,7 @@ status_t thread_create (thread_handler_t handler, void * arguments,
     {
       thread -> info . stack_base = kernel_malloc (info . stack_size, false);
       thread -> stack_allocated = true;
-      check (error, thread -> info . stack_base != NULL, DNA_OUT_OF_MEM);
+      check (no_mem, thread -> info . stack_base != NULL, DNA_OUT_OF_MEM);
     }
 
     if (info . affinity == DNA_NO_AFFINITY)
@@ -114,32 +136,6 @@ status_t thread_create (thread_handler_t handler, void * arguments,
         thread -> info . stack_size, thread_bootstrap, & thread -> signature);
 
     /*
-     * Find a free thread slot
-     */
-
-    it_status = cpu_trap_mask_and_backup();
-    lock_acquire (& thread_pool . lock);
-
-    for (index = 0; index < DNA_MAX_THREAD; index += 1)
-    {
-      if (thread_pool . thread[info . group][index] == NULL)
-      {
-        thread -> id . s . value = thread_pool . counter;
-        thread -> id . s . index = index;
-
-        thread_pool . thread[info . group][index] = thread;
-        thread_pool . counter += 1;
-
-        break;
-      }
-    }
-
-    lock_release (& thread_pool . lock);
-    cpu_trap_restore(it_status);
-
-    check (error, index != DNA_MAX_THREAD, DNA_NO_MORE_THREAD);
-
-    /*
      * Return the thread ID and success
      */
 
@@ -147,14 +143,19 @@ status_t thread_create (thread_handler_t handler, void * arguments,
     return DNA_OK;
   }
 
-  rescue (error)
+  rescue (no_mem)
   {
-    if (info . stack_base == NULL)
-    {
-      kernel_free (thread -> info . stack_base);
-    }
+    it_status = cpu_trap_mask_and_backup();
+    lock_acquire (& thread_pool . lock);
 
-    kernel_free (thread);
+    thread -> id . s . value = 0;
+    queue_add (& thread_pool . thread[info . group], thread);
+  }
+
+  rescue (pool_error)
+  {
+    cpu_trap_restore(it_status);
+    lock_release (& thread_pool . lock);
     leave;
   }
 }

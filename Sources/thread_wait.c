@@ -69,7 +69,9 @@ status_t thread_wait (int32_t id, int32_t * value)
      */
 
     lock_acquire (& thread_pool . lock);
-    thread = thread_pool . thread[tid . s . group][tid . s . index];
+
+    thread = & thread_pool . data
+      [tid . s . group * DNA_MAX_THREAD + tid . s . index];
 
     check (bad_thread, thread != NULL &&
         thread -> id . raw == tid . raw, DNA_INVALID_THREAD_ID);
@@ -123,7 +125,9 @@ status_t thread_wait (int32_t id, int32_t * value)
        */
 
       lock_acquire (& thread_pool . lock);
-      thread = thread_pool . thread[tid . s . group][tid . s . index];
+
+      thread = & thread_pool . data
+        [tid . s . group * DNA_MAX_THREAD + tid . s . index];
 
       check (bad_thread, thread != NULL &&
         thread -> id . raw == tid . raw , DNA_THREAD_DESTROYED);

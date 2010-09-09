@@ -61,7 +61,7 @@ status_t thread_alarm (void * data)
 
       case DNA_THREAD_SLEEPING :
         {
-          log (VERBOSE_LEVEL, "thread 0x%x sleeping, resuming...", thread -> id);
+          log (VERBOSE_LEVEL, "thread 0x%x sleeping, resuming", thread -> id);
  
           thread -> info . status = DNA_THREAD_READY;
           status = scheduler_dispatch (thread);

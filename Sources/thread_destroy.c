@@ -66,7 +66,9 @@ status_t thread_destroy (int32_t id)
      */
 
     lock_acquire (& thread_pool . lock);
-    thread = thread_pool . thread[tid . s . group][tid . s . index];
+
+    thread = & thread_pool . data
+      [tid . s . group * DNA_MAX_THREAD + tid . s . index];
 
     check (bad_thread, thread != NULL &&
         thread -> id . raw == tid . raw , DNA_INVALID_THREAD_ID);
@@ -83,10 +85,10 @@ status_t thread_destroy (int32_t id)
      * and free its memory. Do an early unlock of the pool.
      */
 
-    thread_pool . thread[tid . s . group][tid . s . index] = NULL;
-    lock_release (& thread_pool . lock);
-
+    thread -> id . s . value = 0;
     lock_release (& thread -> lock);
+
+    lock_release (& thread_pool . lock);
     cpu_trap_restore (it_status);
 
     if (thread -> stack_allocated)
@@ -94,7 +96,18 @@ status_t thread_destroy (int32_t id)
       kernel_free (thread -> info . stack_base);
     }
 
-    kernel_free (thread);
+    /*
+     * Add the freed thread into the thread queue and return.
+     */
+
+    it_status = cpu_trap_mask_and_backup ();
+    lock_acquire (& thread_pool . lock);
+
+    queue_add (& thread_pool . thread[tid . s . group], thread);
+
+    lock_release (& thread_pool . lock);
+    cpu_trap_restore (it_status);
+
     return DNA_OK;
   }
 

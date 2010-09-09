@@ -68,6 +68,18 @@ status_t semaphore_create (char * name, int32_t tokens, int32_t * id)
     index = semaphore -> id . s . index;
     dna_memset (semaphore, 0, sizeof (struct _semaphore));
 
+    semaphore -> id . s . index = index;
+    semaphore -> id . s . value = semaphore_pool . counter;
+
+    semaphore_pool . counter += 1;
+
+    /*
+     * Release the pool.
+     */
+
+    lock_release (& semaphore_pool . lock);
+    cpu_trap_restore(it_status);
+
     /*
      * Fill in the information.
      */
@@ -75,17 +87,9 @@ status_t semaphore_create (char * name, int32_t tokens, int32_t * id)
     dna_strcpy (semaphore -> info . name, name);
     semaphore -> info . tokens = tokens;
 
-    semaphore -> id . s . index = index;
-    semaphore -> id . s . value = semaphore_pool . counter;
-
-    semaphore_pool . counter += 1;
-
     /*
-     * Release the pool and return the semaphore ID.
+     * Return the semaphore ID.
      */
-
-    lock_release (& semaphore_pool . lock);
-    cpu_trap_restore(it_status);
 
     log (VERBOSE_LEVEL, "ID(%d:%d) TOKEN(%d)",
         semaphore -> id . s . value, semaphore -> id . s . index,
@@ -98,7 +102,7 @@ status_t semaphore_create (char * name, int32_t tokens, int32_t * id)
   rescue (pool_error)
   {
     cpu_trap_restore(it_status);
-    kernel_free (semaphore);
+    lock_release (& semaphore_pool . lock);
     leave;
   }
 }
