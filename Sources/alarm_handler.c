@@ -41,10 +41,10 @@ status_t alarm_handler (void)
   queue_t alarm_garbage = DNA_QUEUE_DEFAULTS;
   alarm_t current_alarm = NULL, next_alarm = NULL;
   status_t status = DNA_OK;
-  int32_t current_cpuid = cpu_mp_id ();
+  int32_t current_cpuid = cpu_mp_id (), liveness = 10;
   bigtime_t start_time, quantum, current_deadline = 0, timer_delay;
   bigtime_t delta_start, delta_end, expected_deadline, expected_delay;
-  bool reschedule = false;
+  volatile bool reschedule = false;
   bool process_next_alarm = true;
   cpu_t * cpu = & cpu_pool . cpu[current_cpuid];
 
@@ -52,7 +52,6 @@ status_t alarm_handler (void)
   {
     do
     {
-      process_next_alarm = false;
       cpu_timer_get (cpu -> id, & start_time);
 
       /*
@@ -76,23 +75,11 @@ status_t alarm_handler (void)
           current_alarm -> thread_id, start_time);
 
       current_deadline = current_alarm -> deadline;
-      check (false_alarm, current_deadline < start_time, DNA_ERROR);
 
-      /*
-       * Check if the alarm makes actually sense.
-       */
+      check (false_alarm, process_next_alarm ||
+          current_deadline < start_time, DNA_ERROR);
 
-      timer_delay = start_time - current_deadline;
-
-      if (timer_delay / current_alarm -> quantum > 2)
-      {
-        log (VERBOSE_LEVEL,
-            "Irrealistic delay(%d)/quantum(%d) ratio for alarm 0x%x.",
-            (int32_t) timer_delay, (int32_t) current_alarm -> quantum,
-            current_alarm -> id . raw);
-
-        current_alarm -> is_invalid = true;
-      }
+      process_next_alarm = false;
 
       /*
        * Check if the alarm is valid. If so, check if
@@ -113,17 +100,21 @@ status_t alarm_handler (void)
       lock_release (& current_alarm -> lock);
 
       /*
-       * Look through the next alarm.
+       * Look through the next alarm if no reschedule is needed.
        */
 
       while ((next_alarm = queue_rem (& cpu -> alarm_queue)) != NULL)
       {
+        lock_acquire (& next_alarm -> lock);
+
         if (! next_alarm -> is_invalid)
         {
+          lock_release (& next_alarm -> lock);
           break;
         }
 
-        queue_add (& alarm_garbage, current_alarm);
+        queue_add (& alarm_garbage, next_alarm);
+        lock_release (& next_alarm -> lock);
       }
 
       /*
@@ -141,9 +132,37 @@ status_t alarm_handler (void)
 
       if (next_alarm != NULL)
       {
+        /*
+         * If we are dealing with the same alarm as the current one,
+         * we need to decrease the liveness counter.
+         */
+
+        liveness = current_alarm == next_alarm ? liveness - 1 : 10;
+
+        if (liveness == 0)
+        {
+          log (PANIC_LEVEL,
+              "Can't stabilize alarm (%d:%d) after 10 cycle, abandon.",
+              next_alarm -> id . s . value, next_alarm -> id . s . index);
+
+          lock_acquire (& next_alarm -> lock);
+          next_alarm -> is_invalid = next_alarm -> is_invalid || liveness == 0;
+          lock_release (& next_alarm -> lock);
+        }
+
+        /*
+         * Compute the delays and the expected deadline.
+         */
+
+        timer_delay = start_time - current_deadline;
         expected_deadline = start_time + timer_delay
           + current_alarm -> execution_time;
         expected_delay = expected_deadline - next_alarm -> deadline;
+
+        /*
+         * If the deadline is way out of base, restart the loop,
+         * otherwise program the timer.
+         */
 
         if (expected_delay > 0)
         {
