@@ -16,9 +16,8 @@
 
 #define PTHREAD_CANCELED -128
 #define PTHREAD_EXITED  (pthread_t)-1
-#define PTHREAD_COND_INITIALIZER {NULL}
-#define PTHREAD_MUTEX_INITIALIZER {0, MUTEX_UNLOCKED, -1}
-#define CLEANUP_STACK 3 
+#define PTHREAD_COND_INITIALIZER { NULL }
+#define PTHREAD_MUTEX_INITIALIZER { -1 }
 
 typedef uint32_t pthread_state_t;
 typedef void *(*pthread_func_t)(void *); 
@@ -28,7 +27,8 @@ typedef struct pthread_bootstrap
 {
   thread_handler_t handler;
   void * argument;
-} * pthread_bootstrap_t;
+}
+* pthread_bootstrap_t;
 
 enum { PTHREAD_CREATE_JOINABLE, PTHREAD_CREATE_DETACHED };
 enum { PTHREAD_INHERIT_SCHED, PTHREAD_EXPLICIT_SCHED };
@@ -61,7 +61,7 @@ typedef struct pthread_mutex
 {
   int32_t flags;
   int32_t status;
-  spinlock_t lock;
+  int32_t lock;
 }
 pthread_mutex_t;
 

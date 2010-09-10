@@ -6,11 +6,11 @@ int pthread_mutex_lock(pthread_mutex_t *mutex)
 
   if (mutex -> lock == -1)
   {
-    status = lock_create (& mutex -> lock);
+    status = semaphore_create ("pthread_mutex", 1, & mutex -> lock);
     if (status != DNA_OK) return EINVAL;
   }
 
-  lock_acquire (& mutex -> lock);
+  semaphore_acquire (mutex -> lock, 1, 0, 0);
 
   mutex -> status = MUTEX_LOCKED;
   return 0;

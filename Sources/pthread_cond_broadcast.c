@@ -9,8 +9,6 @@ int pthread_cond_broadcast(pthread_cond_t *condition)
     status = semaphore_release (condition -> semaphore,
         condition -> count, 0);
     if (status == DNA_BAD_SEM_ID) return EINVAL;
-
-    condition -> count = 0;
   }
 
   return 0;
