@@ -47,6 +47,8 @@ status_t filesystem_load (char * name, filesystem_t ** fs)
       }
     }
 
+    ensure (new_fs != NULL, DNA_ERROR);
+
     /*
      * Check the consistency of the filesystem.
      */
