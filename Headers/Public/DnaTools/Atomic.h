@@ -41,11 +41,13 @@ static inline int32_t atomic_add (int32_t * p_val, int32_t offset)
 {
   int32_t old_val = 0, new_val = 0, result = 0;
 
-  do {
+  do
+  {
     old_val = *p_val;
     new_val = old_val + offset;
     result = cpu_compare_and_swap(p_val, old_val, new_val);
-  } while (! result);
+  }
+  while (result != 0);
 
   return old_val;
 }

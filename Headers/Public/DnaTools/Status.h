@@ -106,7 +106,8 @@ typedef enum _status
    */
 
   DNA_BAD_PORT_ID                     = 0xFAFF,
-  DNA_NO_MORE_PORT                    = 0xFAFE
+  DNA_NO_MORE_PORT                    = 0xFAFE,
+  DNA_UNKNOWN_PORT                    = 0xFAFD
 }
 status_t;
 
