@@ -10,6 +10,10 @@
 
   <id name="DnaCore" version="1.0"/>
 
+  <restrict>
+    <id name="DnaTools" version="1.0"/>
+  </restrict>
+
   <provide>
     <context name="LifeCycle">
       <method name="core_create" result="status_t"/>
