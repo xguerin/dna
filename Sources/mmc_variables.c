@@ -20,7 +20,7 @@
 
 mmc_extension_t mmc_extension = 
 {
-  { "mmc", 0 },
+  { "mmc", 0 , mmc_initialize, mmc_cleanup},
   mmc_card_create,
   mmc_card_destroy,
   mmc_execute

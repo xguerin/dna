@@ -24,5 +24,8 @@
 
 extern mmc_extension_t mmc_extension;
 
+extern status_t mmc_initialize (void);
+extern void mmc_cleanup (void);
+
 #endif
 
