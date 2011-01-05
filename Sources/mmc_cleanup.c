@@ -19,5 +19,5 @@
 
 void mmc_cleanup (void)
 {
-  return DNA_OK;
+
 }
