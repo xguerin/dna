@@ -26,11 +26,11 @@ static inline long int cpu_compare_and_swap (volatile long int * p_val,
   __asm__ volatile
     ("\n"
      "__start_cas:\n"
-     "ldrex   %0, %4\n"
+     "ldrex   %0, [ %4 ]\n"
      "cmp     %0, %2\n"
-     "strexeq %0, %3, %1\n"
-     : "=&r" (ret), "=m" (*p_val)
-     : "r" (oldval), "r" (newval), "m" (*p_val)
+     "strexeq %0, %3, [%1]\n"
+     : "=&r" (ret), "=r" (p_val)
+     : "r" (oldval), "r" (newval), "r" (p_val)
      : "memory");
 
   return ret;
