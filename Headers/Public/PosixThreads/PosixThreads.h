@@ -67,7 +67,7 @@ pthread_mutex_t;
 
 typedef struct pthread_mutexattr
 {
-
+  int dummy;
 }
 pthread_mutexattr_t;
 
@@ -90,6 +90,7 @@ pthread_cond_t;
 
 typedef struct pthread_condattr
 {
+  int dummy;
 }
 pthread_condattr_t;
  
@@ -107,6 +108,7 @@ pthread_barrier_t;
 
 typedef struct pthread_barrierattr
 {
+  int dummy;
 }
 pthread_barrierattr_t;
 
