@@ -36,6 +36,7 @@ void dna_printf (const char * format, ...)
 
 {
   bool is_long = false, is_long_long = false;
+  bool is_short = false, is_char = false;
   char char_value, ascii[32], * string_value, buffer[256];
   int32_t ascii_index, string_length, j = 0;
   int64_t signed_value;
@@ -62,6 +63,8 @@ void dna_printf (const char * format, ...)
 
             case '%' :
               {
+                is_char = false;
+                is_short = false;
                 is_long = false;
                 is_long_long = false;
                 state = FORMAT;
@@ -112,6 +115,24 @@ void dna_printf (const char * format, ...)
         {
           switch (format[i])
           {
+            case 'h' :
+              {
+                if (! is_short)
+                {
+                  is_short = true;
+                }
+				else if (! is_char)
+                {
+                  is_short = false;
+                  is_char = true;
+                }
+                else
+                {
+                  state = NORMAL;
+                }
+
+                break;
+              }
             case 'l' :
               {
                 if (! is_long)
@@ -120,6 +141,7 @@ void dna_printf (const char * format, ...)
                 }
                 else if (! is_long_long)
                 {
+                  is_long = false;
                   is_long_long = true;
                 }
                 else
@@ -145,6 +167,14 @@ void dna_printf (const char * format, ...)
                 else if (is_long)
                 {
                   unsigned_value = va_arg (arg, unsigned long int);
+                }
+                else if (is_char)
+                {
+					 unsigned_value = (unsigned char)va_arg (arg, unsigned int);
+                }
+                else if (is_short)
+                {
+					 unsigned_value = (unsigned short)va_arg (arg, unsigned int);
                 }
                 else
                 {
@@ -197,6 +227,14 @@ void dna_printf (const char * format, ...)
                 else if (is_long)
                 {
                   signed_value = va_arg (arg, long int);
+                }
+                else if (is_char)
+                {
+					 unsigned_value = (signed char)va_arg (arg, int);
+                }
+                else if (is_short)
+                {
+					 unsigned_value = (short)va_arg (arg, int);
                 }
                 else
                 {
@@ -256,6 +294,7 @@ void dna_printf (const char * format, ...)
                 break;
               }
 
+            case 'p' :
             case 'x' :
               {
                 ascii_index = 0;
@@ -271,6 +310,14 @@ void dna_printf (const char * format, ...)
                 else if (is_long)
                 {
                   unsigned_value = va_arg (arg, unsigned long int);
+                }
+                else if (is_char)
+                {
+					 unsigned_value = (unsigned char)va_arg (arg, unsigned int);
+                }
+                else if (is_short)
+                {
+					 unsigned_value = (unsigned short)va_arg (arg, unsigned int);
                 }
                 else
                 {
@@ -323,6 +370,7 @@ void dna_printf (const char * format, ...)
                 char_value = unsigned_value;
                 buffer[j] = char_value;
                 j += 1;
+                state = NORMAL;
                 break;
               }
 
@@ -340,7 +388,25 @@ void dna_printf (const char * format, ...)
                 state = NORMAL;
                 break;
               }
-
+            case '%':
+                buffer[j] = '%';
+                j += 1;
+                state = FORMAT;
+                break;
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+            case '.':
+                /* simply ignore special formatting */
+                state = FORMAT;
+                break;
             default :
               {
                 state = NORMAL;
