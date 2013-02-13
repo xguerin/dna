@@ -181,17 +181,18 @@ status_t alarm_handler (void)
       }
 
       /*
-       * Execute the alarm, and compute its WCET.
+       * Execute the alarm if valid, and compute its WCET.
        */
+      if (!current_alarm->is_invalid) {
+        cpu_timer_get (cpu -> id, & delta_start);
+        status = current_alarm -> callback (current_alarm -> data);
+        cpu_timer_get (cpu -> id, & delta_end);
 
-      cpu_timer_get (cpu -> id, & delta_start);
-      status = current_alarm -> callback (current_alarm -> data);
-      cpu_timer_get (cpu -> id, & delta_end);
-
-      quantum = delta_end - delta_start;
-      if (quantum > current_alarm -> execution_time)
-      {
-        current_alarm -> execution_time = quantum;
+        quantum = delta_end - delta_start;
+        if (quantum > current_alarm -> execution_time)
+        {
+          current_alarm -> execution_time = quantum;
+        }
       }
 
       /*
