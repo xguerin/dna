@@ -31,6 +31,7 @@ extern int32_t dna_memcmp (const void *s1, const void * s2, size_t n);
 extern char * dna_strcpy (char * s1, const char * s2);
 extern char * dna_strcat (char *  dest, const char *  src);
 extern int32_t dna_strcmp (const char *s1, const char *s2);
+extern int32_t dna_strncmp (const char *s1, const char *s2, size_t n);
 extern size_t dna_strlen (const char *s);
 
 extern uint32_t dna_log2 (uint32_t value);

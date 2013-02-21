@@ -94,7 +94,7 @@ typedef enum _status
   DNA_THREAD_DESTROYED                = 0xFCFB,
 
   /*
-   * Timer error code
+   * Timer error codes
    */
 
   DNA_NO_TIMER                        = 0xFBFF,
