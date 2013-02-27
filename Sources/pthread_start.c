@@ -1,4 +1,3 @@
-#include <malloc.h>
 #include <Private/PosixThreads.h>
 #include <Private/Macros.h>
 
