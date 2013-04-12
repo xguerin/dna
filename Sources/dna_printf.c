@@ -230,11 +230,11 @@ void dna_printf (const char * format, ...)
                 }
                 else if (is_char)
                 {
-					 unsigned_value = (signed char)va_arg (arg, int);
+					 signed_value = (signed char)va_arg (arg, int);
                 }
                 else if (is_short)
                 {
-					 unsigned_value = (short)va_arg (arg, int);
+					 signed_value = (short)va_arg (arg, int);
                 }
                 else
                 {
