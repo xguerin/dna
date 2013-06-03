@@ -41,6 +41,8 @@ void dna_printf (const char * format, ...)
   int32_t ascii_index, string_length, j = 0;
   int64_t signed_value;
   uint64_t unsigned_value, remainder;
+  int fill_num = -1;
+  int fill_val = -1;
 
   enum { NORMAL, ESCAPE, FORMAT } state = NORMAL;
 
@@ -53,6 +55,9 @@ void dna_printf (const char * format, ...)
     {
       case NORMAL :
         {
+		  fill_num = -1;
+		  fill_val = -1;
+
           switch (format[i])
           {
             case '\\' :
@@ -198,6 +203,12 @@ void dna_printf (const char * format, ...)
                  * Echo the data into the buffer
                  */
 
+				if((fill_num != -1) && (ascii_index < fill_num)) {
+					 for(int32_t i = 0; i < (fill_num - ascii_index); i++){
+						  buffer[j] = (fill_val == 0)?'0':' ';
+						  j += 1;
+					 }
+				} 
                 for (int32_t i = ascii_index - 1; i >= 0; i--)
                 {
                   buffer[j] = ascii[i];
@@ -280,6 +291,13 @@ void dna_printf (const char * format, ...)
                  * Echo the data into the buffer
                  */
 
+				if((fill_num != -1) && (ascii_index < fill_num)) {
+					 for(int32_t i = 0; i < (fill_num - ascii_index); i++){
+						  buffer[j] = (fill_val == 0)?'0':' ';
+						  j += 1;
+					 }
+				} 
+
                 for (int32_t i = ascii_index - 1; i >= 0; i--)
                 {
                   buffer[j] = ascii[i];
@@ -349,6 +367,12 @@ void dna_printf (const char * format, ...)
                 /*
                  * Echo the data into the buffer
                  */
+				if((fill_num != -1) && (ascii_index < fill_num)) {
+					 for(int32_t i = 0; i < (fill_num - ascii_index); i++){
+						  buffer[j] = (fill_val == 0)?'0':' ';
+						  j += 1;
+					 }
+				} 
 
                 for(int32_t i = ascii_index - 1; i >= 0; i--)
                 {
@@ -359,7 +383,6 @@ void dna_printf (const char * format, ...)
                 /*
                  * Return to NORMAL state
                  */
-
                 state = NORMAL;
                 break;
               }
@@ -394,6 +417,11 @@ void dna_printf (const char * format, ...)
                 state = FORMAT;
                 break;
             case '0':
+				 if(fill_num == -1){ 
+					  fill_val = 0;
+					  state = FORMAT;
+					  break;
+				 }
             case '1':
             case '2':
             case '3':
@@ -403,6 +431,13 @@ void dna_printf (const char * format, ...)
             case '7':
             case '8':
             case '9':
+				 if(fill_num == -1)
+					  fill_num = format[i] - '0';
+				 else
+					  fill_num = fill_num*10 + (format[i] - '0');
+					  
+				 state = FORMAT;
+				 break;
             case '.':
                 /* simply ignore special formatting */
                 state = FORMAT;
