@@ -23,6 +23,9 @@ extern void cpu_trap_attach_esr (int32_t cpuid, exception_id_t id,
 extern void cpu_trap_attach_isr (int32_t cpuid, interrupt_id_t id,
     uint32_t mode, interrupt_handler_t isr);
 
+#define CPU_DEFAULT_ITRESTORE ((interrupt_status_t)0x00000013)
+                     /* Mode: SVC I F */
+
 extern interrupt_status_t cpu_trap_mask_and_backup (void);
 extern void cpu_trap_restore (interrupt_status_t backup);
 

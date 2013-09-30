@@ -12,7 +12,7 @@ cpu_context_init:
 	str r5, [r0], #4
 	str r3, [r0], #4
 	mrs r5, cpsr
-  bic r5, r5, #0xC0
+	orr r5, r5, #0xC0
 	str r5, [r0]
 	pop {r4, r5, pc}
   nop
