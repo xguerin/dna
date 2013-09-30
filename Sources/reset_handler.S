@@ -19,6 +19,9 @@ reset_handler:
   mul r2, r3, r0
   sub r1, r1, r2
 
+  # eight-byte stack alignment
+  bic r1, r1, #7
+
   @ Set the processor stack
 	mov	r0, #FIQ_MODE
 	msr	cpsr_c, r0
