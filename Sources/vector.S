@@ -10,6 +10,8 @@
 	.extern data_abort_handler
 	.extern prefetch_abort_handler
 
+.type   _start, %function
+
 _start:
 	b	reset_handler
 	b undef_handler
@@ -20,3 +22,4 @@ _start:
 	b irq_handler
 	b fiq_handler
 
+.size _start, .-_start		  

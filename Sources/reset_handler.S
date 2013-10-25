@@ -9,6 +9,8 @@
 	.extern system_kickstart
 	.extern CPU_SVC_STACK_ADDR
 
+.type   reset_handler, %function
+
 reset_handler:
   @ Get the current cpuid
   mrc p15, 0, r0, c0, c0, 5
@@ -53,3 +55,4 @@ reset_handler:
 _hell_pit:
   b _hell_pit
 
+.size reset_handler, .-reset_handler
