@@ -1,7 +1,10 @@
 #include <Private/PosixThreads.h>
 #include <Private/Macros.h>
 
-extern int main (void);
+extern int main (int argc, char **argv);
+
+static int argc = 1;
+static char *argv[2] = {"__dna__no__arguments", NULL};
 
 int __libthread_start (void)
 {
@@ -24,5 +27,5 @@ int __libthread_start (void)
   wrapper -> attributs -> schedpolicy = SCHED_FIFO;
   wrapper -> attributs -> procid = PTHREAD_NOPROCID;
 
-  return main ();
+  return main(argc, argv);
 }
