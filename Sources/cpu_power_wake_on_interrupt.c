@@ -2,13 +2,12 @@
 
 void cpu_power_wake_on_interrupt (void)
 {
-#if 0
   register int32_t id = 0;
 
+  // Wait for Interrupt WFI
   __asm__ volatile (
       "mrc p15,0,%0,c7,c0,4"
       : "=r"(id)
       :
       );
-#endif
 }
