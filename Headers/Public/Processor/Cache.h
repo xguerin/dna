@@ -24,7 +24,7 @@ cpu_cache_t;
       "mcr p15,0,%0,c7,c10,4"                 \
       :                                       \
       : "r"(dummy)                            \
-      );                                      \
+      :"memory");									  \
 }
 
 extern void cpu_cache_invalidate (cpu_cache_t cache_type,
