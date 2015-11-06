@@ -53,7 +53,7 @@ status_t filesystem_load (char * name, filesystem_t ** fs)
      * Check the consistency of the filesystem.
      */
 
-    for (int32_t i = 0; i < sizeof (filesystem_cmd_t) >> 2; i += 1)
+    for (int32_t i = 0; i < sizeof (filesystem_cmd_t) / sizeof(long); i += 1)
     {
       ensure (((void **)new_fs -> cmd)[i] != NULL, DNA_ERROR);
     }
