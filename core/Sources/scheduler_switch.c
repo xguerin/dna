@@ -56,7 +56,6 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
     /*
      * Compute the correct times if necessary
      */
-
     cpu_timer_get (current_cpuid, & current_time);
     delta = current_time - cpu -> lap_date;
     self -> info . kernel_time += delta;
@@ -65,23 +64,23 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
     /*
      * Update the status of the target thread
      */
-
     thread -> info . status = DNA_THREAD_RUNNING;
     thread -> info . cpu_id = current_cpuid;
     lock_release (& thread -> lock);
 
     /*
-     * Save the current context
+     * Save the current context. When the queue is not NULL, it is
+     * locked. Therefore, there is no possible concurrency issues
+     * since the queue is unlocked right before loading the new
+     * context.
      */
-
     cpu_context_save (& self -> context, & __scheduler_switch_end);
 
     /*
-     * Check if self is IDLE. In this case, remove CPU
-     * from the available list. If target is IDLE, restore
-     * the processor status to READY.
+     * Check if self is IDLE. In this case, remove CPU from the
+     * available list. If target is IDLE, restore the processor status
+     * to READY.
      */
-
     if (self == cpu -> idle_thread)
     {
       log (VERBOSE_LEVEL, "CPU(%d) << RUNNING", cpu -> id);
@@ -105,38 +104,33 @@ status_t scheduler_switch (thread_t thread, queue_t * queue)
     /*
      * Update the processor's status
      */
-
     cpu -> lap_date = current_time;
     cpu -> current_thread = thread;
 
     /*
      * Release the queue's lock if queue is not NULL.
      */
-
     if (queue != NULL)
     {
       lock_release (& queue -> lock);
     }
 
     /*
-     * Load the target context
+     * Load the target context.
      */
-
     cpu_context_load (& thread -> context);
 
     /*
      * FIXME: Find a better idea for what follows 
      */
-
     __asm__ volatile ("__scheduler_switch_end:");
 
     /*
-     * Contrary to what I thought at first, we cannot 
-     * check if self is running the IDLE thread here, because
-     * in the case of the CPU0 (the boot CPU), swithching to IDLE
-     * would not branch here but directly in the IDLE thread handler.
+     * Contrary to what I thought at first, we cannot check if self is
+     * running the IDLE thread here, because in the case of the CPU0
+     * (the boot CPU), switching to IDLE would not branch here but
+     * directly in the IDLE thread handler.
      */
-
     return DNA_OK;
   }
 }
