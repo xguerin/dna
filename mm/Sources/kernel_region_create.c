@@ -25,7 +25,7 @@
  * SYNOPSIS
  */
 
-status_t kernel_region_create (uint32_t required_nblocks,
+status_t kernel_region_create (int32_t required_nblocks,
     kernel_region_t * p_region)
 
 /*
@@ -48,10 +48,10 @@ status_t kernel_region_create (uint32_t required_nblocks,
 
   watch (status_t)
   {
-    check (error_state, current_region != NULL, DNA_ERROR);
-    check (error_state, p_region != NULL, DNA_ERROR);
-    check (error_state, current_region -> nblocks > required_nblocks,
-        DNA_OUT_OF_MEM);
+    ensure (required_nblocks > 0, DNA_BAD_ARGUMENT);
+    ensure (current_region != NULL, DNA_ERROR);
+    ensure (p_region != NULL, DNA_ERROR);
+    ensure (current_region -> nblocks > required_nblocks, DNA_OUT_OF_MEM);
 
     /*
      * Allocate the new region
@@ -133,11 +133,6 @@ status_t kernel_region_create (uint32_t required_nblocks,
 
     *p_region = current_region;
     return DNA_OK;
-  }
-
-  rescue (error_state)
-  {
-    leave;
   }
 }
 

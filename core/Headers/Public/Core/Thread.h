@@ -46,7 +46,7 @@
  * SOURCE
  */
 
-#define DNA_NO_AFFINITY  0xFFFFFFFF
+#define DNA_NO_AFFINITY  -1
 
 /*
  ****/

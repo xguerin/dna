@@ -101,7 +101,7 @@ extern kernel_allocator_t kernel_allocator;
 extern void * kernel_malloc (uint32_t size, bool erase);
 extern status_t kernel_free (void * area);
 
-extern status_t kernel_region_create (uint32_t required_nblocks,
+extern status_t kernel_region_create (int32_t required_nblocks,
     kernel_region_t * p_region);
 extern status_t kernel_region_destroy (kernel_region_t region);
 

@@ -42,16 +42,13 @@ status_t thread_destroy (int32_t id)
  */
 
 {
-  uint32_t current_cpuid = 0;
   thread_t thread;
   thread_id_t tid = { .raw = id };
   interrupt_status_t it_status = 0;
 
   watch (status_t)
   {
-    ensure (tid . s . group >= 0, DNA_BAD_ARGUMENT);
     ensure (tid . s . group < DNA_MAX_GROUP, DNA_BAD_ARGUMENT);
-    ensure (tid . s . index >= 0, DNA_BAD_ARGUMENT);
     ensure (tid . s . index < DNA_MAX_THREAD, DNA_BAD_ARGUMENT);
 
     /*
@@ -59,7 +56,6 @@ status_t thread_destroy (int32_t id)
      */
 
     it_status = cpu_trap_mask_and_backup ();
-    current_cpuid = cpu_mp_id ();
 
     /*
      * Get the thread corresponding to ID and check the thread's status.

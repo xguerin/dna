@@ -41,6 +41,8 @@ int32_t thread_idle (void * data)
  */
 
 {
+  (void) data;
+
   while (true)
   {
     cpu_power_wake_on_interrupt ();

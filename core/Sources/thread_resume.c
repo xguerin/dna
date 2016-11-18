@@ -48,9 +48,7 @@ status_t thread_resume (int32_t id)
 
   watch (status_t)
   {
-    ensure (tid . s . group >= 0, DNA_BAD_ARGUMENT);
     ensure (tid . s . group < DNA_MAX_GROUP, DNA_BAD_ARGUMENT);
-    ensure (tid . s . index >= 0, DNA_BAD_ARGUMENT);
     ensure (tid . s . index < DNA_MAX_THREAD, DNA_BAD_ARGUMENT);
 
     /*
