@@ -1,0 +1,2 @@
+file(GLOB SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.c)
+add_library(dna_vfs OBJECT ${SOURCES})
