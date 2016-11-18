@@ -123,6 +123,7 @@ status_t port_poll (int32_t id, int32_t flags,
     status = semaphore_release (read_sem, 1, DNA_NO_RESCHEDULE);
     ensure (status == DNA_OK, status);
 
+    *p_size = data_size;
     return DNA_OK;
   }
 
