@@ -70,6 +70,22 @@ status_t vfs_lseek (int16_t fd, int64_t offset, int32_t whence, int64_t * p_ret)
     ensure (status == DNA_OK, status);
 
     /*
+     * Define a function wrapper to call the volume's ioctl 
+     */
+
+    status_t ioctl_wrapper (void * ns, void * node, void * data,
+                            int32_t fn, int32_t * p_ret, ...)
+    {
+      status_t result;
+      va_list args;
+      va_start (args, p_ret);
+      result = file -> vnode -> volume -> cmd -> ioctl (ns, node, data,
+                                                        fn, args, p_ret);
+      va_end(args);
+      return result;
+    }
+
+    /*
      * Check the seek whence operator.
      */
 
@@ -87,16 +103,11 @@ status_t vfs_lseek (int16_t fd, int64_t offset, int32_t whence, int64_t * p_ret)
         break;
 
       case DNA_SEEK_FROM_END :
-        /*
-         * TODO: Declare an ioctl_wrapper function to properly
-         * wrap around the (va_list).
-         */
-        status = file -> vnode -> volume -> cmd -> ioctl
-          (file -> vnode -> volume -> data, file -> vnode -> data,
-           file -> data, DNA_GET_DEVICE_SIZE, &size, &ret);
-
+        status = ioctl_wrapper (file -> vnode -> volume -> data,
+                                file -> vnode -> data,
+                                file -> data, DNA_GET_DEVICE_SIZE,
+                                &ret, &size);
         check (error, status == DNA_OK, status);
-
         file -> offset = size + offset;
         break;
     }
