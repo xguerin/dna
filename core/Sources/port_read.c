@@ -117,7 +117,7 @@ status_t port_read (int32_t id, int32_t * p_code, void * buffer,
 
     *p_code = message -> code;
     data_size = size >= message -> size ? message -> size : size;
-    dna_memcpy (buffer, message -> buffer, size);
+    dna_memcpy (buffer, message -> buffer, data_size);
 
     queue_add (& port -> message, port);
 
